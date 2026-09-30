@@ -1,0 +1,551 @@
+\documentclass[acmsmall, screen, review]{acmart}
+% \usepackage[utf8]{inputenc}
+% \usepackage[margin=2cm]{geometry}
+% % \usepackage[T1]{fontenc}
+% \usepackage{amsmath}
+% \usepackage{amsthm}
+% \usepackage{amssymb}
+% \usepackage{amsfonts}
+\usepackage{enumitem}
+\usepackage{tikz-cd}
+\usepackage{soul}
+\usepackage{diagbox}
+
+\usepackage{quiver}
+% \usepackage{hypdoc}
+% \usepackage[bb=dsserif]{mathalpha}
+% \usepackage[capitalise,nameinlink]{cleveref}
+% %% Some recommended packages.
+% \usepackage{booktabs}   %% For formal tables:
+%                         %% http://ctan.org/pkg/booktabs
+% \usepackage{subcaption} %% For complex figures with subfigures/subcaptions
+%                         %% http://ctan.org/pkg/subcaption
+% \usepackage{mathtools}
+% \usepackage{extarrows}
+% \usepackage{biblatex}
+\usepackage{natbib}
+\usepackage{etoolbox}
+\usepackage[skins]{tcolorbox}
+\tcbset{boxrule=1pt, colframe=black,  colback=white, }
+
+\bibliographystyle{unsrtnat}
+\graphicspath{ {./imgs/} }
+
+\newcommand\dhxrightarrow[2][]{%
+  \mathrel{\ooalign{$\xrightarrow[#1\mkern4mu]{#2\mkern4mu}$\cr%
+  \hidewidth$\rightarrow\mkern4mu$}}
+}
+
+\AtEndPreamble{%
+  \theoremstyle{acmplain}%
+  % note to copy editors: remove the following
+  % two lines if standard ACM style is preferred
+  %   \let\definition\relax\let\enddefinition\relax
+  %   \newtheorem{definition}[theorem]{Definition}%
+  % end note to copy editors
+  %   \newtheorem{remark}[theorem]{Remark}%
+  \AtBeginEnvironment{definition}{\pushQED{\mbox{}\hfill{$\diamond$}}}%
+  \AtEndEnvironment{definition}{\popQED}%
+}
+
+\DeclareMathOperator{\Ty}{\mathsf{Ty}}
+\DeclareMathOperator{\Tm}{\mathsf{Tm}}
+\DeclareMathOperator{\El}{\mathsf{El}}
+\DeclareMathOperator{\Code}{\mathsf{Code}}
+\DeclareMathOperator{\sEl}{\mathsf{sEl}}
+\DeclareMathOperator{\sCode}{\mathsf{sCode}}
+\DeclareMathOperator{\Lift}{\mathsf{Lift}}
+\DeclareMathOperator{\sLift}{\mathsf{sLift}}
+\DeclareMathOperator{\fLift}{\mathsf{fLift}}
+\DeclareMathOperator{\Sub}{\mathsf{Sub}}
+\newcommand{\coneb}{\blacktriangleright}
+\newcommand{\cone}{\vartriangleright}
+\newcommand{\dom}{\mathsf{dom}}
+\newcommand{\cod}{\mathsf{cod}}
+\newcommand{\app}{\mathsf{app}}
+\newcommand{\lam}{\mathsf{lam}}
+\newcommand{\Level}{\mathsf{Level}}
+\newcommand{\df}{\mathfrak{f}}
+\newcommand{\dop}{\mathfrak{o}}
+\newcommand{\coerce}{\mathsf{coerce}}
+\newcommand{\mode}{\mathbb M}
+\newcommand{\id}{\mathsf{id}}
+\newcommand{\UU}{\mathcal{U}}
+\newcommand{\op}{\mathsf{op}}
+\newcommand{\core}{\mathsf{core}}
+\newcommand{\loc}{\mathsf{loc}}
+\newcommand{\Cat}{\mathsf{Cat}}
+\newcommand{\CAT}{\mathsf{CAT}}
+\newcommand{\Set}{\mathsf{Set}}
+\newcommand{\C}{\mathcal C}
+\newcommand{\gcs}[1]{\overset{\scriptscriptstyle #1}{.}}
+\newcommand{\isovar}{\overset{\circ}{:}}
+\newcommand{\twotm}{\overset{\scriptscriptstyle  2}{:}}
+\newcommand{\twotmd}{\overset{\scriptscriptstyle  d}{:}}
+\newcommand{\covar}{\overset{\scriptscriptstyle  +}{:}}
+\newcommand{\contravar}{\overset{\scriptscriptstyle -}{:}}
+\newcommand{\nvar}{\overset{\scriptscriptstyle \times}{:}}
+\newcommand{\var}[1]{\overset{\scriptscriptstyle #1}{:}}
+\newcommand{\ctx}{\ \mathsf{ctx}}
+\newcommand{\dType}{\ \mathsf{dType}}
+\newcommand{\Type}{\ \mathsf{Type}}
+\newcommand{\type}{\ \mathsf{type}}
+\newcommand{\ort}{\ \mathsf{ort}}
+\newcommand{\xort}[1]{\ \operatorname{#1-\mathsf{ort}}}
+\newcommand{\x}{\mathnormal{x}}
+\newcommand{\Id}{\mathsf{Id}}
+\newcommand{\refl}{\mathsf{refl}}
+\newcommand{\p}{\mathbf{p}}
+\newcommand{\ind}{\mathsf{ind}}
+\newcommand{\flip}{\mathsf{flip}\,}
+\newcommand{\homset}{\mathsf{hom}\mathcal{S}\mathsf{et}}
+\newcommand{\defeq}{:\equiv}
+\newcommand{\tr}{\mathsf{tr}}
+\newcommand{\Con}{\mathsf{Con}}
+\newcommand{\Ort}{\mathsf{Ort}}
+\newcommand{\OrtType}{\mathsf{OrtType}}
+\newcommand{\List}{\mathsf{List}}
+\newcommand{\dfunext}{\mathsf{dfunext}}
+\newcommand{\funext}{\mathsf{funext}^=}
+\newcommand{\ext}[1]{\overset{\scriptscriptstyle #1}{.}}
+
+\usepackage{mathpartir}
+% \usepackage{trfsigns}
+
+\newtheorem{theorem}{theorem}[section]
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{notation}[theorem]{Notation}
+\newtheorem{construction}[theorem]{Construction}
+
+\AtEndPreamble{%
+  \theoremstyle{acmplain}%
+  % note to copy editors: remove the following
+  % two lines if standard ACM style is preferred
+  %   \let\definition\relax\let\enddefinition\relax
+  %   \newtheorem{definition}[theorem]{Definition}%
+  % end note to copy editors
+  %   \newtheorem{remark}[theorem]{Remark}%
+  \AtBeginEnvironment{construction}{\pushQED{\mbox{}\hfill{$\diamond$}}}%
+  \AtEndEnvironment{construction}{\popQED}%
+}
+
+\newtoggle{DEBUG}
+\toggletrue{DEBUG}
+% \togglefalse{DEBUG}
+
+\title{Draft}
+
+\begin{document}
+\subsection{Conventions}
+All our notions of (op)fibrations will be cloven and split.
+Given some functor $F: B \to A$, and some diagram $J:D \to A$, we will write $F^{-1}(J)$ for the pullback $B \times_A D$; if $F$ is clear from the context, we will also write $B(D)$ for this same pullback.
+In particular, if $D$ is the terminal category, and conflating $J$ with its image $a:A$, we write $B(a)$.
+The motivation for this convention is that if $B$ is an (op)fibration, under the equivalence from Proposition \ref{prop:fibequiv}, then $F^{-1}(a) \cong \bar B(a)$, where $\bar B$ is the functor that corresponds to $F$.
+
+Let $B:A \to \Cat$ and $C:A^\op \to \Cat$ be functors. We write $A \cone^{\mathfrak o} B$ (resp. $A \cone^\mathfrak{f} C$) for the covariant (resp. contravariant) Grothendieck construction, when no ambiguity arises, we simply write $A \cone B$ (resp. $A \cone C$).
+Finally, for an endofunctor $\omega : \Cat \to \Cat$ we will write $B^\omega$ for $\omega \circ B:A \to \Cat$.
+
+\section{Dependent 2-sided fibrations}
+Let $A$ be a category. Writing $\mathsf{Opfib}(A)$ (resp. $\mathsf{Fib}(A)$) for the category of opfibrations and opcartesian functors (resp. fibrations and cartesian functors), a classical result states
+
+\begin{proposition}\label{prop:fibequiv}
+  There are equivalences of categories
+  \begin{gather*}
+    \mathsf{Opfib}(A) \simeq \mathsf{Functor}(A,\Cat) \\
+    \mathsf{Fib}(A) \simeq \mathsf{Functor}(A^\op,\Cat)
+  \end{gather*}
+  With the maps from right to left given by the Grothendieck construction.
+\end{proposition}
+
+A more general result, due to Street, relates two-sided fibrations to profunctors to $\Cat$ \cite{street_fibrations_1980}. In this section, we generalize this notion of two-sided fibrations (2SFibs) to the dependent case, and show how these correspond to a certain category of functors.
+
+For the remainder of this section, we fix a category $A$ and a functor $B:A \to \Cat$.
+
+\begin{definition}\label{def:d2sfib}
+  A \textbf{dependent 2-sided fibration} (D2SFib) from $A$ to $B$ is a category $C$ equipped with the following data
+  \begin{enumerate}
+    \item A functor $q:C \to A \cone B$, together with data specifying that it is a  ``local fibration''. I.e., for each $a:A$, the restriction
+      \[ q_{|a}:C(a) \to (A \cone B)(a) \xrightarrow{\cong} B(a) \]
+      % https://q.uiver.app/#q=WzAsNixbMSwxLCJBLkIiXSxbMiwxLCJBIl0sWzIsMCwiMSJdLFsxLDAsIihBLkIpKGEpIl0sWzAsMCwiQyhhKSJdLFswLDEsIkMiXSxbMCwxLCJcXHBpX0EiLDJdLFsyLDEsImEiXSxbMywyXSxbMywwXSxbNCw1XSxbNSwwLCJxIiwyXSxbNCwzXSxbMywxLCIiLDAseyJzdHlsZSI6eyJuYW1lIjoiY29ybmVyIn19XSxbNCwwLCIiLDAseyJzdHlsZSI6eyJuYW1lIjoiY29ybmVyIn19XV0=
+      %   \[\begin{tikzcd}[cramped]
+      %           {C(a)} & {(A \cone B)(a)} & 1 \\
+      %           C & {A \cone B} & A
+      %           \arrow["q_{|a}", from=1-1, to=1-2]
+      %           \arrow[from=1-1, to=2-1]
+      %           \arrow["\lrcorner"{anchor=center, pos=0.125}, draw=none, from=1-1, to=2-2]
+      %           \arrow[from=1-2, to=1-3]
+      %           \arrow[from=1-2, to=2-2]
+      %           \arrow["\lrcorner"{anchor=center, pos=0.125}, draw=none, from=1-2, to=2-3]
+      %           \arrow["a", from=1-3, to=2-3]
+      %           \arrow["q"', from=2-1, to=2-2]
+      %           \arrow["{\pi_A}"', from=2-2, to=2-3]
+      %       \end{tikzcd}\]
+      is a fibration, so that each morphism $\beta: b \to qe$ in $B(a)$ has a specified cartesian lift $\beta^*e \to e$.
+    \item Writing $p \defeq \pi_A \circ q : C \to A$, we require data specifying $p$ as an opfibration, so that each morphism $\alpha: pe \to a$ has a specified opcartesian lift $e \to \alpha_!e$.
+  \end{enumerate}
+  Such that
+  \begin{enumerate}
+      \setcounter{enumi}{2}
+    \item $q$ is an opcartesian functor of opfibrations over $A$. That is, for $\alpha:pe \to a$, its lift $\alpha_! : e \to \alpha_!e$ satisfies
+      \[q(\alpha_!)=(\alpha, \id_{B(\alpha)b}):q(e) \to (a, B(\alpha)(q_{|a}(\alpha_!e)))\]
+      %   {\color{blue} Would the main theorem still be true if we just required $q$ to map all $p$-opcartesian morphisms to $\pi_A$-opcartesian morphisms?}
+    \item For each $\alpha: pe \to a$ in $A$ and $\beta: b \to qe$ in $B(p(e))$, the canonical morphism
+      \[ \alpha_! \beta^* e \to (B(\alpha)\beta)^*\alpha_!e \]
+      given by any of the universal properties is an identity.
+  \end{enumerate}
+\end{definition}
+
+\begin{remark}
+  For the last item above, one way to obtain the map $\alpha_! \beta^* e \to (B(\alpha)\beta)^*\alpha_!e$ would be by obtaining the diagonal arrow below using the universal property of $\alpha_! \beta^*$, and then invoking the universal property of $(B(\alpha)\beta)^*\alpha_!e$.
+  % https://q.uiver.app/#q=WzAsNSxbMCwxLCJcXGJldGFeKmUiXSxbMiwxLCJcXGFscGhhXyFlIl0sWzAsMCwiXFxhbHBoYV8hXFxiZXRhXiplIl0sWzIsMCwiKEJcXGFscGhhXFxiZXRhKV4qXFxhbHBoYV8hZSJdLFsxLDEsImUiXSxbMiwzLCIiLDIseyJzdHlsZSI6eyJib2R5Ijp7Im5hbWUiOiJkYXNoZWQifX19XSxbMywxXSxbMCw0XSxbMiwxLCIiLDEseyJzdHlsZSI6eyJib2R5Ijp7Im5hbWUiOiJkYXNoZWQifX19XSxbNCwxXSxbMCwyXV0=
+  \[
+    \begin{tikzcd}
+      {\alpha_!\beta^*e} && {(B(\alpha)\beta)^*\alpha_!e} \\
+      {\beta^*e} & e & {\alpha_!e}
+      \arrow[dashed, from=1-1, to=1-3]
+      \arrow[dashed, from=1-1, to=2-3]
+      \arrow[from=1-3, to=2-3]
+      \arrow[from=2-1, to=1-1]
+      \arrow[from=2-1, to=2-2]
+      \arrow[from=2-2, to=2-3]
+  \end{tikzcd}\]
+  The other way of obtaining $\alpha_! \beta^* e \to (B(\alpha)\beta)^*\alpha_!e$, by using an analogous argument on the other diagonal, gives the same morphism.
+\end{remark}
+
+For simplicity, we will usually refer to a D2SFib from $A$ to $B$ by its functor $q:C \to A \cone B$, or sometimes just by its total space $C$.
+We will also omit $A$ and $B$ if they are obvious from the context, and just say that $C$ is a D2SFib.
+Following our initial conventions, we will write $C(a,b)$ for $q^{-1}(a,b)$.
+
+\begin{remark}
+  D2SFibs directly generalize 2SFibs as follows. If $A$ and $B$ are categories, writing $\Delta_B:A \to \Cat$ for the constant functor on $B$, then $C \xrightarrow{F} A \times B$ is a 2SFib iff $C \xrightarrow{F} (A\times B) \cong (A \cone \Delta_B)$ is a D2SFib.
+\end{remark}
+
+\begin{remark}\label{remark:d2sfibsareopfibs}
+  D2SFibs directly generalize opfibrations as follows. For categories $A$ and $B$, a functor $B \xrightarrow{F} A$ is an opfibration iff the induced functor $B \xrightarrow{F} A \cong (A \cone \Delta_\mathbf{1})$ is a D2SFib.
+\end{remark}
+
+\begin{definition}
+  A \textbf{dependent 2-sided cartesian functor} between two D2SFibs $q:C \to A \cone B$ and $q' : D \to A \cone B$ is a functor $\varphi:C \to D$ such that
+  \begin{enumerate}
+    \item It is opcartesian over $A$, i.e. it maps chosen opcartesian lifts to chosen opcartesian lifts.
+    \item For each $a:A$, $\varphi$ restricts to a cartesian functor over $B(a)$.
+  \end{enumerate}
+  % https://q.uiver.app/#q=WzAsNixbMCwwLCJDIl0sWzEsMSwiQSJdLFsyLDAsIkQiXSxbNCwwLCJDKGEpIl0sWzUsMSwiQihhKSJdLFs2LDAsIkQoYSkiXSxbMCwxLCJxIiwyXSxbMiwxLCJxJyJdLFswLDIsIlxcdmFycGhpIl0sWzMsNCwicV97fGF9IiwyXSxbMyw1LCJcXHZhcnBoaSJdLFs1LDQsInEnX3t8YX0iXV0=
+  \[
+    \begin{tikzcd}[cramped]
+      C && D && {C(a)} && {D(a)} \\
+      & A &&&& {B(a)}
+      \arrow["\varphi", from=1-1, to=1-3]
+      \arrow["\pi_A \circ q"', from=1-1, to=2-2]
+      \arrow["{\pi_A \circ q'}", from=1-3, to=2-2]
+      \arrow["\varphi_{|a}", from=1-5, to=1-7]
+      \arrow["{q_{|a}}"', from=1-5, to=2-6]
+      \arrow["{q'_{|a}}", from=1-7, to=2-6]
+  \end{tikzcd}\]
+\end{definition}
+
+D2SFibs from $A$ to $B$ and the previous notion of cartesian functors assemble into a category $\mathsf{D2SFib}(A,B)$, which is isomorphic to $\mathsf{2SFib}(A,B)$ when $B$ doesn't depend on $A$, i.e. it is a constant functor.
+
+There is a dual version of the notion of a D2SFib.
+
+\begin{definition}
+  Let $A$ be a category and $B:A^\op \to \Cat$ a functor. A functor $q:C\to A \cone^\mathfrak{f} B$ is a \textbf{dependent 2-sided opfibration} (D2SOpfib) from $A$ to $B$ if the functor $q^\op:C^\op \to (A \cone^\mathfrak{f} B)^\op \cong (A^\op \cone^\mathfrak{o} B^\op)$ is a dependent 2-sided fibration from $A^\op$ to $B^\op$.
+\end{definition}
+
+Briefly, a D2SFib $q:C \to A \cone B$ from is an opfibrations over $A$, and a ``dependent'' fibration over $B$. Dually, a D2SOpfib $q:C \to A \cone B$ is a fibration over $B$ and a ``dependent'' opfibration over $B$.
+
+We will focus on D2SFibs, but will freely use analogous results and constructions for D2SOpfibs.
+The rest of this section is focused on establishing Proposition \ref{prop:d2sfibequiv}, which constructs an equivalence of categories $\mathsf{D2SFib}(A,B) \simeq \mathsf{Functor}(A \cone B^\op, \Cat)$.
+
+\begin{remark}
+  There is also a non-split version of D2SFibs, these are functors $C \to B$, together with data specifying that $B$ is (non-split) opfibration over $A$, and that $C$ is a (non-split) opfibration over $A$ as well as a dependent (non-split) fibration over $B$.
+  This notion would presumably have an 2-equivalence version of Proposition \ref{prop:d2sfibequiv}, but we will not need this notion here.
+\end{remark}
+
+We give an alternative characterization of D2SFibs, which has the benefit of being very compact.
+
+\begin{lemma}
+  An opfibration $p:C \to A$ together with an opcartesian functor $q:C \to A \cone B$ is a D2SFib iff $q$ is a fibration in the category $\text{Opfib}(A)$ of opfibrations over $A$.
+\end{lemma}
+
+\subsection{From fibrations to functors}
+First, a simple lemma.
+
+\begin{lemma}\label{d2sfib:lemma}
+  Let $q:C \to A \cone B$ be a D2SFib, and let $\alpha:a \to a'$ in $A$ and $\beta: b \to b'$ in $B(a)$. Then the following diagram commutes.
+  % https://q.uiver.app/#q=WzAsNCxbMCwwLCJDKGEsYicpIl0sWzAsMSwiQyhhJyxCXFxhbHBoYSBiJykiXSxbMSwxLCJDKGEnLEJcXGFscGhhIGIpIl0sWzEsMCwiQyhhLGIpIl0sWzAsMSwiXFxhbHBoYV8hIiwyXSxbMSwyLCIoQihcXGFscGhhKVxcYmV0YSleKiJdLFszLDIsIlxcYWxwaGFfISJdLFswLDMsIlxcYmV0YV4qIl1d
+  \[
+    \begin{tikzcd}[column sep=4.5em]
+      {C(a,b')} & {C(a,b)} \\
+      {C(a',B\alpha b')} & {C(a',B\alpha b)}
+      \arrow["{\beta^*}", from=1-1, to=1-2]
+      \arrow["{\alpha_!}"', from=1-1, to=2-1]
+      \arrow["{\alpha_!}", from=1-2, to=2-2]
+      \arrow["{(B(\alpha)\beta)^*}"', from=2-1, to=2-2]
+  \end{tikzcd}\]
+\end{lemma}
+\begin{proof}
+  By definition of D2SFib, the diagram commutes on objects. To see that it commutes on morphisms, let $f:e \to d$ be a morphism in $C(a,b')$. Then by either of the universal properties, there exists a unique diagonal arrow as below, proving both morphisms are equal.
+  % https://q.uiver.app/#q=WzAsNCxbMCwwLCJcXGFscGhhXyFcXGJldGFeKmUiXSxbMCwxLCJcXGFscGhhXyFcXGJldGFeKmQiXSxbMSwxLCIoQihcXGFscGhhKVxcYmV0YSleKlxcYWxwaGFfIWQiXSxbMSwwLCIoQihcXGFscGhhKVxcYmV0YSleKlxcYWxwaGFfIWUiXSxbMCwxLCJcXGFscGhhXyFcXGJldGFeKmYiLDJdLFsxLDIsIj0iLDIseyJzdHlsZSI6eyJoZWFkIjp7Im5hbWUiOiJub25lIn19fV0sWzAsMywiPSIsMCx7InN0eWxlIjp7ImhlYWQiOnsibmFtZSI6Im5vbmUifX19XSxbMywyLCIoQihcXGFscGhhKVxcYmV0YSleKlxcYWxwaGFfIWYiXSxbMCwyLCIiLDEseyJzdHlsZSI6eyJib2R5Ijp7Im5hbWUiOiJkYXNoZWQifX19XV0=
+  \[
+    \begin{tikzcd}[sep=2.25em]
+      {\alpha_!\beta^*e} & {(B(\alpha)\beta)^*\alpha_!e} \\
+      {\alpha_!\beta^*d} & {(B(\alpha)\beta)^*\alpha_!d}
+      \arrow["{=}", no head, from=1-1, to=1-2]
+      \arrow["{\alpha_!\beta^*f}"', from=1-1, to=2-1]
+      \arrow[dashed, from=1-1, to=2-2]
+      \arrow["{(B(\alpha)\beta)^*\alpha_!f}", from=1-2, to=2-2]
+      \arrow["{=}"', no head, from=2-1, to=2-2]
+  \end{tikzcd}\]
+\end{proof}
+
+\begin{proposition}
+  We have a functor $\Psi: \mathsf{D2SFib}(A,B) \to \mathsf{Functor}(A \cone B^\op,\Cat)$.
+\end{proposition}
+\begin{proof}
+  We now specify the action of $\Psi$. \\
+  \textbf{Objects:} Given a D2SFib $q:C \to A \cone B$, we now define the action of the functor $\Psi(C):A \cone B^\op \to \Cat$
+  \begin{itemize}
+    \item Objects: Given $(a,b):A \cone B^\op$, we define $\Psi(C)(a,b) \defeq C(a,b)$.
+    \item Morphisms: Given $(a,b) \xrightarrow{(\alpha,\beta)} (a',b')$ in $A \cone B^\op$, we define $\Psi(C)(\alpha,\beta)$ by
+      \[ C(a,b) \xrightarrow{\alpha_!} C(a',B(\alpha)b) \xrightarrow{\beta^*} C(a',b') \]
+    \item Functoriality: $\Psi(C)$ preserves identities by splitness of the (op)fibrational data. It preserves composition, since for $(a,b) \xrightarrow{(\alpha,\beta)} (a',b')  \xrightarrow{(\alpha',\beta')} (a'',b'')$, by Lemma \ref{d2sfib:lemma}, the following diagram commutes
+      % https://q.uiver.app/#q=WzAsNixbMCwwLCJhIl0sWzEsMCwiciJdLFsxLDEsInQiXSxbMiwwLCJzIl0sWzIsMSwiZyJdLFszLDEsInoiXSxbMCwxLCJzIl0sWzEsMiwidCIsMl0sWzEsMywiciJdLFszLDQsImEiXSxbMiw0LCJ4IiwyXSxbNCw1LCJ6IiwyXV0=
+      \[
+        \begin{tikzcd}
+          C(a,b) & C(a',B(\alpha)b) & C(a'',B(\alpha'\alpha)b) \\
+          & C(a',b') & C(a'',B(\alpha')b') & C(a'',b'')
+          \arrow["\alpha_!", from=1-1, to=1-2]
+          \arrow["\alpha'_!", from=1-2, to=1-3]
+          \arrow["\beta^*"', from=1-2, to=2-2]
+          \arrow["(B(\alpha)\beta')^*", from=1-3, to=2-3]
+          \arrow["\alpha'_!"', from=2-2, to=2-3]
+          \arrow["(\beta')^*"', from=2-3, to=2-4]
+      \end{tikzcd}\]
+  \end{itemize}
+  \textbf{Morphisms:} Given a morphism $\varphi : \mathsf{D2SFib}(A,B)(C,D)$ we give a natural transformation $\Psi(\varphi):\Psi(C) \to \Psi(D)$. For $(a,b):A \cone B^\op$, the component $\Psi(\varphi)_{(a,b)}:C(a,b) \to D(a,b)$ is given by restricting $\varphi : C \to D$. It is natural since each square below commutes:
+  % https://q.uiver.app/#q=WzAsNixbMCwwLCJhIl0sWzEsMCwiYiJdLFsyLDAsImMiXSxbMCwxLCJkIl0sWzEsMSwiZSJdLFsyLDEsImYiXSxbMCwzLCJhIiwyXSxbMyw0LCJiIiwyXSxbMCwxLCJhIl0sWzEsNCwiYyIsMl0sWzEsMiwiYyJdLFs0LDUsImMiLDJdLFsyLDUsImEiXV0=
+  \[
+    \begin{tikzcd}
+      C(a,b) & C(a',B(\alpha)b) & C(a',b') \\
+      D(a,b) & D(a',B(\alpha)b) & D(a',b')
+      \arrow["\alpha_!", from=1-1, to=1-2]
+      \arrow["\varphi"', from=1-1, to=2-1]
+      \arrow["\beta^*", from=1-2, to=1-3]
+      \arrow["\varphi"{description}, from=1-2, to=2-2]
+      \arrow["\varphi", from=1-3, to=2-3]
+      \arrow["\alpha_!"', from=2-1, to=2-2]
+      \arrow["\beta^*"', from=2-2, to=2-3]
+  \end{tikzcd}\]
+  by the corresponding theorem for (op)fibrations. \\
+  \textbf{Functoriality:} Immediate.
+\end{proof}
+
+\subsection{From functors to fibrations}
+
+\begin{definition}\label{def:D2SGC}
+  Let $C:A \cone B^\op\to \Cat$ be a functor, its \textbf{Dependent 2-sided Grothendieck Construction} (D2SGC) is the category $A \cone B \cone^{2\mathfrak{f}} C$ defined as follows: \\[.3em]
+  \textbf{Objects:} An object is a triple $(a,b,c):\sum_{a:A}\sum_{b:B(a)}C(a,b)$. \\
+  \textbf{Morphisms:} For $(a,b,c), (a',b',c'):A \cone B \cone^{2\mathfrak{f}} C$, their $\hom$-set is
+  \begin{align*}
+    \hom & _{A \cone B.C}((a,b,c), (a',b',c')) \defeq \\
+    & \sum_{\alpha:\hom_{A}(a,a')}
+    \sum_{\beta: \hom_{B(a')}(B(\alpha)b,b')}
+    \hom_{C(a',B(\alpha)b)}(C(\alpha,\id_{B(\alpha)b})c, C(\id_{B(\alpha)b}, \beta)c')
+  \end{align*}
+  A morphism $(\alpha,\beta,\theta):(a,b,c) \to(a',b',c')$ is depicted on Figure \ref{figure:d2sfib}. \\
+  \textbf{Identities:} For $(a,b,c):A \cone B \cone^{2\mathfrak{f}} C$, its identity is $(\id_a,\id_b,\id_c)$. \\
+  \textbf{Composition:} Given morphisms
+  \[ (a,b,c) \xrightarrow{(\alpha,\beta,\theta)} (a',b',c') \xrightarrow{(\alpha',\beta',\theta')} (a'',b'',c'')\]
+  in $A \cone B \cone^{2\mathfrak{f}} C$, their composite is defined by $(\alpha'\circ \alpha,\, \beta' \circ B(\alpha')\beta,\, \gamma)$, with
+  \[ \gamma \defeq C(\alpha'\alpha,\id)c
+    \xrightarrow{C(\alpha',\id)\theta}
+    C(\alpha,B(\alpha')\beta) c'
+    \xrightarrow{C(\id,B(\alpha')\beta)\theta'}
+  C(\id,\beta' \circ B(\alpha')\beta)c''\]
+  a morphism in $C(a'',B(\alpha'\alpha)b)$.
+\end{definition}
+\iftoggle{DEBUG}{
+  \begin{center}
+    \includegraphics[scale=.20]{assocggc}
+  \end{center}
+}
+
+\begin{figure}[ht]
+  \caption{The Dependent 2-sided Grothendieck Construction}
+  \centering
+  \begin{tikzpicture}
+    % Nodes
+    \node (A) at (0,0) {$A$};
+    \node (a) at (1,0) {$a$};
+    \node (a') at (4,0) {$a'$};
+    \node (Ba) at (0,2.7) {$B(a)$};
+    \node (Ba') at (5,2.7) {$B(a')$};
+    \node (Cab) at (0,4.5) {$C(a,b)$};
+    \node (Ca'b') at (5,4.5) {$C(a',b')$};
+    \node (Ca'trb) at (4.2,6.5) {$C(a',B(\alpha)b)$};
+    \node (b) at (1,1.75) {$b$};
+    \node (b') at (4,1.25) {$b'$};
+    \node (c) at (1,3.75) {$c$};
+    \node (c') at (4,3.75) {$c'$};
+    \node (c') at (4,3.75) {$c'$};
+    \node (trb) at (4,2.25) {$B(\alpha)b$};
+    \node (trc) at (2.5,6) {$C(\alpha,\id_b)c$};
+    \node (trc') at (2.5,5) {$C(\id_a,\beta)c'$};
+
+    % Ovals
+    \draw (2.5,0) ellipse (2cm and 0.5cm);
+    % Bs
+    \draw (1,1.75) ellipse (.65cm and 1cm);
+    \draw (4,1.75) ellipse (.65cm and 1cm);
+    % Cs
+    \draw (1,3.75) ellipse (.5cm and .5cm);
+    \draw (4,3.75) ellipse (.5cm and .5cm);
+    \draw (2.5,5.5) ellipse (1.1cm and 1cm);
+
+    % Arrows
+    \draw[->] (a) -- (a') node[midway, below] {$\alpha$};
+    \draw[->] (trb) -- (b') node[midway, right] {$\beta$};
+    \draw[->] (trc) -- (trc') node[midway, right] {$\theta$};
+    \draw[|->, gray] (b) to[out=0, in=180] (trb);
+    \draw[|->, gray] (c) to[out=90, in=180] (trc);
+    \draw[|->, gray] (c') to[out=90, in=0] (trc');
+  \end{tikzpicture}
+  \label{figure:d2sfib}
+\end{figure}
+
+Note that there is a forgetful functor $\pi_{A \cone B}: A \cone B \cone^{2\mathfrak f} C \to A \cone B$ given by forgetting the last component.
+The dual construction for D2SOpfibs will be denoted $A \cone^{\mathfrak f} B \cone^{2\mathfrak o} C$.
+
+Another, simpler way of describing the D2SGC is given by considering $\Sigma$-types.
+\begin{lemma}
+  Let $C: A \cone B^\op \to \Cat$ be a functor, and write $\sum_{B^\op}C^\op:A \to \Cat$ for the functor that corresponds to the opfibration $\pi_A \circ \pi_{A \cone B^\op}:A \cone B^\op \cone C^\op \to A$.
+  Then, there is a canonical isomorphism $A \cone B \cone^{2\mathfrak f} C \cong A \cone (\sum_{B^\op}C^\op)^\op$.
+\end{lemma}
+\begin{proof}
+  Immediate, by expanding the definitions.
+\end{proof}
+
+\begin{proposition}
+  The D2SGC extends to a functor $\Phi:\mathsf{Functor}(A \cone B^\op,\Cat) \to \mathsf{D2SFib}(A,B)$.
+\end{proposition}
+\begin{proof}
+  We now specify the action of $\Phi$. \\
+  \textbf{Objects:} Given a functor $C:A \cone B^\op \to \Cat$, we will show $\pi_{A \cone B}:A \cone B \cone^{2\mathfrak{f}} C \to A \cone B$ is the required D2SFib:
+  \begin{enumerate}
+    \item Let $a:A$, then $(\pi_{A \cone B})_{|a}: \pi_A^{-1}(a) \to B(a)$ is a fibration: For $\beta: b \to (\pi_{A \cone B})_{|a}(a,b',c)$ in $B(a)$, the required lift is
+      \[ (\id_a, \beta, \id_{C(\id_a,\beta)c}): (a,b,C(\id_a,\beta)c) \to (a,b',c) \]
+      \iftoggle{DEBUG}{
+        \begin{center}
+          \includegraphics[scale=.20]{fibggc}
+        \end{center}
+      }
+    \item $\pi_{A}:A \cone B.C \to A$ is an opfibration: For $\alpha:\pi_A(a,b,c) \to a'$ a morphism in $A$, the required lift is
+      \[ (\alpha, \id_{B(\alpha)b}, \id_{C(\alpha,\id_{B(\alpha)b})c}) : (a,b,c) \to (a',B(\alpha)b,C(\alpha,\id_{B(\alpha)b})c)\]
+      \iftoggle{DEBUG}{
+        \begin{center}
+          \includegraphics[scale=.20]{opfibggc}
+        \end{center}
+      }
+    \item We immediately have $\pi_{A \cone B}(\alpha, \id_B(\alpha)b, \id_{C(\alpha,\id_{B(\alpha)b})c})=(\alpha, \id_B(\alpha)b)$.
+    \item For $e\defeq(a,b,c)$ in $A \cone B.C$, $\alpha:\pi_{A}(e) \to a'$ and $\beta: b' \to (\pi_{A \cone B})_{|a}(e)$, we have
+      \[ \alpha_! \beta^* e = (a',B(\alpha)b', C(\alpha,B(\alpha)\beta)c) = (B(\alpha)\beta)^*\alpha_!e \]
+  \end{enumerate}
+  \textbf{Morphisms:} Given functors $C,D:A \cone B^\op \to \Cat$ and a natural transformation $\varphi:C \to D$, we now construct a functor $\Phi(\varphi):A \cone B \cone^{2\mathfrak{f}} C \to A \cone B \cone^{2\mathfrak{f}} D$.
+  On objects, it maps $(a,b,c) : A \cone B \cone^{2\mathfrak{f}} C$ to $(a,b,\varphi_{(a,b)}(c)) : A \cone B \cone^{2\mathfrak{f}} D$.
+  On morphisms, it maps $(\alpha,\beta,\theta):(a,b,c) \to (a',b',c')$ to $(\alpha,\beta,\varphi_{(a',B(\alpha)b)}\theta):(a,b,\varphi_{(a,b)}(c)) \to (a',b',\varphi_{(a,b)}(c'))$. Functoriality is immediate by naturality.
+
+  Now, the opcartesian morphism
+  \[ (\alpha, \id_{B(\alpha)b}, \id_{C(\alpha,\id_{B(\alpha)b})c}) : (a,b,c) \to (a',B(\alpha)b,C(\alpha,\id_{B(\alpha)b})c)\]
+  is mapped to
+  \[ (\alpha, \id_{B(\alpha)b}, \id_{D(\alpha,\id_{B(\alpha)b})\Phi(\varphi)c}) : (a,b,\Phi(\varphi)c) \to (a',B(\alpha)b,D(\alpha,\id_{B(\alpha)b})\Phi(\varphi)c)\]
+  which is also opcartesian, hence $\Phi(\varphi)$ is an opcartesian functor.
+  On the other hand, for an $a:A$, a cartesian morphism $(\id_a, \beta, \id_{C(\id_a,\beta)c}): (a,b,C(\id_a,\beta)c) \to (a,b',c)$ is mapped by $\Phi(\varphi)$ to
+  \[ (\id_a, \beta, \id_{D(\id_a,\beta)\Phi(\varphi)c}): (a,b,D(\id_a,\beta)\Phi(\varphi)c) \to (a,b',\Phi(\varphi)c) \]
+  which is also cartesian. Hence $\Phi(\varphi)_{|a}$ is a cartesian functor.  \\
+  \textbf{Functoriality:} Immediate.
+\end{proof}
+
+We record here some useful isomorphisms, all of which are immediate after expanding definitions.
+
+\begin{lemma}\label{lemma:sigma2opcomp}
+  Let $C: A \cone B^\op \to \Cat$ be a functor. Then
+  \[ (A \cone B \cone^{2\mathfrak{f}} C)^\op \cong (A^\op) \cone^{\mathfrak{f}} (B^\op)\cone^{2\mathfrak{o}}(C^\op) \]
+\end{lemma}
+\begin{lemma}
+  Let $C: A \cone B^\op \to \Cat$ be a functor, and write $\Sigma^{2\mathfrak{f}}_{B}C:A \to \Cat$ for the functor that corresponds to the opfibration $\pi_A:A \cone B \cone^{2\mathfrak{f}} C \to A$.
+  Then, there is a canonical isomorphism
+  \[ A \cone (\Sigma^{2\mathfrak{f}}_{B}C)^\op \cong (A \cone B^\op) \cone C^\op \]
+\end{lemma}
+
+\subsection{The equivalence}
+
+\begin{proposition}\label{prop:d2sfibequiv}
+  There is an equivalence of categories
+  \[ \mathsf{Functor}(A \cone B^\op,\Cat) \simeq \mathsf{D2SFib}(A,B) \]
+\end{proposition}
+\begin{proof}
+  We begin by showing that $\Phi \circ \Psi \cong \id_{\mathsf{D2SFib}(A,B)}$. Let $q:C\to A \cone B$ be a D2SFib, we define a functor $F: C \to A \cone B \cone^{2\mathfrak{f}} (\Psi q)$ as follows: \\
+  \textbf{Objects:} For $c:C$, $F(c)\defeq(p(c), q_{|p(c)}(c), c)$. \\
+  \textbf{Morphisms:} For $f:c\to c':C$, and setting $(a,b,c) \defeq F(c)$, $(a',b',c')\defeq F(c')$, $\alpha \defeq p(f):a \to a'$ and $\beta\defeq q_{|a'}(f):B(\alpha)b \to b'$, we define $Ff:\alpha_!c \to \beta^*c'$, by first obtaining a map $\alpha_!c \to c'$ by the universal property of $\alpha_!c$, and then obtaining $Ff$ by using the universal property of $\beta^*c'$.
+  % https://q.uiver.app/#q=WzAsNCxbMCwwLCJcXGFscGhhXyFjIl0sWzAsMSwiYyJdLFsxLDEsImMnIl0sWzEsMCwiXFxiZXRhXipjJyJdLFswLDFdLFsxLDIsImYiLDJdLFszLDJdLFswLDMsIiIsMSx7InN0eWxlIjp7ImJvZHkiOnsibmFtZSI6ImRhc2hlZCJ9fX1dLFswLDIsIiIsMSx7InN0eWxlIjp7ImJvZHkiOnsibmFtZSI6ImRhc2hlZCJ9fX1dXQ==
+  \[
+    \begin{tikzcd}
+      {\alpha_!c} & {\beta^*c'} \\
+      c & {c'}
+      \arrow["Ff", dashed, from=1-1, to=1-2]
+      \arrow[dashed, from=1-1, to=1-2]
+      \arrow[from=1-1, to=2-1]
+      \arrow[dashed, from=1-1, to=2-2]
+      \arrow[from=1-2, to=2-2]
+      \arrow["f"', from=2-1, to=2-2]
+  \end{tikzcd}\]
+  \textbf{Functoriality:} Preservation of identities is immediate. For functoriality, let $c \xrightarrow{f} c' \xrightarrow{f'} c''$ be morphisms whose image under $q$ give the morphisms $(a,b) \xrightarrow{(\alpha,\beta)} (a',b') \xrightarrow{(\alpha',\beta')} (a'',b'')$, then, commutativity of the diagram below gives preservation of composition.
+  % https://q.uiver.app/#q=WzAsMTAsWzIsMiwiXFxiZXRhXipjJyJdLFszLDAsIlxcYWxwaGEnXyFcXGJldGFeKmMnPShCXFxhbHBoYSdcXGJldGEpXipcXGFscGhhJ18hYyciXSxbNCwyLCJcXGFscGhhJ18hYyciXSxbMyw0LCJjJyJdLFswLDIsIlxcYWxwaGFfIWMiXSxbMSwwLCIoXFxhbHBoYSdcXGFscGhhKV8hYyJdLFsxLDQsImMiXSxbNSw0LCJjJyciXSxbNiwyLCJcXGJldGEnXipjJyciXSxbNSwwLCIoXFxiZXRhJyBcXGNpcmMgQlxcYWxwaGEnXFxiZXRhKV4qYycnIl0sWzAsMV0sWzEsMl0sWzAsM10sWzQsMCwiRmYiXSxbNCw1XSxbNiw0XSxbNiwzLCJmIiwyXSxbMyw3LCJmJyIsMl0sWzgsN10sWzIsOCwiRmYnIl0sWzUsMSwiXFxhbHBoYSdfIShGZikiXSxbMSw5LCIoQlxcYWxwaGEnXFxiZXRhKV4qRmYnIl0sWzksOF0sWzMsMl1d
+  \[
+    \begin{tikzcd}[column sep=1em,row sep=0.5em]
+      & {(\alpha'\alpha)_!c} && {\alpha'_!\beta^*c'=(B\alpha'\beta)^*\alpha'_!c'} && {(\beta' \circ B\alpha'\beta)^*c''} \\
+      \\
+      {\alpha_!c} && {\beta^*c'} && {\alpha'_!c'} && {\beta'^*c''} \\
+      \\
+      & c && {c'} && {c''}
+      \arrow["{\alpha'_!(Ff)}", from=1-2, to=1-4]
+      \arrow["{(B\alpha'\beta)^*Ff'}", from=1-4, to=1-6]
+      \arrow[from=1-4, to=3-5]
+      \arrow[from=1-6, to=3-7]
+      \arrow[from=3-1, to=1-2]
+      \arrow["Ff", from=3-1, to=3-3]
+      \arrow[from=3-3, to=1-4]
+      \arrow[from=3-3, to=5-4]
+      \arrow["{Ff'}", from=3-5, to=3-7]
+      \arrow[from=3-7, to=5-6]
+      \arrow[from=5-2, to=3-1]
+      \arrow["f"', from=5-2, to=5-4]
+      \arrow[from=5-4, to=3-5]
+      \arrow["{f'}"', from=5-4, to=5-6]
+  \end{tikzcd}\]
+  On the other hand, the functor $G:A \cone B \cone^{2\mathfrak{f}} (\Psi q) \to C$ is defined as follows: \\
+  \textbf{Objects:} For $(a,b,c) : A \cone B \cone^{2\mathfrak{f}} (\Psi q)$, we set $G(a,b,c) \defeq c$. \\
+  \textbf{Morphisms:} For $(\alpha,\beta,\theta):(a,b,c) \to (a',b',c')$ in $A \cone B \cone^{2\mathfrak{f}} (\Psi q)$, its image under $G$ is given by
+  \[ c \to \alpha_! c \xrightarrow{\theta} \beta^* c' \to c' \]
+  \textbf{Functoriality:} Analogous to the proof of functoriality of $F$.
+
+  The fact that $F$ and $G$ are inverses follows from the fact that $\hom_C(\alpha_!c,\beta^*c') \cong \hom_C(c,c')$, for $(\alpha,\beta):\pi_{A \cone B}(a,b,c) \to \pi_{A \cone B}(a',b',c')$. \\[1em]
+  Finally, we show that $\Psi \circ \Phi \cong \id_{\mathsf{Functor}(A \cone B^\op,\Cat)}$.
+  Let $C:A \cone B^\op \to \Cat$, we define a natural isomorphism $\xi:C \to \Psi(A \cone B \cone^{2\mathfrak{f}} C)$. \\
+  \textbf{Components:} For $(a,b) : A \cone B^\op$, we define $\xi_{(a,b)}:C(a,b) \to C(a,b)$ to be the identity functor.
+  \textbf{Naturality:} For $(\alpha,\beta):(a,b) \to (a',b')$, naturality requires that $C(\alpha,\beta)=C(\id_{a'},\beta) \circ C(\alpha,\id_{B(\alpha)b})$, which holds by functoriality of $C$.
+\end{proof}
+
+For reference, we also state the analogous theorem for D2SOpfibs.
+
+\begin{corollary}\label{coro:d2sopfibequiv}
+  Let $A$ be a category and $B:A^\op \to \Cat$ a functor.
+  There is an equivalence of categories
+  \[ \mathsf{Functor}(A^\op.B,\Cat) \simeq \mathsf{D2SOpFib}(A,B) \]
+\end{corollary}
+
+\bibliography{references.bib}
+
+\end{document}

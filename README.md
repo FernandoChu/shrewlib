@@ -77,6 +77,13 @@ as trustworthy as the axiom.
   natural unitors and associator subject to the triangle and pentagon laws. With the category laws
   as rules, the displayed laws are stated without transport. The horizontal bicategory of
   globular squares is constructed as an application.
+- `Nfib/`: displayed categories and dependent 2-sided fibrations. The main theorem
+  `d2sfibEquivalence` is the equivalence between functors `∫(Bᵈᵒ) ⥤ Cat` and D2SFibs over a
+  split opfibration `B`. It is ported unchanged from a development on Lean and Mathlib `v4.30.0-rc2`
+  and uses no rewrite rules: its laws are stated with `castHom` and `HEq`. It builds with
+  `backward.isDefEq.respectTransparency.types = false` (set in `lakefile.toml`), since it relies on
+  unfolding definitions such as `Displayed.Fiber` when checking the types of metavariable
+  assignments. The plan, the list of deviations from it and the paper are in `docs/nfib/`.
 - `mathlib4/`: Mathlib master, pinned to `v4.35.0-rc2`, used as a path dependency.
 
 ## Building
