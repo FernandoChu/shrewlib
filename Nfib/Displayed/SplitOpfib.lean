@@ -7,16 +7,14 @@ import Mathlib.Tactic.IrreducibleDef
 
 An `Opfib` structure on a displayed category `D` is a cloven opfibration: a chosen pushforward
 `transp f x` for every base morphism `f` and object `x`, and a chosen opcartesian lift
-`olift f x : x ⟶[f] transp f x`. A `SplitOpfib` extends it with the splitting axioms. `Fib` and
-`SplitFib` are the exact duals (chosen cartesian lifts).
+`olift f x : x ⟶[f] transp f x`. A `PreSplitOpfib` extends it with the
+splitting axioms on objects, `transp (𝟙 a) x = x` and `transp (f ≫ g) x = transp g (transp f x)`,
+which are rewrite rules. A `SplitOpfib` adds the splitting axioms on lifts,
+`olift (𝟙 a) x = 𝟙ᵈ x` and `olift (f ≫ g) x = olift f x ≫ᵈ olift g (transp f x)`. These are plain
+equations, since the rules on objects make the codomains agree definitionally, and are rules too.
+`Fib`, `PreSplitFib` and `SplitFib` are the exact duals (chosen cartesian lifts).
 
-The splitting axioms on objects, `transp (𝟙 a) x = x` and
-`transp (f ≫ g) x = transp g (transp f x)`, are rewrite rules. The axioms on lifts are stated as
-`HEq`s, since within the class the axioms on objects are not yet rules. Once they are, the axioms on
-lifts compare morphisms with definitionally equal codomains, and their equational forms
-`olift (𝟙 a) x = 𝟙ᵈ x` and `olift (f ≫ g) x = olift f x ≫ᵈ olift g (transp f x)` are rules too.
-
-From an `Opfib` (or a `SplitOpfib`, where noted) we derive, all as rewrite rules:
+From an `Opfib` (or a (pre-)split one, where noted) we derive, all as rewrite rules:
 
 * the vertical factorization `factor φ : transp f x ⟶ y` of a displayed morphism through the chosen
   lift, with `olift f x ≫ᵈ factor φ = φ`;
@@ -55,32 +53,33 @@ class Opfib (D : Displayed.{v₁, u₁, v₂, u₂} A) where
   /-- The chosen lifts are opcartesian. -/
   olift_opcartesian : ∀ {a a' : A} (f : a ⟶ a') (x : D.Ob a), IsOpcartesian (olift f x)
 
-/-- A split opfibration: an opfibration whose chosen lifts are strictly functorial. The axioms on
-lifts compare morphisms whose codomains agree only by the axioms on objects, so they are stated as
-`HEq`s; `SplitOpfib.olift_id'` and `SplitOpfib.olift_comp'` are the corresponding equations,
-which hold once the axioms on objects are rewrite rules. -/
-class SplitOpfib (D : Displayed.{v₁, u₁, v₂, u₂} A) extends Opfib D where
+/-- A pre-split opfibration: an opfibration whose chosen pushforwards are strictly functorial on
+objects. These axioms are rewrite rules. -/
+class PreSplitOpfib (D : Displayed.{v₁, u₁, v₂, u₂} A) extends Opfib D where
   transp_id : ∀ {a : A} (x : D.Ob a), transp (𝟙 a) x = x
   transp_comp : ∀ {a a' a'' : A} (f : a ⟶ a') (g : a' ⟶ a'') (x : D.Ob a),
     transp (f ≫ g) x = transp g (transp f x)
+
+attribute [rewrite_rule] PreSplitOpfib.transp_id PreSplitOpfib.transp_comp
+
+/-- A split opfibration: a pre-split opfibration whose chosen lifts are strictly functorial.
+
+The pre-split structure is an instance field rather than a parent: the fields of a parent are
+local variables while the later fields are elaborated, so the rules `transp_id` and `transp_comp`
+would not apply to them. As a field, `transp` is `Opfib.transp` of an instance, the axioms on
+objects hold definitionally, and the axioms on lifts are plain equations. -/
+class SplitOpfib (D : Displayed.{v₁, u₁, v₂, u₂} A) where
+  /-- The underlying pre-split opfibration. -/
+  [toPreSplitOpfib : PreSplitOpfib D]
   /-- The lift of the identity is the displayed identity. -/
-  olift_id : ∀ {a : A} (x : D.Ob a), HEq (olift (𝟙 a) x) (𝟙ᵈ x)
+  olift_id : ∀ {a : A} (x : D.Ob a), Opfib.olift (𝟙 a) x = 𝟙ᵈ x
   /-- The lift of a composite is the composite of lifts. -/
   olift_comp : ∀ {a a' a'' : A} (f : a ⟶ a') (g : a' ⟶ a'') (x : D.Ob a),
-    HEq (olift (f ≫ g) x) (olift f x ≫ᵈ olift g (transp f x))
+    Opfib.olift (f ≫ g) x = Opfib.olift f x ≫ᵈ Opfib.olift g (Opfib.transp f x)
 
-attribute [rewrite_rule] SplitOpfib.transp_id SplitOpfib.transp_comp
+attribute [instance_reducible, instance] SplitOpfib.toPreSplitOpfib
 
-theorem SplitOpfib.olift_id' {D : Displayed.{v₁, u₁, v₂, u₂} A} [SplitOpfib D] {a : A}
-    (x : D.Ob a) : Opfib.olift (𝟙 a) x = 𝟙ᵈ x :=
-  eq_of_heq (SplitOpfib.olift_id x)
-
-theorem SplitOpfib.olift_comp' {D : Displayed.{v₁, u₁, v₂, u₂} A} [SplitOpfib D] {a a' a'' : A}
-    (f : a ⟶ a') (g : a' ⟶ a'') (x : D.Ob a) :
-    Opfib.olift (f ≫ g) x = Opfib.olift f x ≫ᵈ Opfib.olift g (Opfib.transp f x) :=
-  eq_of_heq (SplitOpfib.olift_comp f g x)
-
-attribute [rewrite_rule] SplitOpfib.olift_id' SplitOpfib.olift_comp'
+attribute [rewrite_rule] SplitOpfib.olift_id SplitOpfib.olift_comp
 
 /-- A (cloven) fibration structure on a displayed category: a chosen cartesian lift of every base
 morphism at every object over its codomain. -/
@@ -92,30 +91,29 @@ class Fib (D : Displayed.{v₁, u₁, v₂, u₂} A) where
   /-- The chosen lifts are cartesian. -/
   clift_cartesian : ∀ {a a' : A} (f : a ⟶ a') (y : D.Ob a'), IsCartesian (clift f y)
 
-/-- A split fibration: a fibration whose chosen lifts are strictly functorial. The exact dual of
-`SplitOpfib`. -/
-class SplitFib (D : Displayed.{v₁, u₁, v₂, u₂} A) extends Fib D where
+/-- A pre-split fibration: a fibration whose chosen pullbacks are strictly functorial on objects.
+These axioms are rewrite rules. -/
+class PreSplitFib (D : Displayed.{v₁, u₁, v₂, u₂} A) extends Fib D where
   pull_id : ∀ {a : A} (y : D.Ob a), pull (𝟙 a) y = y
   pull_comp : ∀ {a a' a'' : A} (f : a ⟶ a') (g : a' ⟶ a'') (y : D.Ob a''),
     pull (f ≫ g) y = pull f (pull g y)
+
+attribute [rewrite_rule] PreSplitFib.pull_id PreSplitFib.pull_comp
+
+/-- A split fibration: a pre-split fibration whose chosen lifts are strictly functorial. The exact
+dual of `SplitOpfib`. -/
+class SplitFib (D : Displayed.{v₁, u₁, v₂, u₂} A) where
+  /-- The underlying pre-split fibration. -/
+  [toPreSplitFib : PreSplitFib D]
   /-- The lift of the identity is the displayed identity. -/
-  clift_id : ∀ {a : A} (y : D.Ob a), HEq (clift (𝟙 a) y) (𝟙ᵈ y)
+  clift_id : ∀ {a : A} (y : D.Ob a), Fib.clift (𝟙 a) y = 𝟙ᵈ y
   /-- The lift of a composite is the composite of lifts. -/
   clift_comp : ∀ {a a' a'' : A} (f : a ⟶ a') (g : a' ⟶ a'') (y : D.Ob a''),
-    HEq (clift (f ≫ g) y) (clift f (pull g y) ≫ᵈ clift g y)
+    Fib.clift (f ≫ g) y = Fib.clift f (Fib.pull g y) ≫ᵈ Fib.clift g y
 
-attribute [rewrite_rule] SplitFib.pull_id SplitFib.pull_comp
+attribute [instance_reducible, instance] SplitFib.toPreSplitFib
 
-theorem SplitFib.clift_id' {D : Displayed.{v₁, u₁, v₂, u₂} A} [SplitFib D] {a : A}
-    (y : D.Ob a) : Fib.clift (𝟙 a) y = 𝟙ᵈ y :=
-  eq_of_heq (SplitFib.clift_id y)
-
-theorem SplitFib.clift_comp' {D : Displayed.{v₁, u₁, v₂, u₂} A} [SplitFib D] {a a' a'' : A}
-    (f : a ⟶ a') (g : a' ⟶ a'') (y : D.Ob a'') :
-    Fib.clift (f ≫ g) y = Fib.clift f (Fib.pull g y) ≫ᵈ Fib.clift g y :=
-  eq_of_heq (SplitFib.clift_comp f g y)
-
-attribute [rewrite_rule] SplitFib.clift_id' SplitFib.clift_comp'
+attribute [rewrite_rule] SplitFib.clift_id SplitFib.clift_comp
 
 section
 
@@ -135,23 +133,29 @@ end
 
 section
 
-variable (D : Displayed.{v₁, u₁, v₂, u₂} A) [SplitOpfib D]
+variable (D : Displayed.{v₁, u₁, v₂, u₂} A) [PreSplitOpfib D]
 
 @[rewrite_rule]
 theorem transp_id {a : A} (x : D.Ob a) : D.transp (𝟙 a) x = x :=
-  SplitOpfib.transp_id x
+  PreSplitOpfib.transp_id x
 
 @[rewrite_rule]
 theorem transp_comp {a a' a'' : A} (f : a ⟶ a') (g : a' ⟶ a'') (x : D.Ob a) :
     D.transp (f ≫ g) x = D.transp g (D.transp f x) :=
-  SplitOpfib.transp_comp f g x
+  PreSplitOpfib.transp_comp f g x
+
+end
+
+section
+
+variable (D : Displayed.{v₁, u₁, v₂, u₂} A) [SplitOpfib D]
 
 @[rewrite_rule]
-theorem olift_id {a : A} (x : D.Ob a) : D.olift (𝟙 a) x = 𝟙ᵈ x := SplitOpfib.olift_id' x
+theorem olift_id {a : A} (x : D.Ob a) : D.olift (𝟙 a) x = 𝟙ᵈ x := SplitOpfib.olift_id x
 
 @[rewrite_rule]
 theorem olift_comp {a a' a'' : A} (f : a ⟶ a') (g : a' ⟶ a'') (x : D.Ob a) :
-    D.olift (f ≫ g) x = D.olift f x ≫ᵈ D.olift g (D.transp f x) := SplitOpfib.olift_comp' f g x
+    D.olift (f ≫ g) x = D.olift f x ≫ᵈ D.olift g (D.transp f x) := SplitOpfib.olift_comp f g x
 
 end
 
