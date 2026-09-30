@@ -4,8 +4,8 @@ import Nfib.Displayed.Basic
 # (Op)cartesian morphisms in a displayed category
 
 This file defines the (strong) opcartesian and cartesian properties of a displayed morphism and
-their universal-property API: the descent operation, its factorization equation, uniqueness, a
-hom-extensionality principle, and stability under `castHom`.
+their universal-property API: the descent operation, its factorization equation, uniqueness and a
+hom-extensionality principle.
 
 This is part of milestone **M2** of `PLAN.md`.
 -/
@@ -56,15 +56,6 @@ theorem hom_ext (H : IsOpcartesian φ) {a'' : A} {g : a' ⟶ a''} {z : D.Ob a''}
     {ψ ψ' : y ⟶[g] z} (h : φ ≫ᵈ ψ = φ ≫ᵈ ψ') : ψ = ψ' :=
   (H.desc_uniq ψ rfl).trans (H.desc_uniq ψ' h.symm).symm
 
-/-- Transporting along an equality of base morphisms does not affect opcartesianness. -/
-@[simp]
-theorem castHom_iff {f' : a ⟶ a'} (h : f = f') :
-    IsOpcartesian (D.castHom φ h) ↔ IsOpcartesian φ := by cases h; exact Iff.rfl
-
-/-- Opcartesianness is preserved by transport along an equality of base morphisms. -/
-theorem castHom {f' : a ⟶ a'} (h : f = f') (H : IsOpcartesian φ) :
-    IsOpcartesian (D.castHom φ h) := (castHom_iff h).mpr H
-
 end IsOpcartesian
 
 namespace IsCartesian
@@ -90,15 +81,6 @@ theorem lift_uniq (H : IsCartesian φ) {a₀ : A} {g : a₀ ⟶ a} {z : D.Ob a�
 theorem hom_ext (H : IsCartesian φ) {a₀ : A} {g : a₀ ⟶ a} {z : D.Ob a₀}
     {ψ ψ' : z ⟶[g] x} (h : ψ ≫ᵈ φ = ψ' ≫ᵈ φ) : ψ = ψ' :=
   (H.lift_uniq ψ rfl).trans (H.lift_uniq ψ' h.symm).symm
-
-/-- Transporting along an equality of base morphisms does not affect cartesianness. -/
-@[simp]
-theorem castHom_iff {f' : a ⟶ a'} (h : f = f') :
-    IsCartesian (D.castHom φ h) ↔ IsCartesian φ := by cases h; exact Iff.rfl
-
-/-- Cartesianness is preserved by transport along an equality of base morphisms. -/
-theorem castHom {f' : a ⟶ a'} (h : f = f') (H : IsCartesian φ) :
-    IsCartesian (D.castHom φ h) := (castHom_iff h).mpr H
 
 end IsCartesian
 

@@ -29,19 +29,27 @@ after β, `match`/recursor and projection reduction fail, but before `f` is unfo
 arguments beyond the left-hand side are kept. Rules whose head is a projection function, such as
 `Hom.app`, also fire on the corresponding primitive projection `η.1`.
 
+When several rules apply, the one declared last is used, since later rules are usually more
+specific. When the definitional-equality checker compares two applications of the same rule head,
+it compares their arguments before rewriting either side, as lazy delta reduction does for
+definitions.
+
 **Patterns.** The left-hand side must be `f p₁ … pₙ` with `f` a constant that is neither an
 inductive type nor a constructor. Each `pᵢ` is one of:
 
 - a variable of `xs`. A repeated variable is checked by definitional equality.
-- a constant applied to patterns, `c q₁ … qₘ`. The target is unfolded one step at a time until
-  `c` appears at its head, so the output of another rule or a β-redex can still match.
+- a constant applied to patterns, `c q₁ … qₘ`. The target is rewritten and unfolded one step at
+  a time until `c` appears at its head, so the output of another rule or a β-redex can still
+  match. If its arguments then don't match, the target is unfolded further and tried again.
 - any other term, for example a closed term or a lambda. It is checked by definitional equality
   after the other positions have bound its variables.
 
-Implicit and instance arguments that don't match structurally are also checked by definitional
-equality. They are determined by the explicit arguments only up to definitional equality: an index
-`f ≫ g` in the type of an argument can appear as `𝟙 x` in the target, and the same instance can be
-reached along different paths.
+Implicit and instance arguments are determined by the explicit ones only up to definitional
+equality: an index `f ≫ g` in the type of an argument can appear as `𝟙 x` in the target, and the
+same instance can be reached along different paths. So implicit arguments that are variables are
+bound first, then explicit arguments are matched, and the remaining implicit arguments are checked
+by definitional equality once their variables are bound (or matched structurally, falling back to
+definitional equality, if not).
 
 Every variable and universe parameter of `h` must occur in a pattern position (one of the first
 two kinds).
@@ -61,6 +69,19 @@ as trustworthy as the axiom.
 - `#print axioms` doesn't report the rules a proof used.
 - External checkers (lean4lean, nanoda) don't know about rules.
 
+**Writing rules.** Some consequences of the above, learned in `Nfib/`:
+
+- A rule on a definition `f` makes `f xs` stop being recognizably equal to its unfolding when the
+  rule applies. Facts about the unfolding are best proved before the rule is declared, for example
+  as `HEq`s that `eq_of_heq` turns into equations afterwards.
+- A definition that the rules rewrite back into itself when unfolded, such as `transpMap` in `Nfib/`,
+  must be an `irreducible_def`, or unfolding it loops.
+- Nested subpatterns should use the most unfolded form of a term, since targets are unfolded
+  towards the pattern and not the other way; heads need a rule for each form.
+- Index-like arguments should be implicit, so that they are checked by definitional equality.
+- A rule on `Functor.obj` or `Functor.map` is tried on every functor application. Rules keyed on
+  dedicated constants are cheaper.
+
 ## Files
 
 - `FunctorId.lean`: `F.map (𝟙 a) x = x` by `rfl` for any functor `F : A ⥤ Type`, after making
@@ -79,11 +100,13 @@ as trustworthy as the axiom.
   globular squares is constructed as an application.
 - `Nfib/`: displayed categories and dependent 2-sided fibrations. The main theorem
   `d2sfibEquivalence` is the equivalence between functors `∫(Bᵈᵒ) ⥤ Cat` and D2SFibs over a
-  split opfibration `B`. It is ported unchanged from a development on Lean and Mathlib `v4.30.0-rc2`
-  and uses no rewrite rules: its laws are stated with `castHom` and `HEq`. It builds with
-  `backward.isDefEq.respectTransparency.types = false` (set in `lakefile.toml`), since it relies on
-  unfolding definitions such as `Displayed.Fiber` when checking the types of metavariable
-  assignments. The plan, the list of deviations from it and the paper are in `docs/nfib/`.
+  split opfibration `B`. It is a rewrite of a development on Lean and Mathlib `v4.30.0-rc2` whose
+  laws were stated with `castHom`, `eqToHom` and `HEq` (commit `4b55ea2` of this repository). Here
+  the displayed laws, the splitting of `B`, the functoriality of its transport, and the laws of the
+  chosen pullbacks and pushforwards of a D2SFib are rules, so they are plain equations; the dual
+  opfibration computes, and the Grothendieck construction, its `D2SFib` structure and much of the
+  unit and counit hold by `rfl`. It is about half the size of the original. The plan, the list of
+  deviations from it (for the original) and the paper are in `docs/nfib/`.
 - `mathlib4/`: Mathlib master, pinned to `v4.35.0-rc2`, used as a path dependency.
 
 ## Building

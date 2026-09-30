@@ -7,6 +7,12 @@ We define the morphisms of D2SFibs — vertical functors preserving the chosen p
 nose (`D2SFibHom`) — and bundle D2SFibs into the category `D2SFibCat B`, the displayed adaptation
 of the paper's `D2SFib(A, B)`.
 
+As for `D2SFib`, the preservation of chosen pullbacks and pushforwards on objects lives in a
+separate structure `D2SFibHomObj`, and is a rewrite rule, so that the preservation of the chosen
+lifts
+compares morphisms with definitionally equal endpoints. Both are rewrite rules, and so is the
+derived preservation of `pushMap`/`pullMap`.
+
 This is part of milestone **M5** of `PLAN.md`.
 -/
 
@@ -16,166 +22,112 @@ namespace Nfib
 
 open CategoryTheory Displayed DoubleDisplayed D2SFib
 
-variable {A : Type u₁} [Category.{v₁} A] {B : Displayed A} [SplitOpfib B]
+open scoped Displayed DoubleDisplayed
+
+variable {A : Type u₁} [Category.{v₁} A] {B : Displayed.{v₁, u₁, v₂, u₂} A} [SplitOpfib B]
+
+/-- A vertical functor preserving the chosen pullbacks and pushforwards of objects. -/
+structure D2SFibHomObj (C C' : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) [D2SFib C]
+    [D2SFib C'] extends DoubleDisplayed.VertFunctor C C' where
+  /-- Preserves chosen pullbacks on objects. It is stated with the fields of the cleavages, which
+the chosen pullbacks `pull β c` unfold to, so that the rule matches both. -/
+  obj_pull : ∀ {a : A} {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') (c : C.Ob b'),
+    obj ((D2SFib.cleavage (C := C)).pull β c) = (D2SFib.cleavage (C := C')).pull β (obj c)
+  /-- Preserves chosen pushforwards on objects. -/
+  obj_push : ∀ {a a' : A} (α : a ⟶ a') {b : B.Ob a} (c : C.Ob b),
+    obj ((D2SFib.cleavage (C := C)).push α c) = (D2SFib.cleavage (C := C')).push α (obj c)
+
+attribute [rewrite_rule] D2SFibHomObj.obj_pull D2SFibHomObj.obj_push
 
 /-- A morphism of D2SFibs: a vertical functor over `B` preserving the chosen cartesian and
 opcartesian lifts strictly. -/
-structure D2SFibHom (C C' : DoubleDisplayed B) [D2SFib C] [D2SFib C'] extends
-    DoubleDisplayed.VertFunctor C C' where
-  /-- Preserves chosen pullbacks on objects. -/
-  obj_pull : ∀ {a : A} {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') (c : C.Ob b'),
-    obj (pull β c) = pull β (obj c)
+structure D2SFibHom (C C' : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) [D2SFib C]
+    [D2SFib C'] where
+  /-- The underlying vertical functor, preserving the chosen objects. -/
+  toObj : D2SFibHomObj C C'
   /-- Preserves chosen cartesian lifts. -/
   map_pullLift : ∀ {a : A} {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') (c : C.Ob b'),
-    map (pullLift β c) ≍ pullLift β (obj c)
-  /-- Preserves chosen pushforwards on objects. -/
-  obj_push : ∀ {a a' : A} (α : a ⟶ a') {b : B.Ob a} (c : C.Ob b),
-    obj (push α c) = push α (obj c)
+    toObj.map (pullLift β c) = pullLift β (toObj.obj c)
   /-- Preserves chosen opcartesian lifts. -/
   map_pushLift : ∀ {a a' : A} (α : a ⟶ a') {b : B.Ob a} (c : C.Ob b),
-    map (pushLift α c) ≍ pushLift α (obj c)
+    toObj.map (pushLift α c) = pushLift α (toObj.obj c)
+
+attribute [rewrite_rule] D2SFibHom.map_pullLift D2SFibHom.map_pushLift
 
 namespace D2SFibHom
 
-variable {C C' C'' : DoubleDisplayed B} [D2SFib C] [D2SFib C'] [D2SFib C'']
+variable {C C' C'' : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B} [D2SFib C] [D2SFib C']
+  [D2SFib C'']
+
+/-- The underlying vertical functor. -/
+abbrev toVertFunctor (Φ : D2SFibHom C C') : VertFunctor C C' := Φ.toObj.toVertFunctor
 
 /-- Extensionality: a `D2SFibHom` is determined by its underlying vertical functor. -/
 theorem ext {F G : D2SFibHom C C'} (h : F.toVertFunctor = G.toVertFunctor) : F = G := by
-  cases F; cases G; cases h; rfl
+  obtain ⟨⟨F, _, _⟩, _, _⟩ := F
+  obtain ⟨⟨G, _, _⟩, _, _⟩ := G
+  obtain rfl : F = G := h
+  rfl
 
 /-- The identity D2SFib morphism. -/
-def id (C : DoubleDisplayed B) [D2SFib C] : D2SFibHom C C where
-  toVertFunctor := VertFunctor.id C
-  obj_pull β c := rfl
-  map_pullLift β c := HEq.rfl
-  obj_push := by intro a a' α b c; rfl
-  map_pushLift := by intro a a' α b c; exact HEq.rfl
+def id (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) [D2SFib C] : D2SFibHom C C where
+  toObj := { toVertFunctor := VertFunctor.id C, obj_pull := by intros; rfl,
+             obj_push := by intros; rfl }
+  map_pullLift _ _ := rfl
+  map_pushLift := by intros; rfl
 
 /-- Composition of D2SFib morphisms. -/
 def comp (F : D2SFibHom C C') (G : D2SFibHom C' C'') : D2SFibHom C C'' where
-  toVertFunctor := F.toVertFunctor.comp G.toVertFunctor
-  obj_pull β c := by
-    change G.obj (F.obj (pull β c)) = pull β (G.obj (F.obj c))
-    rw [F.obj_pull, G.obj_pull]
-  map_pullLift β c := by
-    change G.map (F.map (pullLift β c)) ≍ pullLift β (G.obj (F.obj c))
-    refine (G.toVertFunctor.map_heq rfl rfl rfl HEq.rfl (heq_of_eq (F.obj_pull β c)) HEq.rfl
-      (F.map_pullLift β c)).trans (G.map_pullLift β (F.obj c))
-  obj_push := by
-    intro a a' α b c
-    change G.obj (F.obj (push α c)) = push α (G.obj (F.obj c))
-    rw [F.obj_push, G.obj_push]
-  map_pushLift := by
-    intro a a' α b c
-    change G.map (F.map (pushLift α c)) ≍ pushLift α (G.obj (F.obj c))
-    refine (G.toVertFunctor.map_heq rfl rfl rfl HEq.rfl HEq.rfl (heq_of_eq (F.obj_push α c))
-      (F.map_pushLift α c)).trans (G.map_pushLift α (F.obj c))
+  toObj := { toVertFunctor := F.toVertFunctor.comp G.toVertFunctor,
+             obj_pull := by intros; rfl, obj_push := by intros; rfl }
+  map_pullLift _ _ := rfl
+  map_pushLift := by intros; rfl
 
-@[simp] theorem id_toVertFunctor (C : DoubleDisplayed B) [D2SFib C] :
+@[simp] theorem id_toVertFunctor (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) [D2SFib C] :
     (D2SFibHom.id C).toVertFunctor = VertFunctor.id C := rfl
 
 @[simp] theorem comp_toVertFunctor (F : D2SFibHom C C') (G : D2SFibHom C' C'') :
     (F.comp G).toVertFunctor = F.toVertFunctor.comp G.toVertFunctor := rfl
 
-/-- A D2SFib morphism preserves the pushforward action on morphisms (heterogeneously). -/
-theorem map_pushMap (Φ : D2SFibHom C C') {a a' : A} (α : a ⟶ a') {b : B.Ob a} {c c' : C.Fiber b}
-    (f : c ⟶ c') : Φ.map (pushMap α f) ≍ pushMap α (Φ.map f) := by
-  have hθ₂ : ((Φ.obj_push α c).symm ▸ pushLift α (Φ.obj c)) ≍ pushLift α (Φ.obj c) :=
-    eqRec_heq_self _ _
-  have hL : ((Φ.obj_push α c).symm ▸ pushLift α (Φ.obj c)) ≫ᵈᵈ Φ.map (pushMap α f)
-      ≍ Φ.map f ≫ᵈᵈ pushLift α (Φ.obj c') := by
-    refine (C'.heq_comp_left rfl rfl HEq.rfl HEq.rfl
-      (hθ₂.trans (Φ.map_pushLift α c).symm)).trans ?_
-    refine (heq_of_eq (Φ.toVertFunctor.map_comp (pushLift α c) (pushMap α f))).symm.trans ?_
-    refine (heq_of_eq (congrArg Φ.map (pushLift_pushMap α f))).trans ?_
-    refine (Φ.toVertFunctor.map_heq rfl rfl (by simp)
-      ((B.comp_id_heq (B.olift α b)).trans (B.id_comp_heq (B.olift α b)).symm) HEq.rfl HEq.rfl
-      (C.castHom_heq _ _ _)).trans ?_
-    refine (heq_of_eq (Φ.toVertFunctor.map_comp f (pushLift α c'))).trans ?_
-    exact C'.heq_comp_right rfl rfl HEq.rfl (heq_of_eq (Φ.obj_push α c')) (Φ.map_pushLift α c')
-  have hR : pushLift α (Φ.obj c) ≫ᵈᵈ pushMap α (Φ.map f) ≍ Φ.map f ≫ᵈᵈ pushLift α (Φ.obj c') :=
-    (heq_of_eq (pushLift_pushMap α (Φ.map f))).trans (C'.castHom_heq _ _ _)
-  exact (DoubleDisplayed.IsOpcartesian.hom_ext_heq (pushLift_opcartesian α (Φ.obj c))
-    rfl HEq.rfl (heq_of_eq (Φ.obj_push α c).symm) hθ₂.symm
-    rfl HEq.rfl (heq_of_eq (Φ.obj_push α c').symm) (hR.trans hL.symm)).symm
+variable (Φ : D2SFibHom C C')
 
-/-- A D2SFib morphism preserves the pullback action on morphisms (heterogeneously). -/
-theorem map_pullMap (Φ : D2SFibHom C C') {a : A} {b b' : B.Ob a} (β : b ⟶[𝟙 a] b')
-    {c c' : C.Fiber b'} (f : c ⟶ c') : Φ.map (pullMap β f) ≍ pullMap β (Φ.map f) := by
-  have hθ₂ : ((Φ.obj_pull β c').symm ▸ pullLift β (Φ.obj c')) ≍ pullLift β (Φ.obj c') :=
-    eqRec_heq_self _ _
-  have hL : Φ.map (pullMap β f) ≫ᵈᵈ ((Φ.obj_pull β c').symm ▸ pullLift β (Φ.obj c'))
-      ≍ pullLift β (Φ.obj c) ≫ᵈᵈ Φ.map f := by
-    refine (C'.heq_comp_right rfl rfl HEq.rfl HEq.rfl
-      (hθ₂.trans (Φ.map_pullLift β c').symm)).trans ?_
-    refine (heq_of_eq (Φ.toVertFunctor.map_comp (pullMap β f) (pullLift β c'))).symm.trans ?_
-    refine (heq_of_eq (congrArg Φ.map (pullMap_pullLift β f))).trans ?_
-    refine (Φ.toVertFunctor.map_heq rfl rfl (by simp)
-      ((B.id_comp_heq β).trans (B.comp_id_heq β).symm) HEq.rfl HEq.rfl (C.castHom_heq _ _ _)).trans ?_
-    refine (heq_of_eq (Φ.toVertFunctor.map_comp (pullLift β c) f)).trans ?_
-    exact C'.heq_comp_left rfl rfl HEq.rfl (heq_of_eq (Φ.obj_pull β c)) (Φ.map_pullLift β c)
-  have hR : pullMap β (Φ.map f) ≫ᵈᵈ pullLift β (Φ.obj c') ≍ pullLift β (Φ.obj c) ≫ᵈᵈ Φ.map f :=
-    (heq_of_eq (pullMap_pullLift β (Φ.map f))).trans (C'.castHom_heq _ _ _)
-  exact (DoubleDisplayed.IsCartesian.hom_ext_heq (pullLift_isCartesian β (Φ.obj c'))
-    rfl rfl rfl HEq.rfl (heq_of_eq (Φ.obj_pull β c').symm) hθ₂.symm
-    rfl HEq.rfl (heq_of_eq (Φ.obj_pull β c).symm) (hR.trans hL.symm)).symm
+/-- A D2SFib morphism preserves the pushforward action on morphisms. -/
+theorem map_pushMap {a a' : A} (α : a ⟶ a') {b : B.Ob a} {c c' : C.Fiber b} (f : c ⟶ c') :
+    Φ.toObj.map (pushMap α f) = pushMap α (Φ.toObj.map f) := by
+  refine DoubleDisplayed.IsOpcartesian.hom_ext (θ := pushLift α (Φ.toObj.obj c))
+    (pushLift_opcartesian α _) ?_
+  refine (congrArg Φ.toObj.map (pushLift_pushMap α f)).trans ?_
+  exact (pushLift_pushMap α (Φ.toObj.map f)).symm
+
+/-- A D2SFib morphism preserves the pullback action on morphisms. -/
+theorem map_pullMap {a : A} {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') {c c' : C.Fiber b'}
+    (f : c ⟶ c') : Φ.toObj.map (pullMap β f) = pullMap β (Φ.toObj.map f) := by
+  refine pull_hom_ext (β := β) (c := Φ.toObj.obj c') ?_
+  refine (congrArg Φ.toObj.map (pullMap_pullLift β f)).trans ?_
+  exact (pullMap_pullLift β (Φ.toObj.map f)).symm
+
+attribute [rewrite_rule] map_pushMap map_pullMap
 
 /-- On fibers, `Φ` commutes with the pushforward functor on the nose. -/
-theorem fiber_pushFunctor (Φ : D2SFibHom C C') {a a' : A} (α : a ⟶ a') (b : B.Ob a) :
+theorem fiber_pushFunctor {a a' : A} (α : a ⟶ a') (b : B.Ob a) :
     pushFunctor (C := C) α b ⋙ Φ.toVertFunctor.fiber (B.transp α b)
-      = Φ.toVertFunctor.fiber b ⋙ pushFunctor (C := C') α b := by
-  refine CategoryTheory.Functor.ext (fun c => Φ.obj_push α c) (fun c c' f => ?_)
-  refine (CategoryTheory.conj_eqToHom_iff_heq (C := C'.Fiber (B.transp α b)) _ _
-    (Φ.obj_push α c) (Φ.obj_push α c')).mpr ?_
-  exact Φ.map_pushMap α f
+      = Φ.toVertFunctor.fiber b ⋙ pushFunctor (C := C') α b := rfl
 
 /-- On fibers, `Φ` commutes with the pullback functor on the nose. -/
-theorem fiber_pullFunctor (Φ : D2SFibHom C C') {a : A} {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') :
+theorem fiber_pullFunctor {a : A} {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') :
     pullFunctor (C := C) β ⋙ Φ.toVertFunctor.fiber b
-      = Φ.toVertFunctor.fiber b' ⋙ pullFunctor (C := C') β := by
-  refine CategoryTheory.Functor.ext (fun c => Φ.obj_pull β c) (fun c c' f => ?_)
-  refine (CategoryTheory.conj_eqToHom_iff_heq (C := C'.Fiber b) _ _
-    (Φ.obj_pull β c) (Φ.obj_pull β c')).mpr ?_
-  exact Φ.map_pullMap β f
+      = Φ.toVertFunctor.fiber b' ⋙ pullFunctor (C := C') β := rfl
 
-/-- A D2SFib morphism is determined by its fibers: `Φ.map θ` is the composite of the two chosen
-lifts with `Φ` applied to the vertical morphism `d2sHomEquiv θ`. -/
-theorem map_heq_lifts {C C' : DoubleDisplayed B} [D2SFib C]
-    [D2SFib C'] (Φ : D2SFibHom C C') {a a' : A} {α : a ⟶ a'} {b : B.Ob a} {b' : B.Ob a'}
-    {g : b ⟶[α] b'} {c : C.Ob b} {c' : C.Ob b'} (θ : c ⟶[[g]] c')
-    (f : (push α (Φ.obj c)) ⟶[[B.id (B.transp α b)]] (pull (B.factor g) (Φ.obj c')))
-    (hf : Φ.map (d2sHomEquiv α g c c' θ) ≍ f) :
-    Φ.map θ ≍ pushLift α (Φ.obj c) ≫ᵈᵈ (f ≫ᵈᵈ pullLift (B.factor g) (Φ.obj c')) := by
-  have hg : g ≍ B.olift α b ≫ᵈ (B.id (B.transp α b) ≫ᵈ B.factor g) :=
-    (olift_factor_heq α g).trans
-      (B.heq_comp rfl (by simp) rfl rfl rfl HEq.rfl (B.id_comp_heq (B.factor g)).symm)
-  refine (Φ.toVertFunctor.map_heq rfl rfl (by simp) hg HEq.rfl HEq.rfl
-    (d2sHomEquiv_heq α g c c' θ).symm).trans ?_
-  rw [Φ.toVertFunctor.map_comp]
-  refine C'.heq_comp' rfl rfl rfl rfl rfl HEq.rfl (heq_of_eq (Φ.obj_push α c)) HEq.rfl
-    HEq.rfl HEq.rfl (Φ.map_pushLift α c) ?_
-  rw [Φ.toVertFunctor.map_comp]
-  exact C'.heq_comp' rfl rfl rfl rfl rfl (heq_of_eq (Φ.obj_push α c))
-    (heq_of_eq (Φ.obj_pull (B.factor g) c')) HEq.rfl HEq.rfl HEq.rfl hf
-    (Φ.map_pullLift (B.factor g) c')
-
-/-- `d2sHomEquiv` is natural in the D2SFib: applying `Φ` to the classifying vertical morphism of
-`θ` gives the classifying vertical morphism of `Φ.map θ`. -/
-theorem d2sHomEquiv_map_heq {C C' : DoubleDisplayed B} [D2SFib C] [D2SFib C']
-    (Φ : D2SFibHom C C') {a a' : A} {α : a ⟶ a'} {b : B.Ob a} {b' : B.Ob a'}
-    {g : b ⟶[α] b'} {c : C.Ob b} {c' : C.Ob b'} (θ : c ⟶[[g]] c') :
-    d2sHomEquiv α g (Φ.obj c) (Φ.obj c') (Φ.map θ) ≍ Φ.map (d2sHomEquiv α g c c' θ) := by
-  have hty : ((Φ.obj (push α c)) ⟶[[B.id (B.transp α b)]] (Φ.obj (pull (B.factor g) c')))
-      = ((push α (Φ.obj c)) ⟶[[B.id (B.transp α b)]] (pull (B.factor g) (Φ.obj c'))) := by
-    rw [Φ.obj_push, Φ.obj_pull]
-  have h := d2sHomEquiv_eq_of_heq α g (Φ.map θ) (cast hty (Φ.map (d2sHomEquiv α g c c' θ)))
-    (map_heq_lifts Φ θ _ (cast_heq hty _).symm).symm
-  exact (heq_of_eq h.symm).trans (cast_heq hty _)
+/-- `d2sHomEquiv` is natural in the D2SFib: its inverse commutes with `Φ`. -/
+theorem map_d2sHomEquiv_symm {a a' : A} {α : a ⟶ a'} {b : B.Ob a} {b' : B.Ob a'}
+    {g : b ⟶[α] b'} {c : C.Ob b} {c' : C.Ob b'} (f : push α c ⟶ pull (B.factor g) c') :
+    Φ.toObj.map ((d2sHomEquiv α g c c').symm f)
+      = (d2sHomEquiv α g (Φ.toObj.obj c) (Φ.toObj.obj c')).symm (Φ.toObj.map f) := rfl
 
 end D2SFibHom
 
 /-- Bundled D2SFibs: the objects of the category `D2SFib(A, B)`. -/
-structure D2SFibCat (B : Displayed A) [SplitOpfib B] where
+structure D2SFibCat (B : Displayed.{v₁, u₁, v₂, u₂} A) [SplitOpfib B] where
   /-- The underlying doubly displayed category. -/
   C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B
   /-- Its D2SFib structure. -/
@@ -184,12 +136,12 @@ structure D2SFibCat (B : Displayed A) [SplitOpfib B] where
 attribute [instance] D2SFibCat.str
 
 /-- The category structure on bundled D2SFibs. -/
-instance : Category (D2SFibCat B) where
+instance : Category (D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B) where
   Hom E E' := D2SFibHom E.C E'.C
   id E := D2SFibHom.id E.C
   comp F G := F.comp G
-  id_comp _ := D2SFibHom.ext rfl
-  comp_id _ := D2SFibHom.ext rfl
-  assoc _ _ _ := D2SFibHom.ext rfl
+  id_comp _ := rfl
+  comp_id _ := rfl
+  assoc _ _ _ := rfl
 
 end Nfib

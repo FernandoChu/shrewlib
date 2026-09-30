@@ -19,4 +19,4 @@ name = "DoubleCategory"
 
 [[lean_lib]]
 name = "Nfib"
-leanOptions = { pp.unicode.fun = true, relaxedAutoImplicit = false, weak.linter.mathlibStandardSet = true, maxSynthPendingDepth = 3, backward.isDefEq.respectTransparency.types = false }
+leanOptions = { pp.unicode.fun = true, relaxedAutoImplicit = false, weak.linter.mathlibStandardSet = true, maxSynthPendingDepth = 3 }
