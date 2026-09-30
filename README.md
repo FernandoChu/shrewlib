@@ -107,6 +107,19 @@ as trustworthy as the axiom.
   opfibration computes, and the Grothendieck construction, its `D2SFib` structure and much of the
   unit and counit hold by `rfl`. It is about half the size of the original. The plan, the list of
   deviations from it (for the original) and the paper are in `docs/nfib/`.
+- `Nfib/Displayed/Fibration.lean`: fibrations in the displayed style (every base morphism has a
+  cartesian lift), displayed functors and equivalences over a base (vertical unit and counit). A
+  displayed equivalence is fully faithful on displayed hom-types, preserves cartesian morphisms,
+  transfers the fibration property, and induces an equivalence of total categories over the base.
+- `Straightening/`: straightening–unstraightening for displayed categories (Proposition 9 of the
+  notes). `DCat` is displayed over `Cat`: lax normal functors `LocallyDiscrete A ⥤ᴸ ProfCat`, with
+  lax transformations with representable components as morphisms, stated on elements. `Arr` is
+  `Cat^→` displayed over `Cat` by the codomain. `unstraighten` (`(▷ᵈ)*`, built on
+  `Unstraightening.lean`) and `straighten` (fibres `{e // p e = a}`) form a `DEquivalence DCat Arr`
+  (`straighteningEquiv`). `DCat` is a fibration by strict pullback (`isFibration_DCat`), `Cat^→` is
+  one by transfer (`isFibration_Arr`), and both functors preserve cartesian morphisms. The
+  functoriality of both functors and the naturality of the unit and counit hold by `rfl`. Only the
+  inverses of the unit and counit transport along equations `p e = a`.
 - `mathlib4/`: Mathlib master, pinned to `v4.35.0-rc2`, used as a path dependency.
 
 ## Building

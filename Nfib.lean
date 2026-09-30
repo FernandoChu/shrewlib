@@ -1,5 +1,6 @@
 import Nfib.Displayed.Basic
 import Nfib.Displayed.Cartesian
+import Nfib.Displayed.Fibration
 import Nfib.Displayed.SplitOpfib
 import Nfib.Displayed.DualOp
 import Nfib.Displayed.Double
