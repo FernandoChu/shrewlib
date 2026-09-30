@@ -1,0 +1,105 @@
+diff --git a/src/Lean/Meta/WHNF.lean b/src/Lean/Meta/WHNF.lean
+index ae369ded2b..3c7ba5a644 100644
+--- a/src/Lean/Meta/WHNF.lean
++++ b/src/Lean/Meta/WHNF.lean
+@@ -636,15 +636,24 @@ private def matchRewriteLevel (p u : Level) : RewriteMatchM Unit := do
+       return
+   modify fun s => { s with levels := s.levels.push (p, u) }
+ 
++set_option compiler.ignoreBorrowAnnotation true in
++/-- Forward reference to `whnfUntil`. -/
++@[extern "lean_whnf_until"]
++private opaque whnfUntilFwd : Expr → Name → MetaM (Option Expr)
++
+ /--
+ Returns the arguments of `e` if it is an application of `c` to `n` arguments, possibly after
+-putting it in weak head normal form.
++unfolding it. The head is checked after each unfolding step, since unfolding all the way to weak head
++normal form can turn an application of a projection function such as `CategoryStruct.id` into a
++primitive projection.
+ -/
+ private def matchRewriteHead? (e : Expr) (c : Name) (n : Nat) : MetaM (Option (List Level × Array Expr)) := do
+   let e := e.consumeMData
+   if e.isAppOfArity c n then
+     return some (e.getAppFn.constLevels!, e.getAppArgs)
+-  let e ← (← whnf e).toCtorIfLit
++  let e ← match (← whnfUntilFwd e c) with
++    | some e => pure e
++    | none => (← whnf e).toCtorIfLit
+   if e.isAppOfArity c n then
+     return some (e.getAppFn.constLevels!, e.getAppArgs)
+   return none
+@@ -1043,6 +1052,11 @@ def whnfUntil (e : Expr) (declName : Name) : MetaM (Option Expr) := do
+   else
+     return none
+ 
++set_option compiler.ignoreBorrowAnnotation true in
++@[export lean_whnf_until]
++private def whnfUntilImp (e : Expr) (declName : Name) : MetaM (Option Expr) :=
++  whnfUntil e declName
++
+ /-- Applies `whnfCore` while unfolding type annotations (`outParam`/`optParam`/etc.). -/
+ partial def whnfCoreUnfoldingAnnotations (e : Expr) : MetaM Expr :=
+   whnfHeadPred e (fun e => return e.isTypeAnnotation)
+diff --git a/src/kernel/type_checker.cpp b/src/kernel/type_checker.cpp
+index a098cef4a2..a434e512b4 100644
+--- a/src/kernel/type_checker.cpp
++++ b/src/kernel/type_checker.cpp
+@@ -558,15 +558,26 @@ bool type_checker::match_rewrite_pattern(expr const & p, expr const & e, rewrite
+         expr const & fn = get_app_fn(t);
+         return is_constant(fn) && const_name(fn) == const_name(p_fn) && get_app_num_args(t) == nargs;
+     };
++    /* Unfold `e` one step at a time, checking the head after each step: unfolding all the way to
++       weak head normal form can turn an application of a projection function such as
++       `CategoryStruct.id` into a primitive projection. */
+     expr t = e;
+     while (is_mdata(t))
+         t = mdata_expr(t);
+-    if (!is_match(t)) {
+-        t = whnf(t);
+-        if (is_nat_lit(t))
+-            t = nat_lit_to_constructor(t);
+-        if (!is_match(t))
+-            return false;
++    while (!is_match(t)) {
++        t = whnf_core(t);
++        if (is_match(t))
++            break;
++        if (optional<expr> r = reduce_nat(t)) {
++            t = *r;
++        } else if (optional<expr> u = unfold_definition(t)) {
++            t = *u;
++        } else {
++            if (is_nat_lit(t))
++                t = nat_lit_to_constructor(t);
++            if (!is_match(t))
++                return false;
++        }
+     }
+     levels const & p_ls = const_levels(p_fn);
+     levels const & t_ls = const_levels(get_app_fn(t));
+diff --git a/tests/elab/rewrite_rules.lean b/tests/elab/rewrite_rules.lean
+index 4061bfbd2a..0d79d05e67 100644
+--- a/tests/elab/rewrite_rules.lean
++++ b/tests/elab/rewrite_rules.lean
+@@ -113,6 +113,20 @@ axiom twice : Nat → Nat → Nat
+ 
+ example (n : Nat) : twice 0 n = n := rfl
+ 
++/-! ## Heads that are projection functions -/
++
++class Unital (α : Type) where
++  one : α
++
++axiom act {α : Type} [Unital α] : α → Nat → Nat
++@[rewrite_rule] axiom act_one {α : Type} [Unital α] (n : Nat) : act (Unital.one : α) n = n
++
++def ones {α β : Type} [Unital α] [Unital β] : α × β := (Unital.one, Unital.one)
++
++-- Fully unfolding `ones.1` yields a primitive projection out of the instance, so the target must
++-- be unfolded step by step until `Unital.one` is at the head.
++example {α β : Type} [Unital α] [Unital β] (n : Nat) : act (ones : α × β).1 n = n := rfl
++
+ /-! ## Rules on library definitions -/
+ 
+ attribute [rewrite_rule] Nat.zero_add
