@@ -5,13 +5,14 @@ import Mathlib.CategoryTheory.Category.Cat
 /-!
 # Unstraightening: the dependent 2-sided Grothendieck construction
 
-Given `F : ∫(Bᵈᵒ) ⥤ Cat`, we build a doubly displayed category `D2SGC F` over `B` (Def.
+Given `F : ∫(Bᵈᵒ) ⥤ Cat`, we build a doubly displayed category `Unstraightening F` over `B` (Def.
 `def:D2SGC` of the notes), equip it with a `D2SFib` structure (`unstraightenObj F`), and assemble
 the whole thing into the functor `unstraighten` (`Φ`) : `(B.dualOp.Total ⥤ Cat) ⥤ D2SFibCat B`.
 
-The objects of `D2SGC F` over `b : B.Ob a` are the objects of `F.obj ⟨a, b⟩`, and a morphism over
-`g : B.Hom α b b'` from `c` to `c'` is a morphism `hobj α c ⟶ vobj (B.opcartesianFactor g) c'` of
-`F.obj ⟨a', B.push α b⟩`, exactly the notes' `hom_{C(a', B(α)b)}(C(α,id)c, C(id,β)c')`. Here
+The objects of `Unstraightening F` over `b : B.Ob a` are the objects of `F.obj ⟨a, b⟩`, and a
+morphism over `g : B.Hom α b b'` from `c` to `c'` is a morphism
+`hobj α c ⟶ vobj (B.opcartesianFactor g) c'` of `F.obj ⟨a', B.push α b⟩`, exactly the notes'
+`hom_{C(a', B(α)b)}(C(α,id)c, C(id,β)c')`. Here
 `hobj`/`hmor` and `vobj`/`vmor` are the actions of `F` on objects and morphisms along the chosen
 horizontal and vertical morphisms of `∫(Bᵈᵒ)`.
 
@@ -21,8 +22,8 @@ are rewrite rules. They have their own heads `hobj`, `hmor`, `vobj` and `vmor`, 
 `F.map (u ≫ v) = F.map u ≫ F.map v` for arbitrary morphisms of `∫(Bᵈᵒ)` would not do: these
 compute, so `F.map u` and `F.map (dualHoriz _ _ ≫ dualVert _)` would stop being definitionally
 equal.) The naturality of a transformation `κ` along these morphisms is a rule too. As a result,
-composition in `D2SGC F` is `hmor α' θ ≫ vmor (B.pushMap α' (B.opcartesianFactor g)) θ'`, with no
-`eqToHom`, and its laws, its `D2SFib` structure and the functoriality of `Φ` hold by `rfl`.
+composition in `Unstraightening F` is `hmor α' θ ≫ vmor (B.pushMap α' (B.opcartesianFactor g)) θ'`,
+with no `eqToHom`, and its laws, its `D2SFib` structure and the functoriality of `Φ` hold by `rfl`.
 -/
 
 universe v₁ u₁ v₂ u₂ v₃ u₃
@@ -37,7 +38,7 @@ variable {A : Type u₁} [Category.{v₁} A] {B : Displayed.{v₁, u₁, v₂, u
 
 noncomputable section
 
-namespace D2SGC
+namespace Unstraightening
 
 variable (F : B.dualOp.Total ⥤ Cat.{v₃, u₃})
 
@@ -208,25 +209,25 @@ theorem map_eq {x x' : B.dualOp.Total} (u : x ⟶ x') :
 
 end Generators
 
-/-! ### The doubly displayed category `D2SGC F` -/
+/-! ### The doubly displayed category `Unstraightening F` -/
 
 section Construction
 
 variable {a a' a'' : A}
 
-/-- Objects of `D2SGC F` over `b : B.Ob a`. -/
+/-- Objects of `Unstraightening F` over `b : B.Ob a`. -/
 abbrev Ob (b : B.Ob a) : Type u₃ := F.obj (B.dualOp.tot b)
 
-/-- Morphisms of `D2SGC F` over `g : B.Hom α b b'`: the notes'
+/-- Morphisms of `Unstraightening F` over `g : B.Hom α b b'`: the notes'
 `hom_{C(a', B(α)b)}(C(α,id)c, C(id,β)c')`. -/
 abbrev Hom {α : a ⟶ a'} {b : B.Ob a} {b' : B.Ob a'} (g : b ⟶[α] b')
     (c : Ob F b) (c' : Ob F b') : Type v₃ :=
   hobj F α b c ⟶ vobj F (B.opcartesianFactor g) c'
 
-/-- The identity of `D2SGC F`. -/
+/-- The identity of `Unstraightening F`. -/
 def id' {b : B.Ob a} (c : Ob F b) : Hom F (B.id b) c c := 𝟙 c
 
-/-- Composition in `D2SGC F` (the notes' `γ ≔ C(α',id)θ ≫ C(id, B(α')β)θ'`). -/
+/-- Composition in `Unstraightening F` (the notes' `γ ≔ C(α',id)θ ≫ C(id, B(α')β)θ'`). -/
 def comp' {α : a ⟶ a'} {α' : a' ⟶ a''} {b : B.Ob a} {b' : B.Ob a'} {b'' : B.Ob a''}
     {g : b ⟶[α] b'} {g' : b' ⟶[α'] b''} {c : Ob F b} {c' : Ob F b'} {c'' : Ob F b''}
     (θ : Hom F g c c') (θ' : Hom F g' c' c'') : Hom F (g ≫ᵈ g') c c'' :=
@@ -246,28 +247,30 @@ theorem assoc'' {a₃ : A} {α : a ⟶ a'} {α' : a' ⟶ a''} {α'' : a'' ⟶ a�
 
 end Construction
 
-end D2SGC
+end Unstraightening
 
-open D2SGC in
-/-- **The dependent 2-sided Grothendieck construction** (Def. `def:D2SGC` of the notes): the doubly
-displayed category over `B` associated with a functor `F : ∫(Bᵈᵒ) ⥤ Cat`. -/
-def D2SGC (F : B.dualOp.Total ⥤ Cat.{v₃, u₃}) : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B where
-  Ob b := D2SGC.Ob F b
-  Hom g c c' := D2SGC.Hom F g c c'
+open Unstraightening in
+/-- **The unstraightening of `F`**, the dependent 2-sided Grothendieck construction (Def.
+`def:D2SGC` of the notes): the doubly displayed category over `B` associated with a functor
+`F : ∫(Bᵈᵒ) ⥤ Cat`. -/
+def Unstraightening (F : B.dualOp.Total ⥤ Cat.{v₃, u₃}) :
+    DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B where
+  Ob b := Unstraightening.Ob F b
+  Hom g c c' := Unstraightening.Hom F g c c'
   id c := id' F c
   comp θ θ' := comp' F θ θ'
   id_comp θ := id_comp'' F θ
   comp_id θ := comp_id'' F θ
   assoc θ θ' θ'' := assoc'' F θ θ' θ''
 
-namespace D2SGC
+namespace Unstraightening
 
 variable (F : B.dualOp.Total ⥤ Cat.{v₃, u₃})
 
-/-- The `D2SFib` structure on the D2S Grothendieck construction: the chosen pullbacks and
+/-- The `D2SFib` structure on the unstraightening: the chosen pullbacks and
 pushforwards are the images under `F` of the chosen morphisms of `∫(Bᵈᵒ)`, and the chosen lifts are
 identities. -/
-instance instD2SFib : D2SFib (D2SGC F) where
+instance instD2SFib : D2SFib (Unstraightening F) where
   pull β c := vobj F β c
   pullLift _ _ := 𝟙 _
   pullLift_cartesian := by intro _ _ _ _ _ _ _ _ χ; exact ⟨χ, rfl, fun _ h => h⟩
@@ -275,14 +278,14 @@ instance instD2SFib : D2SFib (D2SGC F) where
   pushLift _ _ _ := 𝟙 _
   pushLift_opcartesian := by intro _ _ _ _ _ _ _ _ _ _ χ; exact ⟨χ, rfl, fun _ h => h⟩
 
-instance instPreSplitD2SFib : PreSplitD2SFib (D2SGC F) where
+instance instPreSplitD2SFib : PreSplitD2SFib (Unstraightening F) where
   pull_id _ := rfl
   pull_comp _ _ _ := rfl
   push_id _ := rfl
   push_comp := by intros; rfl
   push_pull := by intros; rfl
 
-instance instSplitD2SFib : SplitD2SFib (D2SGC F) where
+instance instSplitD2SFib : SplitD2SFib (Unstraightening F) where
   pullLift_id _ := rfl
   pullLift_comp _ _ _ := rfl
   pushLift_id _ := rfl
@@ -293,16 +296,18 @@ section Maps
 
 variable {a a' : A}
 
-/-- The pushforward action of `D2SGC F` on fiber morphisms is `hmor`. -/
+/-- The pushforward action of `Unstraightening F` on fiber morphisms is `hmor`. -/
 @[rewrite_rule]
-theorem pushMap_eq (α : a ⟶ a') {b : B.Ob a} {c c' : (D2SGC F).Fiber b} (f : c ⟶ c') :
-    pushMap (C := D2SGC F) α f = hmor F α b f :=
-  (DoubleDisplayed.IsOpcartesian.desc_uniq (pushLift_opcartesian (C := D2SGC F) α c) _ rfl).symm
+theorem pushMap_eq (α : a ⟶ a') {b : B.Ob a} {c c' : (Unstraightening F).Fiber b} (f : c ⟶ c') :
+    pushMap (C := Unstraightening F) α f = hmor F α b f :=
+  (DoubleDisplayed.IsOpcartesian.desc_uniq (pushLift_opcartesian (C := Unstraightening F) α c) _
+    rfl).symm
 
-/-- The pullback action of `D2SGC F` on fiber morphisms is `vmor`. -/
+/-- The pullback action of `Unstraightening F` on fiber morphisms is `vmor`. -/
 @[rewrite_rule]
-theorem pullMap_eq {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') {c c' : (D2SGC F).Fiber b'} (f : c ⟶ c') :
-    pullMap (C := D2SGC F) β f = vmor F β f :=
+theorem pullMap_eq {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') {c c' : (Unstraightening F).Fiber b'}
+    (f : c ⟶ c') :
+    pullMap (C := Unstraightening F) β f = vmor F β f :=
   (pullDesc_uniq β c' (B.id b) _ _ rfl).symm
 
 end Maps
@@ -392,27 +397,27 @@ theorem kmor_comp' (κ : F ⟶ F') {a a' a'' : A} {α : a ⟶ a'} {α' : a' ⟶ 
 
 end Naturality
 
-end D2SGC
+end Unstraightening
 
-/-- Bundled form: the object of `D2SFibCat B` carried by the D2S Grothendieck construction. -/
+/-- Bundled form: the object of `D2SFibCat B` carried by the unstraightening. -/
 def unstraightenObj (F : B.dualOp.Total ⥤ Cat.{v₃, u₃}) : D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B :=
-  ⟨D2SGC F⟩
+  ⟨Unstraightening F⟩
 
 /-- `Φ` on morphisms: a natural transformation `κ : F ⟶ F'` induces a morphism of D2SFibs, by the
 components of `κ`. -/
 def unstraightenMap {F F' : B.dualOp.Total ⥤ Cat.{v₃, u₃}} (κ : F ⟶ F') :
     unstraightenObj F ⟶ unstraightenObj F' where
   toObj :=
-    { obj := fun c => D2SGC.kobj κ c
-      map := fun θ => D2SGC.kmor κ θ
+    { obj := fun c => Unstraightening.kobj κ c
+      map := fun θ => Unstraightening.kmor κ θ
       map_id := fun _ => rfl
-      map_comp := fun θ θ' => D2SGC.kmor_comp' κ θ θ'
+      map_comp := fun θ θ' => Unstraightening.kmor_comp' κ θ θ'
       obj_pull := by intros; rfl
       obj_push := by intros; rfl }
   map_pullLift := by intros; rfl
   map_pushLift := by intros; rfl
 
-/-- **`Φ`**: the D2S Grothendieck construction as a functor into `D2SFib(A, B)`. -/
+/-- **`Φ`**: the unstraightening as a functor into `D2SFib(A, B)`. -/
 def unstraighten : (B.dualOp.Total ⥤ Cat.{v₃, u₃}) ⥤ D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B where
   obj F := unstraightenObj F
   map κ := unstraightenMap κ
