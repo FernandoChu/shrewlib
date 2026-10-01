@@ -102,7 +102,7 @@ folders. Displayed and doubly displayed categories are developed in parallel: ea
 - `Profunctor.lean`: profunctors as a structure with actions `lmap`/`rmap`; composition as a
   coend quotient; the bicategory `ProfCat`. The action laws and the naturality of 2-cells are
   rules, so most coherence laws hold by `rfl`.
-- `DoubleCategory.lean`: pseudo double categories, following *Univalent Double Categories*
+- `DoubleCategory/Basic.lean`: pseudo double categories, following *Univalent Double Categories*
   (van der Weide, Rasekh, Ahrens, North) without univalence: a two-sided displayed category of
   horizontal morphisms and squares, horizontal identities and composition, and invertible,
   natural unitors and associator subject to the triangle and pentagon laws. With the category laws
@@ -132,10 +132,11 @@ folders. Displayed and doubly displayed categories are developed in parallel: ea
     equations `p e = a`.
 - `DoubleDisplayed/`: categories doubly displayed over a displayed category `B`, with `Basic`,
   `Total` (`C.total : Displayed A`), `Cartesian` and `Functor` (`VertFunctor` over `B`).
-  - `D2SFib/`: dependent 2-sided split fibrations over a split opfibration `B` (`Basic`) and their
-    category (`Category`).
-  - `D2SFib/Straightening/`: `straighten` (`Ψ`) and `unstraighten` (`Φ`, the dependent 2-sided
-    Grothendieck construction), with `straighteningEquiv` between functors `∫(Bᵈᵒ) ⥤ Cat` and
+  - `D2SFib/`: dependent 2-sided fibrations over a split opfibration `B` (`Basic`), as cloven
+    (`D2SFib`), pre-split (`PreSplitD2SFib`, laws on objects as rules) and split (`SplitD2SFib`)
+    classes, like `Displayed/Fibration`, and the category of split ones (`Category`).
+  - `D2SFib/Straightening/`: `straighten` (`Ψ`) and `unstraighten` (`Φ`, through
+    `Unstraightening F`, the dependent 2-sided Grothendieck construction), with `straighteningEquiv` between functors `∫(Bᵈᵒ) ⥤ Cat` and
     D2SFibs over `B`. The laws of D2SFibs are rules, so the Grothendieck construction, its `D2SFib`
     structure and much of the unit and counit hold by `rfl`. This is a rewrite of a development on
     Lean and Mathlib `v4.30.0-rc2` whose laws were stated with `castHom`, `eqToHom` and `HEq`
