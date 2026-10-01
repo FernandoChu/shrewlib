@@ -1,5 +1,6 @@
 import Straightening.Arrow
 import Unstraightening
+import Rules.Functor
 import Nfib.Displayed.Fib
 
 /-!
@@ -33,8 +34,6 @@ namespace Straightening
 open CategoryTheory Bicategory Nfib Displayed Unstraightening
 
 open scoped Displayed
-
-attribute [rewrite_rule] Functor.map_id Functor.map_comp
 
 /-- Lax normal functors from `A` to the bicategory of categories and profunctors. -/
 abbrev LaxNormal (A : Cat.{u, u}) : Type (u + 1) :=
@@ -89,15 +88,6 @@ def DCat : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
   assoc _ _ _ := rfl
 
 /-! ## Pullbacks and the fibration property -/
-
-/-- The 2-cells of `LocallyDiscrete C` are built by the constructor `⟨p⟩`. A prelax functor sends
-those from a 1-cell to itself to identities; as a rule, this complements `PrelaxFunctor.map₂_id`
-for 2-cells that are not syntactically identities. -/
-@[rewrite_rule]
-theorem _root_.CategoryTheory.PrelaxFunctor.map₂_mk {C : Type*} [Category C] {B : Type*}
-    [Bicategory B] (G : PrelaxFunctor (LocallyDiscrete C) B) {a b : LocallyDiscrete C}
-    (f : a ⟶ b) (p : f.as = f.as) : G.map₂ (⟨p⟩ : f ⟶ f) = 𝟙 (G.map f) := by
-  rw [show (⟨p⟩ : f ⟶ f) = 𝟙 f from rfl]
 
 /-- The pullback `u^* G` of a lax normal functor along `u : A ⟶ B`. -/
 def pullback {A B : Cat.{u, u}} (u : A ⟶ B) (G : LaxNormal B) : LaxNormal A where

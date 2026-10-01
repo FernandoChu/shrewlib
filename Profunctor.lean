@@ -1,3 +1,4 @@
+import Rules.Category
 import Mathlib.CategoryTheory.Bicategory.Basic
 
 /-!
@@ -18,8 +19,6 @@ fork of Lean.
 open CategoryTheory
 
 universe u
-
-attribute [rewrite_rule] Category.id_comp Category.comp_id Category.assoc
 
 /-- A profunctor `A ⇸ B`: a family of types `obj a b`, contravariant in `a` and covariant in `b`. -/
 structure Profunctor (A : Type u) [SmallCategory A] (B : Type u) [SmallCategory B] where

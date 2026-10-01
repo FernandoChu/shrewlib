@@ -1,4 +1,5 @@
 import Profunctor
+import Rules.Bicategory
 import Mathlib.CategoryTheory.Bicategory.Functor.StrictlyUnitary
 import Mathlib.CategoryTheory.Bicategory.LocallyDiscrete
 
@@ -33,18 +34,9 @@ fibre over `c`. Requires the `rewrite-rules` fork of Lean.
 
 open CategoryTheory Bicategory Profunctor
 
-attribute [rewrite_rule] StrictlyUnitaryLaxFunctor.map_id StrictlyUnitaryLaxFunctor.mapId_eq_eqToHom
-  PrelaxFunctor.map₂_id Quiver.Hom.id_toLoc
-
 universe v₁ u₁ u
 
 variable {C : Type u₁} [Category.{v₁} C]
-
-/-- Composition of 1-cells in `LocallyDiscrete C` computes in `C`. -/
-@[rewrite_rule]
-theorem LocallyDiscrete.comp_eq_toLoc {a b c : LocallyDiscrete C} (f : a ⟶ b) (g : b ⟶ c) :
-    f ≫ g = (f.as ≫ g.as).toLoc :=
-  rfl
 
 /-- The unstraightening of a lax normal functor `F` from `C` to `ProfCat`. -/
 structure Unstraightening (F : StrictlyUnitaryLaxFunctor (LocallyDiscrete C) ProfCat.{u}) where

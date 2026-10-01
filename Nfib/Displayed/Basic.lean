@@ -1,3 +1,4 @@
+import Rules.Category
 import Mathlib.CategoryTheory.Category.Basic
 import Mathlib.CategoryTheory.Functor.Basic
 
@@ -28,8 +29,6 @@ universe v₁ u₁ v₂ u₂
 namespace Nfib
 
 open CategoryTheory
-
-attribute [rewrite_rule] Category.id_comp Category.comp_id Category.assoc
 
 variable {A : Type u₁} [Category.{v₁} A]
 

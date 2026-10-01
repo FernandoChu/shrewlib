@@ -1,5 +1,5 @@
 name = "Rewrite"
-defaultTargets = ["FunctorId", "Profunctor", "Unstraightening", "DoubleCategory", "Nfib", "Straightening"]
+defaultTargets = ["Rules", "FunctorId", "Profunctor", "Unstraightening", "DoubleCategory", "Nfib", "Straightening"]
 
 [[require]]
 name = "mathlib"
@@ -24,3 +24,6 @@ leanOptions = { pp.unicode.fun = true, relaxedAutoImplicit = false, weak.linter.
 [[lean_lib]]
 name = "Straightening"
 leanOptions = { pp.unicode.fun = true, relaxedAutoImplicit = false, weak.linter.mathlibStandardSet = true, maxSynthPendingDepth = 3 }
+
+[[lean_lib]]
+name = "Rules"

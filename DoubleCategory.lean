@@ -1,3 +1,4 @@
+import Rules.Category
 import Mathlib.CategoryTheory.Bicategory.Basic
 
 /-!
@@ -45,8 +46,6 @@ bicategory, `DoubleCategory.Horizontal C`. Requires the `rewrite-rules` fork of 
 open CategoryTheory
 
 universe w₁ w₂ v₁ v₂ v u₁ u₂ u
-
-attribute [rewrite_rule] Category.id_comp Category.comp_id Category.assoc
 
 /-! ## Two-sided displayed categories -/
 
