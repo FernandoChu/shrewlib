@@ -3,15 +3,15 @@ import Displayed.Fibration.DualOp
 import Mathlib.CategoryTheory.Category.Cat
 
 /-!
-# `Φ`: the dependent 2-sided Grothendieck construction
+# Unstraightening: the dependent 2-sided Grothendieck construction
 
-Milestone **M8** of `PLAN.md`. Given `F : ∫(Bᵈᵒ) ⥤ Cat`, we build a doubly displayed category
-`D2SGC F` over `B` (Def. `def:D2SGC` of the paper), equip it with a `D2SFib` structure, and
-assemble the whole thing into a functor `D2SGCFunctor : (B.dualOp.Total ⥤ Cat) ⥤ D2SFibCat B`.
+Given `F : ∫(Bᵈᵒ) ⥤ Cat`, we build a doubly displayed category `D2SGC F` over `B` (Def.
+`def:D2SGC` of the notes), equip it with a `D2SFib` structure (`unstraightenObj F`), and assemble
+the whole thing into the functor `unstraighten` (`Φ`) : `(B.dualOp.Total ⥤ Cat) ⥤ D2SFibCat B`.
 
 The objects of `D2SGC F` over `b : B.Ob a` are the objects of `F.obj ⟨a, b⟩`, and a morphism over
 `g : B.Hom α b b'` from `c` to `c'` is a morphism `hobj α c ⟶ vobj (B.opcartesianFactor g) c'` of
-`F.obj ⟨a', B.push α b⟩`, exactly the paper's `hom_{C(a', B(α)b)}(C(α,id)c, C(id,β)c')`. Here
+`F.obj ⟨a', B.push α b⟩`, exactly the notes' `hom_{C(a', B(α)b)}(C(α,id)c, C(id,β)c')`. Here
 `hobj`/`hmor` and `vobj`/`vmor` are the actions of `F` on objects and morphisms along the chosen
 horizontal and vertical morphisms of `∫(Bᵈᵒ)`.
 
@@ -217,7 +217,7 @@ variable {a a' a'' : A}
 /-- Objects of `D2SGC F` over `b : B.Ob a`. -/
 abbrev Ob (b : B.Ob a) : Type u₃ := F.obj (B.dualOp.tot b)
 
-/-- Morphisms of `D2SGC F` over `g : B.Hom α b b'`: the paper's
+/-- Morphisms of `D2SGC F` over `g : B.Hom α b b'`: the notes'
 `hom_{C(a', B(α)b)}(C(α,id)c, C(id,β)c')`. -/
 abbrev Hom {α : a ⟶ a'} {b : B.Ob a} {b' : B.Ob a'} (g : b ⟶[α] b')
     (c : Ob F b) (c' : Ob F b') : Type v₃ :=
@@ -226,7 +226,7 @@ abbrev Hom {α : a ⟶ a'} {b : B.Ob a} {b' : B.Ob a'} (g : b ⟶[α] b')
 /-- The identity of `D2SGC F`. -/
 def id' {b : B.Ob a} (c : Ob F b) : Hom F (B.id b) c c := 𝟙 c
 
-/-- Composition in `D2SGC F` (the paper's `γ ≔ C(α',id)θ ≫ C(id, B(α')β)θ'`). -/
+/-- Composition in `D2SGC F` (the notes' `γ ≔ C(α',id)θ ≫ C(id, B(α')β)θ'`). -/
 def comp' {α : a ⟶ a'} {α' : a' ⟶ a''} {b : B.Ob a} {b' : B.Ob a'} {b'' : B.Ob a''}
     {g : b ⟶[α] b'} {g' : b' ⟶[α'] b''} {c : Ob F b} {c' : Ob F b'} {c'' : Ob F b''}
     (θ : Hom F g c c') (θ' : Hom F g' c' c'') : Hom F (g ≫ᵈ g') c c'' :=
@@ -249,7 +249,7 @@ end Construction
 end D2SGC
 
 open D2SGC in
-/-- **The dependent 2-sided Grothendieck construction** (Def. `def:D2SGC` of the paper): the doubly
+/-- **The dependent 2-sided Grothendieck construction** (Def. `def:D2SGC` of the notes): the doubly
 displayed category over `B` associated with a functor `F : ∫(Bᵈᵒ) ⥤ Cat`. -/
 def D2SGC (F : B.dualOp.Total ⥤ Cat.{v₃, u₃}) : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B where
   Ob b := D2SGC.Ob F b
@@ -392,13 +392,13 @@ end Naturality
 end D2SGC
 
 /-- Bundled form: the object of `D2SFibCat B` carried by the D2S Grothendieck construction. -/
-def D2SGCFib (F : B.dualOp.Total ⥤ Cat.{v₃, u₃}) : D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B :=
+def unstraightenObj (F : B.dualOp.Total ⥤ Cat.{v₃, u₃}) : D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B :=
   ⟨D2SGC F⟩
 
 /-- `Φ` on morphisms: a natural transformation `κ : F ⟶ F'` induces a morphism of D2SFibs, by the
 components of `κ`. -/
-def D2SGCMap {F F' : B.dualOp.Total ⥤ Cat.{v₃, u₃}} (κ : F ⟶ F') :
-    D2SGCFib F ⟶ D2SGCFib F' where
+def unstraightenMap {F F' : B.dualOp.Total ⥤ Cat.{v₃, u₃}} (κ : F ⟶ F') :
+    unstraightenObj F ⟶ unstraightenObj F' where
   toObj :=
     { obj := fun c => D2SGC.kobj κ c
       map := fun θ => D2SGC.kmor κ θ
@@ -410,9 +410,9 @@ def D2SGCMap {F F' : B.dualOp.Total ⥤ Cat.{v₃, u₃}} (κ : F ⟶ F') :
   map_pushLift := by intros; rfl
 
 /-- **`Φ`**: the D2S Grothendieck construction as a functor into `D2SFib(A, B)`. -/
-def D2SGCFunctor : (B.dualOp.Total ⥤ Cat.{v₃, u₃}) ⥤ D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B where
-  obj F := D2SGCFib F
-  map κ := D2SGCMap κ
+def unstraighten : (B.dualOp.Total ⥤ Cat.{v₃, u₃}) ⥤ D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B where
+  obj F := unstraightenObj F
+  map κ := unstraightenMap κ
   map_id _ := rfl
   map_comp _ _ := rfl
 

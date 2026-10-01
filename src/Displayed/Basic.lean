@@ -17,11 +17,11 @@ so that the same holds one level up, for categories displayed over a displayed c
 We provide:
 
 * the structure `Displayed` and scoped notation `𝟙ᵈ x`, `φ ≫ᵈ ψ` and `x ⟶[f] y`;
-* the fiber category `Displayed.Fiber D a`, whose laws hold by `rfl`;
-* the total category `Displayed.Total D`, whose laws hold by `rfl`, with the projection `π` and
-  the fiber inclusions `ι`.
+* the fiber category `Displayed.Fiber D a`, whose laws hold by `rfl`.
 
-This is milestone **M1** of `PLAN.md`. Requires the `rewrite-rules` fork of Lean.
+The total category is in `Displayed/Total.lean`.
+
+Requires the `rewrite-rules` fork of Lean.
 -/
 
 universe v₁ u₁ v₂ u₂

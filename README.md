@@ -69,65 +69,79 @@ as trustworthy as the axiom.
 - `#print axioms` doesn't report the rules a proof used.
 - External checkers (lean4lean, nanoda) don't know about rules.
 
-**Writing rules.** Some consequences of the above, learned in `Nfib/`:
+**Writing rules.** Some consequences of the above, learned in `src/`:
 
 - A rule on a definition `f` makes `f xs` stop being recognizably equal to its unfolding when the
   rule applies. Facts about the unfolding are best proved before the rule is declared, for example
   as `HEq`s that `eq_of_heq` turns into equations afterwards.
-- A definition that the rules rewrite back into itself when unfolded, such as `pushMap` in `Nfib/`,
-  must be an `irreducible_def`, or unfolding it loops.
+- A definition that the rules rewrite back into itself when unfolded, such as `pushMap` in
+  `Displayed/Fibration/Opfib.lean`, must be an `irreducible_def`, or unfolding it loops.
 - Nested subpatterns should use the most unfolded form of a term, since targets are unfolded
   towards the pattern and not the other way; heads need a rule for each form.
 - Index-like arguments should be implicit, so that they are checked by definitional equality.
 - A rule on `Functor.obj` or `Functor.map` is tried on every functor application. Rules keyed on
   dedicated constants are cheaper.
+- A failed match costs a full unfolding search for the subpattern head. Two sets of rules keyed on
+  the same head whose subpatterns never occur in each other's terms (as for displayed composition
+  in `Displayed/Functor.lean` and `Displayed/Fibration/`) should not be imported together where
+  there is much computation: `Displayed/Fibration/Transfer.lean` is the only file importing both.
+- Rules on Mathlib's lemmas are declared only in `src/Rules/`, and each file imports only those it
+  needs, so its imports show which foreign rules it sees.
 
 ## Files
 
-- `FunctorId.lean`: `F.map (𝟙 a) x = x` by `rfl` for any functor `F : A ⥤ Type`, after making
-  Mathlib's `Functor.map_id` a rule.
+The development is one library with sources in `src/`. Module names and namespaces follow the
+folders. Displayed and doubly displayed categories are developed in parallel: each has `Basic`,
+`Total`, `Cartesian` and `Functor` files, a folder of fibrations (`Displayed/Fibration`,
+`DoubleDisplayed/D2SFib`) and a `Straightening` folder.
+
+- `Rules/`: the category laws, the functor laws, and the laws of locally discrete bicategories and
+  strictly unitary lax functors, as rules.
+- `Examples/FunctorId.lean`: `F.map (𝟙 a) x = x` by `rfl` for any functor `F : A ⥤ Type`, after
+  making Mathlib's `Functor.map_id` a rule.
 - `Profunctor.lean`: profunctors as a structure with actions `lmap`/`rmap`; composition as a
-  coend quotient; the bicategory `ProfCat`. The category laws, the action laws and the
-  naturality of 2-cells are rules, so most coherence laws hold by `rfl`.
-- `Unstraightening.lean`: the unstraightening of a lax normal functor
-  `LocallyDiscrete C ⥤ ProfCat` to a category over `C`. With normality and `F.map₂ (𝟙 _) = 𝟙 _`
-  as rules, the construction uses no `eqToHom` or `cast`.
+  coend quotient; the bicategory `ProfCat`. The action laws and the naturality of 2-cells are
+  rules, so most coherence laws hold by `rfl`.
 - `DoubleCategory.lean`: pseudo double categories, following *Univalent Double Categories*
   (van der Weide, Rasekh, Ahrens, North) without univalence: a two-sided displayed category of
   horizontal morphisms and squares, horizontal identities and composition, and invertible,
   natural unitors and associator subject to the triangle and pentagon laws. With the category laws
   as rules, the displayed laws are stated without transport. The horizontal bicategory of
   globular squares is constructed as an application.
-- `Nfib/`: displayed categories and dependent 2-sided fibrations. The main theorem
-  `d2sfibEquivalence` is the equivalence between functors `∫(Bᵈᵒ) ⥤ Cat` and D2SFibs over a
-  split opfibration `B`. It is a rewrite of a development on Lean and Mathlib `v4.30.0-rc2` whose
-  laws were stated with `castHom`, `eqToHom` and `HEq` (commit `4b55ea2` of this repository). Here
-  the displayed laws, the splitting of `B`, the functoriality of its transport, and the laws of the
-  chosen pullbacks and pushforwards of a D2SFib are rules, so they are plain equations; the dual
-  opfibration computes, and the Grothendieck construction, its `D2SFib` structure and much of the
-  unit and counit hold by `rfl`. It is about half the size of the original. The plan, the list of
-  deviations from it (for the original) and the paper are in `docs/nfib/`.
-- `Nfib/Displayed/Opfib.lean` and `Nfib/Displayed/Fib.lean`: cloven (op)fibrations as mirror
-  images, with chosen `push f x`/`olift` and `pull f y`/`clift`, the (op)cartesian factorization,
-  the transport `pushMap`/`pullMap` and its functors, and split versions. `PreSplitOpfib`
-  (`PreSplitFib`) adds the splitting axioms on objects, which are rules; `SplitOpfib` (`SplitFib`)
-  holds it as an instance field rather than a parent, since the fields of a parent are local
-  variables while a class is elaborated and the rules would not apply to the axioms on lifts.
-- `Nfib/Displayed/Functor.lean`: displayed functors and equivalences over a base (vertical unit and
-  counit). A displayed equivalence is fully faithful on displayed hom-types, preserves cartesian
-  and opcartesian morphisms, and induces an equivalence of total categories over the base.
-  `Nfib/Displayed/Transfer.lean` transfers `Fib` and `Opfib` cleavages along it. The two files
-  are kept apart from `Opfib.lean`/`Fib.lean`: both sides have rules keyed on displayed
-  composition, and trying the other side's rules on every composite makes the matcher time out.
-- `Straightening/`: straightening–unstraightening for displayed categories (Proposition 9 of the
-  notes). `DCat` is displayed over `Cat`: lax normal functors `LocallyDiscrete A ⥤ᴸ ProfCat`, with
-  lax transformations with representable components as morphisms, stated on elements. `Arr` is
-  `Cat^→` displayed over `Cat` by the codomain. `unstraighten` (`(▷ᵈ)*`, built on
-  `Unstraightening.lean`) and `straighten` (fibres `{e // p e = a}`) form a `DEquivalence DCat Arr`
-  (`straighteningEquiv`). `DCat` is a `SplitFib` by strict pullback, with the splitting laws by
-  `rfl`; `Cat^→` gets a `Fib` instance by transfer, and both functors preserve cartesian morphisms. The
-  functoriality of both functors and the naturality of the unit and counit hold by `rfl`. Only the
-  inverses of the unit and counit transport along equations `p e = a`.
+- `Displayed/`: categories displayed over a category, whose laws are rules and hold as plain
+  equations. `Basic` (with fibers), `Total` (the total category, `π`, `ι`), `Cartesian`
+  ((op)cartesian morphisms), `Functor` (`VertFunctor`, `VertNatIso`, `VertEquivalence`: functors
+  and equivalences over the base, which are fully faithful, preserve (op)cartesian morphisms and
+  induce equivalences of total categories).
+  - `Fibration/`: cloven (op)fibrations as mirror images, `Opfib.lean` and `Fib.lean`, with chosen
+    `push f x`/`olift` and `pull f y`/`clift`, the (op)cartesian factorization, the transport
+    `pushMap`/`pullMap` and its functors, and split versions. `PreSplitOpfib` (`PreSplitFib`) adds
+    the splitting axioms on objects, which are rules; `SplitOpfib` (`SplitFib`) holds it as an
+    instance field rather than a parent, since the fields of a parent are local variables while a
+    class is elaborated and the rules would not apply to the axioms on lifts. `DualOp.lean` is the
+    dual opfibration of a split opfibration, which computes; `Transfer.lean` transfers cleavages
+    along equivalences.
+  - `Straightening/`: Proposition 9 of the notes. `DCat` (lax normal functors
+    `LocallyDiscrete A ⥤ᴸ ProfCat`, with lax transformations with representable components as
+    morphisms, on elements via `LaxNormal.lean`) and `Arr` (`Cat^→`, by the codomain) are displayed
+    over `Cat`. `unstraighten` (`(▷ᵈ)*`, through the category `Unstraightening F` over `A`, built
+    without `eqToHom` or `cast`) and `straighten` (fibres `{e // p e = a}`) form a
+    `VertEquivalence DCat Arr`, `straighteningEquiv`. `DCat` is a `SplitFib` by strict pullback,
+    with the splitting laws by `rfl`; `Cat^→` gets a `Fib` instance by transfer, and both functors
+    preserve cartesian morphisms. Only the inverses of the unit and counit transport along
+    equations `p e = a`.
+- `DoubleDisplayed/`: categories doubly displayed over a displayed category `B`, with `Basic`,
+  `Total` (`C.total : Displayed A`), `Cartesian` and `Functor` (`VertFunctor` over `B`).
+  - `D2SFib/`: dependent 2-sided split fibrations over a split opfibration `B` (`Basic`) and their
+    category (`Category`).
+  - `D2SFib/Straightening/`: `straighten` (`Ψ`) and `unstraighten` (`Φ`, the dependent 2-sided
+    Grothendieck construction), with `straighteningEquiv` between functors `∫(Bᵈᵒ) ⥤ Cat` and
+    D2SFibs over `B`. The laws of D2SFibs are rules, so the Grothendieck construction, its `D2SFib`
+    structure and much of the unit and counit hold by `rfl`. This is a rewrite of a development on
+    Lean and Mathlib `v4.30.0-rc2` whose laws were stated with `castHom`, `eqToHom` and `HEq`
+    (commit `4b55ea2` of this repository), at about half its size.
+- `docs/nfib/`: the notes (`main.tex`) referred to in docstrings, and the plan and list of
+  deviations of the original development.
 - `mathlib4/`: Mathlib master, pinned to `v4.35.0-rc2`, used as a path dependency.
 
 ## Building

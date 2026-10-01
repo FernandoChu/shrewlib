@@ -87,7 +87,7 @@ def fiberInclusion (c : C) : F.obj ⟨c⟩ ⥤ Unstraightening F where
   map h := ⟨𝟙 c, h⟩
   map_id _ := rfl
   map_comp {x _ z} h h' := by
-    show Hom.mk (X := ⟨c, x⟩) (Y := ⟨c, z⟩) (𝟙 c) (h ≫ h') = Hom.mk (𝟙 c ≫ 𝟙 c) (mul h h')
+    change Hom.mk (X := ⟨c, x⟩) (Y := ⟨c, z⟩) (𝟙 c) (h ≫ h') = Hom.mk (𝟙 c ≫ 𝟙 c) (mul h h')
     exact congrArg (Hom.mk (X := ⟨c, x⟩) (Y := ⟨c, z⟩) (𝟙 c)) (mul_eq_comp h h').symm
 
 @[simp]
@@ -114,7 +114,7 @@ def unstraightenObj {A : Cat.{u, u}} (F : LaxNormal A) : ArrOb A :=
   ⟨Cat.of (Unstraightening F), Unstraightening.π⟩
 
 /-- `(▷ᵈ)*` on morphisms: the functor induced by a transformation with representable components. -/
-def unstraightenFunctor {A B : Cat.{u, u}} {u : A ⟶ B} {F : LaxNormal A} {G : LaxNormal B}
+def unstraightenMap {A B : Cat.{u, u}} {u : A ⟶ B} {F : LaxNormal A} {G : LaxNormal B}
     (φ : ReprHom u F G) : Unstraightening F ⥤ Unstraightening G where
   obj X := ⟨u.toFunctor.obj X.base, φ.obj X.fiber⟩
   map g := ⟨u.toFunctor.map g.base, φ.map g.fiber⟩
@@ -124,7 +124,7 @@ def unstraightenFunctor {A B : Cat.{u, u}} {u : A ⟶ B} {F : LaxNormal A} {G : 
 /-- **The unstraightening functor `(▷ᵈ)* : DCat → Cat^→` over `Cat`.** -/
 def unstraighten : VertFunctor DCat.{u} Arr.{u} where
   obj F := unstraightenObj F
-  map φ := ⟨unstraightenFunctor φ, rfl⟩
+  map φ := ⟨unstraightenMap φ, rfl⟩
   map_id _ := rfl
   map_comp _ _ := rfl
 

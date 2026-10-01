@@ -18,8 +18,6 @@ We provide:
 * the fiber category `DoubleDisplayed.Fiber C b`, whose laws hold by `rfl`;
 * the double-level `IsOpcartesian` and `IsCartesian` predicates and their universal-property API;
 * vertical functors `DoubleDisplayed.VertFunctor`, whose functoriality is a rewrite rule.
-
-This is milestone **M3** of `PLAN.md`.
 -/
 
 universe v₁ u₁ v₂ u₂ v₃ u₃

@@ -9,8 +9,6 @@ over `a` are dependent pairs `⟨b, c⟩` with `b : B.Ob a` and `c : C.Ob b`, an
 dependent pairs of a `B`-morphism and a `C`-morphism over it. Its laws are componentwise those of
 `B` and `C`, which hold definitionally. Its total category is the "associated category" of the
 chain.
-
-This is part of milestone **M3/M4** of `PLAN.md`.
 -/
 
 universe v₁ u₁ v₂ u₂ v₃ u₃

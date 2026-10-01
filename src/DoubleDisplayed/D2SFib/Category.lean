@@ -6,15 +6,13 @@ import DoubleDisplayed.Functor
 
 We define the morphisms of D2SFibs — vertical functors preserving the chosen pull/push data on the
 nose (`D2SFibHom`) — and bundle D2SFibs into the category `D2SFibCat B`, the displayed adaptation
-of the paper's `D2SFib(A, B)`.
+of the notes' `D2SFib(A, B)`.
 
 As for `D2SFib`, the preservation of chosen pullbacks and pushforwards on objects lives in a
 separate structure `D2SFibHomObj`, and is a rewrite rule, so that the preservation of the chosen
 lifts
 compares morphisms with definitionally equal endpoints. Both are rewrite rules, and so is the
 derived preservation of `pushMap`/`pullMap`.
-
-This is part of milestone **M5** of `PLAN.md`.
 -/
 
 universe v₁ u₁ v₂ u₂ v₃ u₃

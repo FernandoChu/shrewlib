@@ -6,8 +6,8 @@ import Displayed.Fibration.Transfer
 # Straightening–unstraightening for displayed categories
 
 Proposition 9: `(▷ᵈ)* : DCat → Cat^→` is part of an equivalence over `Cat`, in the displayed
-sense (`straighteningEquiv : VertEquivalence DCat Arr`): the unit and counit are vertical, i.e. their
-components lie over identities of `Cat`. Consequently:
+sense (`straighteningEquiv : VertEquivalence DCat Arr`): the unit and counit are vertical, i.e.
+their components lie over identities of `Cat`. Consequently:
 
 * the equivalence of total categories `DCat.Total ≌ Arr.Total` commutes with the projections to
   `Cat` (`straighteningEquiv_total`);

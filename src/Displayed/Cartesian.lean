@@ -6,8 +6,6 @@ import Displayed.Basic
 This file defines the (strong) opcartesian and cartesian properties of a displayed morphism and
 their universal-property API: the descent operation, its factorization equation, uniqueness and a
 hom-extensionality principle.
-
-This is part of milestone **M2** of `PLAN.md`.
 -/
 
 universe v₁ u₁ v₂ u₂

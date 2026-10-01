@@ -30,8 +30,6 @@ unfolding it would loop.
 
 `Fib.lean` is the exact dual, with chosen cartesian lifts `clift f y : pull f y ⟶[f] y`. Its
 sections mirror the sections of this file.
-
-This is part of milestone **M2** of `PLAN.md`.
 -/
 
 universe v₁ u₁ v₂ u₂

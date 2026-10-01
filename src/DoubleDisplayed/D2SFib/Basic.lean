@@ -6,13 +6,13 @@ import Displayed.Fibration.DualOp
 # Dependent 2-sided split fibrations (`D2SFib`)
 
 `D2SFib C` is a data-carrying class on a doubly displayed category `C : DoubleDisplayed B`
-(with `B` a split opfibration over `A`). It packages, following Def. `def:d2sfib` of the paper
+(with `B` a split opfibration over `A`). It packages, following Def. `def:d2sfib` of the notes
 adapted to the displayed setting:
 
 1. a *local split fibration*: chosen cartesian lifts `pull`/`pullLift` of the vertical morphisms of
    `B`, cartesian among morphisms of the same fiber;
 2.–3. a *split opfibration over `A`*: chosen opcartesian lifts `push`/`pushLift`, typed over the
-   chosen lifts `B.olift` of `B` (so the paper's axiom (3) is absorbed into the type of `pushLift`);
+   chosen lifts `B.olift` of `B` (so the notes' axiom (3) is absorbed into the type of `pushLift`);
 4. a strict *push/pull interchange* `push_pull`/`pushLift_pullLift`.
 
 The laws on objects (`pull_id`, `pull_comp`, `push_id`, `push_comp`, `push_pull`) are rewrite rules.
@@ -26,7 +26,7 @@ We derive the fiberwise actions `pushMap`/`pullMap`, whose functoriality and int
 nose (again as rewrite rules), and the two-sided hom equivalence `d2sHomEquiv`, together with its
 compatibility with composition, identities and the chosen lifts.
 
-This is part of milestone **M5** of `PLAN.md`.
+References to definitions and lemmas of the notes are to `docs/nfib/main.tex`.
 -/
 
 universe v₁ u₁ v₂ u₂ v₃ u₃
@@ -273,7 +273,7 @@ section Interchange
 
 variable {a a' : A}
 
-/-- The push/pull interchange on morphisms (the paper's `d2sfib:lemma`). -/
+/-- The push/pull interchange on morphisms (the notes' `d2sfib:lemma`). -/
 theorem pushMap_pullMap (α : a ⟶ a') {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') {c c' : C.Fiber b'}
     (f : c ⟶ c') : pushMap α (pullMap β f) = pullMap (B.pushMap α β) (pushMap α f) := by
   refine pull_hom_ext (β := B.pushMap α β) (c := push α c') ?_
@@ -363,7 +363,7 @@ section HomEquiv
 
 variable {a a' a'' : A}
 
-/-- **The two-sided hom equivalence** (the paper's `hom(α_! c, β^* c') ≅ hom(c, c')`): morphisms of
+/-- **The two-sided hom equivalence** (the notes' `hom(α_! c, β^* c') ≅ hom(c, c')`): morphisms of
 `C` over `g : B.Hom α b b'` correspond to *vertical* morphisms
 `push α c ⟶ pull (B.opcartesianFactor g) c'` in the fiber over `B.push α b`. Its inverse composes
 with the two chosen lifts. -/
@@ -461,7 +461,7 @@ theorem totC_pushLift_pullLift_assoc (α : a ⟶ a') {b b' : B.Ob a} (β : b ⟶
       = totC β (pullLift β c) ≫ (totC (B.olift α b') (pushLift α c) ≫ h) := by
   rw [← Category.assoc, totC_pushLift_pullLift, Category.assoc]
 
-/-- **`d2sHomEquiv` is compatible with composition** (the paper's pasted-square diagram): the
+/-- **`d2sHomEquiv` is compatible with composition** (the notes' pasted-square diagram): the
 vertical morphism classifying `θ ≫ᵈᵈ θ'` is the evident composite of those classifying `θ` and
 `θ'`. -/
 theorem d2sHomEquiv_comp (α : a ⟶ a') (α' : a' ⟶ a'') {b : B.Ob a} {b' : B.Ob a'}

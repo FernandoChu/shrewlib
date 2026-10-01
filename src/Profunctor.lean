@@ -231,7 +231,8 @@ def associator (P : Profunctor A B) (Q : Profunctor B C) (R : Profunctor C D) :
       induction x using CompObj.ind with | h _ x _ => induction x using CompObj.ind; rfl
     app_rmap := by
       intros; rename_i x
-      induction x using CompObj.ind with | h _ x _ => induction x using CompObj.ind; rfl } : Hom _ _)
+      induction x using CompObj.ind with
+      | h _ x _ => induction x using CompObj.ind; rfl } : Hom _ _)
   inv := ({
     app := assocInv P Q R
     app_lmap := by
@@ -239,7 +240,8 @@ def associator (P : Profunctor A B) (Q : Profunctor B C) (R : Profunctor C D) :
       induction x using CompObj.ind with | h _ _ y => induction y using CompObj.ind; rfl
     app_rmap := by
       intros; rename_i x
-      induction x using CompObj.ind with | h _ _ y => induction y using CompObj.ind; rfl } : Hom _ _)
+      induction x using CompObj.ind with
+      | h _ _ y => induction y using CompObj.ind; rfl } : Hom _ _)
   hom_inv_id := by
     hom_ext x
     induction x using CompObj.ind with | h _ x _ => induction x using CompObj.ind; rfl
@@ -302,7 +304,9 @@ instance bicategory : Bicategory ProfCat where
     intros; hom_ext x; induction x using CompObj.ind; rfl
   pentagon := by
     intros; hom_ext x
-    induction x using CompObj.ind with | h _ x _ => induction x using CompObj.ind with | h _ x _ => induction x using CompObj.ind; rfl
+    induction x using CompObj.ind with
+    | h _ x _ => induction x using CompObj.ind with
+      | h _ x _ => induction x using CompObj.ind; rfl
   triangle := by
     intros _ _ _ f g; hom_ext x
     induction x using CompObj.ind with

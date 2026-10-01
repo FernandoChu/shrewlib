@@ -23,7 +23,8 @@ namespace Displayed.Straightening
 abbrev LaxNormal (A : Cat.{u, u}) : Type (u + 1) :=
   StrictlyUnitaryLaxFunctor (LocallyDiscrete A) ProfCat.{u}
 
-variable {C : Type u₁} [Category.{v₁} C] {F : StrictlyUnitaryLaxFunctor (LocallyDiscrete C) ProfCat.{u}}
+variable {C : Type u₁} [Category.{v₁} C]
+  {F : StrictlyUnitaryLaxFunctor (LocallyDiscrete C) ProfCat.{u}}
 
 /-- The profunctor `F f : F c ⇸ F c'`. -/
 abbrev prof (F : StrictlyUnitaryLaxFunctor (LocallyDiscrete C) ProfCat.{u}) {c c' : C}

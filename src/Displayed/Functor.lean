@@ -6,9 +6,9 @@ import Mathlib.CategoryTheory.Equivalence
 # Displayed functors and equivalences over the base
 
 Categories over `A` and functors over `A` are displayed categories over `A` and displayed functors
-over the identity (`VertFunctor`). An *equivalence over `A`* (`VertEquivalence`) is a pair of displayed
-functors with vertical natural isomorphisms `𝟭 ≅ F ⋙ G` and `G ⋙ F ≅ 𝟭`: their components lie over
-identities. We show:
+over the identity (`VertFunctor`). An *equivalence over `A`* (`VertEquivalence`) is a pair of
+displayed functors with vertical natural isomorphisms (`VertNatIso`) `𝟭 ≅ F ⋙ G` and `G ⋙ F ≅ 𝟭`:
+their components lie over identities. We show:
 
 * a displayed equivalence is fully faithful on displayed hom-types over each base morphism
   (`VertEquivalence.map_injective`, `VertEquivalence.map_surjective`);
@@ -111,7 +111,8 @@ end VertNatIso
 
 /-- An equivalence of categories over `A`: displayed functors in both directions, with vertical
 natural isomorphisms `𝟭 ≅ F ⋙ G` and `G ⋙ F ≅ 𝟭`. -/
-structure VertEquivalence (D : Displayed.{v₁, u₁, v₂, u₂} A) (E : Displayed.{v₁, u₁, v₃, u₃} A) where
+structure VertEquivalence (D : Displayed.{v₁, u₁, v₂, u₂} A) (E : Displayed.{v₁, u₁, v₃, u₃} A) :
+    Type _ where
   /-- The functor. -/
   functor : VertFunctor D E
   /-- The inverse functor. -/
