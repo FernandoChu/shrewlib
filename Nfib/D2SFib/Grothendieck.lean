@@ -10,8 +10,8 @@ Milestone **M8** of `PLAN.md`. Given `F : ∫(Bᵈᵒ) ⥤ Cat`, we build a doub
 assemble the whole thing into a functor `D2SGCFunctor : (B.dualOp.Total ⥤ Cat) ⥤ D2SFibCat B`.
 
 The objects of `D2SGC F` over `b : B.Ob a` are the objects of `F.obj ⟨a, b⟩`, and a morphism over
-`g : B.Hom α b b'` from `c` to `c'` is a morphism `hobj α c ⟶ vobj (B.factor g) c'` of
-`F.obj ⟨a', B.transp α b⟩`, exactly the paper's `hom_{C(a', B(α)b)}(C(α,id)c, C(id,β)c')`. Here
+`g : B.Hom α b b'` from `c` to `c'` is a morphism `hobj α c ⟶ vobj (B.opcartesianFactor g) c'` of
+`F.obj ⟨a', B.push α b⟩`, exactly the paper's `hom_{C(a', B(α)b)}(C(α,id)c, C(id,β)c')`. Here
 `hobj`/`hmor` and `vobj`/`vmor` are the actions of `F` on objects and morphisms along the chosen
 horizontal and vertical morphisms of `∫(Bᵈᵒ)`.
 
@@ -21,7 +21,7 @@ are rewrite rules. They have their own heads `hobj`, `hmor`, `vobj` and `vmor`, 
 `F.map (u ≫ v) = F.map u ≫ F.map v` for arbitrary morphisms of `∫(Bᵈᵒ)` would not do: these
 compute, so `F.map u` and `F.map (dualHoriz _ _ ≫ dualVert _)` would stop being definitionally
 equal.) The naturality of a transformation `κ` along these morphisms is a rule too. As a result,
-composition in `D2SGC F` is `hmor α' θ ≫ vmor (B.transpMap α' (B.factor g)) θ'`, with no `eqToHom`,
+composition in `D2SGC F` is `hmor α' θ ≫ vmor (B.pushMap α' (B.opcartesianFactor g)) θ'`, with no `eqToHom`,
 and its laws, its `D2SFib` structure and the functoriality of `Φ` hold by `rfl`.
 -/
 
@@ -49,7 +49,7 @@ variable {a a' a'' : A}
 
 /-- `F` along the chosen horizontal morphism `dualHoriz α b`. -/
 def hmap (α : a ⟶ a') (b : B.Ob a) :
-    F.obj (B.dualOp.tot b) ⥤ F.obj (B.dualOp.tot (B.transp α b)) :=
+    F.obj (B.dualOp.tot b) ⥤ F.obj (B.dualOp.tot (B.push α b)) :=
   (F.map (dualHoriz α b)).toFunctor
 
 /-- `F` along the chosen vertical morphism `dualVert β`. -/
@@ -58,7 +58,7 @@ def vmap {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') : F.obj (B.dualOp.tot b') ⥤ F
 
 /-- `hmap` on objects. -/
 def hobj (α : a ⟶ a') (b : B.Ob a) (c : F.obj (B.dualOp.tot b)) :
-    F.obj (B.dualOp.tot (B.transp α b)) :=
+    F.obj (B.dualOp.tot (B.push α b)) :=
   (hmap F α b).obj c
 
 /-- `hmap` on morphisms. -/
@@ -81,8 +81,8 @@ theorem hmap_id (b : B.Ob a) : hmap F (𝟙 a) b = 𝟭 _ := by
   rw [F.map_id]; rfl
 
 theorem hmap_comp (α : a ⟶ a') (α' : a' ⟶ a'') (b : B.Ob a) :
-    hmap F (α ≫ α') b = hmap F α b ⋙ hmap F α' (B.transp α b) := by
-  change (F.map (dualHoriz α b ≫ dualHoriz α' (B.transp α b))).toFunctor = _
+    hmap F (α ≫ α') b = hmap F α b ⋙ hmap F α' (B.push α b) := by
+  change (F.map (dualHoriz α b ≫ dualHoriz α' (B.push α b))).toFunctor = _
   rw [F.map_comp]; rfl
 
 theorem vmap_id (b : B.Ob a) : vmap F (B.id b) = 𝟭 _ := by
@@ -95,9 +95,9 @@ theorem vmap_comp {b b' b'' : B.Ob a} (β : b ⟶[𝟙 a] b') (γ : b' ⟶[𝟙 
   rw [F.map_comp]; rfl
 
 theorem vmap_hmap (α : a ⟶ a') {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') :
-    vmap F β ⋙ hmap F α b = hmap F α b' ⋙ vmap F (B.transpMap α β) :=
+    vmap F β ⋙ hmap F α b = hmap F α b' ⋙ vmap F (B.pushMap α β) :=
   (congrArg Cat.Hom.toFunctor (F.map_comp (dualVert β) (dualHoriz α b))).symm.trans
-    (congrArg Cat.Hom.toFunctor (F.map_comp (dualHoriz α b') (dualVert (B.transpMap α β))))
+    (congrArg Cat.Hom.toFunctor (F.map_comp (dualHoriz α b') (dualVert (B.pushMap α β))))
 
 omit [SplitOpfib B] in
 /-- Equal functors act heterogeneously equally on morphisms. -/
@@ -115,7 +115,7 @@ theorem hmor_idBase_heq (b : B.Ob a) {c c' : F.obj (B.dualOp.tot b)} (θ : c ⟶
 
 theorem hmor_compBase_heq (α : a ⟶ a') (α' : a' ⟶ a'') (b : B.Ob a)
     {c c' : F.obj (B.dualOp.tot b)} (θ : c ⟶ c') :
-    hmor F (α ≫ α') b θ ≍ hmor F α' (B.transp α b) (hmor F α b θ) :=
+    hmor F (α ≫ α') b θ ≍ hmor F α' (B.push α b) (hmor F α b θ) :=
   Functor.map_heq_of_eq (hmap_comp F α α' b) θ
 
 theorem vmor_idBase_heq (b : B.Ob a) {c c' : F.obj (B.dualOp.tot b)} (θ : c ⟶ c') :
@@ -128,7 +128,7 @@ theorem vmor_compBase_heq {b b' b'' : B.Ob a} (β : b ⟶[𝟙 a] b') (γ : b' �
 
 theorem hmor_vmor_heq (α : a ⟶ a') {b b' : B.Ob a} (β : b ⟶[𝟙 a] b')
     {c c' : F.obj (B.dualOp.tot b')} (θ : c ⟶ c') :
-    hmor F α b (vmor F β θ) ≍ vmor F (B.transpMap α β) (hmor F α b' θ) :=
+    hmor F α b (vmor F β θ) ≍ vmor F (B.pushMap α β) (hmor F α b' θ) :=
   Functor.map_heq_of_eq (vmap_hmap F α β) θ
 
 @[rewrite_rule]
@@ -137,7 +137,7 @@ theorem hobj_id (b : B.Ob a) (c : F.obj (B.dualOp.tot b)) : hobj F (𝟙 a) b c 
 
 @[rewrite_rule]
 theorem hobj_comp (α : a ⟶ a') (α' : a' ⟶ a'') (b : B.Ob a) (c : F.obj (B.dualOp.tot b)) :
-    hobj F (α ≫ α') b c = hobj F α' (B.transp α b) (hobj F α b c) :=
+    hobj F (α ≫ α') b c = hobj F α' (B.push α b) (hobj F α b c) :=
   Functor.congr_obj (hmap_comp F α α' b) c
 
 @[rewrite_rule]
@@ -151,7 +151,7 @@ theorem vobj_comp {b b' b'' : B.Ob a} (β : b ⟶[𝟙 a] b') (γ : b' ⟶[𝟙 
 
 @[rewrite_rule]
 theorem hobj_vobj (α : a ⟶ a') {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') (c : F.obj (B.dualOp.tot b')) :
-    hobj F α b (vobj F β c) = vobj F (B.transpMap α β) (hobj F α b' c) :=
+    hobj F α b (vobj F β c) = vobj F (B.pushMap α β) (hobj F α b' c) :=
   Functor.congr_obj (vmap_hmap F α β) c
 
 @[rewrite_rule]
@@ -179,7 +179,7 @@ theorem hmor_idBase (b : B.Ob a) {c c' : F.obj (B.dualOp.tot b)} (θ : c ⟶ c')
 
 @[rewrite_rule]
 theorem hmor_compBase (α : a ⟶ a') (α' : a' ⟶ a'') (b : B.Ob a) {c c' : F.obj (B.dualOp.tot b)}
-    (θ : c ⟶ c') : hmor F (α ≫ α') b θ = hmor F α' (B.transp α b) (hmor F α b θ) :=
+    (θ : c ⟶ c') : hmor F (α ≫ α') b θ = hmor F α' (B.push α b) (hmor F α b θ) :=
   eq_of_heq (hmor_compBase_heq F α α' b θ)
 
 @[rewrite_rule]
@@ -196,7 +196,7 @@ theorem vmor_compBase {b b' b'' : B.Ob a} (β : b ⟶[𝟙 a] b') (γ : b' ⟶[�
 @[rewrite_rule]
 theorem hmor_vmor (α : a ⟶ a') {b b' : B.Ob a} (β : b ⟶[𝟙 a] b')
     {c c' : F.obj (B.dualOp.tot b')} (θ : c ⟶ c') :
-    hmor F α b (vmor F β θ) = vmor F (B.transpMap α β) (hmor F α b' θ) :=
+    hmor F α b (vmor F β θ) = vmor F (B.pushMap α β) (hmor F α b' θ) :=
   eq_of_heq (hmor_vmor_heq F α β θ)
 
 /-- `F` on an arbitrary morphism of `∫(Bᵈᵒ)`, which factors as a chosen horizontal morphism
@@ -221,7 +221,7 @@ abbrev Ob (b : B.Ob a) : Type u₃ := F.obj (B.dualOp.tot b)
 `hom_{C(a', B(α)b)}(C(α,id)c, C(id,β)c')`. -/
 abbrev Hom {α : a ⟶ a'} {b : B.Ob a} {b' : B.Ob a'} (g : b ⟶[α] b')
     (c : Ob F b) (c' : Ob F b') : Type v₃ :=
-  hobj F α b c ⟶ vobj F (B.factor g) c'
+  hobj F α b c ⟶ vobj F (B.opcartesianFactor g) c'
 
 /-- The identity of `D2SGC F`. -/
 def id' {b : B.Ob a} (c : Ob F b) : Hom F (B.id b) c c := 𝟙 c
@@ -230,7 +230,7 @@ def id' {b : B.Ob a} (c : Ob F b) : Hom F (B.id b) c c := 𝟙 c
 def comp' {α : a ⟶ a'} {α' : a' ⟶ a''} {b : B.Ob a} {b' : B.Ob a'} {b'' : B.Ob a''}
     {g : b ⟶[α] b'} {g' : b' ⟶[α'] b''} {c : Ob F b} {c' : Ob F b'} {c'' : Ob F b''}
     (θ : Hom F g c c') (θ' : Hom F g' c' c'') : Hom F (g ≫ᵈ g') c c'' :=
-  hmor F α' (B.transp α b) θ ≫ vmor F (B.transpMap α' (B.factor g)) θ'
+  hmor F α' (B.push α b) θ ≫ vmor F (B.pushMap α' (B.opcartesianFactor g)) θ'
 
 theorem id_comp'' {α : a ⟶ a'} {b : B.Ob a} {b' : B.Ob a'} {g : b ⟶[α] b'} {c : Ob F b}
     {c' : Ob F b'} (θ : Hom F g c c') : comp' F (id' F c) θ = θ := rfl

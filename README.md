@@ -74,7 +74,7 @@ as trustworthy as the axiom.
 - A rule on a definition `f` makes `f xs` stop being recognizably equal to its unfolding when the
   rule applies. Facts about the unfolding are best proved before the rule is declared, for example
   as `HEq`s that `eq_of_heq` turns into equations afterwards.
-- A definition that the rules rewrite back into itself when unfolded, such as `transpMap` in `Nfib/`,
+- A definition that the rules rewrite back into itself when unfolded, such as `pushMap` in `Nfib/`,
   must be an `irreducible_def`, or unfolding it loops.
 - Nested subpatterns should use the most unfolded form of a term, since targets are unfolded
   towards the pattern and not the other way; heads need a rule for each form.
@@ -107,6 +107,12 @@ as trustworthy as the axiom.
   opfibration computes, and the Grothendieck construction, its `D2SFib` structure and much of the
   unit and counit hold by `rfl`. It is about half the size of the original. The plan, the list of
   deviations from it (for the original) and the paper are in `docs/nfib/`.
+- `Nfib/Displayed/Opfib.lean` and `Nfib/Displayed/Fib.lean`: cloven (op)fibrations as mirror
+  images, with chosen `push f x`/`olift` and `pull f y`/`clift`, the (op)cartesian factorization,
+  the transport `pushMap`/`pullMap` and its functors, and split versions. `PreSplitOpfib`
+  (`PreSplitFib`) adds the splitting axioms on objects, which are rules; `SplitOpfib` (`SplitFib`)
+  holds it as an instance field rather than a parent, since the fields of a parent are local
+  variables while a class is elaborated and the rules would not apply to the axioms on lifts.
 - `Nfib/Displayed/Fibration.lean`: fibrations in the displayed style (every base morphism has a
   cartesian lift), displayed functors and equivalences over a base (vertical unit and counit). A
   displayed equivalence is fully faithful on displayed hom-types, preserves cartesian morphisms,

@@ -110,7 +110,7 @@ attribute [rewrite_rule] map_pushMap map_pullMap
 
 /-- On fibers, `Φ` commutes with the pushforward functor on the nose. -/
 theorem fiber_pushFunctor {a a' : A} (α : a ⟶ a') (b : B.Ob a) :
-    pushFunctor (C := C) α b ⋙ Φ.toVertFunctor.fiber (B.transp α b)
+    pushFunctor (C := C) α b ⋙ Φ.toVertFunctor.fiber (B.push α b)
       = Φ.toVertFunctor.fiber b ⋙ pushFunctor (C := C') α b := rfl
 
 /-- On fibers, `Φ` commutes with the pullback functor on the nose. -/
@@ -120,7 +120,7 @@ theorem fiber_pullFunctor {a : A} {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') :
 
 /-- `d2sHomEquiv` is natural in the D2SFib: its inverse commutes with `Φ`. -/
 theorem map_d2sHomEquiv_symm {a a' : A} {α : a ⟶ a'} {b : B.Ob a} {b' : B.Ob a'}
-    {g : b ⟶[α] b'} {c : C.Ob b} {c' : C.Ob b'} (f : push α c ⟶ pull (B.factor g) c') :
+    {g : b ⟶[α] b'} {c : C.Ob b} {c' : C.Ob b'} (f : push α c ⟶ pull (B.opcartesianFactor g) c') :
     Φ.toObj.map ((d2sHomEquiv α g c c').symm f)
       = (d2sHomEquiv α g (Φ.toObj.obj c) (Φ.toObj.obj c')).symm (Φ.toObj.map f) := rfl
 

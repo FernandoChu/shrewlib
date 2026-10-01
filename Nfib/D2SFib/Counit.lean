@@ -8,7 +8,7 @@ import Mathlib.Tactic.IrreducibleDef
 Milestone **M9** of `PLAN.md`, following the paper's argument: the D2S Grothendieck construction of
 `Ψ C` is isomorphic to `C`. Objects agree definitionally, and so do hom-types: a morphism of
 `D2SGC (Ψ C)` over `g : B.Hom α b b'` is, by the rewrite rules, a vertical morphism
-`push α c ⟶ pull (B.factor g) c'` of `C`. So the counit acts on morphisms by `d2sHomEquiv⁻¹`, its
+`push α c ⟶ pull (B.opcartesianFactor g) c'` of `C`. So the counit acts on morphisms by `d2sHomEquiv⁻¹`, its
 functoriality is `d2sHomEquiv_comp`, and it preserves the chosen lifts by `rfl`.
 -/
 
@@ -32,7 +32,7 @@ variable {a a' a'' : A} {α : a ⟶ a'} {α' : a' ⟶ a''} {b : B.Ob a} {b' : B.
 
 /-- The hom-types of `D2SGC (Ψ C)` are the targets of `d2sHomEquiv`. -/
 theorem hom_eq (g : b ⟶[α] b') (c : C.Ob b) (c' : C.Ob b') :
-    (D2SGC (toFunctorObj C)).Hom g c c' = (push α c ⟶ pull (B.factor g) c') := rfl
+    (D2SGC (toFunctorObj C)).Hom g c c' = (push α c ⟶ pull (B.opcartesianFactor g) c') := rfl
 
 /-- The counit on morphisms. It is irreducible: its value composes with the chosen lifts, and rules
 such as `VertFunctor.map_comp` would otherwise see through it. -/
