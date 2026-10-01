@@ -9,7 +9,8 @@ components lie over identities of `Cat`. Consequently:
 
 * the equivalence of total categories `DCat.Total ≌ Arr.Total` commutes with the projections to
   `Cat` (`straighteningEquiv_total`);
-* both `DCat` and `Cat^→` are fibrations over `Cat` (`isFibration_DCat`, `isFibration_Arr`);
+* both `DCat` and `Cat^→` are fibrations over `Cat`: `DCat` is a `SplitFib` by pullback, and
+  `Cat^→` gets a `Fib` instance from it by transfer along the equivalence;
 * both functors preserve cartesian morphisms (`isCartesian_unstraighten_map`,
   `isCartesian_straighten_map`).
 
@@ -40,12 +41,12 @@ def unitHom : ReprHom (𝟙 A) F (straightenObj (unstraightenObj F)) where
   map_mul _ _ := rfl
 
 /-- The inverse of the unit on objects: transport along `X.base = a`. -/
-def unitInvObj : ∀ {a : A}, Fib (unstraightenObj F) a → F.obj ⟨a⟩
+def unitInvObj : ∀ {a : A}, Fibre (unstraightenObj F) a → F.obj ⟨a⟩
   | _, ⟨⟨_, x⟩, rfl⟩ => x
 
 /-- The inverse of the unit on morphisms. -/
-def unitInvMap : ∀ {a a' : A} {f : a ⟶ a'} {x : Fib (unstraightenObj F) a}
-    {y : Fib (unstraightenObj F) a'}, FibHom (unstraightenObj F) f x y →
+def unitInvMap : ∀ {a a' : A} {f : a ⟶ a'} {x : Fibre (unstraightenObj F) a}
+    {y : Fibre (unstraightenObj F) a'}, FibreHom (unstraightenObj F) f x y →
       (prof F f).obj (unitInvObj F x) (unitInvObj F y)
   | _, _, f, ⟨⟨_, _⟩, rfl⟩, ⟨⟨_, _⟩, rfl⟩, ⟨⟨g, s⟩, hg⟩ => (show g = f from hg) ▸ s
 
@@ -115,7 +116,7 @@ def counitInvFunctor : X.dom ⥤ Unstraightening (straightenObj X) where
 
 /-- The counit at `p`. -/
 def counitHom : Arr.Hom (𝟙 A) (unstraightenObj (straightenObj X)) X :=
-  ⟨counitFunctor X, Functor.ext (fun Y => Y.fiber.2) (fun _ _ g => FibHom.proj_map g.fiber)⟩
+  ⟨counitFunctor X, Functor.ext (fun Y => Y.fiber.2) (fun _ _ g => FibreHom.proj_map g.fiber)⟩
 
 /-- The inverse of the counit at `p`. -/
 def counitInv : Arr.Hom (𝟙 A) X (unstraightenObj (straightenObj X)) :=
@@ -168,9 +169,10 @@ theorem straighteningEquivTotal_functor_comp_π :
     straighteningEquivTotal.{u}.functor ⋙ Arr.π = DCat.π :=
   rfl
 
-/-- **`Cat^→` is a fibration over `Cat`**, transferred from `DCat` along the equivalence. -/
-theorem isFibration_Arr : IsFibration Arr.{u} :=
-  straighteningEquiv.isFibration isFibration_DCat
+/-- **`Cat^→` is a fibration over `Cat`**, with the cleavage transferred from `DCat` along the
+equivalence. -/
+instance fibArr : Fib Arr.{u} :=
+  straighteningEquiv.fib
 
 /-- **`(▷ᵈ)*` preserves cartesian morphisms.** -/
 theorem isCartesian_unstraighten_map {A B : Cat.{u, u}} {u : A ⟶ B} {F : LaxNormal A}

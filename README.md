@@ -113,17 +113,19 @@ as trustworthy as the axiom.
   (`PreSplitFib`) adds the splitting axioms on objects, which are rules; `SplitOpfib` (`SplitFib`)
   holds it as an instance field rather than a parent, since the fields of a parent are local
   variables while a class is elaborated and the rules would not apply to the axioms on lifts.
-- `Nfib/Displayed/Fibration.lean`: fibrations in the displayed style (every base morphism has a
-  cartesian lift), displayed functors and equivalences over a base (vertical unit and counit). A
-  displayed equivalence is fully faithful on displayed hom-types, preserves cartesian morphisms,
-  transfers the fibration property, and induces an equivalence of total categories over the base.
+- `Nfib/Displayed/Functor.lean`: displayed functors and equivalences over a base (vertical unit and
+  counit). A displayed equivalence is fully faithful on displayed hom-types, preserves cartesian
+  and opcartesian morphisms, and induces an equivalence of total categories over the base.
+  `Nfib/Displayed/Transfer.lean` transfers `Fib` and `Opfib` cleavages along it. The two files
+  are kept apart from `Opfib.lean`/`Fib.lean`: both sides have rules keyed on displayed
+  composition, and trying the other side's rules on every composite makes the matcher time out.
 - `Straightening/`: straightening–unstraightening for displayed categories (Proposition 9 of the
   notes). `DCat` is displayed over `Cat`: lax normal functors `LocallyDiscrete A ⥤ᴸ ProfCat`, with
   lax transformations with representable components as morphisms, stated on elements. `Arr` is
   `Cat^→` displayed over `Cat` by the codomain. `unstraighten` (`(▷ᵈ)*`, built on
   `Unstraightening.lean`) and `straighten` (fibres `{e // p e = a}`) form a `DEquivalence DCat Arr`
-  (`straighteningEquiv`). `DCat` is a fibration by strict pullback (`isFibration_DCat`), `Cat^→` is
-  one by transfer (`isFibration_Arr`), and both functors preserve cartesian morphisms. The
+  (`straighteningEquiv`). `DCat` is a `SplitFib` by strict pullback, with the splitting laws by
+  `rfl`; `Cat^→` gets a `Fib` instance by transfer, and both functors preserve cartesian morphisms. The
   functoriality of both functors and the naturality of the unit and counit hold by `rfl`. Only the
   inverses of the unit and counit transport along equations `p e = a`.
 - `mathlib4/`: Mathlib master, pinned to `v4.35.0-rc2`, used as a path dependency.

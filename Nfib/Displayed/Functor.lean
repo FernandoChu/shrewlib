@@ -2,11 +2,7 @@ import Nfib.Displayed.Cartesian
 import Mathlib.CategoryTheory.Equivalence
 
 /-!
-# Fibrations and displayed equivalences
-
-A displayed category `D` over `A` is a *fibration* if every base morphism `f : a ⟶ a'` has a
-cartesian lift at every object over `a'` (`IsFibration`). Cartesian morphisms are the strong ones of
-`Nfib.Displayed.Cartesian`.
+# Displayed functors and equivalences over the base
 
 Categories over `A` and functors over `A` are displayed categories over `A` and displayed functors
 over the identity (`DFunctor`). An *equivalence over `A`* (`DEquivalence`) is a pair of displayed
@@ -15,12 +11,18 @@ identities. We show:
 
 * a displayed equivalence is fully faithful on displayed hom-types over each base morphism
   (`DEquivalence.map_injective`, `DEquivalence.map_surjective`);
-* it preserves cartesian morphisms (`DEquivalence.isCartesian_map`);
-* the fibration property transfers along it (`DEquivalence.isFibration`);
+* it preserves cartesian and opcartesian morphisms (`DEquivalence.isCartesian_map`,
+  `DEquivalence.isOpcartesian_map`);
 * it induces an equivalence of the total categories commuting with the projections to `A`
   (`DEquivalence.total`).
 
-The laws of displayed functors are rewrite rules.
+Cleavages transfer along displayed equivalences in `Transfer.lean`. This file and `Opfib.lean`,
+`Fib.lean` do not import each other: the cancellation rules of vertical natural isomorphisms here
+and the interchange rules there are keyed on displayed composition, and trying them on every
+composite of the other files is too slow.
+
+The laws of displayed functors, and the cancellation of vertical natural isomorphisms with their
+inverses, are rewrite rules.
 -/
 
 universe v₁ u₁ v₂ u₂ v₃ u₃
@@ -34,11 +36,6 @@ namespace Displayed
 open scoped Displayed
 
 variable {A : Type u₁} [Category.{v₁} A]
-
-/-- A displayed category is a *fibration* if every base morphism has a cartesian lift at every
-object over its codomain. -/
-def IsFibration (D : Displayed.{v₁, u₁, v₂, u₂} A) : Prop :=
-  ∀ ⦃a a' : A⦄ (f : a ⟶ a') (y : D.Ob a'), ∃ (x : D.Ob a) (φ : x ⟶[f] y), IsCartesian φ
 
 section DFunctor
 
@@ -113,16 +110,6 @@ def symm : VNatIso G F where
 
 end VNatIso
 
-/-- Postcomposing a cartesian morphism with a vertical isomorphism gives a cartesian morphism. -/
-theorem IsCartesian.comp_iso {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y y' : D.Ob a'}
-    {φ : x ⟶[f] y} (H : IsCartesian φ) (ι : y ⟶[𝟙 a'] y') (ι' : y' ⟶[𝟙 a'] y)
-    (h : ι' ≫ᵈ ι = 𝟙ᵈ y') (h' : ι ≫ᵈ ι' = 𝟙ᵈ y) : IsCartesian (φ ≫ᵈ ι) := by
-  intro a₀ g z χ
-  refine ⟨IsCartesian.lift H g (χ ≫ᵈ ι' :), ?_, fun ψ hψ => IsCartesian.lift_uniq H ψ ?_⟩
-  · exact ((congrArg (· ≫ᵈ ι) (IsCartesian.lift_fac H g (χ ≫ᵈ ι' :))).trans
-      (congrArg (χ ≫ᵈ ·) h) :)
-  · exact ((congrArg (fun t => ψ ≫ᵈ (φ ≫ᵈ t)) h').symm.trans (congrArg (· ≫ᵈ ι') hψ) :)
-
 /-- An equivalence of categories over `A`: displayed functors in both directions, with vertical
 natural isomorphisms `𝟭 ≅ F ⋙ G` and `G ⋙ F ≅ 𝟭`. -/
 structure DEquivalence (D : Displayed.{v₁, u₁, v₂, u₂} A) (E : Displayed.{v₁, u₁, v₃, u₃} A) where
@@ -179,13 +166,20 @@ theorem isCartesian_map {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ
     have h₂ : ψ' = IsCartesian.lift H g χ' := IsCartesian.lift_uniq H ψ' h₁
     exact (congrArg (ε.inv z ≫ᵈ ·) (hψ'.symm.trans (congrArg e.functor.map h₂)) :)
 
-/-- **The fibration property transfers along a displayed equivalence.** -/
-theorem isFibration (e : DEquivalence D E) (hD : IsFibration D) : IsFibration E := by
-  intro a a' f y
-  obtain ⟨x, φ, H⟩ := hD f (e.inverse.obj y)
-  exact ⟨e.functor.obj x, e.functor.map φ ≫ᵈ e.counitIso.app y,
-    IsCartesian.comp_iso (e.isCartesian_map H) _ (e.counitIso.inv y) (e.counitIso.inv_app y)
-      (e.counitIso.app_inv y)⟩
+/-- **A displayed equivalence preserves opcartesian morphisms.** -/
+theorem isOpcartesian_map {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f] y}
+    (H : IsOpcartesian φ) : IsOpcartesian (e.functor.map φ) := by
+  intro a'' g z χ
+  let ε := e.counitIso
+  obtain ⟨χ', hχ'⟩ := e.map_surjective (χ ≫ᵈ ε.inv z :)
+  refine ⟨(e.functor.map (IsOpcartesian.desc H g χ') ≫ᵈ ε.app z :), ?_, fun ψ hψ => ?_⟩
+  · exact ((congrArg (fun t => e.functor.map t ≫ᵈ ε.app z) (IsOpcartesian.desc_fac H g χ')).trans
+      (congrArg (· ≫ᵈ ε.app z) hχ') :)
+  · obtain ⟨ψ', hψ'⟩ := e.map_surjective (ψ ≫ᵈ ε.inv z :)
+    have h₁ : φ ≫ᵈ ψ' = χ' := e.map_injective
+      ((congrArg (e.functor.map φ ≫ᵈ ·) hψ').trans ((congrArg (· ≫ᵈ ε.inv z) hψ).trans hχ'.symm) :)
+    have h₂ : ψ' = IsOpcartesian.desc H g χ' := IsOpcartesian.desc_uniq H ψ' h₁
+    exact (congrArg (· ≫ᵈ ε.app z) (hψ'.symm.trans (congrArg e.functor.map h₂)) :)
 
 end DEquivalence
 

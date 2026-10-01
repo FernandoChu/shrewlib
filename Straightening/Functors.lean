@@ -7,8 +7,8 @@ import Straightening.DCat
   `π : Unstraightening F ⥤ A`, and a transformation with representable components over `u` to
   the induced functor `(a, x) ↦ (u a, h x)`, `(f, s) ↦ (u f, map s)`. The square commutes by `rfl`.
 * `straighten : DFunctor Arr DCat` sends `p : E ⥤ A` to the lax normal functor of its fibres,
-  `a ↦ Fib p a = {e // p e = a}`, with `F_p f x y` the morphisms of `E` over `f` and composition as
-  the composition constraint. A commuting square `w ⋙ p' = p ⋙ u` is sent to the restriction of
+  `a ↦ Fibre p a = {e // p e = a}`, with `F_p f x y` the morphisms of `E` over `f` and composition
+  as the composition constraint. A commuting square `w ⋙ p' = p ⋙ u` is sent to the restriction of
   `w` to the fibres.
 
 The functoriality of both holds by `rfl`.
@@ -50,39 +50,39 @@ section Straighten
 variable {A : Cat.{u, u}} (X : ArrOb A)
 
 /-- The fibre of `p : E ⥤ A` over `a`, on objects. -/
-def Fib (a : A) : Type u := { e : X.dom // X.proj.obj e = a }
+def Fibre (a : A) : Type u := { e : X.dom // X.proj.obj e = a }
 
 /-- The morphisms of `E` over `f`, between objects of the fibres. -/
-def FibHom {a a' : A} (f : a ⟶ a') (x : Fib X a) (y : Fib X a') : Type u :=
+def FibreHom {a a' : A} (f : a ⟶ a') (x : Fibre X a) (y : Fibre X a') : Type u :=
   { g : x.1 ⟶ y.1 // X.proj.map g ≫ eqToHom y.2 = eqToHom x.2 ≫ f }
 
 variable {X}
 
 /-- Composition of morphisms over base morphisms. -/
-def FibHom.comp {a a' a'' : A} {f : a ⟶ a'} {g : a' ⟶ a''} {x : Fib X a} {y : Fib X a'}
-    {z : Fib X a''} (s : FibHom X f x y) (t : FibHom X g y z) : FibHom X (f ≫ g) x z :=
+def FibreHom.comp {a a' a'' : A} {f : a ⟶ a'} {g : a' ⟶ a''} {x : Fibre X a} {y : Fibre X a'}
+    {z : Fibre X a''} (s : FibreHom X f x y) (t : FibreHom X g y z) : FibreHom X (f ≫ g) x z :=
   ⟨s.1 ≫ t.1, ((congrArg (X.proj.map s.1 ≫ ·) t.2).trans (congrArg (· ≫ g) s.2) :)⟩
 
 /-- A morphism over `f` lies over `f` up to the identifications of the fibres. -/
-theorem FibHom.proj_map {a a' : A} {f : a ⟶ a'} {x : Fib X a} {y : Fib X a'}
-    (s : FibHom X f x y) : X.proj.map s.1 = eqToHom x.2 ≫ f ≫ eqToHom y.2.symm := by
+theorem FibreHom.proj_map {a a' : A} {f : a ⟶ a'} {x : Fibre X a} {y : Fibre X a'}
+    (s : FibreHom X f x y) : X.proj.map s.1 = eqToHom x.2 ≫ f ≫ eqToHom y.2.symm := by
   obtain ⟨x, rfl⟩ := x
   obtain ⟨y, rfl⟩ := y
   exact s.2
 
-instance (a : A) : SmallCategory (Fib X a) where
-  Hom := FibHom X (𝟙 a)
+instance (a : A) : SmallCategory (Fibre X a) where
+  Hom := FibreHom X (𝟙 a)
   id x := ⟨𝟙 x.1, rfl⟩
-  comp s t := FibHom.comp s t
+  comp s t := FibreHom.comp s t
   id_comp := by intros; rfl
   comp_id := by intros; rfl
   assoc := by intros; rfl
 
-/-- The profunctor `F_p f : Fib p a ⇸ Fib p a'` of morphisms over `f`. -/
-def fibProf {a a' : A} (f : a ⟶ a') : Profunctor (Fib X a) (Fib X a') where
-  obj := FibHom X f
-  lmap k s := FibHom.comp k s
-  rmap k s := FibHom.comp s k
+/-- The profunctor `F_p f : Fibre p a ⇸ Fibre p a'` of morphisms over `f`. -/
+def fibProf {a a' : A} (f : a ⟶ a') : Profunctor (Fibre X a) (Fibre X a') where
+  obj := FibreHom X f
+  lmap k s := FibreHom.comp k s
+  rmap k s := FibreHom.comp s k
   lmap_id := by intros; rfl
   lmap_comp := by intros; rfl
   rmap_id := by intros; rfl
@@ -92,14 +92,14 @@ def fibProf {a a' : A} (f : a ⟶ a') : Profunctor (Fib X a) (Fib X a') where
 /-- The composition constraint `F_p f ⊗ F_p g ⟶ F_p (f ≫ g)`: composition in `E`. -/
 def fibMul {a a' a'' : A} (f : a ⟶ a') (g : a' ⟶ a'') :
     Profunctor.Hom (Profunctor.comp (fibProf (X := X) f) (fibProf g)) (fibProf (f ≫ g)) where
-  app _ _ := Profunctor.CompObj.lift (fun _ s t => FibHom.comp s t) (fun _ _ _ => rfl)
+  app _ _ := Profunctor.CompObj.lift (fun _ s t => FibreHom.comp s t) (fun _ _ _ => rfl)
   app_lmap := by intros; rename_i x; induction x using Profunctor.CompObj.ind; rfl
   app_rmap := by intros; rename_i x; induction x using Profunctor.CompObj.ind; rfl
 
 variable (X) in
 /-- **The straightening of `p : E ⥤ A`**: the lax normal functor of its fibres. -/
 def straightenObj : LaxNormal A where
-  obj a := ProfCat.of (Fib X a.as)
+  obj a := ProfCat.of (Fibre X a.as)
   map f := fibProf f.as
   map₂ η := eqToHom (congrArg (fun k => fibProf (X := X) k.as) (LocallyDiscrete.eq_of_hom η))
   map₂_id _ := rfl
@@ -129,14 +129,14 @@ def straightenObj : LaxNormal A where
   mapId_eq_eqToHom _ := rfl
 
 /-- The composition constraint of `straightenObj X` is composition in `E`. -/
-theorem straightenObj_mul {a a' a'' : A} {f : a ⟶ a'} {g : a' ⟶ a''} {x : Fib X a}
-    {y : Fib X a'} {z : Fib X a''} (s : FibHom X f x y) (t : FibHom X g y z) :
-    mul (F := straightenObj X) s t = FibHom.comp s t :=
+theorem straightenObj_mul {a a' a'' : A} {f : a ⟶ a'} {g : a' ⟶ a''} {x : Fibre X a}
+    {y : Fibre X a'} {z : Fibre X a''} (s : FibreHom X f x y) (t : FibreHom X g y z) :
+    mul (F := straightenObj X) s t = FibreHom.comp s t :=
   rfl
 
 /-- A commuting square `w ⋙ p' = p ⋙ u` restricts to the fibres. -/
 theorem proj_map_map {B : Cat.{u, u}} {u : A ⟶ B} {Y : ArrOb B} (w : ArrHom u X Y) {a a' : A}
-    {f : a ⟶ a'} {x : Fib X a} {y : Fib X a'} (s : FibHom X f x y)
+    {f : a ⟶ a'} {x : Fibre X a} {y : Fibre X a'} (s : FibreHom X f x y)
     (hx : Y.proj.obj (w.1.obj x.1) = u.toFunctor.obj a)
     (hy : Y.proj.obj (w.1.obj y.1) = u.toFunctor.obj a') :
     Y.proj.map (w.1.map s.1) ≫ eqToHom hy = eqToHom hx ≫ u.toFunctor.map f := by

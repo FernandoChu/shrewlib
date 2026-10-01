@@ -56,6 +56,15 @@ theorem hom_ext (H : IsOpcartesian φ) {a'' : A} {g : a' ⟶ a''} {z : D.Ob a''}
     {ψ ψ' : y ⟶[g] z} (h : φ ≫ᵈ ψ = φ ≫ᵈ ψ') : ψ = ψ' :=
   (H.desc_uniq ψ rfl).trans (H.desc_uniq ψ' h.symm).symm
 
+/-- Precomposing an opcartesian morphism with a vertical isomorphism gives an opcartesian
+morphism. -/
+theorem iso_comp {x' : D.Ob a} (H : IsOpcartesian φ) (ι : x' ⟶[𝟙 a] x) (ι' : x ⟶[𝟙 a] x')
+    (h : ι' ≫ᵈ ι = 𝟙ᵈ x) (h' : ι ≫ᵈ ι' = 𝟙ᵈ x') : IsOpcartesian (ι ≫ᵈ φ) := by
+  intro a'' g z χ
+  refine ⟨H.desc g (ι' ≫ᵈ χ :), ?_, fun ψ hψ => H.desc_uniq ψ ?_⟩
+  · exact ((congrArg (ι ≫ᵈ ·) (H.desc_fac g (ι' ≫ᵈ χ :))).trans (congrArg (· ≫ᵈ χ) h') :)
+  · exact ((congrArg (fun t => t ≫ᵈ (φ ≫ᵈ ψ)) h).symm.trans (congrArg (ι' ≫ᵈ ·) hψ) :)
+
 end IsOpcartesian
 
 namespace IsCartesian
@@ -81,6 +90,14 @@ theorem lift_uniq (H : IsCartesian φ) {a₀ : A} {g : a₀ ⟶ a} {z : D.Ob a�
 theorem hom_ext (H : IsCartesian φ) {a₀ : A} {g : a₀ ⟶ a} {z : D.Ob a₀}
     {ψ ψ' : z ⟶[g] x} (h : ψ ≫ᵈ φ = ψ' ≫ᵈ φ) : ψ = ψ' :=
   (H.lift_uniq ψ rfl).trans (H.lift_uniq ψ' h.symm).symm
+
+/-- Postcomposing a cartesian morphism with a vertical isomorphism gives a cartesian morphism. -/
+theorem comp_iso {y' : D.Ob a'} (H : IsCartesian φ) (ι : y ⟶[𝟙 a'] y') (ι' : y' ⟶[𝟙 a'] y)
+    (h : ι' ≫ᵈ ι = 𝟙ᵈ y') (h' : ι ≫ᵈ ι' = 𝟙ᵈ y) : IsCartesian (φ ≫ᵈ ι) := by
+  intro a₀ g z χ
+  refine ⟨H.lift g (χ ≫ᵈ ι' :), ?_, fun ψ hψ => H.lift_uniq ψ ?_⟩
+  · exact ((congrArg (· ≫ᵈ ι) (H.lift_fac g (χ ≫ᵈ ι' :))).trans (congrArg (χ ≫ᵈ ·) h) :)
+  · exact ((congrArg (fun t => ψ ≫ᵈ (φ ≫ᵈ t)) h').symm.trans (congrArg (· ≫ᵈ ι') hψ) :)
 
 end IsCartesian
 

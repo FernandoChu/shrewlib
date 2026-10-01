@@ -1,4 +1,4 @@
-import Nfib.Displayed.Fibration
+import Nfib.Displayed.Transfer
 import Mathlib.CategoryTheory.Category.Cat
 
 /-!

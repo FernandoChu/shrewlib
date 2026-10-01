@@ -1,5 +1,6 @@
 import Straightening.Arrow
 import Unstraightening
+import Nfib.Displayed.Fib
 
 /-!
 # The category of displayed categories, `DCat = Cat ▷⁻ [−, Cat_Prof]^{lax,normal}`
@@ -21,7 +22,8 @@ instances of the composition constraint.
 `DCat` is a category displayed over `Cat`, with laws holding by `rfl` (`map_id` and `map_mul` are
 rewrite rules). Mathlib's `Functor.map_id` and `Functor.map_comp` are rules too, so the pullback
 `u^* G` of `G` along `u` (`pullback`) satisfies `(v ⋙ u)^* G ≡ v^* (u^* G)`. The morphism
-`u^* G ⟶[u] G` given by identities is cartesian, so `DCat` is a fibration (`isFibration_DCat`).
+`u^* G ⟶[u] G` given by identities is cartesian, and these lifts make `DCat` a split fibration
+(a `SplitFib` instance).
 -/
 
 universe u
@@ -88,17 +90,25 @@ def DCat : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
 
 /-! ## Pullbacks and the fibration property -/
 
+/-- The 2-cells of `LocallyDiscrete C` are built by the constructor `⟨p⟩`. A prelax functor sends
+those from a 1-cell to itself to identities; as a rule, this complements `PrelaxFunctor.map₂_id`
+for 2-cells that are not syntactically identities. -/
+@[rewrite_rule]
+theorem _root_.CategoryTheory.PrelaxFunctor.map₂_mk {C : Type*} [Category C] {B : Type*}
+    [Bicategory B] (G : PrelaxFunctor (LocallyDiscrete C) B) {a b : LocallyDiscrete C}
+    (f : a ⟶ b) (p : f.as = f.as) : G.map₂ (⟨p⟩ : f ⟶ f) = 𝟙 (G.map f) := by
+  rw [show (⟨p⟩ : f ⟶ f) = 𝟙 f from rfl]
+
 /-- The pullback `u^* G` of a lax normal functor along `u : A ⟶ B`. -/
 def pullback {A B : Cat.{u, u}} (u : A ⟶ B) (G : LaxNormal B) : LaxNormal A where
   obj a := G.obj ⟨u.toFunctor.obj a.as⟩
   map f := G.map (u.toFunctor.map f.as).toLoc
-  map₂ η := G.map₂ (eqToHom (congrArg (fun k => (u.toFunctor.map k.as).toLoc)
-    (LocallyDiscrete.eq_of_hom η)))
+  -- The 2-cell is built with the constructor of the hom-types of `LocallyDiscrete B`, rather than
+  -- as an `eqToHom`, so that by eta it agrees with any 2-cell: `pullback (𝟙 A) G` is then `G` on
+  -- the nose.
+  map₂ η := G.map₂ ⟨congrArg (fun k => u.toFunctor.map k.as) (LocallyDiscrete.eq_of_hom η)⟩
   map₂_id _ := rfl
-  map₂_comp η θ := by
-    obtain rfl := LocallyDiscrete.eq_of_hom η
-    obtain rfl := LocallyDiscrete.eq_of_hom θ
-    rfl
+  map₂_comp η θ := G.map₂_comp _ _
   mapId _ := 𝟙 _
   mapComp f g := G.mapComp (u.toFunctor.map f.as).toLoc (u.toFunctor.map g.as).toLoc
   mapComp_naturality_left η g := by
@@ -130,8 +140,17 @@ theorem isCartesian_pullbackLift {A B : Cat.{u, u}} (u : A ⟶ B) (G : LaxNormal
   subst hψ
   rfl
 
-/-- **`DCat` is a fibration over `Cat`.** -/
-theorem isFibration_DCat : IsFibration DCat.{u} :=
-  fun _ _ u G => ⟨pullback u G, pullbackLift u G, isCartesian_pullbackLift u G⟩
+/-- **`DCat` is a split fibration over `Cat`**, cloven by the pullbacks. Pullback along the
+identity and along composites holds on the nose. -/
+instance preSplitFibDCat : PreSplitFib DCat.{u} where
+  pull u G := pullback u G
+  clift u G := pullbackLift u G
+  clift_cartesian u G := isCartesian_pullbackLift u G
+  pull_id _ := rfl
+  pull_comp _ _ _ := rfl
+
+instance splitFibDCat : SplitFib DCat.{u} where
+  clift_id _ := rfl
+  clift_comp _ _ _ := rfl
 
 end Straightening

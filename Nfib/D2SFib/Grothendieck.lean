@@ -21,8 +21,8 @@ are rewrite rules. They have their own heads `hobj`, `hmor`, `vobj` and `vmor`, 
 `F.map (u ≫ v) = F.map u ≫ F.map v` for arbitrary morphisms of `∫(Bᵈᵒ)` would not do: these
 compute, so `F.map u` and `F.map (dualHoriz _ _ ≫ dualVert _)` would stop being definitionally
 equal.) The naturality of a transformation `κ` along these morphisms is a rule too. As a result,
-composition in `D2SGC F` is `hmor α' θ ≫ vmor (B.pushMap α' (B.opcartesianFactor g)) θ'`, with no `eqToHom`,
-and its laws, its `D2SFib` structure and the functoriality of `Φ` hold by `rfl`.
+composition in `D2SGC F` is `hmor α' θ ≫ vmor (B.pushMap α' (B.opcartesianFactor g)) θ'`, with no
+`eqToHom`, and its laws, its `D2SFib` structure and the functoriality of `Φ` hold by `rfl`.
 -/
 
 universe v₁ u₁ v₂ u₂ v₃ u₃
