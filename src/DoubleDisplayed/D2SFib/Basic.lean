@@ -15,12 +15,10 @@ adapted to the displayed setting:
    chosen lifts `B.olift` of `B` (so the notes' axiom (3) is absorbed into the type of `pushLift`);
 4. a strict *push/pull interchange* `push_pull`/`pushLift_pullLift`.
 
-The laws on objects (`pull_id`, `pull_comp`, `push_id`, `push_comp`, `push_pull`) are rewrite rules.
-They live in a separate structure `D2SFibObj`, a field of `D2SFib`, so that they are already rules
-when the laws on lifts are declared, and these compare morphisms with definitionally equal
-endpoints. The laws on lifts are rewrite rules too, except for the interchange `pushLift_pullLift`:
-its two sides lie over `β ≫ᵈ B.olift α b'` and `B.olift α b ≫ᵈ B.pushMap α β`, which the
-interchange rule of `B` identifies.
+As for (op)fibrations of displayed categories, there are three classes: `D2SFib` (cloven) holds
+the chosen lifts, `PreSplitD2SFib` adds the laws on objects (`pull_id`, `pull_comp`, `push_id`,
+`push_comp`, `push_pull`), which are rewrite rules, and `SplitD2SFib` the laws on lifts, which are
+then plain equations, and rules too, except for the interchange `pushLift_pullLift`.
 
 We derive the fiberwise actions `pushMap`/`pullMap`, whose functoriality and interchange hold on the
 nose (again as rewrite rules), and the two-sided hom equivalence `d2sHomEquiv`, together with its
@@ -39,13 +37,28 @@ open scoped Displayed DoubleDisplayed
 
 variable {A : Type u₁} [Category.{v₁} A] {B : Displayed.{v₁, u₁, v₂, u₂} A} [SplitOpfib B]
 
-/-- The object part of a D2SFib structure: chosen pullbacks along vertical morphisms of `B` and
-pushforwards along morphisms of `A`, strictly functorial and interchanging. -/
-structure D2SFibObj (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) where
+/-- A dependent 2-sided fibration structure (cloven) on a doubly displayed category `C` over a
+split opfibration `B`: chosen cartesian lifts along the vertical morphisms of `B`, and chosen
+opcartesian lifts over the chosen lifts of `B`. -/
+class D2SFib (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) where
   /-- Chosen pullback along a vertical morphism `β : b ⟶ b'`. -/
   pull : {a : A} → {b b' : B.Ob a} → (β : b ⟶[𝟙 a] b') → C.Ob b' → C.Ob b
+  /-- Chosen cartesian lift over `β`. -/
+  pullLift : ∀ {a : A} {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') (c : C.Ob b'), pull β c ⟶[[β]] c
+  /-- The chosen pullback lifts are cartesian (among morphisms of the same fiber). -/
+  pullLift_cartesian : ∀ {a : A} {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') (c : C.Ob b'),
+    DoubleDisplayed.IsCartesian (pullLift β c)
   /-- Chosen pushforward along `α : a ⟶ a'`, over `B`'s pushforward `B.push`. -/
   push : {a a' : A} → (α : a ⟶ a') → {b : B.Ob a} → C.Ob b → C.Ob (B.push α b)
+  /-- Chosen opcartesian lift over `B.olift α b`. -/
+  pushLift : ∀ {a a' : A} (α : a ⟶ a') {b : B.Ob a} (c : C.Ob b), c ⟶[[B.olift α b]] push α c
+  /-- The chosen pushforward lifts are opcartesian over `B`. -/
+  pushLift_opcartesian : ∀ {a a' : A} (α : a ⟶ a') {b : B.Ob a} (c : C.Ob b),
+    DoubleDisplayed.IsOpcartesian (pushLift α c)
+
+/-- A pre-split D2SFib: the chosen pullbacks and pushforwards are strictly functorial on objects
+and interchange. These axioms are rewrite rules. -/
+class PreSplitD2SFib (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) extends D2SFib C where
   pull_id : ∀ {a : A} {b : B.Ob a} (c : C.Ob b), pull (B.id b) c = c
   pull_comp : ∀ {a : A} {b b' b'' : B.Ob a} (β : b ⟶[𝟙 a] b') (γ : b' ⟶[𝟙 a] b'')
     (c : C.Ob b''), pull (β ≫ᵈ γ) c = pull β (pull γ c)
@@ -55,96 +68,57 @@ structure D2SFibObj (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B)
   push_pull : ∀ {a a' : A} (α : a ⟶ a') {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') (c : C.Ob b'),
     push α (pull β c) = pull (B.pushMap α β) (push α c)
 
-attribute [rewrite_rule] D2SFibObj.pull_id D2SFibObj.pull_comp D2SFibObj.push_id
-  D2SFibObj.push_comp D2SFibObj.push_pull
+attribute [rewrite_rule] PreSplitD2SFib.pull_id PreSplitD2SFib.pull_comp PreSplitD2SFib.push_id
+  PreSplitD2SFib.push_comp PreSplitD2SFib.push_pull
 
-/-- A dependent 2-sided split fibration structure on a doubly displayed category `C` over a split
-opfibration `B`. -/
-class D2SFib (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) where
-  /-- The chosen pullbacks and pushforwards of objects. -/
-  cleavage : D2SFibObj C
-  /-- Chosen cartesian lift over `β`. -/
-  pullLift : ∀ {a : A} {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') (c : C.Ob b'),
-    cleavage.pull β c ⟶[[β]] c
-  /-- The chosen pullback lifts are cartesian (among morphisms of the same fiber). -/
-  pullLift_cartesian : ∀ {a : A} {b b' b₀ : B.Ob a} (β : b ⟶[𝟙 a] b') (c : C.Ob b')
-    (β₀ : b₀ ⟶[𝟙 a] b) (c₀ : C.Ob b₀) (χ : c₀ ⟶[[β₀ ≫ᵈ β]] c),
-    ∃! ξ : c₀ ⟶[[β₀]] (cleavage.pull β c), ξ ≫ᵈᵈ pullLift β c = χ
-  pullLift_id : ∀ {a : A} {b : B.Ob a} (c : C.Ob b), pullLift (B.id b) c = C.id c
+/-- A dependent 2-sided split fibration: a pre-split D2SFib whose chosen lifts are strictly
+functorial and interchange. As for `SplitOpfib`, the pre-split structure is an instance field rather
+than a parent, so that its rules apply to the axioms on lifts. -/
+class SplitD2SFib (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) where
+  /-- The underlying pre-split D2SFib. -/
+  [toPreSplitD2SFib : PreSplitD2SFib C]
+  pullLift_id : ∀ {a : A} {b : B.Ob a} (c : C.Ob b), D2SFib.pullLift (B.id b) c = C.id c
   pullLift_comp : ∀ {a : A} {b b' b'' : B.Ob a} (β : b ⟶[𝟙 a] b') (γ : b' ⟶[𝟙 a] b'')
-    (c : C.Ob b''), pullLift (β ≫ᵈ γ) c = pullLift β (cleavage.pull γ c) ≫ᵈᵈ pullLift γ c
-  /-- Chosen opcartesian lift over `B.olift α b`. -/
-  pushLift : ∀ {a a' : A} (α : a ⟶ a') {b : B.Ob a} (c : C.Ob b),
-    c ⟶[[B.olift α b]] cleavage.push α c
-  /-- The chosen pushforward lifts are opcartesian over `B`. -/
-  pushLift_opcartesian : ∀ {a a' : A} (α : a ⟶ a') {b : B.Ob a} (c : C.Ob b),
-    DoubleDisplayed.IsOpcartesian (pushLift α c)
-  pushLift_id : ∀ {a : A} {b : B.Ob a} (c : C.Ob b), pushLift (𝟙 a) c = C.id c
+    (c : C.Ob b''),
+    D2SFib.pullLift (β ≫ᵈ γ) c = D2SFib.pullLift β (D2SFib.pull γ c) ≫ᵈᵈ D2SFib.pullLift γ c
+  pushLift_id : ∀ {a : A} {b : B.Ob a} (c : C.Ob b), D2SFib.pushLift (𝟙 a) c = C.id c
   pushLift_comp : ∀ {a a' a'' : A} (α : a ⟶ a') (α' : a' ⟶ a'') {b : B.Ob a} (c : C.Ob b),
-    pushLift (α ≫ α') c = pushLift α c ≫ᵈᵈ pushLift α' (cleavage.push α c)
-  /-- Strict push/pull interchange on lifts: the two ways around the pull/push square agree. -/
+    D2SFib.pushLift (α ≫ α') c = D2SFib.pushLift α c ≫ᵈᵈ D2SFib.pushLift α' (D2SFib.push α c)
+  /-- Strict push/pull interchange on lifts: the two ways around the pull/push square agree. Its
+  two sides lie over `β ≫ᵈ B.olift α b'` and `B.olift α b ≫ᵈ B.pushMap α β`, which the
+  interchange rule of `B` identifies, so this is a plain equation, but not a rule. -/
   pushLift_pullLift : ∀ {a a' : A} (α : a ⟶ a') {b b' : B.Ob a} (β : b ⟶[𝟙 a] b')
     (c : C.Ob b'),
-    pullLift β c ≫ᵈᵈ pushLift α c
-      = pushLift α (cleavage.pull β c) ≫ᵈᵈ pullLift (B.pushMap α β) (cleavage.push α c)
+    D2SFib.pullLift β c ≫ᵈᵈ D2SFib.pushLift α c
+      = D2SFib.pushLift α (D2SFib.pull β c) ≫ᵈᵈ
+          D2SFib.pullLift (B.pushMap α β) (D2SFib.push α c)
 
-attribute [rewrite_rule] D2SFib.pullLift_id D2SFib.pullLift_comp D2SFib.pushLift_id
-  D2SFib.pushLift_comp
+attribute [instance_reducible, instance] SplitD2SFib.toPreSplitD2SFib
+
+attribute [rewrite_rule] SplitD2SFib.pullLift_id SplitD2SFib.pullLift_comp SplitD2SFib.pushLift_id
+  SplitD2SFib.pushLift_comp
 
 namespace D2SFib
 
-variable {C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B} [D2SFib C]
+variable {C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B} [SplitD2SFib C]
 
-section Cleavage
+section Interchange
 
 variable {a a' a'' : A}
 
-/-- The chosen pullback of `c` along a vertical morphism `β`. -/
-@[reducible] def pull {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') (c : C.Ob b') : C.Fiber b :=
-  (D2SFib.cleavage (C := C)).pull β c
-
-/-- The chosen pushforward of `c` along `α`. -/
-@[reducible] def push (α : a ⟶ a') {b : B.Ob a} (c : C.Ob b) : C.Fiber (B.push α b) :=
-  (D2SFib.cleavage (C := C)).push α c
-
-@[rewrite_rule]
-theorem pull_id {b : B.Ob a} (c : C.Ob b) : pull (B.id b) c = c :=
-  (D2SFib.cleavage (C := C)).pull_id c
-
-@[rewrite_rule]
-theorem pull_comp {b b' b'' : B.Ob a} (β : b ⟶[𝟙 a] b') (γ : b' ⟶[𝟙 a] b'') (c : C.Ob b'') :
-    pull (β ≫ᵈ γ) c = pull β (pull γ c) :=
-  (D2SFib.cleavage (C := C)).pull_comp β γ c
-
-@[rewrite_rule]
-theorem push_id {b : B.Ob a} (c : C.Ob b) : push (𝟙 a) c = c :=
-  (D2SFib.cleavage (C := C)).push_id c
-
-@[rewrite_rule]
-theorem push_comp (α : a ⟶ a') (α' : a' ⟶ a'') {b : B.Ob a} (c : C.Ob b) :
-    push (α ≫ α') c = push α' (push α c) :=
-  (D2SFib.cleavage (C := C)).push_comp α α' c
-
-/-- The interchange of `push` and `pull`. The inner `pull` is stated as the field of the cleavage,
-which `pull β c` unfolds to, so that the rule matches both. -/
-@[rewrite_rule]
-theorem push_pull (α : a ⟶ a') {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') (c : C.Ob b') :
-    push α ((D2SFib.cleavage (C := C)).pull β c) = pull (B.pushMap α β) (push α c) :=
-  (D2SFib.cleavage (C := C)).push_pull α β c
-
-theorem pushLift_pullLift' (α : a ⟶ a') {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') (c : C.Ob b') :
+theorem pushLift_pullLift (α : a ⟶ a') {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') (c : C.Ob b') :
     pullLift β c ≫ᵈᵈ pushLift α c
       = pushLift α (pull β c) ≫ᵈᵈ pullLift (B.pushMap α β) (push α c) :=
-  D2SFib.pushLift_pullLift α β c
+  SplitD2SFib.pushLift_pullLift α β c
 
 theorem pushLift_pullLift_assoc (α : a ⟶ a') {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') (c : C.Ob b')
     {f' : a' ⟶ a''} {b'' : B.Ob a''} {g : B.push α b' ⟶[f'] b''} {e : C.Ob b''}
     (h : push α c ⟶[[g]] e) :
     pullLift β c ≫ᵈᵈ (pushLift α c ≫ᵈᵈ h)
       = pushLift α (pull β c) ≫ᵈᵈ (pullLift (B.pushMap α β) (push α c) ≫ᵈᵈ h) :=
-  congrArg (· ≫ᵈᵈ h) (pushLift_pullLift' α β c)
+  congrArg (· ≫ᵈᵈ h) (pushLift_pullLift α β c)
 
-end Cleavage
+end Interchange
 
 section PushMap
 
@@ -281,7 +255,7 @@ theorem pushMap_pullMap (α : a ⟶ a') {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') 
     (pushLift_opcartesian α _) ?_
   refine (pushLift_pushMap_assoc α (pullMap β f)
     (pullLift (B.pushMap α β) (push α c'))).trans ?_
-  refine (congrArg (pullMap β f ≫ᵈᵈ ·) (pushLift_pullLift' α β c').symm).trans ?_
+  refine (congrArg (pullMap β f ≫ᵈᵈ ·) (pushLift_pullLift α β c').symm).trans ?_
   refine (pullMap_pullLift_assoc β f (pushLift α c')).trans ?_
   refine (congrArg (pullLift β c ≫ᵈᵈ ·) (pushLift_pushMap α f).symm).trans ?_
   refine (pushLift_pullLift_assoc α β c (pushMap α f)).trans ?_
@@ -344,13 +318,13 @@ def totC {α : a ⟶ a'} {b : B.Ob a} {b' : B.Ob a'} (g : b ⟶[α] b') {c : C.O
     C.total.tot (⟨b, c⟩ : C.total.Ob a) ⟶ C.total.tot (⟨b', c'⟩ : C.total.Ob a') :=
   C.total.totalMk α ⟨g, θ⟩
 
-omit [SplitOpfib B] [D2SFib C] in
+omit [SplitOpfib B] [SplitD2SFib C] in
 theorem totC_comp {a'' : A} {α : a ⟶ a'} {α' : a' ⟶ a''} {b : B.Ob a} {b' : B.Ob a'}
     {b'' : B.Ob a''} (g : b ⟶[α] b') (g' : b' ⟶[α'] b'') {c : C.Ob b} {c' : C.Ob b'}
     {c'' : C.Ob b''} (θ : c ⟶[[g]] c') (θ' : c' ⟶[[g']] c'') :
     totC g θ ≫ totC g' θ' = totC (g ≫ᵈ g') (θ ≫ᵈᵈ θ') := rfl
 
-omit [SplitOpfib B] [D2SFib C] in
+omit [SplitOpfib B] [SplitD2SFib C] in
 theorem totC_injective {α : a ⟶ a'} {b : B.Ob a} {b' : B.Ob a'} {g : b ⟶[α] b'} {c : C.Ob b}
     {c' : C.Ob b'} {θ θ₂ : c ⟶[[g]] c'} (h : totC g θ = totC g θ₂) : θ = θ₂ := by
   unfold totC totalMk at h
@@ -411,7 +385,7 @@ theorem totC_pushLift_comp (α : a ⟶ a') (α' : a' ⟶ a'') {b : B.Ob a} (c : 
     totC (B.olift (α ≫ α') b) (pushLift (α ≫ α') c)
       = totC (B.olift α b) (pushLift α c) ≫ totC (B.olift α' _) (pushLift α' (push α c)) := rfl
 
-omit [SplitOpfib B] [D2SFib C] in
+omit [SplitOpfib B] [SplitD2SFib C] in
 theorem totC_vert_comp {b : B.Ob a} {c c' c'' : C.Fiber b} (f : c ⟶ c') (f' : c' ⟶ c'') :
     totC (B.id b) (f ≫ f') = totC (B.id b) f ≫ totC (B.id b) f' := rfl
 
@@ -452,7 +426,7 @@ theorem totC_pushLift_pullLift (α : a ⟶ a') {b b' : B.Ob a} (β : b ⟶[𝟙 
         ≫ totC (B.pushMap α β) (pullLift (B.pushMap α β) (push α c))
       = totC β (pullLift β c) ≫ totC (B.olift α b') (pushLift α c) := by
   rw [totC_comp, totC_comp]
-  exact congrArg (totC _) (pushLift_pullLift' α β c).symm
+  exact congrArg (totC _) (pushLift_pullLift α β c).symm
 
 theorem totC_pushLift_pullLift_assoc (α : a ⟶ a') {b b' : B.Ob a} (β : b ⟶[𝟙 a] b')
     (c : C.Ob b') {z : C.total.Total} (h : C.total.tot (⟨_, push α c⟩ : C.total.Ob a') ⟶ z) :

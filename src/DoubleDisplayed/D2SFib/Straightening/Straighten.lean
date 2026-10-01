@@ -28,14 +28,14 @@ set_option maxHeartbeats 400000 in
 -- checking it unfolds both composites of functors.
 /-- The functor `∫(Bᵈᵒ) ⥤ Cat` underlying `Ψ C`: `⟨a, b⟩ ↦ C.Fiber b`, with a morphism `⟨α, β⟩`
 sent to `pushFunctor α ⋙ pullFunctor β`. -/
-noncomputable def straightenObj (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) [D2SFib C] :
+noncomputable def straightenObj (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) [SplitD2SFib C] :
     B.dualOp.Total ⥤ Cat.{v₃, u₃} where
   obj x := Cat.of (C.Fiber x.2)
   map {x _} F := (pushFunctor (C := C) F.base x.2 ⋙ pullFunctor (C := C) F.fiber).toCatHom
   map_id _ := rfl
   map_comp _ _ := rfl
 
-theorem straightenObj_map_toFunctor (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) [D2SFib C]
+theorem straightenObj_map_toFunctor (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) [SplitD2SFib C]
     {x x' : B.dualOp.Total} (F : x ⟶ x') :
     ((straightenObj C).map F).toFunctor
       = pushFunctor (C := C) F.base x.2 ⋙ pullFunctor (C := C) F.fiber := rfl
@@ -56,12 +56,12 @@ noncomputable def straighten :
   map_comp _ _ := rfl
 
 /-- `Ψ C` sends a chosen horizontal morphism to the pushforward functor. -/
-theorem straightenObj_map_dualHoriz (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) [D2SFib C]
+theorem straightenObj_map_dualHoriz (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) [SplitD2SFib C]
     {a a' : A} (α : a ⟶ a') (b : B.Ob a) :
     ((straightenObj C).map (dualHoriz α b)).toFunctor = pushFunctor (C := C) α b := rfl
 
 /-- `Ψ C` sends a chosen vertical morphism to the pullback functor. -/
-theorem straightenObj_map_dualVert (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) [D2SFib C]
+theorem straightenObj_map_dualVert (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) [SplitD2SFib C]
     {a : A} {b b' : B.Fiber a} (β : b ⟶ b') :
     ((straightenObj C).map (dualVert β)).toFunctor = pullFunctor (C := C) β := rfl
 

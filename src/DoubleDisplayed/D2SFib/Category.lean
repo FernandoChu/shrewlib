@@ -26,22 +26,21 @@ open scoped Displayed DoubleDisplayed
 variable {A : Type u₁} [Category.{v₁} A] {B : Displayed.{v₁, u₁, v₂, u₂} A} [SplitOpfib B]
 
 /-- A vertical functor preserving the chosen pullbacks and pushforwards of objects. -/
-structure D2SFibHomObj (C C' : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) [D2SFib C]
-    [D2SFib C'] extends DoubleDisplayed.VertFunctor C C' where
-  /-- Preserves chosen pullbacks on objects. It is stated with the fields of the cleavages, which
-the chosen pullbacks `pull β c` unfold to, so that the rule matches both. -/
+structure D2SFibHomObj (C C' : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) [SplitD2SFib C]
+    [SplitD2SFib C'] extends DoubleDisplayed.VertFunctor C C' where
+  /-- Preserves chosen pullbacks on objects. -/
   obj_pull : ∀ {a : A} {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') (c : C.Ob b'),
-    obj ((D2SFib.cleavage (C := C)).pull β c) = (D2SFib.cleavage (C := C')).pull β (obj c)
+    obj (D2SFib.pull β c) = D2SFib.pull β (obj c)
   /-- Preserves chosen pushforwards on objects. -/
   obj_push : ∀ {a a' : A} (α : a ⟶ a') {b : B.Ob a} (c : C.Ob b),
-    obj ((D2SFib.cleavage (C := C)).push α c) = (D2SFib.cleavage (C := C')).push α (obj c)
+    obj (D2SFib.push α c) = D2SFib.push α (obj c)
 
 attribute [rewrite_rule] D2SFibHomObj.obj_pull D2SFibHomObj.obj_push
 
 /-- A morphism of D2SFibs: a vertical functor over `B` preserving the chosen cartesian and
 opcartesian lifts strictly. -/
-structure D2SFibHom (C C' : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) [D2SFib C]
-    [D2SFib C'] where
+structure D2SFibHom (C C' : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) [SplitD2SFib C]
+    [SplitD2SFib C'] where
   /-- The underlying vertical functor, preserving the chosen objects. -/
   toObj : D2SFibHomObj C C'
   /-- Preserves chosen cartesian lifts. -/
@@ -55,8 +54,8 @@ attribute [rewrite_rule] D2SFibHom.map_pullLift D2SFibHom.map_pushLift
 
 namespace D2SFibHom
 
-variable {C C' C'' : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B} [D2SFib C] [D2SFib C']
-  [D2SFib C'']
+variable {C C' C'' : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B} [SplitD2SFib C] [SplitD2SFib C']
+  [SplitD2SFib C'']
 
 /-- The underlying vertical functor. -/
 abbrev toVertFunctor (Φ : D2SFibHom C C') : VertFunctor C C' := Φ.toObj.toVertFunctor
@@ -69,7 +68,7 @@ theorem ext {F G : D2SFibHom C C'} (h : F.toVertFunctor = G.toVertFunctor) : F =
   rfl
 
 /-- The identity D2SFib morphism. -/
-def id (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) [D2SFib C] : D2SFibHom C C where
+def id (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) [SplitD2SFib C] : D2SFibHom C C where
   toObj := { toVertFunctor := VertFunctor.id C, obj_pull := by intros; rfl,
              obj_push := by intros; rfl }
   map_pullLift _ _ := rfl
@@ -82,7 +81,7 @@ def comp (F : D2SFibHom C C') (G : D2SFibHom C' C'') : D2SFibHom C C'' where
   map_pullLift _ _ := rfl
   map_pushLift := by intros; rfl
 
-@[simp] theorem id_toVertFunctor (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) [D2SFib C] :
+@[simp] theorem id_toVertFunctor (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) [SplitD2SFib C] :
     (D2SFibHom.id C).toVertFunctor = VertFunctor.id C := rfl
 
 @[simp] theorem comp_toVertFunctor (F : D2SFibHom C C') (G : D2SFibHom C' C'') :
@@ -130,7 +129,7 @@ structure D2SFibCat (B : Displayed.{v₁, u₁, v₂, u₂} A) [SplitOpfib B] wh
   /-- The underlying doubly displayed category. -/
   C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B
   /-- Its D2SFib structure. -/
-  [str : D2SFib C]
+  [str : SplitD2SFib C]
 
 attribute [instance] D2SFibCat.str
 

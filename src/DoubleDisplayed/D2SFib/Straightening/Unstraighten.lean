@@ -268,20 +268,23 @@ variable (F : B.dualOp.Total ⥤ Cat.{v₃, u₃})
 pushforwards are the images under `F` of the chosen morphisms of `∫(Bᵈᵒ)`, and the chosen lifts are
 identities. -/
 instance instD2SFib : D2SFib (D2SGC F) where
-  cleavage :=
-    { pull := fun β c => vobj F β c
-      push := @fun _ _ α b c => hobj F α b c
-      pull_id := fun _ => rfl
-      pull_comp := fun _ _ _ => rfl
-      push_id := fun _ => rfl
-      push_comp := by intros; rfl
-      push_pull := by intros; rfl }
+  pull β c := vobj F β c
   pullLift _ _ := 𝟙 _
-  pullLift_cartesian _ _ _ _ χ := ⟨χ, rfl, fun _ h => h⟩
-  pullLift_id _ := rfl
-  pullLift_comp _ _ _ := rfl
+  pullLift_cartesian := by intro _ _ _ _ _ _ _ _ χ; exact ⟨χ, rfl, fun _ h => h⟩
+  push := @fun _ _ α b c => hobj F α b c
   pushLift _ _ _ := 𝟙 _
   pushLift_opcartesian := by intro _ _ _ _ _ _ _ _ _ _ χ; exact ⟨χ, rfl, fun _ h => h⟩
+
+instance instPreSplitD2SFib : PreSplitD2SFib (D2SGC F) where
+  pull_id _ := rfl
+  pull_comp _ _ _ := rfl
+  push_id _ := rfl
+  push_comp := by intros; rfl
+  push_pull := by intros; rfl
+
+instance instSplitD2SFib : SplitD2SFib (D2SGC F) where
+  pullLift_id _ := rfl
+  pullLift_comp _ _ _ := rfl
   pushLift_id _ := rfl
   pushLift_comp := by intros; rfl
   pushLift_pullLift := by intros; rfl

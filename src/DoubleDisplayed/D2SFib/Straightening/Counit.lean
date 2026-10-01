@@ -27,7 +27,7 @@ noncomputable section
 
 namespace Counit
 
-variable {C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B} [D2SFib C]
+variable {C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B} [SplitD2SFib C]
 
 variable {a a' a'' : A} {α : a ⟶ a'} {α' : a' ⟶ a''} {b : B.Ob a} {b' : B.Ob a'} {b'' : B.Ob a''}
 
