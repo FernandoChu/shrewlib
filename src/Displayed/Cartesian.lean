@@ -1,4 +1,4 @@
-import Nfib.Displayed.Basic
+import Displayed.Basic
 
 /-!
 # (Op)cartesian morphisms in a displayed category
@@ -11,8 +11,6 @@ This is part of milestone **M2** of `PLAN.md`.
 -/
 
 universe v₁ u₁ v₂ u₂
-
-namespace Nfib
 
 open CategoryTheory
 
@@ -102,5 +100,3 @@ theorem comp_iso {y' : D.Ob a'} (H : IsCartesian φ) (ι : y ⟶[𝟙 a'] y') (�
 end IsCartesian
 
 end Displayed
-
-end Nfib

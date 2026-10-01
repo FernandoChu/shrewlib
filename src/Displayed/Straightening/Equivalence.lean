@@ -1,10 +1,12 @@
-import Straightening.Functors
+import Displayed.Straightening.Straighten
+import Displayed.Straightening.Unstraighten
+import Displayed.Fibration.Transfer
 
 /-!
 # Straightening–unstraightening for displayed categories
 
 Proposition 9: `(▷ᵈ)* : DCat → Cat^→` is part of an equivalence over `Cat`, in the displayed
-sense (`straighteningEquiv : DEquivalence DCat Arr`): the unit and counit are vertical, i.e. their
+sense (`straighteningEquiv : VertEquivalence DCat Arr`): the unit and counit are vertical, i.e. their
 components lie over identities of `Cat`. Consequently:
 
 * the equivalence of total categories `DCat.Total ≌ Arr.Total` commutes with the projections to
@@ -21,9 +23,9 @@ component, and its inverse sends `e` to `(p e, ⟨e, rfl⟩)`. Their naturality 
 
 universe u
 
-namespace Straightening
+namespace Displayed.Straightening
 
-open CategoryTheory Bicategory Nfib Displayed Unstraightening
+open CategoryTheory Bicategory Displayed Unstraightening
 
 open scoped Displayed
 
@@ -87,7 +89,7 @@ theorem unitInv_unitHom :
 end Unit
 
 /-- **The unit** `𝟭 ≅ Str ∘ Unstr`, vertical over `Cat`. -/
-def unitIso : VNatIso (DFunctor.id DCat.{u}) (unstraighten.comp straighten) where
+def unitIso : VertNatIso (VertFunctor.id DCat.{u}) (unstraighten.comp straighten) where
   app F := unitHom F
   inv F := unitInv F
   app_inv F := unitHom_unitInv F
@@ -143,7 +145,7 @@ theorem counitInv_counitHom :
 end Counit
 
 /-- **The counit** `Unstr ∘ Str ≅ 𝟭`, vertical over `Cat`. -/
-def counitIso : VNatIso (straighten.comp unstraighten) (DFunctor.id Arr.{u}) where
+def counitIso : VertNatIso (straighten.comp unstraighten) (VertFunctor.id Arr.{u}) where
   app X := counitHom X
   inv X := counitInv X
   app_inv X := counitHom_counitInv X
@@ -154,7 +156,7 @@ def counitIso : VNatIso (straighten.comp unstraighten) (DFunctor.id Arr.{u}) whe
 
 /-- **Proposition 9** (straightening–unstraightening): `(▷ᵈ)* : DCat → Cat^→` is an equivalence
 over `Cat`, with inverse the straightening. -/
-def straighteningEquiv : DEquivalence DCat.{u} Arr.{u} where
+def straighteningEquiv : VertEquivalence DCat.{u} Arr.{u} where
   functor := unstraighten
   inverse := straighten
   unitIso := unitIso
@@ -186,4 +188,4 @@ theorem isCartesian_straighten_map {A B : Cat.{u, u}} {u : A ⟶ B} {X : ArrOb A
     IsCartesian (D := DCat) (straighten.map w) :=
   straighteningEquiv.symm.isCartesian_map H
 
-end Straightening
+end Displayed.Straightening

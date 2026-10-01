@@ -1,5 +1,5 @@
-import Nfib.D2SFib.Grothendieck
-import Nfib.D2SFib.ToFunctor
+import DoubleDisplayed.D2SFib.Straightening.Unstraighten
+import DoubleDisplayed.D2SFib.Straightening.Straighten
 import Mathlib.Tactic.IrreducibleDef
 
 /-!
@@ -15,7 +15,7 @@ Milestone **M9** of `PLAN.md`, following the paper's argument: the D2S Grothendi
 
 universe v₁ u₁ v₂ u₂ v₃ u₃
 
-namespace Nfib
+namespace DoubleDisplayed.D2SFib.Straightening
 
 open CategoryTheory Displayed DoubleDisplayed D2SFib
 
@@ -145,4 +145,4 @@ def counitIso : toFunctor ⋙ D2SGCFunctor ≅ 𝟭 (D2SFibCat.{v₁, u₁, v₂
 
 end
 
-end Nfib
+end DoubleDisplayed.D2SFib.Straightening

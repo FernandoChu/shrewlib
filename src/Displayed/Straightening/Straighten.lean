@@ -1,12 +1,13 @@
-import Straightening.DCat
+import Displayed.Straightening.DCat
+import Displayed.Functor
 
 /-!
 # Unstraightening and straightening as displayed functors over `Cat`
 
-* `unstraighten : DFunctor DCat Arr` is `(▷ᵈ)*`: it sends `F : LaxNormal A` to the projection
+* `unstraighten : VertFunctor DCat Arr` is `(▷ᵈ)*`: it sends `F : LaxNormal A` to the projection
   `π : Unstraightening F ⥤ A`, and a transformation with representable components over `u` to
   the induced functor `(a, x) ↦ (u a, h x)`, `(f, s) ↦ (u f, map s)`. The square commutes by `rfl`.
-* `straighten : DFunctor Arr DCat` sends `p : E ⥤ A` to the lax normal functor of its fibres,
+* `straighten : VertFunctor Arr DCat` sends `p : E ⥤ A` to the lax normal functor of its fibres,
   `a ↦ Fibre p a = {e // p e = a}`, with `F_p f x y` the morphisms of `E` over `f` and composition
   as the composition constraint. A commuting square `w ⋙ p' = p ⋙ u` is sent to the restriction of
   `w` to the fibres.
@@ -16,32 +17,11 @@ The functoriality of both holds by `rfl`.
 
 universe u
 
-namespace Straightening
+namespace Displayed.Straightening
 
-open CategoryTheory Bicategory Nfib Displayed Unstraightening
+open CategoryTheory Bicategory Displayed
 
 open scoped Displayed
-
-/-! ## Unstraightening -/
-
-/-- `(▷ᵈ)*` on objects: the projection of the unstraightening. -/
-def unstraightenObj {A : Cat.{u, u}} (F : LaxNormal A) : ArrOb A :=
-  ⟨Cat.of (Unstraightening F), Unstraightening.π⟩
-
-/-- `(▷ᵈ)*` on morphisms: the functor induced by a transformation with representable components. -/
-def unstraightenFunctor {A B : Cat.{u, u}} {u : A ⟶ B} {F : LaxNormal A} {G : LaxNormal B}
-    (φ : ReprHom u F G) : Unstraightening F ⥤ Unstraightening G where
-  obj X := ⟨u.toFunctor.obj X.base, φ.obj X.fiber⟩
-  map g := ⟨u.toFunctor.map g.base, φ.map g.fiber⟩
-  map_id _ := rfl
-  map_comp _ _ := rfl
-
-/-- **The unstraightening functor `(▷ᵈ)* : DCat → Cat^→` over `Cat`.** -/
-def unstraighten : DFunctor DCat.{u} Arr.{u} where
-  obj F := unstraightenObj F
-  map φ := ⟨unstraightenFunctor φ, rfl⟩
-  map_id _ := rfl
-  map_comp _ _ := rfl
 
 /-! ## Straightening -/
 
@@ -161,10 +141,10 @@ def straightenMap {B : Cat.{u, u}} {u : A ⟶ B} {Y : ArrOb B} (w : ArrHom u X Y
 end Straighten
 
 /-- **The straightening functor `Cat^→ → DCat` over `Cat`.** -/
-def straighten : DFunctor Arr.{u} DCat.{u} where
+def straighten : VertFunctor Arr.{u} DCat.{u} where
   obj X := straightenObj X
   map w := straightenMap w
   map_id _ := rfl
   map_comp _ _ := rfl
 
-end Straightening
+end Displayed.Straightening

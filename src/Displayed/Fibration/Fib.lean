@@ -1,5 +1,6 @@
-import Nfib.Displayed.Basic
-import Nfib.Displayed.Cartesian
+import Displayed.Basic
+import Displayed.Cartesian
+import Displayed.Total
 import Mathlib.Tactic.IrreducibleDef
 
 /-!
@@ -31,8 +32,6 @@ further morphisms, as in `cartesianFactor φ ≫ᵈ (clift f y ≫ᵈ χ)` and `
 -/
 
 universe v₁ u₁ v₂ u₂
-
-namespace Nfib
 
 open CategoryTheory
 
@@ -327,5 +326,3 @@ theorem totalClift_comp (f : a ⟶ a') (g : a' ⟶ a'') (y : D.Ob a'') :
 end TotalSplit
 
 end Displayed
-
-end Nfib

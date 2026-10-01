@@ -1,5 +1,5 @@
-import Nfib.D2SFib.Category
-import Nfib.Displayed.DualOp
+import DoubleDisplayed.D2SFib.Category
+import Displayed.Fibration.DualOp
 import Mathlib.CategoryTheory.Category.Cat
 
 /-!
@@ -15,7 +15,7 @@ definitionally, `Ψ C` is a functor by `rfl`, and so is the naturality of `Ψ` o
 
 universe v₁ u₁ v₂ u₂ v₃ u₃
 
-namespace Nfib
+namespace DoubleDisplayed.D2SFib.Straightening
 
 open CategoryTheory Displayed DoubleDisplayed D2SFib
 
@@ -65,4 +65,4 @@ theorem toFunctorObj_map_dualVert (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, 
     {a : A} {b b' : B.Fiber a} (β : b ⟶ b') :
     ((toFunctorObj C).map (dualVert β)).toFunctor = pullFunctor (C := C) β := rfl
 
-end Nfib
+end DoubleDisplayed.D2SFib.Straightening

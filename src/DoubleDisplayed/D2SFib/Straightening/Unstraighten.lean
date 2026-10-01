@@ -1,5 +1,5 @@
-import Nfib.D2SFib.Category
-import Nfib.Displayed.DualOp
+import DoubleDisplayed.D2SFib.Category
+import Displayed.Fibration.DualOp
 import Mathlib.CategoryTheory.Category.Cat
 
 /-!
@@ -27,7 +27,7 @@ composition in `D2SGC F` is `hmor α' θ ≫ vmor (B.pushMap α' (B.opcartesianF
 
 universe v₁ u₁ v₂ u₂ v₃ u₃
 
-namespace Nfib
+namespace DoubleDisplayed.D2SFib.Straightening
 
 open CategoryTheory Displayed DoubleDisplayed D2SFib
 
@@ -252,8 +252,8 @@ open D2SGC in
 /-- **The dependent 2-sided Grothendieck construction** (Def. `def:D2SGC` of the paper): the doubly
 displayed category over `B` associated with a functor `F : ∫(Bᵈᵒ) ⥤ Cat`. -/
 def D2SGC (F : B.dualOp.Total ⥤ Cat.{v₃, u₃}) : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B where
-  Ob b := Ob F b
-  Hom g c c' := Hom F g c c'
+  Ob b := D2SGC.Ob F b
+  Hom g c c' := D2SGC.Hom F g c c'
   id c := id' F c
   comp θ θ' := comp' F θ θ'
   id_comp θ := id_comp'' F θ
@@ -418,4 +418,4 @@ def D2SGCFunctor : (B.dualOp.Total ⥤ Cat.{v₃, u₃}) ⥤ D2SFibCat.{v₁, u�
 
 end
 
-end Nfib
+end DoubleDisplayed.D2SFib.Straightening

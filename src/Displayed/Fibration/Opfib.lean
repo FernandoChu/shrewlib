@@ -1,5 +1,6 @@
-import Nfib.Displayed.Basic
-import Nfib.Displayed.Cartesian
+import Displayed.Basic
+import Displayed.Cartesian
+import Displayed.Total
 import Mathlib.Tactic.IrreducibleDef
 
 /-!
@@ -34,8 +35,6 @@ This is part of milestone **M2** of `PLAN.md`.
 -/
 
 universe v₁ u₁ v₂ u₂
-
-namespace Nfib
 
 open CategoryTheory
 
@@ -334,5 +333,3 @@ theorem totalOlift_comp (f : a ⟶ a') (g : a' ⟶ a'') (x : D.Ob a) :
 end TotalSplit
 
 end Displayed
-
-end Nfib

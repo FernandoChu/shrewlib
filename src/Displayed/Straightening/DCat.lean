@@ -1,7 +1,7 @@
-import Straightening.Arrow
-import Unstraightening
+import Displayed.Straightening.Arrow
+import Displayed.Straightening.LaxNormal
 import Rules.Functor
-import Nfib.Displayed.Fib
+import Displayed.Fibration.Fib
 
 /-!
 # The category of displayed categories, `DCat = Cat ▷⁻ [−, Cat_Prof]^{lax,normal}`
@@ -29,15 +29,11 @@ rewrite rules). Mathlib's `Functor.map_id` and `Functor.map_comp` are rules too,
 
 universe u
 
-namespace Straightening
+namespace Displayed.Straightening
 
-open CategoryTheory Bicategory Nfib Displayed Unstraightening
+open CategoryTheory Bicategory Displayed
 
 open scoped Displayed
-
-/-- Lax normal functors from `A` to the bicategory of categories and profunctors. -/
-abbrev LaxNormal (A : Cat.{u, u}) : Type (u + 1) :=
-  StrictlyUnitaryLaxFunctor (LocallyDiscrete A) ProfCat.{u}
 
 /-- A lax transformation `F ⇒ G ∘ u` with representable components, as a map of elements. -/
 structure ReprHom {A B : Cat.{u, u}} (u : A ⟶ B) (F : LaxNormal A) (G : LaxNormal B) where
@@ -143,4 +139,4 @@ instance splitFibDCat : SplitFib DCat.{u} where
   clift_id _ := rfl
   clift_comp _ _ _ := rfl
 
-end Straightening
+end Displayed.Straightening

@@ -1,29 +1,12 @@
 name = "Rewrite"
-defaultTargets = ["Rules", "FunctorId", "Profunctor", "Unstraightening", "DoubleCategory", "Nfib", "Straightening"]
+defaultTargets = ["Rewrite"]
 
 [[require]]
 name = "mathlib"
 path = "mathlib4"
 
 [[lean_lib]]
-name = "FunctorId"
-
-[[lean_lib]]
-name = "Profunctor"
-
-[[lean_lib]]
-name = "Unstraightening"
-
-[[lean_lib]]
-name = "DoubleCategory"
-
-[[lean_lib]]
-name = "Nfib"
+name = "Rewrite"
+srcDir = "src"
+globs = ["Rules.+", "Examples.+", "Profunctor", "DoubleCategory", "Displayed.+", "DoubleDisplayed.+"]
 leanOptions = { pp.unicode.fun = true, relaxedAutoImplicit = false, weak.linter.mathlibStandardSet = true, maxSynthPendingDepth = 3 }
-
-[[lean_lib]]
-name = "Straightening"
-leanOptions = { pp.unicode.fun = true, relaxedAutoImplicit = false, weak.linter.mathlibStandardSet = true, maxSynthPendingDepth = 3 }
-
-[[lean_lib]]
-name = "Rules"

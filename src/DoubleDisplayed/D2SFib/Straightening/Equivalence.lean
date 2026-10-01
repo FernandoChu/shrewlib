@@ -1,6 +1,6 @@
-import Nfib.D2SFib.ToFunctor
-import Nfib.D2SFib.Grothendieck
-import Nfib.D2SFib.Counit
+import DoubleDisplayed.D2SFib.Straightening.Straighten
+import DoubleDisplayed.D2SFib.Straightening.Unstraighten
+import DoubleDisplayed.D2SFib.Straightening.Counit
 
 /-!
 # The main equivalence `Functor(∫(Bᵈᵒ), Cat) ≌ D2SFib(A, B)`
@@ -20,7 +20,7 @@ horizontal and a chosen vertical morphism, `D2SGC.map_eq`.
 
 universe v₁ u₁ v₂ u₂ v₃ u₃
 
-namespace Nfib
+namespace DoubleDisplayed.D2SFib.Straightening
 
 open CategoryTheory Displayed DoubleDisplayed D2SFib
 
@@ -87,4 +87,4 @@ noncomputable def d2sfibEquivalence (B : Displayed.{v₁, u₁, v₂, u₂} A) [
 @[simp] theorem d2sfibEquivalence_inverse (B : Displayed.{v₁, u₁, v₂, u₂} A) [SplitOpfib B] :
     (d2sfibEquivalence.{v₁, u₁, v₂, u₂, v₃, u₃} B).inverse = toFunctor := rfl
 
-end Nfib
+end DoubleDisplayed.D2SFib.Straightening

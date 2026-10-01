@@ -1,4 +1,5 @@
-import Nfib.D2SFib.Basic
+import DoubleDisplayed.D2SFib.Basic
+import DoubleDisplayed.Functor
 
 /-!
 # The category of dependent 2-sided split fibrations
@@ -18,7 +19,7 @@ This is part of milestone **M5** of `PLAN.md`.
 
 universe v₁ u₁ v₂ u₂ v₃ u₃
 
-namespace Nfib
+namespace DoubleDisplayed
 
 open CategoryTheory Displayed DoubleDisplayed D2SFib
 
@@ -144,4 +145,4 @@ instance : Category (D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B) where
   comp_id _ := rfl
   assoc _ _ _ := rfl
 
-end Nfib
+end DoubleDisplayed

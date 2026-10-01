@@ -1,6 +1,6 @@
-import Nfib.Displayed.Double
-import Nfib.Displayed.Sigma
-import Nfib.Displayed.DualOp
+import DoubleDisplayed.Cartesian
+import DoubleDisplayed.Total
+import Displayed.Fibration.DualOp
 
 /-!
 # Dependent 2-sided split fibrations (`D2SFib`)
@@ -31,7 +31,7 @@ This is part of milestone **M5** of `PLAN.md`.
 
 universe v₁ u₁ v₂ u₂ v₃ u₃
 
-namespace Nfib
+namespace DoubleDisplayed
 
 open CategoryTheory Displayed DoubleDisplayed
 
@@ -330,19 +330,19 @@ theorem pushFunctor_id (b : B.Ob a) : pushFunctor (C := C) (𝟙 a) b = 𝟭 (C.
 
 end Functors
 
-section SigmaBridge
+section TotalBridge
 
 /-! Equations between morphisms of `C` lying over `B`-morphisms that are equal, but not
-recognizably so by the rewrite rules, are computed in the total category of `C.sigma`: there a
+recognizably so by the rewrite rules, are computed in the total category of `C.total`: there a
 morphism carries its `B`-base as data, and composites are compared factor by factor. -/
 
 variable {a a' : A}
 
-/-- A morphism of `C`, viewed as a morphism of the total category of `C.sigma`. -/
+/-- A morphism of `C`, viewed as a morphism of the total category of `C.total`. -/
 def totC {α : a ⟶ a'} {b : B.Ob a} {b' : B.Ob a'} (g : b ⟶[α] b') {c : C.Ob b} {c' : C.Ob b'}
     (θ : c ⟶[[g]] c') :
-    C.sigma.tot (⟨b, c⟩ : C.sigma.Ob a) ⟶ C.sigma.tot (⟨b', c'⟩ : C.sigma.Ob a') :=
-  C.sigma.totalMk α ⟨g, θ⟩
+    C.total.tot (⟨b, c⟩ : C.total.Ob a) ⟶ C.total.tot (⟨b', c'⟩ : C.total.Ob a') :=
+  C.total.totalMk α ⟨g, θ⟩
 
 omit [SplitOpfib B] [D2SFib C] in
 theorem totC_comp {a'' : A} {α : a ⟶ a'} {α' : a' ⟶ a''} {b : B.Ob a} {b' : B.Ob a'}
@@ -357,7 +357,7 @@ theorem totC_injective {α : a ⟶ a'} {b : B.Ob a} {b' : B.Ob a'} {g : b ⟶[α
   injection h with _ h'
   injection h' with _ h''
 
-end SigmaBridge
+end TotalBridge
 
 section HomEquiv
 
@@ -390,7 +390,7 @@ theorem d2sHomEquiv_symm_apply (α : a ⟶ a') {b : B.Ob a} {b' : B.Ob a'} (g : 
       pushLift α c ≫ᵈᵈ (f ≫ᵈᵈ pullLift (B.opcartesianFactor g) c') := rfl
 
 /-! The following lemmas state the pieces of `d2sHomEquiv_comp` in the total category of
-`C.sigma`, for arbitrary base morphisms. Proving them for variables is cheap, and their instances at
+`C.total`, for arbitrary base morphisms. Proving them for variables is cheap, and their instances at
 composites need not be rechecked. -/
 
 theorem totC_symm (α : a ⟶ a') {b : B.Ob a} {b' : B.Ob a'} (g : b ⟶[α] b') (c : C.Ob b)
@@ -429,7 +429,7 @@ theorem totC_pushLift_pushMap (α : a ⟶ a') {b : B.Ob a} {c c' : C.Fiber b} (f
   exact congrArg (totC _) (pushLift_pushMap α f)
 
 theorem totC_pushLift_pushMap_assoc (α : a ⟶ a') {b : B.Ob a} {c c' : C.Fiber b} (f : c ⟶ c')
-    {z : C.sigma.Total} (h : C.sigma.tot (⟨_, push α c'⟩ : C.sigma.Ob a') ⟶ z) :
+    {z : C.total.Total} (h : C.total.tot (⟨_, push α c'⟩ : C.total.Ob a') ⟶ z) :
     totC (B.olift α b) (pushLift α c) ≫ (totC (B.id _) (pushMap α f) ≫ h)
       = totC (B.id b) f ≫ (totC (B.olift α b) (pushLift α c') ≫ h) := by
   rw [← Category.assoc, totC_pushLift_pushMap, Category.assoc]
@@ -442,7 +442,7 @@ theorem totC_pullMap_pullLift {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') {c c' : C.
   exact congrArg (totC _) (pullMap_pullLift β f)
 
 theorem totC_pullMap_pullLift_assoc {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') {c c' : C.Fiber b'}
-    (f : c ⟶ c') {z : C.sigma.Total} (h : C.sigma.tot (⟨b', c'⟩ : C.sigma.Ob a) ⟶ z) :
+    (f : c ⟶ c') {z : C.total.Total} (h : C.total.tot (⟨b', c'⟩ : C.total.Ob a) ⟶ z) :
     totC (B.id _) (pullMap β f) ≫ (totC β (pullLift β c') ≫ h)
       = totC β (pullLift β c) ≫ (totC (B.id b') f ≫ h) := by
   rw [← Category.assoc, totC_pullMap_pullLift, Category.assoc]
@@ -455,7 +455,7 @@ theorem totC_pushLift_pullLift (α : a ⟶ a') {b b' : B.Ob a} (β : b ⟶[𝟙 
   exact congrArg (totC _) (pushLift_pullLift' α β c).symm
 
 theorem totC_pushLift_pullLift_assoc (α : a ⟶ a') {b b' : B.Ob a} (β : b ⟶[𝟙 a] b')
-    (c : C.Ob b') {z : C.sigma.Total} (h : C.sigma.tot (⟨_, push α c⟩ : C.sigma.Ob a') ⟶ z) :
+    (c : C.Ob b') {z : C.total.Total} (h : C.total.tot (⟨_, push α c⟩ : C.total.Ob a') ⟶ z) :
     totC (B.olift α b) (pushLift α (pull β c))
         ≫ (totC (B.pushMap α β) (pullLift (B.pushMap α β) (push α c)) ≫ h)
       = totC β (pullLift β c) ≫ (totC (B.olift α b') (pushLift α c) ≫ h) := by
@@ -525,4 +525,4 @@ end HomEquiv
 
 end D2SFib
 
-end Nfib
+end DoubleDisplayed

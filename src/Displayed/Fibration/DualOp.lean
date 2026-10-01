@@ -1,4 +1,4 @@
-import Nfib.Displayed.Opfib
+import Displayed.Fibration.Opfib
 
 /-!
 # The dual opfibration
@@ -16,8 +16,6 @@ This is part of milestone **M2** of `PLAN.md`.
 -/
 
 universe v₁ u₁ v₂ u₂
-
-namespace Nfib
 
 open CategoryTheory
 
@@ -110,5 +108,3 @@ theorem dualHoriz_comp {a a' a'' : A} (α : a ⟶ a') (α' : a' ⟶ a'') (b : B.
 end Total
 
 end Displayed
-
-end Nfib

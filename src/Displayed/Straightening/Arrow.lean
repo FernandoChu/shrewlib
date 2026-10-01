@@ -1,4 +1,4 @@
-import Nfib.Displayed.Transfer
+import Displayed.Basic
 import Mathlib.CategoryTheory.Category.Cat
 
 /-!
@@ -14,9 +14,9 @@ The laws hold by `rfl`, since composition of functors is definitionally associat
 
 universe u
 
-namespace Straightening
+namespace Displayed.Straightening
 
-open CategoryTheory Nfib
+open CategoryTheory
 
 /-- An object of `Cat^→` over `A`: a small category with a functor to `A`. -/
 structure ArrOb (A : Cat.{u, u}) where
@@ -48,4 +48,4 @@ def Arr : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
   comp_id _ := rfl
   assoc _ _ _ := rfl
 
-end Straightening
+end Displayed.Straightening
