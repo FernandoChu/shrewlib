@@ -1,4 +1,5 @@
-import Displayed.Basic
+import Displayed.Equivalence
+import Mathlib.CategoryTheory.Equivalence
 
 /-!
 # The total category of a displayed category
@@ -8,10 +9,15 @@ The total category `D.Total` of `D : Displayed A` has as objects pairs `⟨a, x�
 are those of `A` and `D`, which hold definitionally. The projection `π : D.Total ⥤ A` forgets the
 displayed component, and `ι a : D.Fiber a ⥤ D.Total` includes the fiber over `a`.
 
+Vertical functors and natural transformations induce functors and natural transformations between
+total categories over `A` (`VertFunctor.totalFunctor`), and a vertical equivalence induces an
+equivalence of total categories whose functors commute with the projections to `A`
+(`VertEquivalence.total`).
+
 `DoubleDisplayed/Total.lean` is the analogue one level up.
 -/
 
-universe v₁ u₁ v₂ u₂
+universe v₁ u₁ v₂ u₂ v₃ u₃
 
 open CategoryTheory
 
@@ -107,5 +113,64 @@ theorem π_map_ι_map {a : A} {x y : D.Fiber a} (β : x ⟶ y) :
     D.π.map ((D.ι a).map β) = 𝟙 a := rfl
 
 end Total
+
+
+/-! ## Total functors -/
+
+section Functors
+
+variable {D} {E : Displayed.{v₁, u₁, v₃, u₃} A}
+
+/-- The functor between total categories induced by a vertical functor. -/
+def VertFunctor.total (F : VertFunctor D E) : D.Total ⥤ E.Total where
+  obj X := ⟨X.1, F.obj X.2⟩
+  map g := ⟨g.base, F.map g.fiber⟩
+  map_id _ := rfl
+  map_comp _ _ := rfl
+
+/-- The functor induced by a vertical functor lies over `A`, strictly. -/
+theorem VertFunctor.total_comp_π (F : VertFunctor D E) : F.total ⋙ E.π = D.π :=
+  rfl
+
+/-- The natural transformation between total functors induced by a vertical natural
+transformation. Its components lie over identities. -/
+def VertNatTrans.total {F G : VertFunctor D E} (η : F ⟶ G) : F.total ⟶ G.total where
+  app X := ⟨𝟙 X.1, η.app X.2⟩
+  naturality {X Y} g := (congrArg (Total.Hom.mk (x := F.total.obj X) (y := G.total.obj Y) g.base)
+    (η.naturality g.fiber) :)
+
+/-- Passing to total categories, as a functor. -/
+@[simps]
+def VertFunctor.totalFunctor : VertFunctor D E ⥤ (D.Total ⥤ E.Total) where
+  obj F := F.total
+  map η := VertNatTrans.total η
+  map_id _ := rfl
+  map_comp _ _ := rfl
+
+/-- The natural isomorphism between total functors induced by a vertical natural isomorphism. -/
+def VertNatIso.total {F G : VertFunctor D E} (η : F ≅ G) : F.total ≅ G.total :=
+  VertFunctor.totalFunctor.mapIso η
+
+/-- The components of `VertNatIso.total` are vertical: they lie over identities. -/
+theorem VertNatIso.π_map_total_hom {F G : VertFunctor D E} (η : F ≅ G) (X : D.Total) :
+    E.π.map ((VertNatIso.total η).hom.app X) = 𝟙 X.1 :=
+  rfl
+
+/-- **A vertical equivalence induces an equivalence of the total categories over `A`**: its
+functors commute with the projections to `A` (`VertEquivalence.total_functor_comp_π`), and the
+components of its unit and counit lie over identities. -/
+def VertEquivalence.total (e : VertEquivalence D E) : D.Total ≌ E.Total :=
+  CategoryTheory.Equivalence.mk e.functor.total e.inverse.total (VertNatIso.total e.unitIso)
+    (VertNatIso.total e.counitIso)
+
+theorem VertEquivalence.total_functor_comp_π (e : VertEquivalence D E) :
+    e.total.functor ⋙ E.π = D.π :=
+  rfl
+
+theorem VertEquivalence.total_inverse_comp_π (e : VertEquivalence D E) :
+    e.total.inverse ⋙ D.π = E.π :=
+  rfl
+
+end Functors
 
 end Displayed

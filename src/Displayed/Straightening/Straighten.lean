@@ -1,5 +1,5 @@
 import Displayed.Straightening.DCat
-import Displayed.Functor
+import Displayed.Total
 
 /-!
 # Unstraightening and straightening as displayed functors over `Cat`

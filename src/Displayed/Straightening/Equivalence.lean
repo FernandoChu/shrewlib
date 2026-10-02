@@ -1,6 +1,6 @@
 import Displayed.Straightening.Straighten
 import Displayed.Straightening.Unstraighten
-import Displayed.Fibration.Transfer
+import Displayed.Fibration.Fib
 
 /-!
 # Straightening–unstraightening for displayed categories
@@ -89,12 +89,9 @@ theorem unitInv_unitHom :
 end Unit
 
 /-- **The unit** `𝟭 ≅ Str ∘ Unstr`, vertical over `Cat`. -/
-def unitIso : VertNatIso (VertFunctor.id DCat.{u}) (unstraighten.comp straighten) where
-  app F := unitHom F
-  inv F := unitInv F
-  app_inv F := unitHom_unitInv F
-  inv_app F := unitInv_unitHom F
-  naturality _ := rfl
+def unitIso : VertFunctor.id DCat.{u} ≅ unstraighten.comp straighten :=
+  VertNatIso.ofComponents
+    (fun F => ⟨unitHom F, unitInv F, unitHom_unitInv F, unitInv_unitHom F⟩) (fun _ => rfl)
 
 /-! ## The counit -/
 
@@ -145,12 +142,10 @@ theorem counitInv_counitHom :
 end Counit
 
 /-- **The counit** `Unstr ∘ Str ≅ 𝟭`, vertical over `Cat`. -/
-def counitIso : VertNatIso (straighten.comp unstraighten) (VertFunctor.id Arr.{u}) where
-  app X := counitHom X
-  inv X := counitInv X
-  app_inv X := counitHom_counitInv X
-  inv_app X := counitInv_counitHom X
-  naturality _ := rfl
+def counitIso : straighten.comp unstraighten ≅ VertFunctor.id Arr.{u} :=
+  VertNatIso.ofComponents
+    (fun X => ⟨counitHom X, counitInv X, counitHom_counitInv X, counitInv_counitHom X⟩)
+    (fun _ => rfl)
 
 /-! ## Proposition 9 -/
 

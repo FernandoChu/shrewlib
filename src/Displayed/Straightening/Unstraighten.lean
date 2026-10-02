@@ -1,5 +1,5 @@
 import Displayed.Straightening.DCat
-import Displayed.Functor
+import Displayed.Total
 
 /-!
 # Unstraightening of a lax normal functor into `ProfCat`

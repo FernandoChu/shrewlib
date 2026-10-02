@@ -1,5 +1,4 @@
 import DoubleDisplayed.D2SFib.Basic
-import DoubleDisplayed.Functor
 
 /-!
 # The category of dependent 2-sided split fibrations

@@ -25,13 +25,15 @@ From a `Fib` (or a (pre-)split one, where noted) we derive, all as rewrite rules
 * the interchange `clift f x ≫ᵈ β = pullMap f β ≫ᵈ clift f y`, oriented so that chosen lifts come
   last.
 
+Finally, a cleavage transfers along an equivalence over `A` (`VertEquivalence.fib`).
+
 As for `pushMap`, `pullMap` is an `irreducible_def`, since the rules rewrite its definition back
 into it. Composites are normalized to be right-associated, so the `_assoc` forms of the rules are
 not literally dual to those of `Opfib.lean`: here the rules must also see `clift f y` followed by
 further morphisms, as in `cartesianFactor φ ≫ᵈ (clift f y ≫ᵈ χ)` and `clift f x ≫ᵈ (β ≫ᵈ χ)`.
 -/
 
-universe v₁ u₁ v₂ u₂
+universe v₁ u₁ v₂ u₂ v₃ u₃
 
 open CategoryTheory
 
@@ -324,5 +326,23 @@ theorem totalClift_comp (f : a ⟶ a') (g : a' ⟶ a'') (y : D.Ob a'') :
     D.totalClift (f ≫ g) y = D.totalClift f (D.pull g y) ≫ D.totalClift g y := rfl
 
 end TotalSplit
+
+/-! ## Transfer along equivalences -/
+
+section Transfer
+
+variable {D : Displayed.{v₁, u₁, v₂, u₂} A} {E : Displayed.{v₁, u₁, v₃, u₃} A}
+
+/-- A cleavage transfers along an equivalence over `A`: the chosen lift at `y` is the image of the
+chosen lift at `G y`, followed by the counit. -/
+@[instance_reducible]
+def VertEquivalence.fib (e : VertEquivalence D E) [Fib D] : Fib E where
+  pull f y := e.functor.obj (D.pull f (e.inverse.obj y))
+  clift f y := (e.functor.map (D.clift f (e.inverse.obj y)) ≫ᵈ e.counitIso.hom.app y :)
+  clift_cartesian f y :=
+    IsCartesian.comp_iso (e.isCartesian_map (D.clift_cartesian f _)) _ (e.counitIso.inv.app y)
+      (VertNatIso.inv_hom_id_app e.counitIso y) (VertNatIso.hom_inv_id_app e.counitIso y)
+
+end Transfer
 
 end Displayed

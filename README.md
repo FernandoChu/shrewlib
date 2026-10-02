@@ -81,10 +81,10 @@ as trustworthy as the axiom.
 - Index-like arguments should be implicit, so that they are checked by definitional equality.
 - A rule on `Functor.obj` or `Functor.map` is tried on every functor application. Rules keyed on
   dedicated constants are cheaper.
-- A failed match costs a full unfolding search for the subpattern head. Two sets of rules keyed on
-  the same head whose subpatterns never occur in each other's terms (as for displayed composition
-  in `Displayed/Functor.lean` and `Displayed/Fibration/`) should not be imported together where
-  there is much computation: `Displayed/Fibration/Transfer.lean` is the only file importing both.
+- A failed match costs a full unfolding search for the subpattern head. A rule keyed on a common
+  head such as displayed composition, whose subpatterns are absent from most terms, slows down every
+  file that imports it. The cancellation lemmas of vertical natural isomorphisms are not rules for
+  this reason: as rules, they made the D2SFib development time out.
 - Rules on Mathlib's lemmas are declared only in `src/Rules/`, and each file imports only those it
   needs, so its imports show which foreign rules it sees.
 
@@ -92,7 +92,7 @@ as trustworthy as the axiom.
 
 The development is one library with sources in `src/`. Module names and namespaces follow the
 folders. Displayed and doubly displayed categories are developed in parallel: each has `Basic`,
-`Total`, `Cartesian` and `Functor` files, a folder of fibrations (`Displayed/Fibration`,
+`Total` and `Cartesian` files, a folder of fibrations (`Displayed/Fibration`,
 `DoubleDisplayed/D2SFib`) and a `Straightening` folder.
 
 - `Rules/`: the category laws, the functor laws, and the laws of locally discrete bicategories and
@@ -109,18 +109,20 @@ folders. Displayed and doubly displayed categories are developed in parallel: ea
   as rules, the displayed laws are stated without transport. The horizontal bicategory of
   globular squares is constructed as an application.
 - `Displayed/`: categories displayed over a category, whose laws are rules and hold as plain
-  equations. `Basic` (with fibers), `Total` (the total category, `π`, `ι`), `Cartesian`
-  ((op)cartesian morphisms), `Functor` (`VertFunctor`, `VertNatIso`, `VertEquivalence`: functors
-  and equivalences over the base, which are fully faithful, preserve (op)cartesian morphisms and
-  induce equivalences of total categories).
+  equations. `Basic` has fibers, vertical functors `VertFunctor` and vertical natural
+  transformations `VertNatTrans`, which form a category as in Mathlib (vertical natural
+  isomorphisms are its isomorphisms `F ≅ G`, with API in `VertNatIso`). `Cartesian` has
+  (op)cartesian morphisms, `Equivalence` equivalences over the base (`VertEquivalence`), which
+  are fully faithful and preserve (op)cartesian morphisms, and `Total` the total category, `π`, `ι`,
+  and the induced functors, natural transformations and equivalences of total categories.
   - `Fibration/`: cloven (op)fibrations as mirror images, `Opfib.lean` and `Fib.lean`, with chosen
     `push f x`/`olift` and `pull f y`/`clift`, the (op)cartesian factorization, the transport
     `pushMap`/`pullMap` and its functors, and split versions. `PreSplitOpfib` (`PreSplitFib`) adds
     the splitting axioms on objects, which are rules; `SplitOpfib` (`SplitFib`) holds it as an
     instance field rather than a parent, since the fields of a parent are local variables while a
     class is elaborated and the rules would not apply to the axioms on lifts. `DualOp.lean` is the
-    dual opfibration of a split opfibration, which computes; `Transfer.lean` transfers cleavages
-    along equivalences.
+    dual opfibration of a split opfibration, which computes. (Op)cleavages transfer along
+    equivalences over the base.
   - `Straightening/`: Proposition 9 of the notes. `DCat` (lax normal functors
     `LocallyDiscrete A ⥤ᴸ ProfCat`, with lax transformations with representable components as
     morphisms, on elements via `LaxNormal.lean`) and `Arr` (`Cat^→`, by the codomain) are displayed
@@ -131,7 +133,7 @@ folders. Displayed and doubly displayed categories are developed in parallel: ea
     preserve cartesian morphisms. Only the inverses of the unit and counit transport along
     equations `p e = a`.
 - `DoubleDisplayed/`: categories doubly displayed over a displayed category `B`, with `Basic`,
-  `Total` (`C.total : Displayed A`), `Cartesian` and `Functor` (`VertFunctor` over `B`).
+  `Total` (`C.total : Displayed A`) and `Cartesian`; `Basic` includes `VertFunctor` over `B`.
   - `D2SFib/`: dependent 2-sided fibrations over a split opfibration `B` (`Basic`), as cloven
     (`D2SFib`), pre-split (`PreSplitD2SFib`, laws on objects as rules) and split (`SplitD2SFib`)
     classes, like `Displayed/Fibration`, and the category of split ones (`Category`).

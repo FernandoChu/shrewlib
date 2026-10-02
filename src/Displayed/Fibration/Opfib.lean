@@ -28,11 +28,13 @@ These make the dual opfibration of `B` (`DualOp.lean`) a displayed category whos
 by a factorization that the rules rewrite back into `pushMap`, `pushMap` is an `irreducible_def`:
 unfolding it would loop.
 
+Finally, an opcleavage transfers along an equivalence over `A` (`VertEquivalence.opfib`).
+
 `Fib.lean` is the exact dual, with chosen cartesian lifts `clift f y : pull f y ⟶[f] y`. Its
 sections mirror the sections of this file.
 -/
 
-universe v₁ u₁ v₂ u₂
+universe v₁ u₁ v₂ u₂ v₃ u₃
 
 open CategoryTheory
 
@@ -329,5 +331,23 @@ theorem totalOlift_comp (f : a ⟶ a') (g : a' ⟶ a'') (x : D.Ob a) :
     D.totalOlift (f ≫ g) x = D.totalOlift f x ≫ D.totalOlift g (D.push f x) := rfl
 
 end TotalSplit
+
+/-! ## Transfer along equivalences -/
+
+section Transfer
+
+variable {D : Displayed.{v₁, u₁, v₂, u₂} A} {E : Displayed.{v₁, u₁, v₃, u₃} A}
+
+/-- An opcleavage transfers along an equivalence over `A`: the chosen lift at `x` is the inverse
+of the counit, followed by the image of the chosen lift at `G x`. -/
+@[instance_reducible]
+def VertEquivalence.opfib (e : VertEquivalence D E) [Opfib D] : Opfib E where
+  push f x := e.functor.obj (D.push f (e.inverse.obj x))
+  olift f x := (e.counitIso.inv.app x ≫ᵈ e.functor.map (D.olift f (e.inverse.obj x)) :)
+  olift_opcartesian f x :=
+    IsOpcartesian.iso_comp (e.isOpcartesian_map (D.olift_opcartesian f _)) _ (e.counitIso.hom.app x)
+      (VertNatIso.hom_inv_id_app e.counitIso x) (VertNatIso.inv_hom_id_app e.counitIso x)
+
+end Transfer
 
 end Displayed
