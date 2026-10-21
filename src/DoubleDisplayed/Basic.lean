@@ -1,4 +1,4 @@
-import Displayed.Basic
+import Displayed.Displayed.Basic
 
 /-!
 # Doubly displayed categories

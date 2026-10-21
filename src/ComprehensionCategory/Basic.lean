@@ -1,4 +1,4 @@
-import Displayed.Codomain
+import Displayed.Displayed.Codomain
 
 /-!
 # Comprehension categories
@@ -28,8 +28,7 @@ We provide:
   `[SplitComprehension D] [FullComprehension D]`;
 * `Comprehension.ofClift`: it suffices that the chosen lifts go to cartesian morphisms;
 * the extended context `D.ext A`, the projection `D.proj A : D.ext A ⟶ Γ`, and the morphism
-  `D.q σ A : D.ext (D.pull σ A) ⟶ D.ext A` with its pullback square (`isPullback_q`);
-* the full comprehension category `cod C` of a category with chosen pullbacks, by the identity.
+  `D.q σ A : D.ext (D.pull σ A) ⟶ D.ext A` with its pullback square (`isPullback_q`).
 
 ## Notation
 
@@ -216,18 +215,5 @@ noncomputable def comprHomEquiv (f : a ⟶ a') (x : D.Ob a) (y : D.Ob a') :
   Equiv.ofBijective _ (FullComprehension.compr_map_bijective f x y)
 
 end FullComprehension
-
-/-! ## The codomain comprehension category -/
-
-/-- A category with chosen pullbacks is a comprehension category over itself, with the codomain
-fibration and the identity comprehension functor. -/
-@[instance_reducible]
-instance cod.comprehension [ChosenPullbacks C] : Comprehension (cod C) where
-  compr := VertFunctor.id (cod C)
-  isCartesian_compr_map H := H
-
-/-- The codomain comprehension category is full. -/
-instance cod.fullComprehension [ChosenPullbacks C] : FullComprehension (cod C) where
-  compr_map_bijective _ _ _ := Function.bijective_id
 
 end Displayed

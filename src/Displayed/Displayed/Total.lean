@@ -1,4 +1,4 @@
-import Displayed.Equivalence
+import Displayed.Displayed.Equivalence
 import Mathlib.CategoryTheory.Equivalence
 
 /-!

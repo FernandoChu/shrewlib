@@ -1,6 +1,6 @@
 import DoubleDisplayed.Cartesian
 import DoubleDisplayed.Total
-import Displayed.Fibration.DualOp
+import Displayed.Opfibration.DualOp
 
 /-!
 # Dependent 2-sided split fibrations (`D2SFib`)

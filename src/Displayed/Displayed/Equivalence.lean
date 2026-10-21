@@ -1,4 +1,4 @@
-import Displayed.Cartesian
+import Displayed.Displayed.Basic
 
 /-!
 # Equivalences over the base
@@ -7,13 +7,14 @@ An *equivalence over `A`* (`VertEquivalence`) between displayed categories over 
 vertical functors with vertical natural isomorphisms `𝟭 ≅ F ⋙ G` and `G ⋙ F ≅ 𝟭`: their components
 lie over identities. We show:
 
-* a vertical equivalence is fully faithful on displayed hom-types over each base morphism
-  (`VertEquivalence.map_injective`, `VertEquivalence.map_surjective`);
-* it preserves cartesian and opcartesian morphisms (`VertEquivalence.isCartesian_map`,
-  `VertEquivalence.isOpcartesian_map`).
+a vertical equivalence is fully faithful on displayed hom-types over each base morphism
+(`VertEquivalence.map_injective`, `VertEquivalence.map_surjective`). That it preserves
+(op)cartesian morphisms is in `Displayed/Fibration/Basic.lean` and
+`Displayed/Opfibration/Basic.lean`.
 
-The induced equivalence of total categories is `VertEquivalence.total` in `Displayed/Total.lean`,
-and the transfer of cleavages along a vertical equivalence is in `Displayed/Fibration/`.
+The induced equivalence of total categories is `VertEquivalence.total` in
+`Displayed/Displayed/Total.lean`, and the transfer of cleavages along a vertical equivalence is in
+`Displayed/Fibration/` and `Displayed/Opfibration/`.
 -/
 
 universe v₁ u₁ v₂ u₂ v₃ u₃
@@ -76,42 +77,6 @@ theorem map_surjective {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'}
   have hR := (VertNatIso.inv_hom_id_app_assoc η x _).trans
     (congrArg (e.inverse.map (e.functor.map φ) ≫ᵈ ·) (VertNatIso.inv_hom_id_app η y))
   exact (hR.symm.trans (c.symm.trans hL) :)
-
-/-- **A vertical equivalence preserves cartesian morphisms.** -/
-theorem isCartesian_map {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f] y}
-    (H : IsCartesian φ) : IsCartesian (e.functor.map φ) := by
-  intro a₀ g z χ
-  let ε := e.counitIso
-  obtain ⟨χ', hχ'⟩ := e.map_surjective (ε.hom.app z ≫ᵈ χ :)
-  refine ⟨(ε.inv.app z ≫ᵈ e.functor.map (IsCartesian.lift H g χ') :), ?_, fun ψ hψ => ?_⟩
-  · exact (((congrArg (fun t => ε.inv.app z ≫ᵈ e.functor.map t)
-      (IsCartesian.lift_fac H g χ')).trans (congrArg (ε.inv.app z ≫ᵈ ·) hχ')).trans
-        (VertNatIso.inv_hom_id_app_assoc ε z χ) :)
-  · obtain ⟨ψ', hψ'⟩ := e.map_surjective (ε.hom.app z ≫ᵈ ψ :)
-    have h₁ : ψ' ≫ᵈ φ = χ' := e.map_injective
-      ((congrArg (· ≫ᵈ e.functor.map φ) hψ').trans
-        ((congrArg (ε.hom.app z ≫ᵈ ·) hψ).trans hχ'.symm) :)
-    have h₂ : ψ' = IsCartesian.lift H g χ' := IsCartesian.lift_uniq H ψ' h₁
-    exact ((VertNatIso.inv_hom_id_app_assoc ε z ψ).symm.trans
-      (congrArg (ε.inv.app z ≫ᵈ ·) (hψ'.symm.trans (congrArg e.functor.map h₂))) :)
-
-/-- **A vertical equivalence preserves opcartesian morphisms.** -/
-theorem isOpcartesian_map {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f] y}
-    (H : IsOpcartesian φ) : IsOpcartesian (e.functor.map φ) := by
-  intro a'' g z χ
-  let ε := e.counitIso
-  obtain ⟨χ', hχ'⟩ := e.map_surjective (χ ≫ᵈ ε.inv.app z :)
-  refine ⟨(e.functor.map (IsOpcartesian.desc H g χ') ≫ᵈ ε.hom.app z :), ?_, fun ψ hψ => ?_⟩
-  · exact (((congrArg (fun t => e.functor.map t ≫ᵈ ε.hom.app z)
-      (IsOpcartesian.desc_fac H g χ')).trans (congrArg (· ≫ᵈ ε.hom.app z) hχ')).trans
-        (congrArg (χ ≫ᵈ ·) (VertNatIso.inv_hom_id_app ε z)) :)
-  · obtain ⟨ψ', hψ'⟩ := e.map_surjective (ψ ≫ᵈ ε.inv.app z :)
-    have h₁ : φ ≫ᵈ ψ' = χ' := e.map_injective
-      ((congrArg (e.functor.map φ ≫ᵈ ·) hψ').trans
-        ((congrArg (· ≫ᵈ ε.inv.app z) hψ).trans hχ'.symm) :)
-    have h₂ : ψ' = IsOpcartesian.desc H g χ' := IsOpcartesian.desc_uniq H ψ' h₁
-    exact ((congrArg (ψ ≫ᵈ ·) (VertNatIso.inv_hom_id_app ε z)).symm.trans
-      (congrArg (· ≫ᵈ ε.hom.app z) (hψ'.symm.trans (congrArg e.functor.map h₂))) :)
 
 end VertEquivalence
 

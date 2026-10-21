@@ -1,12 +1,13 @@
-import Displayed.Basic
-import Displayed.Cartesian
-import Displayed.Total
+import Displayed.Displayed.Basic
+import Displayed.Displayed.Total
 import Mathlib.Tactic.IrreducibleDef
 
 /-!
 # Fibrations
 
-The exact dual of `Opfib.lean`, whose sections this file mirrors.
+The exact dual of `Opfibration/Basic.lean`, whose sections this file mirrors. It starts with
+cartesian morphisms (`IsCartesian`), which vertical equivalences preserve
+(`VertEquivalence.isCartesian_map`).
 
 A `Fib` structure on a displayed category `D` is a cloven fibration: a chosen pullback `pull f y`
 for every base morphism `f : a ⟶ a'` and object `y` over `a'`, and a chosen cartesian lift
@@ -29,8 +30,9 @@ Finally, a cleavage transfers along an equivalence over `A` (`VertEquivalence.fi
 
 As for `pushMap`, `pullMap` is an `irreducible_def`, since the rules rewrite its definition back
 into it. Composites are normalized to be right-associated, so the `_assoc` forms of the rules are
-not literally dual to those of `Opfib.lean`: here the rules must also see `clift f y` followed by
-further morphisms, as in `cartesianFactor φ ≫ᵈ (clift f y ≫ᵈ χ)` and `clift f x ≫ᵈ (β ≫ᵈ χ)`.
+not literally dual to those of `Opfibration/Basic.lean`: here the rules must also see `clift f y`
+followed by further morphisms, as in `cartesianFactor φ ≫ᵈ (clift f y ≫ᵈ χ)` and
+`clift f x ≫ᵈ (β ≫ᵈ χ)`.
 -/
 
 universe v₁ u₁ v₂ u₂ v₃ u₃
@@ -42,6 +44,87 @@ namespace Displayed
 variable {A : Type u₁} [Category.{v₁} A]
 
 open scoped Displayed
+
+/-! ## Cartesian morphisms -/
+
+section Cartesian
+
+variable {D : Displayed.{v₁, u₁, v₂, u₂} A}
+
+/-- `φ : x ⟶[f] y` is *cartesian*: every displayed map into `y` over `g ≫ f` factors uniquely
+through `φ` by a displayed map over `g`. (This is the *strong* cartesian property.) -/
+def IsCartesian {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} (φ : x ⟶[f] y) : Prop :=
+  ∀ {a₀ : A} (g : a₀ ⟶ a) (z : D.Ob a₀) (χ : z ⟶[g ≫ f] y),
+    ∃! ψ : z ⟶[g] x, ψ ≫ᵈ φ = χ
+
+namespace IsCartesian
+
+variable {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f] y}
+
+/-- The unique factorization of `χ` through a cartesian `φ`. -/
+noncomputable def lift (H : IsCartesian φ) {a₀ : A} (g : a₀ ⟶ a) {z : D.Ob a₀}
+    (χ : z ⟶[g ≫ f] y) : z ⟶[g] x :=
+  (H g z χ).choose
+
+@[simp]
+theorem lift_fac (H : IsCartesian φ) {a₀ : A} (g : a₀ ⟶ a) {z : D.Ob a₀}
+    (χ : z ⟶[g ≫ f] y) : H.lift g χ ≫ᵈ φ = χ :=
+  (H g z χ).choose_spec.1
+
+/-- Any factorization of `χ` through `φ` agrees with `lift`. -/
+theorem lift_uniq (H : IsCartesian φ) {a₀ : A} {g : a₀ ⟶ a} {z : D.Ob a₀}
+    {χ : z ⟶[g ≫ f] y} (ψ : z ⟶[g] x) (hψ : ψ ≫ᵈ φ = χ) : ψ = H.lift g χ :=
+  (H g z χ).choose_spec.2 ψ hψ
+
+/-- Two maps into `x` that agree after postcomposition with a cartesian `φ` are equal. -/
+theorem hom_ext (H : IsCartesian φ) {a₀ : A} {g : a₀ ⟶ a} {z : D.Ob a₀}
+    {ψ ψ' : z ⟶[g] x} (h : ψ ≫ᵈ φ = ψ' ≫ᵈ φ) : ψ = ψ' :=
+  (H.lift_uniq ψ rfl).trans (H.lift_uniq ψ' h.symm).symm
+
+/-- Precomposing a cartesian morphism with a vertical isomorphism gives a cartesian morphism. -/
+theorem iso_comp {x' : D.Ob a} (H : IsCartesian φ) (ι : x' ⟶[𝟙 a] x) (ι' : x ⟶[𝟙 a] x')
+    (h : ι' ≫ᵈ ι = 𝟙ᵈ x) (h' : ι ≫ᵈ ι' = 𝟙ᵈ x') : IsCartesian (ι ≫ᵈ φ) := by
+  intro a₀ g z χ
+  refine ⟨(H.lift g χ ≫ᵈ ι' :), ?_, fun ψ hψ => ?_⟩
+  · exact ((congrArg (fun t => H.lift g χ ≫ᵈ (t ≫ᵈ φ)) h).trans (H.lift_fac g χ) :)
+  · exact ((congrArg (ψ ≫ᵈ ·) h').symm.trans
+      (congrArg (· ≫ᵈ ι') (H.lift_uniq (ψ ≫ᵈ ι :) hψ)) :)
+
+/-- Postcomposing a cartesian morphism with a vertical isomorphism gives a cartesian morphism. -/
+theorem comp_iso {y' : D.Ob a'} (H : IsCartesian φ) (ι : y ⟶[𝟙 a'] y') (ι' : y' ⟶[𝟙 a'] y)
+    (h : ι' ≫ᵈ ι = 𝟙ᵈ y') (h' : ι ≫ᵈ ι' = 𝟙ᵈ y) : IsCartesian (φ ≫ᵈ ι) := by
+  intro a₀ g z χ
+  refine ⟨H.lift g (χ ≫ᵈ ι' :), ?_, fun ψ hψ => H.lift_uniq ψ ?_⟩
+  · exact ((congrArg (· ≫ᵈ ι) (H.lift_fac g (χ ≫ᵈ ι' :))).trans (congrArg (χ ≫ᵈ ·) h) :)
+  · exact ((congrArg (fun t => ψ ≫ᵈ (φ ≫ᵈ t)) h').symm.trans (congrArg (· ≫ᵈ ι') hψ) :)
+
+end IsCartesian
+
+namespace VertEquivalence
+
+variable {E : Displayed.{v₁, u₁, v₃, u₃} A} (e : VertEquivalence D E)
+
+/-- **A vertical equivalence preserves cartesian morphisms.** -/
+theorem isCartesian_map {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f] y}
+    (H : IsCartesian φ) : IsCartesian (e.functor.map φ) := by
+  intro a₀ g z χ
+  let ε := e.counitIso
+  obtain ⟨χ', hχ'⟩ := e.map_surjective (ε.hom.app z ≫ᵈ χ :)
+  refine ⟨(ε.inv.app z ≫ᵈ e.functor.map (IsCartesian.lift H g χ') :), ?_, fun ψ hψ => ?_⟩
+  · exact (((congrArg (fun t => ε.inv.app z ≫ᵈ e.functor.map t)
+      (IsCartesian.lift_fac H g χ')).trans (congrArg (ε.inv.app z ≫ᵈ ·) hχ')).trans
+        (VertNatIso.inv_hom_id_app_assoc ε z χ) :)
+  · obtain ⟨ψ', hψ'⟩ := e.map_surjective (ε.hom.app z ≫ᵈ ψ :)
+    have h₁ : ψ' ≫ᵈ φ = χ' := e.map_injective
+      ((congrArg (· ≫ᵈ e.functor.map φ) hψ').trans
+        ((congrArg (ε.hom.app z ≫ᵈ ·) hψ).trans hχ'.symm) :)
+    have h₂ : ψ' = IsCartesian.lift H g χ' := IsCartesian.lift_uniq H ψ' h₁
+    exact ((VertNatIso.inv_hom_id_app_assoc ε z ψ).symm.trans
+      (congrArg (ε.inv.app z ≫ᵈ ·) (hψ'.symm.trans (congrArg e.functor.map h₂))) :)
+
+end VertEquivalence
+
+end Cartesian
 
 /-! ## The classes -/
 

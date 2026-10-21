@@ -3,9 +3,9 @@ import DoubleDisplayed.Basic
 /-!
 # (Op)cartesian morphisms in a doubly displayed category
 
-The analogue of `Displayed/Cartesian.lean` one level up: the double-level `IsOpcartesian` (over
-any `B`-morphism) and `IsCartesian` (over vertical `B`-morphisms) predicates and their
-universal-property API.
+The analogue one level up of the (op)cartesian morphisms of `Displayed/Opfibration/Basic.lean` and
+`Displayed/Fibration/Basic.lean`: the double-level `IsOpcartesian` (over any `B`-morphism) and
+`IsCartesian` (over vertical `B`-morphisms) predicates and their universal-property API.
 -/
 
 universe v₁ u₁ v₂ u₂ v₃ u₃

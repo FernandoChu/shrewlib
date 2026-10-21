@@ -28,8 +28,8 @@ We provide:
 The cancellation lemmas of vertical natural isomorphisms are not rewrite rules: they are keyed on
 displayed composition, and trying them on every displayed composite is too slow.
 
-The total category is in `Displayed/Total.lean`, and equivalences over `A` are in
-`Displayed/Equivalence.lean`.
+The total category is in `Displayed/Displayed/Total.lean`, and equivalences over `A` are in
+`Displayed/Displayed/Equivalence.lean`.
 
 Requires the `rewrite-rules` fork of Lean.
 -/

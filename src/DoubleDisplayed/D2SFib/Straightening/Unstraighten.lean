@@ -1,5 +1,5 @@
 import DoubleDisplayed.D2SFib.Category
-import Displayed.Fibration.DualOp
+import Displayed.Opfibration.DualOp
 import Mathlib.CategoryTheory.Category.Cat
 
 /-!

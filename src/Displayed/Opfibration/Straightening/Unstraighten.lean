@@ -1,14 +1,13 @@
-import ComprehensionCategory.LaxTrans
+import Displayed.Opfibration.Straightening.ICat
 import Tactic.KernelTactic
 import Mathlib.CategoryTheory.Grothendieck
 
 /-!
-# The category model
+# Unstraightening functors into `Cat`
 
-The *category model* is the full split comprehension category over `Cat` given by the split
-fibration `ICat` of indexed categories and lax transformations (`ComprehensionCategory/LaxTrans`),
-with the comprehension functor `ICat ⟶ cod Cat` sending `F : A ⥤ Cat` to the projection
-`π : A ⋉ F ⥤ A` of its Grothendieck construction.
+The unstraightening of `F : A ⥤ Cat` is the projection `π : A ⋉ F ⥤ A` of its Grothendieck
+construction, a split opfibration. It is a functor `unstraighten : ICat ⟶ cod Cat` over `Cat`
+(`ICat` in `ICat.lean`).
 
 * `A ⋉ F` is Mathlib's `Grothendieck F`: objects are pairs `(a, x)` with `x : F a`, and a morphism
   `(a, x) ⟶ (a', y)` is a pair `(f, φ)` with `φ : F f x ⟶ y`. Its identities and composites carry
@@ -17,22 +16,24 @@ with the comprehension functor `ICat ⟶ cod Cat` sending `F : A ⥤ Cat` to the
   `(f ≫ g, F g φ ≫ ψ)` by `rfl`. The projection `π` is `Grothendieck.forget`.
 * `Groth.map α`: the functor `A ⋉ F ⥤ B ⋉ G` over `u : A ⥤ B` induced by a lax transformation
   `α : F ⇒ u ⋙ G`, sending `(f, φ)` to `(u f, α_f x ≫ α φ)`.
-* `compr : VertFunctor ICat (cod Cat)`, whose functor laws hold by `rfl`.
+* `unstraighten : VertFunctor ICat (cod Cat)`, whose functor laws hold by `rfl`.
 * It sends the chosen lifts, the identities `u^* G ⟶[u] G`, to cartesian morphisms of `cod Cat`
-  (`isCartesian_compr_clift`): `A ⋉ u^* G` is the pullback of `B ⋉ G` along `u`.
-* It is fully faithful (`compr_map_bijective`): a functor `A ⋉ F ⥤ B ⋉ G` over `u` is `Groth.map`
-  of a unique lax transformation, read off on the morphisms `(f, 𝟙)` and `(𝟙, φ)`.
+  (`isCartesian_unstraighten_clift`): `A ⋉ u^* G` is the pullback of `B ⋉ G` along `u`.
+* It is fully faithful (`unstraighten_map_bijective`): a functor `A ⋉ F ⥤ B ⋉ G` over `u` is
+  `Groth.map` of a unique lax transformation, read off on the morphisms `(f, 𝟙)` and `(𝟙, φ)`.
+* Transport in `A ⋉ F`: the morphisms `(f, 𝟙)` (`Groth.transport`), as rules, and their action
+  under functors out of `A ⋉ F`.
 
-The Grothendieck construction `Grothendieck F` of `F : A ⥤ Cat` is written `A ⋉ F` (scoped in
-`ComprehensionCategory`), as in the paper, so that the comprehension of `F` is `π : A ⋉ F ⥤ A`.
+The notation `A ⋉ F` is scoped in `Displayed.Opfibration.Straightening`, as in the paper.
 
-The last two are proved without transport: a functor `W` into `B ⋉ G` whose composite with `π` is
-known is taken apart into its components, whose bases are then substituted by the known ones.
+The last two items about `unstraighten` are proved without transport: a functor `W` into `B ⋉ G`
+whose composite with `π` is known is taken apart into its components, whose bases are then
+substituted by the known ones.
 -/
 
 universe v₁ u₁ v₂ u₂ v u
 
-namespace ComprehensionCategory
+namespace Displayed.Opfibration.Straightening
 
 open CategoryTheory Displayed
 
@@ -111,30 +112,30 @@ end Groth
 
 end Groth
 
-/-! ## The comprehension functor -/
+/-! ## The unstraightening functor -/
 
-/-- The comprehension of `F : A ⥤ Cat`: the projection `π : A ⋉ F ⥤ A`. -/
-def comprObj {A : Cat.{u, u}} (F : A ⥤ Cat.{u, u}) : (cod Cat.{u, u}).Ob A :=
+/-- The unstraightening of `F : A ⥤ Cat`: the projection `π : A ⋉ F ⥤ A`. -/
+def unstraightenObj {A : Cat.{u, u}} (F : A ⥤ Cat.{u, u}) : (cod Cat.{u, u}).Ob A :=
   ⟨Cat.of (A ⋉ F), (Groth.π F).toCatHom⟩
 
-/-- The comprehension of a lax transformation over `u`: the induced functor `Groth.map u α`. -/
-def comprMap {A B : Cat.{u, u}} {u : A ⟶ B} {F : A ⥤ Cat.{u, u}} {G : B ⥤ Cat.{u, u}}
-    (α : LaxTrans F (u.toFunctor ⋙ G)) : (comprObj F ⟶[u] comprObj G) :=
+/-- The unstraightening of a lax transformation over `u`: the induced functor `Groth.map u α`. -/
+def unstraightenMap {A B : Cat.{u, u}} {u : A ⟶ B} {F : A ⥤ Cat.{u, u}} {G : B ⥤ Cat.{u, u}}
+    (α : LaxTrans F (u.toFunctor ⋙ G)) : (unstraightenObj F ⟶[u] unstraightenObj G) :=
   ⟨(Groth.map u.toFunctor α).toCatHom, rfl⟩
 
-/-- The comprehension functor of the category model: `F : A ⥤ Cat` goes to `π : A ⋉ F ⥤ A`, and a
+/-- The unstraightening functor: `F : A ⥤ Cat` goes to `π : A ⋉ F ⥤ A`, and a
 lax transformation over `u` to the induced functor `Groth.map u α`. -/
-def compr : VertFunctor ICat.{u} (cod Cat.{u, u}) where
-  obj F := comprObj F
-  map α := comprMap α
+def unstraighten : VertFunctor ICat.{u} (cod Cat.{u, u}) where
+  obj F := unstraightenObj F
+  map α := unstraightenMap α
   map_id _ := rfl
   -- By `rfl` in the elaborator; the kernel needs the functors compared pointwise.
   map_comp _ _ := Subtype.ext (Cat.Hom.ext (Functor.hext (fun _ => rfl) fun _ _ _ => HEq.rfl))
 
-/-- The comprehension functor sends the chosen lifts to cartesian morphisms: `A ⋉ u^* G` is the
+/-- The unstraightening sends the chosen lifts to cartesian morphisms: `A ⋉ u^* G` is the
 pullback of `B ⋉ G` along `u`. -/
-theorem isCartesian_compr_clift {A B : Cat.{u, u}} (u : A ⟶ B) (G : B ⥤ Cat.{u, u}) :
-    IsCartesian (compr.map (ICat.clift u G)) := by
+theorem isCartesian_unstraighten_clift {A B : Cat.{u, u}} (u : A ⟶ B) (G : B ⥤ Cat.{u, u}) :
+    IsCartesian (unstraighten.map (ICat.clift u G)) := by
   intro A₀ g z χ
   obtain ⟨Z, r⟩ := z
   obtain ⟨⟨⟨o, m, hid, hcomp⟩⟩, hχ⟩ := χ
@@ -195,11 +196,11 @@ theorem isCartesian_compr_clift {A B : Cat.{u, u}} (u : A ⟶ B) (G : B ⥤ Cat.
     exact Groth.fiber_eq_of_eq (eq_of_heq (Functor.hcongr_hom hF k))
   exact Subtype.ext (Cat.Hom.ext (Functor.hext (fun _ => rfl) fun _ _ _ => HEq.rfl))
 
-/-- **The comprehension functor is fully faithful**: functors `A ⋉ F ⥤ B ⋉ G` over `u` are the
+/-- **The unstraightening is fully faithful**: functors `A ⋉ F ⥤ B ⋉ G` over `u` are the
 same as lax transformations `F ⇒ u ⋙ G`. -/
-theorem compr_map_bijective {A B : Cat.{u, u}} (u : A ⟶ B) (F : A ⥤ Cat.{u, u})
+theorem unstraighten_map_bijective {A B : Cat.{u, u}} (u : A ⟶ B) (F : A ⥤ Cat.{u, u})
     (G : B ⥤ Cat.{u, u}) :
-    Function.Bijective (compr.map : ICat.Hom u F G → _) := by
+    Function.Bijective (unstraighten.map : ICat.Hom u F G → _) := by
   refine ⟨fun α β h => ?_, fun w => ?_⟩
   · -- `α` is read off `Groth.map α` on the morphisms `(𝟙, φ)` and `(f, 𝟙)`.
     have hF : Groth.map u.toFunctor α = Groth.map u.toFunctor β :=
@@ -265,14 +266,110 @@ theorem compr_map_bijective {A B : Cat.{u, u}} (u : A ⟶ B) (F : A ⥤ Cat.{u, 
         (Hom.mk (X := ⟨Y.base, (F.map k.base).toFunctor.obj X.fiber⟩) (Y := Y)
           (𝟙 Y.base) k.fiber))).symm
 
-@[instance_reducible]
-instance ICat.comprehension : Comprehension ICat.{u} :=
-  Comprehension.ofClift compr isCartesian_compr_clift
+/-! ## Transport in `A ⋉ F` -/
 
-/-- **The category model** is a full split comprehension category over `Cat`. -/
-instance ICat.splitComprehension : SplitComprehension ICat.{u} where
+namespace Groth
 
-instance ICat.fullComprehension : FullComprehension ICat.{u} where
-  compr_map_bijective := compr_map_bijective
+variable {A : Type u₁} [Category.{v₁} A] (F : A ⥤ Cat.{v, u})
 
-end ComprehensionCategory
+/-- The morphism `(f, 𝟙) : (a, x) ⟶ (a', F f x)`. -/
+def transport {a a' : A} (f : a ⟶ a') (x : F.obj a) :
+    (⟨a, x⟩ : Grothendieck F) ⟶ ⟨a', (F.map f).toFunctor.obj x⟩ :=
+  ⟨f, 𝟙 _⟩
+
+@[rewrite_rule]
+theorem transport_id (a : A) (x : F.obj a) : transport F (𝟙 a) x = 𝟙 (⟨a, x⟩ : A ⋉ F) := rfl
+
+@[rewrite_rule]
+theorem transport_comp {a a' a'' : A} (f : a ⟶ a') (g : a' ⟶ a'') (x : F.obj a) :
+    transport F (f ≫ g) x = transport F f x ≫ transport F g ((F.map f).toFunctor.obj x) :=
+  rfl
+
+/-- A morphism `k` is `(k.base, 𝟙)` followed by `(𝟙, k.fiber)`. -/
+theorem transport_incl {X Y : Grothendieck F} (k : X ⟶ Y) :
+    transport F k.base X.fiber ≫ (Grothendieck.ι F Y.base).map k.fiber = k :=
+  rfl
+
+/-- `(f, 𝟙)` and `(𝟙, φ)` commute. -/
+theorem transport_comm {a a' : A} (f : a ⟶ a') {x x' : F.obj a} (φ : x ⟶ x') :
+    transport F f x ≫ (Grothendieck.ι F a').map ((F.map f).toFunctor.map φ) =
+      (Grothendieck.ι F a).map φ ≫ transport F f x' :=
+  rfl
+
+variable {F}
+
+/-! ## Identities between equal objects -/
+
+section EqToHom
+
+variable {C : Type*} [Category C] {D : Type*} [Category D] {E : Type*} [Category E]
+
+theorem eqToHom_comp_eqToHom_comp {X Y Z : C} (p : X = Y) (q : Y = X) (f : X ⟶ Z) :
+    eqToHom p ≫ eqToHom q ≫ f = f := by
+  simp
+
+theorem eqToHom_eq_comp_map_eqToHom (G : C ⥤ D) {a b : C} {c : D} (p : c = G.obj b)
+    (q : c = G.obj a) (r : a = b) : eqToHom p = eqToHom q ≫ G.map (eqToHom r) := by
+  subst r
+  simp
+
+theorem eqToHom_eq_map_map_comp (G : C ⥤ D) (T : E ⥤ C) {a b : E} {c : C} {e : D}
+    (p : G.obj c = e) (q : c = T.obj a) (r : a = b) (s : G.obj (T.obj b) = e) :
+    eqToHom p = G.map (eqToHom q) ≫ G.map (T.map (eqToHom r)) ≫ eqToHom s := by
+  subst q r
+  simp
+
+/-- Naturality of an identity between equal functors. -/
+theorem map_comp_eqToHom {P Q : C ⥤ D} (h : P = Q) {x y : C} (β : x ⟶ y) :
+    P.map β ≫ eqToHom (Functor.congr_obj h y) = eqToHom (Functor.congr_obj h x) ≫ Q.map β := by
+  subst h
+  simp
+
+/-- Naturality of an identity between `T ⋙ G` and an equal functor, preceded by an identity. -/
+theorem map_eqToHom_comp_map_map (T : E ⥤ C) (G : C ⥤ D) {Q : E ⥤ D} (h : T ⋙ G = Q) {x y : E}
+    (c : T.obj x = T.obj x) (β : x ⟶ y) :
+    G.map (eqToHom c) ≫ G.map (T.map β) ≫ eqToHom (Functor.congr_obj h y) =
+      eqToHom (Functor.congr_obj h x) ≫ Q.map β := by
+  subst h
+  simp
+
+end EqToHom
+
+/-- Morphisms of `A ⋉ F` are determined by their bases and fibres. -/
+theorem Hom.ext' {X Y : Grothendieck F} {φ ψ : X ⟶ Y} (hb : Hom.base φ = Hom.base ψ)
+    (hf : Hom.fiber φ ≍ Hom.fiber ψ) : φ = ψ := by
+  obtain ⟨b, f⟩ := φ
+  obtain ⟨b', f'⟩ := ψ
+  dsimp only at hb
+  subst hb
+  cases eq_of_heq hf
+  rfl
+
+/-- Heterogeneous extensionality for morphisms of `A ⋉ F`. -/
+theorem Hom.hext {X X' Y Y' : Grothendieck F} (hX : X = X') (hY : Y = Y') {φ : X ⟶ Y} {ψ : X' ⟶ Y'}
+    (hb : Hom.base φ ≍ Hom.base ψ) (hf : Hom.fiber φ ≍ Hom.fiber ψ) : φ ≍ ψ := by
+  subst hX hY
+  exact heq_of_eq (Hom.ext' (eq_of_heq hb) hf)
+
+/-! ## Functors out of `A ⋉ F` -/
+
+variable (B : Grothendieck F ⥤ Cat.{v, u})
+
+/-- `B (𝟙, F f φ) ∘ B (f, 𝟙) = B (f, 𝟙) ∘ B (𝟙, φ)` on objects. -/
+theorem obj_transport_comm {a a' : A} (f : a ⟶ a') {x x' : F.obj a} (φ : x ⟶ x')
+    (b : B.obj (⟨a, x⟩ : Grothendieck F)) :
+    (B.map ((Grothendieck.ι F a').map ((F.map f).toFunctor.map φ))).toFunctor.obj
+        ((B.map (transport F f x)).toFunctor.obj b) =
+      (B.map (transport F f x')).toFunctor.obj
+        ((B.map ((Grothendieck.ι F a).map φ)).toFunctor.obj b) :=
+  congrArg (fun k => (B.map k).toFunctor.obj b) (transport_comm F f φ)
+
+/-- `B (𝟙, k.fiber) ∘ B (k.base, 𝟙) = B k` on objects. -/
+theorem obj_transport_incl {X Y : Grothendieck F} (k : X ⟶ Y) (b : B.obj X) :
+    (B.map ((Grothendieck.ι F Y.base).map k.fiber)).toFunctor.obj
+        ((B.map (transport F k.base X.fiber)).toFunctor.obj b) = (B.map k).toFunctor.obj b :=
+  congrArg (fun k' => (B.map k').toFunctor.obj b) (transport_incl F k)
+
+end Groth
+
+end Displayed.Opfibration.Straightening

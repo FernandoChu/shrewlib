@@ -1,4 +1,4 @@
-import Displayed.Fibration.Fib
+import Displayed.Fibration.Basic
 import Mathlib.CategoryTheory.LocallyCartesianClosed.ChosenPullbacksAlong
 
 /-!
@@ -8,7 +8,7 @@ The arrow category of `C`, displayed over `C` by the codomain: an object over `a
 `p : X ⟶ a`, and a morphism over `f : a ⟶ a'` from `p : X ⟶ a` to `q : Y ⟶ a'` is a morphism
 `h : X ⟶ Y` with `h ≫ q = p ≫ f`. The laws hold by `rfl`, since the category laws of `C` are rules
 and the equation is a proposition. For `C = Cat` it is the arrow
-category `Cat^→` of `Displayed/Straightening`.
+category `Cat^→` of `Displayed/Displayed/Straightening`.
 
 We show that the cartesian morphisms are the pullback squares (`isCartesian_iff_isPullback`), so
 that if `C` has chosen pullbacks (Mathlib's `ChosenPullbacks C`, which are data rather than a

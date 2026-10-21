@@ -1,4 +1,4 @@
-import Displayed.Fibration.Opfib
+import Displayed.Opfibration.Basic
 
 /-!
 # The dual opfibration

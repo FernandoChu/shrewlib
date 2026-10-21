@@ -1,7 +1,7 @@
-import Displayed.Codomain
-import Displayed.Straightening.LaxNormal
+import Displayed.Displayed.Codomain
+import Displayed.Displayed.Straightening.LaxNormal
 import Rules.Functor
-import Displayed.Fibration.Fib
+import Displayed.Fibration.Basic
 
 /-!
 # The category of displayed categories, `DCat = Cat ▷⁻ [−, Cat_Prof]^{lax,normal}`

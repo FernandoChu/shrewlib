@@ -23,7 +23,7 @@ whose splitting laws hold by `rfl`.
 
 universe v₁ u₁ v₂ u₂ v u
 
-namespace ComprehensionCategory
+namespace Displayed.Opfibration.Straightening
 
 open CategoryTheory Displayed
 
@@ -155,4 +155,4 @@ instance ICat.splitFib : SplitFib ICat.{u} where
   clift_id _ := rfl
   clift_comp _ _ _ := rfl
 
-end ComprehensionCategory
+end Displayed.Opfibration.Straightening
