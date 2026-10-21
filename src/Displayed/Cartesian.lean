@@ -87,6 +87,15 @@ theorem hom_ext (H : IsCartesian φ) {a₀ : A} {g : a₀ ⟶ a} {z : D.Ob a₀}
     {ψ ψ' : z ⟶[g] x} (h : ψ ≫ᵈ φ = ψ' ≫ᵈ φ) : ψ = ψ' :=
   (H.lift_uniq ψ rfl).trans (H.lift_uniq ψ' h.symm).symm
 
+/-- Precomposing a cartesian morphism with a vertical isomorphism gives a cartesian morphism. -/
+theorem iso_comp {x' : D.Ob a} (H : IsCartesian φ) (ι : x' ⟶[𝟙 a] x) (ι' : x ⟶[𝟙 a] x')
+    (h : ι' ≫ᵈ ι = 𝟙ᵈ x) (h' : ι ≫ᵈ ι' = 𝟙ᵈ x') : IsCartesian (ι ≫ᵈ φ) := by
+  intro a₀ g z χ
+  refine ⟨(H.lift g χ ≫ᵈ ι' :), ?_, fun ψ hψ => ?_⟩
+  · exact ((congrArg (fun t => H.lift g χ ≫ᵈ (t ≫ᵈ φ)) h).trans (H.lift_fac g χ) :)
+  · exact ((congrArg (ψ ≫ᵈ ·) h').symm.trans
+      (congrArg (· ≫ᵈ ι') (H.lift_uniq (ψ ≫ᵈ ι :) hψ)) :)
+
 /-- Postcomposing a cartesian morphism with a vertical isomorphism gives a cartesian morphism. -/
 theorem comp_iso {y' : D.Ob a'} (H : IsCartesian φ) (ι : y ⟶[𝟙 a'] y') (ι' : y' ⟶[𝟙 a'] y)
     (h : ι' ≫ᵈ ι = 𝟙ᵈ y') (h' : ι ≫ᵈ ι' = 𝟙ᵈ y) : IsCartesian (φ ≫ᵈ ι) := by

@@ -29,7 +29,7 @@ elements, with no `eqToHom` or `cast` anywhere. The projection `π : Unstraighte
 the second component, and `fiberInclusion c : F c ⥤ Unstraightening F` includes `F c` as the
 fibre over `c`.
 
-Finally, `unstraighten : VertFunctor DCat Arr` is `(▷ᵈ)*`: it sends `F : LaxNormal A` to the
+Finally, `unstraighten : VertFunctor DCat (cod Cat)` is `(▷ᵈ)*`: it sends `F : LaxNormal A` to the
 projection `π : Unstraightening F ⥤ A`, and a transformation with representable components over
 `u` to the induced functor `(a, x) ↦ (u a, h x)`, `(f, s) ↦ (u f, map s)`. The square commutes,
 and the functor laws hold, by `rfl`.
@@ -110,8 +110,8 @@ end Unstraightening
 /-! ## Unstraightening -/
 
 /-- `(▷ᵈ)*` on objects: the projection of the unstraightening. -/
-def unstraightenObj {A : Cat.{u, u}} (F : LaxNormal A) : ArrOb A :=
-  ⟨Cat.of (Unstraightening F), Unstraightening.π⟩
+def unstraightenObj {A : Cat.{u, u}} (F : LaxNormal A) : (cod Cat.{u, u}).Ob A :=
+  ⟨Cat.of (Unstraightening F), Unstraightening.π.toCatHom⟩
 
 /-- `(▷ᵈ)*` on morphisms: the functor induced by a transformation with representable components. -/
 def unstraightenMap {A B : Cat.{u, u}} {u : A ⟶ B} {F : LaxNormal A} {G : LaxNormal B}
@@ -121,10 +121,15 @@ def unstraightenMap {A B : Cat.{u, u}} {u : A ⟶ B} {F : LaxNormal A} {G : LaxN
   map_id _ := rfl
   map_comp _ _ := rfl
 
+/-- `(▷ᵈ)*` on morphisms, as a commuting square over `u`. -/
+def unstraightenHom {A B : Cat.{u, u}} {u : A ⟶ B} {F : LaxNormal A} {G : LaxNormal B}
+    (φ : ReprHom u F G) : unstraightenObj F ⟶[u] unstraightenObj G :=
+  ⟨(unstraightenMap φ).toCatHom, rfl⟩
+
 /-- **The unstraightening functor `(▷ᵈ)* : DCat → Cat^→` over `Cat`.** -/
-def unstraighten : VertFunctor DCat.{u} Arr.{u} where
+def unstraighten : VertFunctor DCat.{u} (cod Cat.{u, u}) where
   obj F := unstraightenObj F
-  map φ := ⟨unstraightenMap φ, rfl⟩
+  map φ := unstraightenHom φ
   map_id _ := rfl
   map_comp _ _ := rfl
 

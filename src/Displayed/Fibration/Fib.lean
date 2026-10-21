@@ -327,6 +327,41 @@ theorem totalClift_comp (f : a ⟶ a') (g : a' ⟶ a'') (y : D.Ob a'') :
 
 end TotalSplit
 
+/-! ## Preservation of cartesian morphisms -/
+
+section Preservation
+
+variable {D : Displayed.{v₁, u₁, v₂, u₂} A} {E : Displayed.{v₁, u₁, v₃, u₃} A} [Fib D]
+
+/-- The factorization of a cartesian morphism through the chosen lift is a vertical isomorphism,
+with inverse the factorization of the chosen lift through it. -/
+theorem cartesianFactor_inv_comp {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'}
+    {φ : x ⟶[f] y} (H : IsCartesian φ) :
+    H.lift (𝟙 a) (D.clift f y) ≫ᵈ D.cartesianFactor φ = 𝟙ᵈ (D.pull f y) :=
+  IsCartesian.hom_ext (D.clift_cartesian f y) (H.lift_fac (𝟙 a) (D.clift f y))
+
+theorem cartesianFactor_comp_inv {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'}
+    {φ : x ⟶[f] y} (H : IsCartesian φ) :
+    D.cartesianFactor φ ≫ᵈ H.lift (𝟙 a) (D.clift f y) = 𝟙ᵈ x :=
+  H.hom_ext (congrArg (D.cartesianFactor φ ≫ᵈ ·) (H.lift_fac (𝟙 a) (D.clift f y)))
+
+/-- A vertical functor out of a fibration preserves cartesian morphisms as soon as it sends the
+chosen lifts to cartesian morphisms: every cartesian morphism is a vertical isomorphism followed
+by a chosen lift. -/
+theorem VertFunctor.isCartesian_map_of_clift (P : VertFunctor D E)
+    (hP : ∀ {a a' : A} (f : a ⟶ a') (y : D.Ob a'), IsCartesian (P.map (D.clift f y)))
+    {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f] y} (H : IsCartesian φ) :
+    IsCartesian (P.map φ) := by
+  have e : P.map φ = P.map (D.cartesianFactor φ) ≫ᵈ P.map (D.clift f y) :=
+    (congrArg P.map (D.cartesianFactor_comp_clift φ).symm).trans (P.map_comp _ _)
+  have h : IsCartesian (P.map (D.cartesianFactor φ) ≫ᵈ P.map (D.clift f y)) :=
+    IsCartesian.iso_comp (@hP _ _ f y) _ (P.map (H.lift (𝟙 a) (D.clift f y)))
+    (congrArg P.map (cartesianFactor_inv_comp H) :) (congrArg P.map (cartesianFactor_comp_inv H) :)
+  rw [e]
+  exact @h
+
+end Preservation
+
 /-! ## Transfer along equivalences -/
 
 section Transfer

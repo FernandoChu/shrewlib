@@ -6,11 +6,11 @@ import Displayed.Fibration.Fib
 # Straightening–unstraightening for displayed categories
 
 Proposition 9: `(▷ᵈ)* : DCat → Cat^→` is part of an equivalence over `Cat`, in the displayed
-sense (`straighteningEquiv : VertEquivalence DCat Arr`): the unit and counit are vertical, i.e.
-their components lie over identities of `Cat`. Consequently:
+sense (`straighteningEquiv : VertEquivalence DCat (cod Cat)`): the unit and counit are vertical,
+i.e. their components lie over identities of `Cat`. Consequently:
 
-* the equivalence of total categories `DCat.Total ≌ Arr.Total` commutes with the projections to
-  `Cat` (`straighteningEquiv_total`);
+* the equivalence of total categories `DCat.Total ≌ (cod Cat).Total` commutes with the projections
+  to `Cat` (`straighteningEquiv_total`);
 * both `DCat` and `Cat^→` are fibrations over `Cat`: `DCat` is a `SplitFib` by pullback, and
   `Cat^→` gets a `Fib` instance from it by transfer along the equivalence;
 * both functors preserve cartesian morphisms (`isCartesian_unstraighten_map`,
@@ -97,7 +97,7 @@ def unitIso : VertFunctor.id DCat.{u} ≅ unstraighten.comp straighten :=
 
 section Counit
 
-variable {A : Cat.{u, u}} (X : ArrOb A)
+variable {A : Cat.{u, u}} (X : (cod Cat.{u, u}).Ob A)
 
 /-- The counit at `p : E ⥤ A`, as a functor: forget the base component. -/
 def counitFunctor : Unstraightening (straightenObj X) ⥤ X.dom where
@@ -108,41 +108,44 @@ def counitFunctor : Unstraightening (straightenObj X) ⥤ X.dom where
 
 /-- The inverse of the counit, as a functor: `e ↦ (p e, ⟨e, rfl⟩)`. -/
 def counitInvFunctor : X.dom ⥤ Unstraightening (straightenObj X) where
-  obj e := ⟨X.proj.obj e, ⟨e, rfl⟩⟩
-  map g := ⟨X.proj.map g, ⟨g, rfl⟩⟩
+  obj e := ⟨X.hom.toFunctor.obj e, ⟨e, rfl⟩⟩
+  map g := ⟨X.hom.toFunctor.map g, ⟨g, rfl⟩⟩
   map_id _ := rfl
   map_comp _ _ := rfl
 
 /-- The counit at `p`. -/
-def counitHom : Arr.Hom (𝟙 A) (unstraightenObj (straightenObj X)) X :=
-  ⟨counitFunctor X, Functor.ext (fun Y => Y.fiber.2) (fun _ _ g => FibreHom.proj_map g.fiber)⟩
+def counitHom : (cod Cat.{u, u}).Hom (𝟙 A) (unstraightenObj (straightenObj X)) X :=
+  ⟨(counitFunctor X).toCatHom,
+    Cat.Hom.ext (CategoryTheory.Functor.ext (fun Y => Y.fiber.2)
+      (fun _ _ g => FibreHom.proj_map g.fiber))⟩
 
 /-- The inverse of the counit at `p`. -/
-def counitInv : Arr.Hom (𝟙 A) X (unstraightenObj (straightenObj X)) :=
-  ⟨counitInvFunctor X, rfl⟩
+def counitInv : (cod Cat.{u, u}).Hom (𝟙 A) X (unstraightenObj (straightenObj X)) :=
+  ⟨(counitInvFunctor X).toCatHom, rfl⟩
 
 theorem counitHom_counitInv :
-    (Arr.comp (counitHom X) (counitInv X) : Arr.Hom (𝟙 A) _ _) =
-      Arr.id (unstraightenObj (straightenObj X)) := by
-  refine ArrHom.ext (Functor.hext (fun Y => ?_) ?_)
+    ((cod Cat.{u, u}).comp (counitHom X) (counitInv X) : (cod Cat.{u, u}).Hom (𝟙 A) _ _) =
+      (cod Cat.{u, u}).id (unstraightenObj (straightenObj X)) := by
+  refine CodHom.ext (Cat.Hom.ext (Functor.hext (fun Y => ?_) ?_))
   · obtain ⟨a, _, h⟩ := Y
     obtain rfl : _ = a := h
     rfl
   rintro ⟨a, _, hx⟩ ⟨a', _, hy⟩ ⟨gb, g, hg⟩
   obtain rfl : _ = a := hx
   obtain rfl : _ = a' := hy
-  have e : gb = X.proj.map g := hg.symm
+  have e : gb = X.hom.toFunctor.map g := hg.symm
   subst e
   rfl
 
 theorem counitInv_counitHom :
-    (Arr.comp (counitInv X) (counitHom X) : Arr.Hom (𝟙 A) X X) = Arr.id X :=
+    ((cod Cat.{u, u}).comp (counitInv X) (counitHom X) : (cod Cat.{u, u}).Hom (𝟙 A) X X) =
+      (cod Cat.{u, u}).id X :=
   rfl
 
 end Counit
 
 /-- **The counit** `Unstr ∘ Str ≅ 𝟭`, vertical over `Cat`. -/
-def counitIso : straighten.comp unstraighten ≅ VertFunctor.id Arr.{u} :=
+def counitIso : straighten.comp unstraighten ≅ VertFunctor.id (cod Cat.{u, u}) :=
   VertNatIso.ofComponents
     (fun X => ⟨counitHom X, counitInv X, counitHom_counitInv X, counitInv_counitHom X⟩)
     (fun _ => rfl)
@@ -151,7 +154,7 @@ def counitIso : straighten.comp unstraighten ≅ VertFunctor.id Arr.{u} :=
 
 /-- **Proposition 9** (straightening–unstraightening): `(▷ᵈ)* : DCat → Cat^→` is an equivalence
 over `Cat`, with inverse the straightening. -/
-def straighteningEquiv : VertEquivalence DCat.{u} Arr.{u} where
+def straighteningEquiv : VertEquivalence DCat.{u} (cod Cat.{u, u}) where
   functor := unstraighten
   inverse := straighten
   unitIso := unitIso
@@ -159,27 +162,28 @@ def straighteningEquiv : VertEquivalence DCat.{u} Arr.{u} where
 
 /-- The induced equivalence `DCat ≌ Cat^→` of total categories. It commutes with the projections
 to `Cat` (`straighteningEquiv_total_functor_comp_π`). -/
-def straighteningEquivTotal : DCat.{u}.Total ≌ Arr.{u}.Total :=
+def straighteningEquivTotal : DCat.{u}.Total ≌ (cod Cat.{u, u}).Total :=
   straighteningEquiv.total
 
 theorem straighteningEquivTotal_functor_comp_π :
-    straighteningEquivTotal.{u}.functor ⋙ Arr.π = DCat.π :=
+    straighteningEquivTotal.{u}.functor ⋙ (cod Cat.{u, u}).π = DCat.π :=
   rfl
 
 /-- **`Cat^→` is a fibration over `Cat`**, with the cleavage transferred from `DCat` along the
 equivalence. -/
-instance fibArr : Fib Arr.{u} :=
+instance fibCodCat : Fib (cod Cat.{u, u}) :=
   straighteningEquiv.fib
 
 /-- **`(▷ᵈ)*` preserves cartesian morphisms.** -/
 theorem isCartesian_unstraighten_map {A B : Cat.{u, u}} {u : A ⟶ B} {F : LaxNormal A}
     {G : LaxNormal B} {φ : DCat.Hom u F G} (H : IsCartesian (D := DCat) φ) :
-    IsCartesian (D := Arr) (unstraighten.map φ) :=
+    IsCartesian (D := cod Cat.{u, u}) (unstraighten.map φ) :=
   straighteningEquiv.isCartesian_map H
 
 /-- **The straightening preserves cartesian morphisms.** -/
-theorem isCartesian_straighten_map {A B : Cat.{u, u}} {u : A ⟶ B} {X : ArrOb A} {Y : ArrOb B}
-    {w : Arr.Hom u X Y} (H : IsCartesian (D := Arr) w) :
+theorem isCartesian_straighten_map {A B : Cat.{u, u}} {u : A ⟶ B} {X : (cod Cat.{u, u}).Ob A}
+    {Y : (cod Cat.{u, u}).Ob B}
+    {w : (cod Cat.{u, u}).Hom u X Y} (H : IsCartesian (D := cod Cat.{u, u}) w) :
     IsCartesian (D := DCat) (straighten.map w) :=
   straighteningEquiv.symm.isCartesian_map H
 

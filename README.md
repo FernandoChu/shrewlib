@@ -85,6 +85,15 @@ as trustworthy as the axiom.
   head such as displayed composition, whose subpatterns are absent from most terms, slows down every
   file that imports it. The cancellation lemmas of vertical natural isomorphisms are not rules for
   this reason: as rules, they made the D2SFib development time out.
+- The kernel can reject an `rfl` between two structures that the elaborator accepts, though it
+  accepts each component by `rfl`; extensionality then does it, as for the associativity of
+  `ICat` and the functor laws of the comprehension of the category model.
+- For a functor `B` out of a Grothendieck construction, `B(f, 𝟙) ∘ B(𝟙, φ)` and
+  `B(𝟙, F f φ) ∘ B(f, 𝟙)` are definitionally equal, both being `B(f, F f φ)`, but the functor
+  rules unfold them into different terms, which the checker does not identify. Comparing such
+  nested applications is also slow in the elaborator, which first tries to unify their arguments
+  (one comparison unfolded `Functor.map` some 100000 times), and rules keyed on them make it worse.
+  The kernel compares them quickly, so `CatModelSigma` checks these steps there.
 - Rules on Mathlib's lemmas are declared only in `src/Rules/`, and each file imports only those it
   needs, so its imports show which foreign rules it sees.
 
@@ -95,13 +104,62 @@ folders. Displayed and doubly displayed categories are developed in parallel: ea
 `Total` and `Cartesian` files, a folder of fibrations (`Displayed/Fibration`,
 `DoubleDisplayed/D2SFib`) and a `Straightening` folder.
 
-- `Rules/`: the category laws, the functor laws, and the laws of locally discrete bicategories and
-  strictly unitary lax functors, as rules.
+- `Rules/`: the category laws, the functor laws, the laws of locally discrete bicategories and
+  strictly unitary lax functors, and the laws of pullback cones and chosen pullbacks, as rules.
+- `Tactic/KernelTactic.lean`: `kernel_exact` and `kernel_rfl'`, which hand definitional
+  equalities that the rules reduce in many steps to the kernel, faster than the elaborator.
 - `Examples/FunctorId.lean`: `F.map (𝟙 a) x = x` by `rfl` for any functor `F : A ⥤ Type`, after
   making Mathlib's `Functor.map_id` a rule.
 - `Profunctor.lean`: profunctors as a structure with actions `lmap`/`rmap`; composition as a
   coend quotient; the bicategory `ProfCat`. The action laws and the naturality of 2-cells are
   rules, so most coherence laws hold by `rfl`.
+- `Bicategory/`: 2-categories, their limits and spans. `Basic` has `TwoCategory`, a bicategory
+  with Mathlib's `Bicategory.Strict`, whose laws are rules: composition of 1-cells is
+  right-associated without identities, unitors and associators are `Iso.refl`, and whiskering is
+  functorial, unital and associative, so the coherence laws hold by `rfl`. (Rules can't be stated
+  for `[Bicategory B] [Bicategory.Strict B]`, since the `Strict` instance would not occur in their
+  left-hand sides.) It also has `kernel_rfl`, which checks `rfl` in the kernel, after making the
+  implicit arguments of whiskerings canonical and, if needed, going through weak head normal forms.
+  - `Pullback`: 2-pullbacks `IsPullback`, Mathlib's limit pullback cones `IsLimit t` in the
+    underlying category with the 2-dimensional universal property, and `HasPullbacks`, the same
+    for Mathlib's chosen pullbacks. The equations of Mathlib's pullback cones and induced 1-cells
+    are rules (`Rules/Pullback.lean`), so 2-cells over `t.fst ≫ f = t.snd ≫ g` need no transport;
+    here they get their whiskered forms, and `pullback_ext` applies extensionality.
+  - `Comma`: comma cones (Mathlib's `Comma (postcomp x f) (postcomp x g)`) and comma objects
+    `IsComma s`: precomposing with `s` is an isomorphism of categories `(x ⟶ p) ≅ CommaCone f g x`.
+    The induced 1-cells compute by rules. Comma objects are unique up to isomorphism of apexes,
+    pasting a pullback on their left gives a comma object (`IsComma.pasteLeft`), and in the
+    2-category `Cat`, `Comma L R` is a comma object, with the universal property by `rfl`.
+  - `Arrow`: the arrow 2-category `Arr B`, whose 1-cells are commutative squares and whose 2-cells
+    are pairs of 2-cells `(α, β)` with `α ▷ g = f ◁ β`. The equations of squares and of their
+    2-cells are rules, so the latter needs no transport, and the laws hold by `rfl`.
+  - `Factorization`: in a 2-category with comma objects, `f = Lf ≫ Rf` through `f/B`, the comma
+    object of `f` and `𝟙 B`, as strict 2-functors `L R : Arr B ⥤ Arr B` (Mathlib's
+    `StrictPseudofunctor`). Squares and their 2-cells act on `f/B` by the 1- and 2-dimensional
+    universal property of comma objects, and the functor laws of these actions are rules, so the
+    laws of `L` and `R` hold by `rfl` (checked by `kernel_rfl`).
+  - `Monad`: strict 2-monads and 2-comonads on a 2-category, whose (co)unit and (co)multiplication
+    are 2-natural; their 1-dimensional naturality is a rule, so the 2-dimensional one needs no
+    transport. Their strict (co)algebras form 2-categories `Alg M` and `Coalg M`, whose laws hold
+    by `rfl`. The laws of Mathlib's strict pseudofunctors are rules (`Rules/StrictPseudofunctor`).
+  - `AlgebraicFactorization`: `R` is a 2-monad (`rMonad`, with unit `(Lf, 𝟙)` and multiplication
+    `(π_f, 𝟙)`, composing the universal 2-cells of `f/B` and `Rf/B`) and `L` a 2-comonad
+    (`lComonad`, with counit `(𝟙, Rf)` and comultiplication `(𝟙, σ_f)`, induced by a 2-cell from
+    the 2-dimensional universal property of `f/B`). Their 2-categories of strict (co)algebras are
+    `RAlg B` and `LCoalg B`. The laws are proved by extensionality into comma objects and
+    `kernel_rfl`; a few equations about these 1- and 2-cells are proved first and made rules.
+  - `Span`: spans in a 2-category. The spans between two objects form a 2-category
+    (`Span.twoCategory`), whose laws hold by `rfl`.
+  - `Spans`: the bicategory of spans `Spans B`, composed by Mathlib's chosen pullbacks, whose laws
+    reduce by extensionality to `rfl`, checked in the kernel: the elaborator is much slower on
+    these. Mathlib's `Span` and `SpanBicat` are not used: `SpanBicat` hides its projections and
+    associator, and the matcher of rules does not see through the instances of Mathlib's category
+    of spans, so their composites do not compute.
+  - `FinitelyComplete`: finitely complete 2-categories (Mathlib's terminal object and pullbacks,
+    with the 2-dimensional universal property, and comma objects), monads in a bicategory
+    (`Bicategory.Monad`, as monoids in `a ⟶ a`, dually to Mathlib's comonads), and the arrow
+    object `comma (𝟙 a) (𝟙 a)` as a monad in `Spans B`: an internal category. Its laws hold by the
+    universal property of the comma object and `kernel_rfl`.
 - `DoubleCategory/Basic.lean`: pseudo double categories, following *Univalent Double Categories*
   (van der Weide, Rasekh, Ahrens, North) without univalence: a two-sided displayed category of
   horizontal morphisms and squares, horizontal identities and composition, and invertible,
@@ -115,6 +173,9 @@ folders. Displayed and doubly displayed categories are developed in parallel: ea
   (op)cartesian morphisms, `Equivalence` equivalences over the base (`VertEquivalence`), which
   are fully faithful and preserve (op)cartesian morphisms, and `Total` the total category, `π`, `ι`,
   and the induced functors, natural transformations and equivalences of total categories.
+  `Codomain` has the codomain displayed category `cod C` (the arrow category of `C`, whose laws hold
+  by `rfl`), whose cartesian morphisms are the pullback squares, so that it is a fibration if `C`
+  has chosen pullbacks (Mathlib's `ChosenPullbacks C`, data rather than a `Prop`).
   - `Fibration/`: cloven (op)fibrations as mirror images, `Opfib.lean` and `Fib.lean`, with chosen
     `push f x`/`olift` and `pull f y`/`clift`, the (op)cartesian factorization, the transport
     `pushMap`/`pullMap` and its functors, and split versions. `PreSplitOpfib` (`PreSplitFib`) adds
@@ -125,13 +186,42 @@ folders. Displayed and doubly displayed categories are developed in parallel: ea
     equivalences over the base.
   - `Straightening/`: Proposition 9 of the notes. `DCat` (lax normal functors
     `LocallyDiscrete A ⥤ᴸ ProfCat`, with lax transformations with representable components as
-    morphisms, on elements via `LaxNormal.lean`) and `Arr` (`Cat^→`, by the codomain) are displayed
-    over `Cat`. `unstraighten` (`(▷ᵈ)*`, through the category `Unstraightening F` over `A`, built
+    morphisms, on elements via `LaxNormal.lean`) and the codomain displayed category `cod Cat` (`Cat^→`,
+    from `Codomain.lean`) are displayed over `Cat`. `unstraighten` (`(▷ᵈ)*`, through the category `Unstraightening F` over `A`, built
     without `eqToHom` or `cast`) and `straighten` (fibres `{e // p e = a}`) form a
-    `VertEquivalence DCat Arr`, `straighteningEquiv`. `DCat` is a `SplitFib` by strict pullback,
+    `VertEquivalence DCat (cod Cat)`, `straighteningEquiv`. `DCat` is a `SplitFib` by strict pullback,
     with the splitting laws by `rfl`; `Cat^→` gets a `Fib` instance by transfer, and both functors
     preserve cartesian morphisms. Only the inverses of the unit and counit transport along
     equations `p e = a`.
+- `ComprehensionCategory/`: comprehension categories and the category model.
+  - `Basic`: comprehension categories over `C` (`Comprehension D`, a vertical functor from a
+    fibration `[Fib D]` to `cod C` that preserves cartesian morphisms; the property
+    `FullComprehension D`; and `SplitComprehension D`, over a `SplitFib D`, so that a full split
+    comprehension category is `[SplitComprehension D] [FullComprehension D]`), with context
+    extension `D.ext`, projections
+    `D.proj` and the pullback squares of `D.q σ A`. It suffices that the chosen lifts go to
+    cartesian morphisms (`Comprehension.ofClift`). If `C` has chosen pullbacks, `cod C` is a full
+    comprehension category by the identity. Scoped notation in `Displayed` reads as on paper:
+    `A : D.Ty Γ` for a type in context `Γ`, `Γ ▹ A` for `D.ext A`, `A⦃σ⦄` for the substitution
+    `D.pull σ A`, `𝐩 A` for the projection and `𝐪(σ, A)` for `D.q σ A`. These are notations for
+    the existing terms, displayed back in goals; `D` is inferred from the type of `A`.
+  - `LaxTrans`: lax natural transformations between strict functors `A ⥤ Cat`, whose unit and
+    composition laws are rules, and the category `ICat_lax = Cat ⋉⁻ [−, Cat]_lax` of indexed
+    categories displayed over `Cat` (`ICat`), a split fibration by reindexing `u ⋙ G`.
+  - `CatModel`: the category model, the full split comprehension category `ICat` over `Cat`,
+    whose comprehension sends `F : A ⥤ Cat` to the projection of its Grothendieck construction
+    `A ⋉ F` (Mathlib's `Grothendieck F`, with this notation scoped in `ComprehensionCategory`),
+    whose `eqToHom`s the rules make identities. Substitution is reindexing and `q σ G` is
+    `(a, y) ↦ (σ a, y)`, by `rfl`. That the chosen lifts give pullbacks and that the comprehension functor is fully
+    faithful are proved without transport, by taking functors into `B ⋉ G` apart into their
+    components and substituting their bases.
+  - `Sigma`: Σ-types in a comprehension category (`PreSigma D`, the type formers `Σ[A] B` with
+    `(Σ[A] B)⦃σ⦄ = Σ[A⦃σ⦄] B⦃𝐪(σ, A)⦄` as a rule, and `HasSigma D`, the isomorphisms of contexts
+    `Γ ▹ A ▹ B ≅ Γ ▹ Σ[A] B` over `Γ`, stable under substitution).
+  - `CatModelSigma`: the category model has Σ-types: `Σ[A] B` sends `γ` to `A γ ⋉ B(γ, −)`, and
+    `Γ ▹ A ▹ B ≅ Γ ▹ Σ[A] B` is `((γ, x), b) ↦ (γ, (x, b))`. The reindexing of `Σ_A B` and the pairing
+    have 2-cells `eqToHom` along equations proved by `rfl`, and the slow definitional equalities
+    are checked in the kernel (`kernel_exact`, `kernel_rfl'`).
 - `DoubleDisplayed/`: categories doubly displayed over a displayed category `B`, with `Basic`,
   `Total` (`C.total : Displayed A`) and `Cartesian`; `Basic` includes `VertFunctor` over `B`.
   - `D2SFib/`: dependent 2-sided fibrations over a split opfibration `B` (`Basic`), as cloven

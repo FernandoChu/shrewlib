@@ -1,4 +1,4 @@
-import Displayed.Straightening.Arrow
+import Displayed.Codomain
 import Displayed.Straightening.LaxNormal
 import Rules.Functor
 import Displayed.Fibration.Fib

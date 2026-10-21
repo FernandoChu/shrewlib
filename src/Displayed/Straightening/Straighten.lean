@@ -4,13 +4,14 @@ import Displayed.Total
 /-!
 # Unstraightening and straightening as displayed functors over `Cat`
 
-* `unstraighten : VertFunctor DCat Arr` is `(▷ᵈ)*`: it sends `F : LaxNormal A` to the projection
-  `π : Unstraightening F ⥤ A`, and a transformation with representable components over `u` to
-  the induced functor `(a, x) ↦ (u a, h x)`, `(f, s) ↦ (u f, map s)`. The square commutes by `rfl`.
-* `straighten : VertFunctor Arr DCat` sends `p : E ⥤ A` to the lax normal functor of its fibres,
-  `a ↦ Fibre p a = {e // p e = a}`, with `F_p f x y` the morphisms of `E` over `f` and composition
-  as the composition constraint. A commuting square `w ⋙ p' = p ⋙ u` is sent to the restriction of
-  `w` to the fibres.
+* `unstraighten : VertFunctor DCat (cod Cat)` is `(▷ᵈ)*`: it sends `F : LaxNormal A` to the
+  projection `π : Unstraightening F ⥤ A`, and a transformation with representable components over
+  `u` to the induced functor `(a, x) ↦ (u a, h x)`, `(f, s) ↦ (u f, map s)`. The square commutes by
+  `rfl`.
+* `straighten : VertFunctor (cod Cat) DCat` sends `p : E ⥤ A` to the lax normal functor of its
+  fibres, `a ↦ Fibre p a = {e // p e = a}`, with `F_p f x y` the morphisms of `E` over `f` and
+  composition as the composition constraint. A commuting square `w ⋙ p' = p ⋙ u` is sent to the
+  restriction of `w` to the fibres.
 
 The functoriality of both holds by `rfl`.
 -/
@@ -27,25 +28,25 @@ open scoped Displayed
 
 section Straighten
 
-variable {A : Cat.{u, u}} (X : ArrOb A)
+variable {A : Cat.{u, u}} (X : (cod Cat.{u, u}).Ob A)
 
 /-- The fibre of `p : E ⥤ A` over `a`, on objects. -/
-def Fibre (a : A) : Type u := { e : X.dom // X.proj.obj e = a }
+def Fibre (a : A) : Type u := { e : X.dom // X.hom.toFunctor.obj e = a }
 
 /-- The morphisms of `E` over `f`, between objects of the fibres. -/
 def FibreHom {a a' : A} (f : a ⟶ a') (x : Fibre X a) (y : Fibre X a') : Type u :=
-  { g : x.1 ⟶ y.1 // X.proj.map g ≫ eqToHom y.2 = eqToHom x.2 ≫ f }
+  { g : x.1 ⟶ y.1 // X.hom.toFunctor.map g ≫ eqToHom y.2 = eqToHom x.2 ≫ f }
 
 variable {X}
 
 /-- Composition of morphisms over base morphisms. -/
 def FibreHom.comp {a a' a'' : A} {f : a ⟶ a'} {g : a' ⟶ a''} {x : Fibre X a} {y : Fibre X a'}
     {z : Fibre X a''} (s : FibreHom X f x y) (t : FibreHom X g y z) : FibreHom X (f ≫ g) x z :=
-  ⟨s.1 ≫ t.1, ((congrArg (X.proj.map s.1 ≫ ·) t.2).trans (congrArg (· ≫ g) s.2) :)⟩
+  ⟨s.1 ≫ t.1, ((congrArg (X.hom.toFunctor.map s.1 ≫ ·) t.2).trans (congrArg (· ≫ g) s.2) :)⟩
 
 /-- A morphism over `f` lies over `f` up to the identifications of the fibres. -/
 theorem FibreHom.proj_map {a a' : A} {f : a ⟶ a'} {x : Fibre X a} {y : Fibre X a'}
-    (s : FibreHom X f x y) : X.proj.map s.1 = eqToHom x.2 ≫ f ≫ eqToHom y.2.symm := by
+    (s : FibreHom X f x y) : X.hom.toFunctor.map s.1 = eqToHom x.2 ≫ f ≫ eqToHom y.2.symm := by
   obtain ⟨x, rfl⟩ := x
   obtain ⟨y, rfl⟩ := y
   exact s.2
@@ -115,33 +116,36 @@ theorem straightenObj_mul {a a' a'' : A} {f : a ⟶ a'} {g : a' ⟶ a''} {x : Fi
   rfl
 
 /-- A commuting square `w ⋙ p' = p ⋙ u` restricts to the fibres. -/
-theorem proj_map_map {B : Cat.{u, u}} {u : A ⟶ B} {Y : ArrOb B} (w : ArrHom u X Y) {a a' : A}
+theorem proj_map_map {B : Cat.{u, u}} {u : A ⟶ B} {Y : (cod Cat.{u, u}).Ob B} (w : X ⟶[u] Y)
+    {a a' : A}
     {f : a ⟶ a'} {x : Fibre X a} {y : Fibre X a'} (s : FibreHom X f x y)
-    (hx : Y.proj.obj (w.1.obj x.1) = u.toFunctor.obj a)
-    (hy : Y.proj.obj (w.1.obj y.1) = u.toFunctor.obj a') :
-    Y.proj.map (w.1.map s.1) ≫ eqToHom hy = eqToHom hx ≫ u.toFunctor.map f := by
+    (hx : Y.hom.toFunctor.obj (w.1.toFunctor.obj x.1) = u.toFunctor.obj a)
+    (hy : Y.hom.toFunctor.obj (w.1.toFunctor.obj y.1) = u.toFunctor.obj a') :
+    Y.hom.toFunctor.map (w.1.toFunctor.map s.1) ≫ eqToHom hy = eqToHom hx ≫ u.toFunctor.map f := by
   obtain ⟨x, rfl⟩ := x
   obtain ⟨y, rfl⟩ := y
   obtain ⟨s, hs⟩ := s
-  obtain rfl : X.proj.map s = f := hs
-  have := Functor.congr_hom w.2 s
+  obtain rfl : X.hom.toFunctor.map s = f := hs
+  have := Functor.congr_hom (show w.1.toFunctor ⋙ Y.hom.toFunctor = X.hom.toFunctor ⋙ u.toFunctor
+    from congrArg Cat.Hom.toFunctor w.2) s
   rw [Functor.comp_map] at this
   rw [this]
-  exact congrArg (fun t => eqToHom hx ≫ u.toFunctor.map (X.proj.map s) ≫ t)
+  exact congrArg (fun t => eqToHom hx ≫ u.toFunctor.map (X.hom.toFunctor.map s) ≫ t)
     ((eqToHom_trans _ hy).trans (eqToHom_refl _ _))
 
 /-- The straightening of a commuting square, on the fibres. -/
-def straightenMap {B : Cat.{u, u}} {u : A ⟶ B} {Y : ArrOb B} (w : ArrHom u X Y) :
+def straightenMap {B : Cat.{u, u}} {u : A ⟶ B} {Y : (cod Cat.{u, u}).Ob B} (w : X ⟶[u] Y) :
     ReprHom u (straightenObj X) (straightenObj Y) where
-  obj x := ⟨w.1.obj x.1, (Functor.congr_obj w.2 x.1).trans (congrArg u.toFunctor.obj x.2)⟩
-  map s := ⟨w.1.map s.1, proj_map_map w s _ _⟩
+  obj x := ⟨w.1.toFunctor.obj x.1, (Functor.congr_obj (congrArg Cat.Hom.toFunctor w.2) x.1).trans
+    (congrArg u.toFunctor.obj x.2)⟩
+  map s := ⟨w.1.toFunctor.map s.1, proj_map_map w s _ _⟩
   map_id _ := rfl
   map_mul _ _ := rfl
 
 end Straighten
 
 /-- **The straightening functor `Cat^→ → DCat` over `Cat`.** -/
-def straighten : VertFunctor Arr.{u} DCat.{u} where
+def straighten : VertFunctor (cod Cat.{u, u}) DCat.{u} where
   obj X := straightenObj X
   map w := straightenMap w
   map_id _ := rfl
