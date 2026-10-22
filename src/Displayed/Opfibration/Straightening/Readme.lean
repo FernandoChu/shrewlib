@@ -7,12 +7,14 @@ In this folder we compare two categories displayed over `Cat`:
 
 * `ICat`: which has as objects over a category `A` the functors `A ⥤ Cat`; a morphism over
   `u : A ⟶ B` is a lax transformation `F ⇒ u ⋙ G`;
-* `SplitOpfibCat`, the subcategory of the arrow category `Cat^→` (equipped with its codomain
-  functor) spanned by the split opfibrations: an object over `A` is a functor `p : E ⥤ A` with a
-  split opcleavage, and a morphism over `u` is any functor `w` with `w ⋙ p' = p ⋙ u`.
+* `SplitOpfibCat`, the split opfibrations: an object over `A` is a functor `p : E ⥤ A` together
+  with a split opcleavage, and a morphism over `u` is any functor `w` with `w ⋙ p' = p ⋙ u`, not
+  necessarily preserving the chosen lifts. Forgetting the opcleavage is fully faithful into the
+  arrow category `Cat^→` (equipped with its codomain functor), but not injective on objects, since
+  a functor can carry several split opcleavages.
 
 The vertical functor `unstraighten : ICat ⟶ cod Cat`, sending `F` to the projection
-`A ⋉ F ⥤ A` of its Grothendieck construction, lands in `SplitOpfibCat`, and induces an
+`A ⋉ F ⥤ A` of its Grothendieck construction, lifts to `SplitOpfibCat`, and induces an
 equivalence over `Cat`, `straighteningEquiv`. It also sends the chosen cartesian lifts of `ICat`
 to pullbacks.
 

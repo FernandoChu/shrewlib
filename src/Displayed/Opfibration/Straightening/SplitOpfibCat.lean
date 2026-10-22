@@ -4,19 +4,24 @@ import Displayed.Displayed.Straightening.Straighten
 import Displayed.Opfibration.Basic
 
 /-!
-# The split opfibrations in `cod Cat`
+# The category of split opfibrations
 
-A functor `p : E ⥤ A` is a *split opfibration* when its displayed category of fibres
-`fibres p` (`Displayed/Displayed/Straightening/Straighten.lean`) has a `SplitOpfib` structure.
-`SplitOpfibCat` is the subcategory of `cod Cat` spanned by the split opfibrations, displayed over
-`Cat`: an object over `A` is a functor `p : E ⥤ A` with a split opcleavage, and a morphism over
-`u` is any morphism of `cod Cat`, a functor `w` with `w ⋙ p' = p ⋙ u`.
+A *split opfibration* over `A` is a functor `p : E ⥤ A` together with a split opcleavage, that
+is, a `SplitOpfib` structure on its displayed category of fibres `fibres p`
+(`Displayed/Displayed/Straightening/Straighten.lean`). `SplitOpfibCat`, displayed over `Cat`, has
+the split opfibrations over `A` as objects, and as morphisms over `u` all morphisms of `cod Cat`
+between the underlying functors: a functor `w` with `w ⋙ p' = p ⋙ u`, which need not preserve the
+chosen lifts.
+
+The forgetful functor `SplitOpfibCat.incl : SplitOpfibCat ⟶ cod Cat` is fully faithful, but it is
+not injective on objects, as a functor can carry several split opcleavages, so `SplitOpfibCat` is
+not a subcategory of `cod Cat`.
 
 The projection `π : A ⋉ F ⥤ A` is a split opfibration: the chosen pushforward of `(a, x)` along
 `f` is `(a', F f x)`, with lift `(f, 𝟙)`. Its laws hold by `rfl` once the equation `X.base = a` of
-an object of the fibre is substituted. So the unstraightening lands in `SplitOpfibCat`
-(`unstraightenSplit`), where it is still fully faithful (`unstraightenSplitFullyFaithful`), since
-the morphisms are the same.
+an object of the fibre is substituted. So the unstraightening lifts along `SplitOpfibCat.incl` to
+`SplitOpfibCat` (`unstraightenSplit`), equipping `π` with this split opcleavage, and it is still
+fully faithful there (`unstraightenSplitFullyFaithful`), since the morphisms are the same.
 -/
 
 universe u
@@ -90,9 +95,10 @@ instance splitOpfib : SplitOpfib (fibres (unstraightenObj F)) where
 
 end Groth
 
-/-! ## The subcategory of split opfibrations -/
+/-! ## The category of split opfibrations -/
 
-/-- An object of `cod Cat` over `A` whose fibres form a split opfibration. -/
+/-- A split opfibration over `A`: an object of `cod Cat` over `A` with a split opcleavage of its
+fibres. -/
 structure SplitOpfibOb (A : Cat.{u, u}) where
   /-- The functor `p : E ⥤ A`. -/
   ob : (cod Cat.{u, u}).Ob A
@@ -101,8 +107,8 @@ structure SplitOpfibOb (A : Cat.{u, u}) where
 
 attribute [instance] SplitOpfibOb.splitOpfib
 
-/-- The subcategory of `cod Cat` spanned by the split opfibrations, displayed over `Cat`: the
-morphisms are all morphisms of `cod Cat`. -/
+/-- The split opfibrations, displayed over `Cat`: the morphisms are all morphisms of `cod Cat`
+between the underlying functors, with no condition on the opcleavages. -/
 def SplitOpfibCat : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
   Ob A := SplitOpfibOb A
   Hom u X Y := (cod Cat.{u, u}).Hom u X.ob Y.ob
@@ -112,7 +118,8 @@ def SplitOpfibCat : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
   comp_id _ := rfl
   assoc _ _ _ := rfl
 
-/-- The inclusion of the split opfibrations into `cod Cat`. -/
+/-- The functor forgetting the split opcleavage, into `cod Cat`. It is fully faithful, but not
+injective on objects. -/
 def SplitOpfibCat.incl : VertFunctor SplitOpfibCat.{u} (cod Cat.{u, u}) where
   obj X := X.ob
   map φ := φ
