@@ -4,11 +4,16 @@ import ComprehensionCategory.Model.Cat.TypeFormers.Sigma
 /-!
 # The category model
 
-The full split comprehension category `ICat = Cat ⋉⁻ [−, Cat]_lax` over `Cat`, whose
-comprehension is the unstraightening `F ↦ π : A ⋉ F ⥤ A` of `Displayed/Opfibration/Straightening`.
+In this folder we define the category model: the comprehension category `ICat` over `Cat`, whose
+types in context `Γ` are the functors `Γ ⥤ Cat`, and whose context extension `Γ ▹ A` is the
+Grothendieck construction `Γ ⋉ A`. Its comprehension is the unstraightening of
+`Displayed/Opfibration/Straightening`. It is full and split, and it has Σ-types: `Σ[A] B` sends
+`γ` to the Grothendieck construction `A γ ⋉ B(γ, −)`.
 
-* `Basic`: `ICat` is a full split comprehension category.
-* `TypeFormers/Sigma`: Σ-types, `Σ[A] B = γ ↦ A γ ⋉ B(γ, −)`.
+The files give its ingredients:
+
+* `Basic`: the comprehension structure on `ICat`, which is full and split.
+* `TypeFormers/Sigma`: Σ-types, with their pairing and unpairing.
 -/
 
 universe u

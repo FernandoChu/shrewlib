@@ -5,9 +5,9 @@ import Displayed.Fibration.Basic
 /-!
 # Straightening–unstraightening for displayed categories
 
-Proposition 9: `(▷ᵈ)* : DCat → Cat^→` is part of an equivalence over `Cat`, in the displayed
-sense (`straighteningEquiv : VertEquivalence DCat (cod Cat)`): the unit and counit are vertical,
-i.e. their components lie over identities of `Cat`. Consequently:
+Straightening–unstraightening: `(▷ᵈ)* : DCat → Cat^→` is part of an equivalence over `Cat`, in the
+displayed sense (`straighteningEquiv : VertEquivalence DCat (cod Cat)`): the unit and counit are
+vertical, i.e. their components lie over identities of `Cat`. Consequently:
 
 * the equivalence of total categories `DCat.Total ≌ (cod Cat).Total` commutes with the projections
   to `Cat` (`straighteningEquiv_total`);
@@ -150,9 +150,9 @@ def counitIso : straighten.comp unstraighten ≅ VertFunctor.id (cod Cat.{u, u})
     (fun X => ⟨counitHom X, counitInv X, counitHom_counitInv X, counitInv_counitHom X⟩)
     (fun _ => rfl)
 
-/-! ## Proposition 9 -/
+/-! ## Straightening–unstraightening -/
 
-/-- **Proposition 9** (straightening–unstraightening): `(▷ᵈ)* : DCat → Cat^→` is an equivalence
+/-- **Straightening–unstraightening**: `(▷ᵈ)* : DCat → Cat^→` is an equivalence
 over `Cat`, with inverse the straightening. -/
 def straighteningEquiv : VertEquivalence DCat.{u} (cod Cat.{u, u}) where
   functor := unstraighten

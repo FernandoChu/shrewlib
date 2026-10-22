@@ -5,13 +5,14 @@ import Mathlib.CategoryTheory.Category.Cat
 /-!
 # Unstraightening: the dependent 2-sided Grothendieck construction
 
-Given `F : ∫(Bᵈᵒ) ⥤ Cat`, we build a doubly displayed category `Unstraightening F` over `B` (Def.
-`def:D2SGC` of the notes), equip it with a `D2SFib` structure (`unstraightenObj F`), and assemble
-the whole thing into the functor `unstraighten` (`Φ`) : `(B.dualOp.Total ⥤ Cat) ⥤ D2SFibCat B`.
+Given `F : ∫(Bᵈᵒ) ⥤ Cat`, we build a doubly displayed category `Unstraightening F` over `B` (the
+dependent 2-sided Grothendieck construction), equip it with a `D2SFib` structure
+(`unstraightenObj F`), and assemble the whole thing into the functor `unstraighten` (`Φ`) :
+`(B.dualOp.Total ⥤ Cat) ⥤ D2SFibCat B`.
 
 The objects of `Unstraightening F` over `b : B.Ob a` are the objects of `F.obj ⟨a, b⟩`, and a
 morphism over `g : B.Hom α b b'` from `c` to `c'` is a morphism
-`hobj α c ⟶ vobj (B.opcartesianFactor g) c'` of `F.obj ⟨a', B.push α b⟩`, exactly the notes'
+`hobj α c ⟶ vobj (B.opcartesianFactor g) c'` of `F.obj ⟨a', B.push α b⟩`, that is,
 `hom_{C(a', B(α)b)}(C(α,id)c, C(id,β)c')`. Here
 `hobj`/`hmor` and `vobj`/`vmor` are the actions of `F` on objects and morphisms along the chosen
 horizontal and vertical morphisms of `∫(Bᵈᵒ)`.
@@ -218,7 +219,7 @@ variable {a a' a'' : A}
 /-- Objects of `Unstraightening F` over `b : B.Ob a`. -/
 abbrev Ob (b : B.Ob a) : Type u₃ := F.obj (B.dualOp.tot b)
 
-/-- Morphisms of `Unstraightening F` over `g : B.Hom α b b'`: the notes'
+/-- Morphisms of `Unstraightening F` over `g : B.Hom α b b'`:
 `hom_{C(a', B(α)b)}(C(α,id)c, C(id,β)c')`. -/
 abbrev Hom {α : a ⟶ a'} {b : B.Ob a} {b' : B.Ob a'} (g : b ⟶[α] b')
     (c : Ob F b) (c' : Ob F b') : Type v₃ :=
@@ -227,7 +228,7 @@ abbrev Hom {α : a ⟶ a'} {b : B.Ob a} {b' : B.Ob a'} (g : b ⟶[α] b')
 /-- The identity of `Unstraightening F`. -/
 def id' {b : B.Ob a} (c : Ob F b) : Hom F (B.id b) c c := 𝟙 c
 
-/-- Composition in `Unstraightening F` (the notes' `γ ≔ C(α',id)θ ≫ C(id, B(α')β)θ'`). -/
+/-- Composition in `Unstraightening F`: `γ ≔ C(α',id)θ ≫ C(id, B(α')β)θ'`. -/
 def comp' {α : a ⟶ a'} {α' : a' ⟶ a''} {b : B.Ob a} {b' : B.Ob a'} {b'' : B.Ob a''}
     {g : b ⟶[α] b'} {g' : b' ⟶[α'] b''} {c : Ob F b} {c' : Ob F b'} {c'' : Ob F b''}
     (θ : Hom F g c c') (θ' : Hom F g' c' c'') : Hom F (g ≫ᵈ g') c c'' :=
@@ -250,9 +251,8 @@ end Construction
 end Unstraightening
 
 open Unstraightening in
-/-- **The unstraightening of `F`**, the dependent 2-sided Grothendieck construction (Def.
-`def:D2SGC` of the notes): the doubly displayed category over `B` associated with a functor
-`F : ∫(Bᵈᵒ) ⥤ Cat`. -/
+/-- **The unstraightening of `F`**, the dependent 2-sided Grothendieck construction:
+the doubly displayed category over `B` associated with a functor `F : ∫(Bᵈᵒ) ⥤ Cat`. -/
 def Unstraightening (F : B.dualOp.Total ⥤ Cat.{v₃, u₃}) :
     DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B where
   Ob b := Unstraightening.Ob F b

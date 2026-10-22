@@ -101,17 +101,19 @@ as trustworthy as the axiom.
 ## Files
 
 The development is one library with sources in `src/`. Module names and namespaces follow the
-folders. Displayed and doubly displayed categories are developed in parallel: each has `Basic` and
-`Total` files, (op)cartesian morphisms (in `Displayed/{Opfibration,Fibration}/Basic` and
+folders. Each folder except `Bicategory/` has a `Readme.lean`, which imports the whole folder,
+summarizes its files in its module docstring and restates its main results with `recall`, so that
+the build checks them.
+
+Displayed and doubly displayed categories are developed in parallel: each has `Basic` and `Total`
+files, (op)cartesian morphisms (in `Displayed/{Opfibration,Fibration}/Basic` and
 `DoubleDisplayed/Cartesian`), fibrations (`Displayed/{Opfibration,Fibration}`,
 `DoubleDisplayed/D2SFib`) and `Straightening` folders.
 
-- `Rules/`: the category laws, the functor laws, the laws of locally discrete bicategories and
-  strictly unitary lax functors, and the laws of pullback cones and chosen pullbacks, as rules.
-- `Tactic/KernelTactic.lean`: `kernel_exact` and `kernel_rfl'`, which hand definitional
-  equalities that the rules reduce in many steps to the kernel, faster than the elaborator.
-- `Examples/FunctorId.lean`: `F.map (𝟙 a) x = x` by `rfl` for any functor `F : A ⥤ Type`, after
-  making Mathlib's `Functor.map_id` a rule.
+- `Rules/`: rules on Mathlib's lemmas: the category and functor laws, locally discrete
+  bicategories, pullback cones and strict pseudofunctors.
+- `Tactic/`: `kernel_exact` and `kernel_rfl'`, which check definitional equalities in the kernel.
+- `Examples/`: small examples of the rules.
 - `Profunctor.lean`: profunctors as a structure with actions `lmap`/`rmap`; composition as a
   coend quotient; the bicategory `ProfCat`. The action laws and the naturality of 2-cells are
   rules, so most coherence laws hold by `rfl`.
@@ -162,61 +164,15 @@ folders. Displayed and doubly displayed categories are developed in parallel: ea
     (`Bicategory.Monad`, as monoids in `a ⟶ a`, dually to Mathlib's comonads), and the arrow
     object `comma (𝟙 a) (𝟙 a)` as a monad in `Spans B`: an internal category. Its laws hold by the
     universal property of the comma object and `kernel_rfl`.
-- `DoubleCategory/Basic.lean`: pseudo double categories, following *Univalent Double Categories*
-  (van der Weide, Rasekh, Ahrens, North) without univalence: a two-sided displayed category of
-  horizontal morphisms and squares, horizontal identities and composition, and invertible,
-  natural unitors and associator subject to the triangle and pentagon laws. With the category laws
-  as rules, the displayed laws are stated without transport. The horizontal bicategory of
-  globular squares is constructed as an application.
-- `Displayed/`: categories displayed over a category, whose laws are rules and hold as plain
-  equations. Each of its three folders has a `Straightening/` subfolder.
-  - `Displayed/`: displayed categories in general. `Basic` has fibers, vertical functors
-    `VertFunctor` and vertical natural transformations `VertNatTrans`, which form a category as in
-    Mathlib (vertical natural isomorphisms are its isomorphisms `F ≅ G`, with API in `VertNatIso`).
-    `Equivalence` has equivalences over the base (`VertEquivalence`), which are fully faithful,
-    and `Total`
-    the total category, `π`, `ι`, and the induced functors, natural transformations and
-    equivalences of total categories. `Codomain` has the codomain displayed category `cod C` (the
-    arrow category of `C`, whose laws hold by `rfl`), whose cartesian morphisms are the pullback
-    squares, so that it is a fibration if `C` has chosen pullbacks (Mathlib's `ChosenPullbacks C`,
-    data rather than a `Prop`).
-    - `Straightening/`: Proposition 9 of the notes. `DCat` (lax normal functors
-      `LocallyDiscrete A ⥤ᴸ ProfCat`, with lax transformations with representable components as
-      morphisms, on elements via `LaxNormal.lean`) and the codomain displayed category `cod Cat`
-      (`Cat^→`) are displayed over `Cat`. `unstraighten` (`(▷ᵈ)*`, through the category
-      `Unstraightening F` over `A`, built without `eqToHom` or `cast`) and `straighten` (fibres
-      `{e // p e = a}`) form a `VertEquivalence DCat (cod Cat)`, `straighteningEquiv`. `DCat` is a
-      `SplitFib` by strict pullback, with the splitting laws by `rfl`; `Cat^→` gets a `Fib`
-      instance by transfer, and both functors preserve cartesian morphisms. Only the inverses of
-      the unit and counit transport along equations `p e = a`.
-  - `Opfibration/` and `Fibration/`: (op)cartesian morphisms, which vertical equivalences
-    preserve, and cloven opfibrations and fibrations, as mirror images, each in its `Basic.lean`,
-    with chosen `push f x`/`olift` and `pull f y`/`clift`, the (op)cartesian
-    factorization, the transport `pushMap`/`pullMap` and its functors, and split versions.
-    `PreSplitOpfib` (`PreSplitFib`) adds the splitting axioms on objects, which are rules;
-    `SplitOpfib` (`SplitFib`) holds it as an instance field rather than a parent, since the fields
-    of a parent are local variables while a class is elaborated and the rules would not apply to
-    the axioms on lifts. `Opfibration/DualOp.lean` is the dual opfibration of a split opfibration,
-    which computes. (Op)cleavages transfer along equivalences over the base.
-    - `Opfibration/Straightening/`: functors `A ⥤ Cat` with lax transformations, as the split
-      fibration `ICat = Cat ⋉⁻ [−, Cat]_lax` over `Cat` (`ICat.lean`), and their unstraightening
-      `ICat ⟶ cod Cat` by Mathlib's Grothendieck construction `A ⋉ F` (`Unstraighten.lean`), which
-      sends the chosen lifts to pullbacks and is fully faithful.
-- `ComprehensionCategory/`: comprehension categories, the category model and its Σ-types. See
-  `Readme.lean` in the folder.
-- `DoubleDisplayed/`: categories doubly displayed over a displayed category `B`, with `Basic`,
-  `Total` (`C.total : Displayed A`) and `Cartesian`; `Basic` includes `VertFunctor` over `B`.
-  - `D2SFib/`: dependent 2-sided fibrations over a split opfibration `B` (`Basic`), as cloven
-    (`D2SFib`), pre-split (`PreSplitD2SFib`, laws on objects as rules) and split (`SplitD2SFib`)
-    classes, like `Displayed/Fibration`, and the category of split ones (`Category`).
-  - `D2SFib/Straightening/`: `straighten` (`Ψ`) and `unstraighten` (`Φ`, through
-    `Unstraightening F`, the dependent 2-sided Grothendieck construction), with `straighteningEquiv` between functors `∫(Bᵈᵒ) ⥤ Cat` and
-    D2SFibs over `B`. The laws of D2SFibs are rules, so the Grothendieck construction, its `D2SFib`
-    structure and much of the unit and counit hold by `rfl`. This is a rewrite of a development on
-    Lean and Mathlib `v4.30.0-rc2` whose laws were stated with `castHom`, `eqToHom` and `HEq`
-    (commit `4b55ea2` of this repository), at about half its size.
-- `docs/nfib/`: the notes (`main.tex`) referred to in docstrings, and the plan and list of
-  deviations of the original development.
+- `DoubleCategory/`: pseudo double categories, and the horizontal bicategory of globular squares.
+- `Displayed/`: categories displayed over a category, in three folders, each with a
+  `Straightening/` subfolder: `Displayed/` (displayed categories in general, and their
+  straightening), `Opfibration/` (including the Grothendieck construction of functors `A ⥤ Cat`)
+  and `Fibration/`.
+- `ComprehensionCategory/`: comprehension categories, their type formers, and models: the
+  category model, with Σ-types, and the codomain model.
+- `DoubleDisplayed/`: categories doubly displayed over a displayed category, and dependent 2-sided
+  fibrations with their straightening.
 - `mathlib4/`: Mathlib master, pinned to `v4.35.0-rc2`, used as a path dependency.
 
 ## Building

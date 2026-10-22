@@ -5,7 +5,7 @@ import Mathlib.Tactic.IrreducibleDef
 /-!
 # The counit `Ψ ⋙ Φ ≅ 𝟭`
 
-Following the argument of the notes: the unstraightening of `Ψ C` is isomorphic to `C`. Objects
+The unstraightening of `Ψ C` is isomorphic to `C`. Objects
 agree definitionally, and so do hom-types: a morphism of `Unstraightening (Ψ C)` over
 `g : B.Hom α b b'` is, by the rewrite rules, a vertical morphism
 `push α c ⟶ pull (B.opcartesianFactor g) c'` of `C`. So the counit acts on morphisms by
@@ -128,7 +128,7 @@ theorem map_naturality {E E' : D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B}
 
 end Counit
 
-/-- **The counit component of the equivalence** (the notes' `F`/`G` pair): the unstraightening of
+/-- **The counit component of the equivalence**: the unstraightening of
 `Ψ E` is isomorphic to `E`, by the identity on objects and `d2sHomEquiv` on morphisms. -/
 def counitApp (E : D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B) :
     unstraightenObj (straightenObj E.C) ≅ E where

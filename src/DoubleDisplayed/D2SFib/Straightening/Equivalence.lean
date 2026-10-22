@@ -5,8 +5,8 @@ import DoubleDisplayed.D2SFib.Straightening.Counit
 /-!
 # Straightening–unstraightening for D2SFibs: `Functor(∫(Bᵈᵒ), Cat) ≌ D2SFib(A, B)`
 
-The displayed version of Proposition `prop:d2sfibequiv` of the notes: the category of functors from
-the total category of the dual opfibration of `B` into `Cat` is equivalent to the category of
+Straightening–unstraightening for D2SFibs, in the displayed setting: the category of functors
+from the total category of the dual opfibration of `B` into `Cat` is equivalent to the category of
 dependent 2-sided split fibrations over `B`.
 
 The two functors are `unstraighten` (`Φ`) and `straighten` (`Ψ`). This file supplies the unit
@@ -75,10 +75,9 @@ def unitIso : 𝟭 (B.dualOp.Total ⥤ Cat.{v₃, u₃}) ≅ unstraighten ⋙ st
 
 end
 
-/-- **Straightening–unstraightening for D2SFibs** (Proposition `prop:d2sfibequiv` of the notes):
-the unstraightening `Φ = unstraighten` and the fiberwise functor `Ψ = straighten`
-are mutually inverse equivalences between functors `∫(Bᵈᵒ) ⥤ Cat` and dependent 2-sided split
-fibrations over `B`. -/
+/-- **Straightening–unstraightening for D2SFibs**: the unstraightening `Φ = unstraighten` and the
+fiberwise functor `Ψ = straighten` are mutually inverse equivalences between functors
+`∫(Bᵈᵒ) ⥤ Cat` and dependent 2-sided split fibrations over `B`. -/
 noncomputable def straighteningEquiv (B : Displayed.{v₁, u₁, v₂, u₂} A) [SplitOpfib B] :
     (B.dualOp.Total ⥤ Cat.{v₃, u₃}) ≌ D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B :=
   CategoryTheory.Equivalence.mk unstraighten straighten unitIso counitIso

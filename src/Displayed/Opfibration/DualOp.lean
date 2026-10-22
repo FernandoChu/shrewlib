@@ -5,8 +5,8 @@ import Displayed.Opfibration.Basic
 
 Given a split opfibration `B` over `A`, its *dual opfibration* `B.dualOp` is the fiberwise
 opposite: it has the same displayed objects, but a morphism over `f : a ⟶ a'` from `x` to `y` is a
-*vertical* morphism `y ⟶ B.push f x` in the fiber over `a'`. This corresponds, in the notes
-(`docs/nfib/main.tex`), to the Grothendieck construction of `a ↦ B(a)ᵒᵖ`.
+*vertical* morphism `y ⟶ B.push f x` in the fiber over `a'`. This corresponds to the
+Grothendieck construction of `a ↦ B(a)ᵒᵖ`.
 
 Composition is `ψ ≫ B.pushMap g φ`. Since the splitting of `B` and the functoriality of
 `pushMap` hold definitionally, so do the laws of `B.dualOp`, and every identity between the chosen

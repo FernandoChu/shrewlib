@@ -5,7 +5,7 @@ import DoubleDisplayed.D2SFib.Basic
 
 We define the morphisms of D2SFibs — vertical functors preserving the chosen pull/push data on the
 nose (`D2SFibHom`) — and bundle D2SFibs into the category `D2SFibCat B`, the displayed adaptation
-of the notes' `D2SFib(A, B)`.
+of the category `D2SFib(A, B)`.
 
 As for `D2SFib`, the preservation of chosen pullbacks and pushforwards on objects lives in a
 separate structure `D2SFibHomObj`, and is a rewrite rule, so that the preservation of the chosen
