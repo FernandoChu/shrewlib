@@ -18,15 +18,19 @@ construction, a split opfibration. It is a functor `unstraighten : ICat ⟶ cod 
   `α : F ⇒ u ⋙ G`, sending `(f, φ)` to `(u f, α_f x ≫ α φ)`.
 * `unstraighten : VertFunctor ICat (cod Cat)`, whose functor laws hold by `rfl`.
 * It sends the chosen lifts, the identities `u^* G ⟶[u] G`, to cartesian morphisms of `cod Cat`
-  (`isCartesian_unstraighten_clift`): `A ⋉ u^* G` is the pullback of `B ⋉ G` along `u`.
-* It is fully faithful (`unstraighten_map_bijective`): a functor `A ⋉ F ⥤ B ⋉ G` over `u` is
-  `Groth.map` of a unique lax transformation, read off on the morphisms `(f, 𝟙)` and `(𝟙, φ)`.
+  (`isCartesianUnstraightenClift`): `A ⋉ u^* G` is the pullback of `B ⋉ G` along `u`.
+* A functor `Z ⥤ B ⋉ G` over `v : Z ⥤ B` is given by its fibres (`Groth.Lift`). Those of a
+  functor `W` with `W ⋙ π = v` are transported along this equation (`Groth.Lift.ofFunctor`), and
+  their laws hold by `rfl` once `v` is substituted.
+* It is fully faithful (`unstraightenFullyFaithful`), with an explicit inverse on morphisms
+  (`unstraightenPreimage`): a functor `A ⋉ F ⥤ B ⋉ G` over `u` is `Groth.map` of the lax
+  transformation read off its fibres on the morphisms `(f, 𝟙)` and `(𝟙, φ)`.
 * Transport in `A ⋉ F`: the morphisms `(f, 𝟙)` (`Groth.transport`), as rules, and their action
   under functors out of `A ⋉ F`.
 
 The notation `A ⋉ F` is scoped in `Displayed.Opfibration.Straightening`, as in the paper.
 
-The last two items about `unstraighten` are proved without transport: a functor `W` into `B ⋉ G`
+That the unstraightening is faithful is proved without transport: a functor `W` into `B ⋉ G`
 whose composite with `π` is known is taken apart into its components, whose bases are then
 substituted by the known ones.
 -/
@@ -80,6 +84,22 @@ theorem fiber_heq {X X' Y Y' : Grothendieck F} (hX : X = X') (hY : Y = Y') {φ :
   cases eq_of_heq h
   rfl
 
+/-- Morphisms of `A ⋉ F` are determined by their bases and fibres. -/
+theorem Hom.ext' {X Y : Grothendieck F} {φ ψ : X ⟶ Y} (hb : Hom.base φ = Hom.base ψ)
+    (hf : Hom.fiber φ ≍ Hom.fiber ψ) : φ = ψ := by
+  obtain ⟨b, f⟩ := φ
+  obtain ⟨b', f'⟩ := ψ
+  dsimp only at hb
+  subst hb
+  cases eq_of_heq hf
+  rfl
+
+/-- Heterogeneous extensionality for morphisms of `A ⋉ F`. -/
+theorem Hom.hext {X X' Y Y' : Grothendieck F} (hX : X = X') (hY : Y = Y') {φ : X ⟶ Y} {ψ : X' ⟶ Y'}
+    (hb : Hom.base φ ≍ Hom.base ψ) (hf : Hom.fiber φ ≍ Hom.fiber ψ) : φ ≍ ψ := by
+  subst hX hY
+  exact heq_of_eq (Hom.ext' (eq_of_heq hb) hf)
+
 /-- The projection `π : A ⋉ F ⥤ A`, Mathlib's `Grothendieck.forget`. -/
 abbrev π (F : A ⥤ Cat.{v, u}) : A ⋉ F ⥤ A := Grothendieck.forget F
 
@@ -112,6 +132,54 @@ end Groth
 
 end Groth
 
+/-! ## Functors into `B ⋉ G` over a given base -/
+
+namespace Groth
+
+variable {Z : Type u₁} [Category.{v₁} Z] {B : Type u₂} [Category.{v₂} B] {G : B ⥤ Cat.{v, u}}
+
+/-- A functor `Z ⥤ B ⋉ G` over `v : Z ⥤ B`, given by its fibres: `obj X : G (v X)`, and
+`map k : G (v k) (obj X) ⟶ obj Y`, functorially. -/
+structure Lift (v : Z ⥤ B) (G : B ⥤ Cat.{v, u}) where
+  /-- The fibres of the objects. -/
+  obj : ∀ X, G.obj (v.obj X)
+  /-- The fibres of the morphisms. -/
+  map : ∀ {X Y : Z} (k : X ⟶ Y), (G.map (v.map k)).toFunctor.obj (obj X) ⟶ obj Y
+  map_id : ∀ X, map (𝟙 X) = 𝟙 (obj X)
+  map_comp : ∀ {X Y W : Z} (k : X ⟶ Y) (l : Y ⟶ W),
+    map (k ≫ l) = (G.map (v.map l)).toFunctor.map (map k) ≫ map l
+
+namespace Lift
+
+variable {v : Z ⥤ B}
+
+/-- The functor `Z ⥤ B ⋉ G` of a lift, `X ↦ (v X, obj X)`. -/
+def functor (s : Lift v G) : Z ⥤ B ⋉ G where
+  obj X := ⟨v.obj X, s.obj X⟩
+  map k := ⟨v.map k, s.map k⟩
+  map_id X := hom_mk_congr (s.map_id X)
+  map_comp k l := hom_mk_congr (s.map_comp k l)
+
+theorem functor_comp_π (s : Lift v G) : s.functor ⋙ π G = v := rfl
+
+/-- The lift of a functor `W : Z ⥤ B ⋉ G` over `v`: its fibres, transported along the bases
+`W ⋙ π = v`. Since `v` is a variable, the laws hold by `rfl` once `v` is substituted. -/
+def ofFunctor (W : Z ⥤ B ⋉ G) (h : W ⋙ π G = v) : Lift v G where
+  obj X := (G.map (eqToHom (Functor.congr_obj h X))).toFunctor.obj (W.obj X).fiber
+  map {X Y} k := eqToHom (by subst h; rfl) ≫
+    (G.map (eqToHom (Functor.congr_obj h Y))).toFunctor.map (W.map k).fiber
+  map_id _ := by subst h; rfl
+  map_comp _ _ := by subst h; rfl
+
+/-- Every functor over `v` is the functor of its lift. -/
+theorem functor_ofFunctor (W : Z ⥤ B ⋉ G) (h : W ⋙ π G = v) : (ofFunctor W h).functor = W := by
+  subst h
+  rfl
+
+end Lift
+
+end Groth
+
 /-! ## The unstraightening functor -/
 
 /-- The unstraightening of `F : A ⥤ Cat`: the projection `π : A ⋉ F ⥤ A`. -/
@@ -132,139 +200,132 @@ def unstraighten : VertFunctor ICat.{u} (cod Cat.{u, u}) where
   -- By `rfl` in the elaborator; the kernel needs the functors compared pointwise.
   map_comp _ _ := Subtype.ext (Cat.Hom.ext (Functor.hext (fun _ => rfl) fun _ _ _ => HEq.rfl))
 
-/-- The unstraightening sends the chosen lifts to cartesian morphisms: `A ⋉ u^* G` is the
-pullback of `B ⋉ G` along `u`. -/
-theorem isCartesian_unstraighten_clift {A B : Cat.{u, u}} (u : A ⟶ B) (G : B ⥤ Cat.{u, u}) :
-    IsCartesian (unstraighten.map (ICat.clift u G)) := by
-  intro A₀ g z χ
-  obtain ⟨Z, r⟩ := z
-  obtain ⟨⟨⟨o, m, hid, hcomp⟩⟩, hχ⟩ := χ
-  -- The bases of `χ` are those of `r ≫ g ≫ u`: substitute them.
-  have hB : (fun X => Grothendieck.base (o X)) =
-      fun X => u.toFunctor.obj (g.toFunctor.obj (r.toFunctor.obj X)) :=
-    congrArg (fun k : Z ⟶ B => k.toFunctor.obj) hχ
-  obtain ⟨b, x, rfl⟩ : ∃ (b : Z → B) (x : ∀ X, G.obj (b X)),
-      o = fun X => (⟨b X, x X⟩ : Grothendieck G) :=
-    ⟨_, fun X => Grothendieck.fiber (o X), rfl⟩
-  obtain rfl : b = fun X => u.toFunctor.obj (g.toFunctor.obj (r.toFunctor.obj X)) := hB
-  have hmb : ∀ {X Y : Z} (k : X ⟶ Y),
-      Hom.base (m k) = u.toFunctor.map (g.toFunctor.map (r.toFunctor.map k)) := fun k =>
-    eq_of_heq (Functor.hcongr_hom (congrArg Cat.Hom.toFunctor hχ) k)
-  obtain ⟨mb, mf, rfl⟩ : ∃ (mb : ∀ {X Y : Z}, (X ⟶ Y) →
-        (u.toFunctor.obj (g.toFunctor.obj (r.toFunctor.obj X)) ⟶
-          u.toFunctor.obj (g.toFunctor.obj (r.toFunctor.obj Y))))
-      (mf : ∀ {X Y : Z} (k : X ⟶ Y), (G.map (mb k)).toFunctor.obj (x X) ⟶ x Y),
-      @m = fun {X Y} k => Hom.mk (X := ⟨_, x X⟩) (Y := ⟨_, x Y⟩) (mb k) (mf k) :=
-    ⟨fun k => Hom.base (m k), fun k => Hom.fiber (m k), rfl⟩
-  obtain rfl : @mb = fun {X Y} k => u.toFunctor.map (g.toFunctor.map (r.toFunctor.map k)) := by
-    funext X Y k
-    exact hmb k
-  -- The factorization through `u^* G`: the same components, over `r ≫ g`.
-  let ψ : Z ⥤ Grothendieck (u.toFunctor ⋙ G) :=
-    { obj X := ⟨g.toFunctor.obj (r.toFunctor.obj X), x X⟩
-      map k := ⟨g.toFunctor.map (r.toFunctor.map k), mf k⟩
-      map_id X := Groth.hom_mk_congr (by kernel_exact Groth.fiber_eq_of_eq (hid X))
-      map_comp k l := Groth.hom_mk_congr (by kernel_exact Groth.fiber_eq_of_eq (hcomp k l)) }
-  refine ⟨⟨ψ.toCatHom, rfl⟩, Subtype.ext (Cat.Hom.ext
-    (Functor.hext (fun _ => rfl) fun _ _ _ => HEq.rfl)), ?_⟩
-  rintro ⟨⟨⟨o', m', hid', hcomp'⟩⟩, hsq⟩ hψ
-  -- Its bases are those of `r ≫ g`, and its fibres are those of `χ`.
-  have hB' : (fun X => Grothendieck.base (o' X)) = fun X => g.toFunctor.obj (r.toFunctor.obj X) :=
-    congrArg (fun k : Z ⟶ A => k.toFunctor.obj) hsq
-  obtain ⟨b', x', rfl⟩ : ∃ (b' : Z → A) (x' : ∀ X, G.obj (u.toFunctor.obj (b' X))),
-      o' = fun X => (⟨b' X, x' X⟩ : Grothendieck (u.toFunctor ⋙ G)) :=
-    ⟨_, fun X => Grothendieck.fiber (o' X), rfl⟩
-  obtain rfl : b' = fun X => g.toFunctor.obj (r.toFunctor.obj X) := hB'
-  have hmb' : ∀ {X Y : Z} (k : X ⟶ Y),
-      Hom.base (m' k) = g.toFunctor.map (r.toFunctor.map k) := fun k =>
-    eq_of_heq (Functor.hcongr_hom (congrArg Cat.Hom.toFunctor hsq) k)
-  obtain ⟨mb', mf', rfl⟩ : ∃ (mb' : ∀ {X Y : Z}, (X ⟶ Y) →
-        (g.toFunctor.obj (r.toFunctor.obj X) ⟶ g.toFunctor.obj (r.toFunctor.obj Y)))
-      (mf' : ∀ {X Y : Z} (k : X ⟶ Y),
-        (G.map (u.toFunctor.map (mb' k))).toFunctor.obj (x' X) ⟶ x' Y),
-      @m' = fun {X Y} k => Hom.mk (F := u.toFunctor ⋙ G) (X := ⟨_, x' X⟩) (Y := ⟨_, x' Y⟩)
-        (mb' k) (mf' k) :=
-    ⟨fun k => Hom.base (m' k), fun k => Hom.fiber (m' k), rfl⟩
-  obtain rfl : @mb' = fun {X Y} k => g.toFunctor.map (r.toFunctor.map k) := by
-    funext X Y k
-    exact hmb' k
-  have hF := congrArg (fun w => Cat.Hom.toFunctor (Subtype.val w)) hψ
-  obtain rfl : x' = x :=
-    funext fun X => eq_of_heq (Grothendieck.mk.inj (Functor.congr_obj hF X)).2
-  obtain rfl : @mf' = @mf := by
-    funext X Y k
-    exact Groth.fiber_eq_of_eq (eq_of_heq (Functor.hcongr_hom hF k))
-  exact Subtype.ext (Cat.Hom.ext (Functor.hext (fun _ => rfl) fun _ _ _ => HEq.rfl))
+/-- A lift over `v ⋙ u` into `G` is a lift over `v` into `u ⋙ G`. -/
+def Groth.Lift.toComp {Z : Type u₁} [Category.{v₁} Z] {A : Type u₂} [Category.{v₂} A]
+    {B : Type*} [Category B] {v : Z ⥤ A} {u : A ⥤ B} {G : B ⥤ Cat.{v, u}}
+    (s : Lift (v ⋙ u) G) : Lift v (u ⋙ G) :=
+  ⟨s.obj, s.map, s.map_id, s.map_comp⟩
+
+/-- Followed by `A ⋉ u^* G ⥤ B ⋉ G`, the functor of a lift over `v` into `u ⋙ G` is that of the
+same lift over `v ⋙ u` into `G`. -/
+theorem Groth.Lift.toComp_functor_comp_map {Z : Type u₁} [Category.{v₁} Z] {A : Type u₂}
+    [Category.{v₂} A] {B : Type*} [Category B] {v : Z ⥤ A} {u : A ⥤ B} {G : B ⥤ Cat.{v, u}}
+    (s : Lift (v ⋙ u) G) : s.toComp.functor ⋙ Groth.map u (LaxTrans.id (u ⋙ G)) = s.functor :=
+  Functor.hext (fun _ => rfl) fun _ _ _ => HEq.rfl
+
+/-- Postcomposition with `A ⋉ u^* G ⥤ B ⋉ G` is injective on functors over the same base. -/
+theorem Groth.comp_map_id_injective {Z : Type u₁} [Category.{v₁} Z] {A : Type u₂}
+    [Category.{v₂} A] {B : Type*} [Category B] {u : A ⥤ B} {G : B ⥤ Cat.{v, u}}
+    {Ψ₁ Ψ₂ : Z ⥤ A ⋉ (u ⋙ G)} (hb : Ψ₁ ⋙ π _ = Ψ₂ ⋙ π _)
+    (h : Ψ₁ ⋙ Groth.map u (LaxTrans.id _) = Ψ₂ ⋙ Groth.map u (LaxTrans.id _)) : Ψ₁ = Ψ₂ := by
+  have hobj : ∀ X, Ψ₁.obj X = Ψ₂.obj X := by
+    intro X
+    have h₀ : (Ψ₁.obj X).base = (Ψ₂.obj X).base := Functor.congr_obj hb X
+    have h₁ := Functor.congr_obj h X
+    change (⟨u.obj (Ψ₁.obj X).base, (Ψ₁.obj X).fiber⟩ : B ⋉ G) =
+      ⟨u.obj (Ψ₂.obj X).base, (Ψ₂.obj X).fiber⟩ at h₁
+    revert h₀ h₁
+    generalize Ψ₁.obj X = P
+    generalize Ψ₂.obj X = Q
+    rintro h₀ h₁
+    obtain ⟨b, x⟩ := P
+    obtain ⟨b', x'⟩ := Q
+    obtain rfl : b = b' := h₀
+    obtain rfl : x = x' := eq_of_heq (Grothendieck.mk.inj h₁).2
+    rfl
+  refine Functor.hext hobj fun X Y k => Hom.hext (hobj X) (hobj Y) (Functor.hcongr_hom hb k) ?_
+  exact Groth.fiber_heq (Functor.congr_obj h X) (Functor.congr_obj h Y) (Functor.hcongr_hom h k)
+
+/-- **The unstraightening sends the chosen lifts to cartesian morphisms**: `A ⋉ u^* G` is the
+pullback of `B ⋉ G` along `u`. The factorization of a functor `χ : Z ⥤ B ⋉ G` over `r ⋙ g ⋙ u`
+has the same fibres, read as a lift over `r ⋙ g` into `u ⋙ G`. -/
+def isCartesianUnstraightenClift {A B : Cat.{u, u}} (u : A ⟶ B) (G : B ⥤ Cat.{u, u}) :
+    IsCartesian (unstraighten.map (ICat.clift u G)) where
+  lift g z χ := ⟨(Groth.Lift.ofFunctor χ.1.toFunctor
+    (show χ.1.toFunctor ⋙ Groth.π G = (z.hom.toFunctor ⋙ g.toFunctor) ⋙ u.toFunctor from
+      congrArg Cat.Hom.toFunctor χ.2)).toComp.functor.toCatHom, rfl⟩
+  lift_fac _ _ _ := Subtype.ext (Cat.Hom.ext
+    ((Groth.Lift.toComp_functor_comp_map _).trans (Groth.Lift.functor_ofFunctor _ _)))
+  lift_uniq {_ g z _} ψ hψ := Subtype.ext (Cat.Hom.ext (Groth.comp_map_id_injective
+    (show ψ.1.toFunctor ⋙ Groth.π _ = z.hom.toFunctor ⋙ g.toFunctor from
+      congrArg Cat.Hom.toFunctor ψ.2)
+    ((congrArg (fun w => Cat.Hom.toFunctor (Subtype.val w)) hψ).trans
+      ((Groth.Lift.toComp_functor_comp_map _).trans (Groth.Lift.functor_ofFunctor _ _)).symm)))
+
+/-- The unstraightening is faithful: `α` is read off `Groth.map α` on the morphisms `(𝟙, φ)` and
+`(f, 𝟙)`. -/
+theorem unstraighten_map_injective {A B : Cat.{u, u}} {u : A ⟶ B} {F : A ⥤ Cat.{u, u}}
+    {G : B ⥤ Cat.{u, u}} {α β : ICat.Hom u F G} (h : unstraighten.map α = unstraighten.map β) :
+    α = β := by
+  have hF : Groth.map u.toFunctor α = Groth.map u.toFunctor β :=
+    congrArg (fun w => Cat.Hom.toFunctor (Subtype.val w)) h
+  refine LaxTrans.ext'
+    (fun a x => eq_of_heq (Grothendieck.mk.inj (Functor.congr_obj hF ⟨a, x⟩)).2)
+    (fun a x y φ => ?_) (fun {a a'} f x => ?_)
+  · exact (Groth.fiber_heq (Functor.congr_obj hF _) (Functor.congr_obj hF _)
+      (Functor.hcongr_hom hF (Hom.mk (X := ⟨a, x⟩) (Y := ⟨a, y⟩) (𝟙 a) φ)) :)
+  · exact (Groth.fiber_heq (Functor.congr_obj hF _) (Functor.congr_obj hF _)
+      (Functor.hcongr_hom hF (Hom.mk (X := ⟨a, x⟩) (Y := ⟨a', (F.map f).toFunctor.obj x⟩)
+        f (𝟙 _))) :)
+
+namespace Groth.Lift
+
+variable {A B : Type u₁} [Category.{v₁} A] [Category.{v₁} B] {u : A ⥤ B} {F : A ⥤ Cat.{v, u}}
+  {G : B ⥤ Cat.{v, u}}
+
+/-- The lax transformation `F ⇒ u ⋙ G` of a functor `A ⋉ F ⥤ B ⋉ G` over `u`, given by its lift:
+its components on the morphisms `(𝟙, φ)`, and its 2-cells on the morphisms `(f, 𝟙)`. -/
+def toLaxTrans (s : Lift (π F ⋙ u) G) : LaxTrans F (u ⋙ G) where
+  app a :=
+    { obj y := s.obj ⟨a, y⟩
+      map {y y'} φ := s.map (Hom.mk (X := ⟨a, y⟩) (Y := ⟨a, y'⟩) (𝟙 a) φ)
+      map_id y := s.map_id ⟨a, y⟩
+      map_comp {y y' y''} φ ψ := s.map_comp (Hom.mk (X := ⟨a, y⟩) (Y := ⟨a, y'⟩) (𝟙 a) φ)
+        (Hom.mk (X := ⟨a, y'⟩) (Y := ⟨a, y''⟩) (𝟙 a) ψ) }
+  naturality {a a'} f y :=
+    s.map (Hom.mk (X := ⟨a, y⟩) (Y := ⟨a', (F.map f).toFunctor.obj y⟩) f (𝟙 _))
+  naturality_naturality {a a'} f {y y'} φ :=
+    (s.map_comp (Hom.mk (X := ⟨a, y⟩) (Y := ⟨a, y'⟩) (𝟙 a) φ)
+      (Hom.mk (X := ⟨a, y'⟩) (Y := ⟨a', (F.map f).toFunctor.obj y'⟩) f (𝟙 _))).symm.trans
+    (s.map_comp (Hom.mk (X := ⟨a, y⟩) (Y := ⟨a', (F.map f).toFunctor.obj y⟩) f (𝟙 _))
+      (Hom.mk (X := ⟨a', (F.map f).toFunctor.obj y⟩) (Y := ⟨a', (F.map f).toFunctor.obj y'⟩)
+        (𝟙 a') ((F.map f).toFunctor.map φ)))
+  naturality_id {a} y := s.map_id ⟨a, y⟩
+  naturality_comp {a a' a''} f g y :=
+    s.map_comp (Hom.mk (X := ⟨a, y⟩) (Y := ⟨a', (F.map f).toFunctor.obj y⟩) f (𝟙 _))
+      (Hom.mk (X := ⟨a', (F.map f).toFunctor.obj y⟩)
+        (Y := ⟨a'', (F.map g).toFunctor.obj ((F.map f).toFunctor.obj y)⟩) g (𝟙 _))
+
+/-- `Groth.map` of the lax transformation of a lift is its functor: `(f, φ) = (f, 𝟙) ≫ (𝟙, φ)`. -/
+theorem map_toLaxTrans (s : Lift (π F ⋙ u) G) : Groth.map u s.toLaxTrans = s.functor :=
+  Functor.hext (fun _ => rfl) fun X Y k => heq_of_eq (hom_mk_congr
+    (s.map_comp (Hom.mk (X := X) (Y := ⟨Y.base, (F.map k.base).toFunctor.obj X.fiber⟩)
+      k.base (𝟙 _))
+    (Hom.mk (X := ⟨Y.base, (F.map k.base).toFunctor.obj X.fiber⟩) (Y := Y)
+      (𝟙 Y.base) k.fiber)).symm)
+
+end Groth.Lift
+
+/-- The inverse of the unstraightening on morphisms: the lax transformation of a functor
+`A ⋉ F ⥤ B ⋉ G` over `u`, through its lift. -/
+def unstraightenPreimage {A B : Cat.{u, u}} {u : A ⟶ B} {F : A ⥤ Cat.{u, u}}
+    {G : B ⥤ Cat.{u, u}} (w : unstraighten.obj F ⟶[u] unstraighten.obj G) : ICat.Hom u F G :=
+  (Groth.Lift.ofFunctor w.1.toFunctor
+    (show w.1.toFunctor ⋙ Groth.π G = Groth.π F ⋙ u.toFunctor from
+      congrArg Cat.Hom.toFunctor w.2)).toLaxTrans
+
+theorem unstraighten_map_preimage {A B : Cat.{u, u}} {u : A ⟶ B} {F : A ⥤ Cat.{u, u}}
+    {G : B ⥤ Cat.{u, u}} (w : unstraighten.obj F ⟶[u] unstraighten.obj G) :
+    unstraighten.map (unstraightenPreimage w) = w :=
+  Subtype.ext (Cat.Hom.ext ((Groth.Lift.map_toLaxTrans _).trans
+    (Groth.Lift.functor_ofFunctor _ _)))
 
 /-- **The unstraightening is fully faithful**: functors `A ⋉ F ⥤ B ⋉ G` over `u` are the
 same as lax transformations `F ⇒ u ⋙ G`. -/
-theorem unstraighten_map_bijective {A B : Cat.{u, u}} (u : A ⟶ B) (F : A ⥤ Cat.{u, u})
-    (G : B ⥤ Cat.{u, u}) :
-    Function.Bijective (unstraighten.map : ICat.Hom u F G → _) := by
-  refine ⟨fun α β h => ?_, fun w => ?_⟩
-  · -- `α` is read off `Groth.map α` on the morphisms `(𝟙, φ)` and `(f, 𝟙)`.
-    have hF : Groth.map u.toFunctor α = Groth.map u.toFunctor β :=
-      congrArg (fun w => Cat.Hom.toFunctor (Subtype.val w)) h
-    refine LaxTrans.ext'
-      (fun a x => eq_of_heq (Grothendieck.mk.inj (Functor.congr_obj hF ⟨a, x⟩)).2)
-      (fun a x y φ => ?_) (fun {a a'} f x => ?_)
-    · exact (Groth.fiber_heq (Functor.congr_obj hF _) (Functor.congr_obj hF _)
-        (Functor.hcongr_hom hF (Hom.mk (X := ⟨a, x⟩) (Y := ⟨a, y⟩) (𝟙 a) φ)) :)
-    · exact (Groth.fiber_heq (Functor.congr_obj hF _) (Functor.congr_obj hF _)
-        (Functor.hcongr_hom hF (Hom.mk (X := ⟨a, x⟩) (Y := ⟨a', (F.map f).toFunctor.obj x⟩)
-          f (𝟙 _))) :)
-  · obtain ⟨⟨⟨o, m, hid, hcomp⟩⟩, hw⟩ := w
-    -- The bases of `w` are those of `π ≫ u`: substitute them.
-    have hB : (fun X => Grothendieck.base (o X)) =
-        fun X : Grothendieck F => u.toFunctor.obj X.base :=
-      congrArg (fun k : Cat.of (Grothendieck F) ⟶ B => k.toFunctor.obj) hw
-    obtain ⟨b, x, rfl⟩ : ∃ (b : Grothendieck F → B) (x : ∀ X, G.obj (b X)),
-        o = fun X => (⟨b X, x X⟩ : Grothendieck G) :=
-      ⟨_, fun X => Grothendieck.fiber (o X), rfl⟩
-    obtain rfl : b = fun X : Grothendieck F => u.toFunctor.obj X.base := hB
-    have hmb : ∀ {X Y : Grothendieck F} (k : X ⟶ Y),
-        Hom.base (m k) = u.toFunctor.map (Hom.base k) := fun k =>
-      eq_of_heq (Functor.hcongr_hom (congrArg Cat.Hom.toFunctor hw) k)
-    obtain ⟨mb, mf, rfl⟩ : ∃ (mb : ∀ {X Y : Grothendieck F}, (X ⟶ Y) →
-          (u.toFunctor.obj X.base ⟶ u.toFunctor.obj Y.base))
-        (mf : ∀ {X Y : Grothendieck F} (k : X ⟶ Y), (G.map (mb k)).toFunctor.obj (x X) ⟶ x Y),
-        @m = fun {X Y} k => Hom.mk (X := ⟨_, x X⟩) (Y := ⟨_, x Y⟩) (mb k) (mf k) :=
-      ⟨fun k => Hom.base (m k), fun k => Hom.fiber (m k), rfl⟩
-    obtain rfl : @mb = fun {X Y} k => u.toFunctor.map (Hom.base k) := by
-      funext X Y k
-      exact hmb k
-    -- The lax transformation: components on `(𝟙, φ)`, 2-cells on `(f, 𝟙)`.
-    let α : LaxTrans F (u.toFunctor ⋙ G) :=
-      { app a :=
-          { obj y := x ⟨a, y⟩
-            map {y y'} φ := mf (Hom.mk (X := ⟨a, y⟩) (Y := ⟨a, y'⟩) (𝟙 a) φ)
-            map_id y := Groth.fiber_eq_of_eq (hid ⟨a, y⟩)
-            map_comp {y y' y''} φ ψ := Groth.fiber_eq_of_eq
-              (hcomp (Hom.mk (X := ⟨a, y⟩) (Y := ⟨a, y'⟩) (𝟙 a) φ)
-                (Hom.mk (X := ⟨a, y'⟩) (Y := ⟨a, y''⟩) (𝟙 a) ψ)) }
-        naturality {a a'} f y :=
-          mf (Hom.mk (X := ⟨a, y⟩) (Y := ⟨a', (F.map f).toFunctor.obj y⟩) f (𝟙 _))
-        naturality_naturality {a a'} f {y y'} φ :=
-          (Groth.fiber_eq_of_eq
-            (hcomp (Hom.mk (X := ⟨a, y⟩) (Y := ⟨a, y'⟩) (𝟙 a) φ)
-              (Hom.mk (X := ⟨a, y'⟩) (Y := ⟨a', (F.map f).toFunctor.obj y'⟩) f
-                (𝟙 _)))).symm.trans
-          (Groth.fiber_eq_of_eq
-            (hcomp (Hom.mk (X := ⟨a, y⟩) (Y := ⟨a', (F.map f).toFunctor.obj y⟩) f (𝟙 _))
-              (Hom.mk (X := ⟨a', (F.map f).toFunctor.obj y⟩)
-                (Y := ⟨a', (F.map f).toFunctor.obj y'⟩) (𝟙 a') ((F.map f).toFunctor.map φ))))
-        naturality_id {a} y := Groth.fiber_eq_of_eq (hid ⟨a, y⟩)
-        naturality_comp {a a' a''} f g y := Groth.fiber_eq_of_eq
-          (hcomp (Hom.mk (X := ⟨a, y⟩) (Y := ⟨a', (F.map f).toFunctor.obj y⟩) f (𝟙 _))
-            (Hom.mk (X := ⟨a', (F.map f).toFunctor.obj y⟩)
-              (Y := ⟨a'', (F.map g).toFunctor.obj ((F.map f).toFunctor.obj y)⟩) g (𝟙 _))) }
-    -- `(f, φ) = (f, 𝟙) ≫ (𝟙, φ)`, so `Groth.map α` is `w`.
-    refine ⟨α, Subtype.ext (Cat.Hom.ext (Functor.hext (fun _ => rfl) fun X Y k => heq_of_eq ?_))⟩
-    exact Groth.hom_mk_congr (Groth.fiber_eq_of_eq
-      (hcomp (Hom.mk (X := X) (Y := ⟨Y.base, (F.map k.base).toFunctor.obj X.fiber⟩)
-          k.base (𝟙 _))
-        (Hom.mk (X := ⟨Y.base, (F.map k.base).toFunctor.obj X.fiber⟩) (Y := Y)
-          (𝟙 Y.base) k.fiber))).symm
+def unstraightenFullyFaithful : unstraighten.{u}.FullyFaithful where
+  preimage w := unstraightenPreimage w
+  map_preimage w := unstraighten_map_preimage w
+  preimage_map α := unstraighten_map_injective (unstraighten_map_preimage (unstraighten.map α))
 
 /-! ## Transport in `A ⋉ F` -/
 
@@ -334,22 +395,6 @@ theorem map_eqToHom_comp_map_map (T : E ⥤ C) (G : C ⥤ D) {Q : E ⥤ D} (h : 
   simp
 
 end EqToHom
-
-/-- Morphisms of `A ⋉ F` are determined by their bases and fibres. -/
-theorem Hom.ext' {X Y : Grothendieck F} {φ ψ : X ⟶ Y} (hb : Hom.base φ = Hom.base ψ)
-    (hf : Hom.fiber φ ≍ Hom.fiber ψ) : φ = ψ := by
-  obtain ⟨b, f⟩ := φ
-  obtain ⟨b', f'⟩ := ψ
-  dsimp only at hb
-  subst hb
-  cases eq_of_heq hf
-  rfl
-
-/-- Heterogeneous extensionality for morphisms of `A ⋉ F`. -/
-theorem Hom.hext {X X' Y Y' : Grothendieck F} (hX : X = X') (hY : Y = Y') {φ : X ⟶ Y} {ψ : X' ⟶ Y'}
-    (hb : Hom.base φ ≍ Hom.base ψ) (hf : Hom.fiber φ ≍ Hom.fiber ψ) : φ ≍ ψ := by
-  subst hX hY
-  exact heq_of_eq (Hom.ext' (eq_of_heq hb) hf)
 
 /-! ## Functors out of `A ⋉ F` -/
 

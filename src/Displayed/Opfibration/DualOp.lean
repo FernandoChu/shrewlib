@@ -25,7 +25,7 @@ variable {A : Type u₁} [Category.{v₁} A] (B : Displayed.{v₁, u₁, v₂, u
 
 /-- The fiberwise opposite of a split opfibration `B`: same objects; a morphism over `f : a ⟶ a'`
 from `x` to `y` is a vertical morphism `y ⟶ B.push f x`. -/
-@[reducible] noncomputable def dualOp : Displayed.{v₁, u₁, v₂, u₂} A where
+@[reducible] def dualOp : Displayed.{v₁, u₁, v₂, u₂} A where
   Ob := B.Ob
   Hom {_ a'} f x y := @Quiver.Hom (B.Fiber a') _ y (B.push f x)
   id {a} x := 𝟙 (show B.Fiber a from x)
@@ -51,13 +51,13 @@ variable {B}
 
 /-- The chosen horizontal morphism of `∫(Bᵈᵒ)` over `α`: the total-category image of the identity
 vertical morphism. -/
-noncomputable def dualHoriz {a a' : A} (α : a ⟶ a') (b : B.Ob a) :
+def dualHoriz {a a' : A} (α : a ⟶ a') (b : B.Ob a) :
     B.dualOp.tot b ⟶ B.dualOp.tot (B.push α b) :=
   B.dualOp.totalMk α (𝟙 (B.push α b))
 
 /-- The chosen vertical morphism of `∫(Bᵈᵒ)` associated to `β : b ⟶ b'`; note it is
 *contravariant* (it reverses `β`). -/
-noncomputable def dualVert {a : A} {b b' : B.Fiber a} (β : b ⟶ b') :
+def dualVert {a : A} {b b' : B.Fiber a} (β : b ⟶ b') :
     B.dualOp.tot b' ⟶ B.dualOp.tot b :=
   B.dualOp.totalMk (𝟙 a) β
 

@@ -20,12 +20,13 @@ open CategoryTheory Displayed Opfibration.Straightening
 
 @[instance_reducible]
 instance comprehension : Comprehension ICat.{u} :=
-  Comprehension.ofClift unstraighten isCartesian_unstraighten_clift
+  Comprehension.ofClift unstraighten isCartesianUnstraightenClift
 
 /-- **The category model** is a full split comprehension category over `Cat`. -/
 instance splitComprehension : SplitComprehension ICat.{u} where
 
+@[instance_reducible]
 instance fullComprehension : FullComprehension ICat.{u} where
-  compr_map_bijective := unstraighten_map_bijective
+  comprFullyFaithful := unstraightenFullyFaithful
 
 end ComprehensionCategory.CatModel

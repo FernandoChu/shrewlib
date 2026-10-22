@@ -22,10 +22,14 @@ fibration and the identity comprehension functor. -/
 @[instance_reducible]
 instance comprehension [ChosenPullbacks C] : Comprehension (cod C) where
   compr := VertFunctor.id (cod C)
-  isCartesian_compr_map H := H
+  isCartesianComprMap H := H
 
 /-- The codomain comprehension category is full. -/
+@[instance_reducible]
 instance fullComprehension [ChosenPullbacks C] : FullComprehension (cod C) where
-  compr_map_bijective _ _ _ := Function.bijective_id
+  comprFullyFaithful :=
+    { preimage := fun ψ => ψ
+      map_preimage := fun _ => rfl
+      preimage_map := fun _ => rfl }
 
 end ComprehensionCategory.CodomainModel

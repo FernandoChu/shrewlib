@@ -6,8 +6,8 @@ import Mathlib.Tactic.IrreducibleDef
 # Fibrations
 
 The exact dual of `Opfibration/Basic.lean`, whose sections this file mirrors. It starts with
-cartesian morphisms (`IsCartesian`), which vertical equivalences preserve
-(`VertEquivalence.isCartesian_map`).
+cartesian morphisms (`IsCartesian`, whose factorizations are data), which vertical equivalences
+preserve (`VertEquivalence.isCartesianMap`).
 
 A `Fib` structure on a displayed category `D` is a cloven fibration: a chosen pullback `pull f y`
 for every base morphism `f : a ⟶ a'` and object `y` over `a'`, and a chosen cartesian lift
@@ -52,29 +52,31 @@ section Cartesian
 variable {D : Displayed.{v₁, u₁, v₂, u₂} A}
 
 /-- `φ : x ⟶[f] y` is *cartesian*: every displayed map into `y` over `g ≫ f` factors uniquely
-through `φ` by a displayed map over `g`. (This is the *strong* cartesian property.) -/
-def IsCartesian {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} (φ : x ⟶[f] y) : Prop :=
-  ∀ {a₀ : A} (g : a₀ ⟶ a) (z : D.Ob a₀) (χ : z ⟶[g ≫ f] y),
-    ∃! ψ : z ⟶[g] x, ψ ≫ᵈ φ = χ
+through `φ` by a displayed map over `g`. (This is the *strong* cartesian property.) The
+factorization is data, so that it computes; it is unique, so that this structure is a
+subsingleton. -/
+structure IsCartesian {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} (φ : x ⟶[f] y) where
+  /-- The factorization of `χ` through `φ`. -/
+  lift : ∀ {a₀ : A} (g : a₀ ⟶ a) {z : D.Ob a₀}, (z ⟶[g ≫ f] y) → (z ⟶[g] x)
+  lift_fac : ∀ {a₀ : A} (g : a₀ ⟶ a) {z : D.Ob a₀} (χ : z ⟶[g ≫ f] y), lift g χ ≫ᵈ φ = χ
+  /-- Any factorization of `χ` through `φ` agrees with `lift`. -/
+  lift_uniq : ∀ {a₀ : A} {g : a₀ ⟶ a} {z : D.Ob a₀} {χ : z ⟶[g ≫ f] y} (ψ : z ⟶[g] x),
+    ψ ≫ᵈ φ = χ → ψ = lift g χ
+
+attribute [simp] IsCartesian.lift_fac
 
 namespace IsCartesian
 
 variable {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f] y}
 
-/-- The unique factorization of `χ` through a cartesian `φ`. -/
-noncomputable def lift (H : IsCartesian φ) {a₀ : A} (g : a₀ ⟶ a) {z : D.Ob a₀}
-    (χ : z ⟶[g ≫ f] y) : z ⟶[g] x :=
-  (H g z χ).choose
-
-@[simp]
-theorem lift_fac (H : IsCartesian φ) {a₀ : A} (g : a₀ ⟶ a) {z : D.Ob a₀}
-    (χ : z ⟶[g ≫ f] y) : H.lift g χ ≫ᵈ φ = χ :=
-  (H g z χ).choose_spec.1
-
-/-- Any factorization of `χ` through `φ` agrees with `lift`. -/
-theorem lift_uniq (H : IsCartesian φ) {a₀ : A} {g : a₀ ⟶ a} {z : D.Ob a₀}
-    {χ : z ⟶[g ≫ f] y} (ψ : z ⟶[g] x) (hψ : ψ ≫ᵈ φ = χ) : ψ = H.lift g χ :=
-  (H g z χ).choose_spec.2 ψ hψ
+instance : Subsingleton (IsCartesian φ) where
+  allEq H H' := by
+    obtain ⟨l, fac, _⟩ := H
+    obtain ⟨l', _, uniq'⟩ := H'
+    obtain rfl : @l = @l' := by
+      funext a₀ g z χ
+      exact uniq' _ (fac g χ)
+    rfl
 
 /-- Two maps into `x` that agree after postcomposition with a cartesian `φ` are equal. -/
 theorem hom_ext (H : IsCartesian φ) {a₀ : A} {g : a₀ ⟶ a} {z : D.Ob a₀}
@@ -82,21 +84,21 @@ theorem hom_ext (H : IsCartesian φ) {a₀ : A} {g : a₀ ⟶ a} {z : D.Ob a₀}
   (H.lift_uniq ψ rfl).trans (H.lift_uniq ψ' h.symm).symm
 
 /-- Precomposing a cartesian morphism with a vertical isomorphism gives a cartesian morphism. -/
-theorem iso_comp {x' : D.Ob a} (H : IsCartesian φ) (ι : x' ⟶[𝟙 a] x) (ι' : x ⟶[𝟙 a] x')
-    (h : ι' ≫ᵈ ι = 𝟙ᵈ x) (h' : ι ≫ᵈ ι' = 𝟙ᵈ x') : IsCartesian (ι ≫ᵈ φ) := by
-  intro a₀ g z χ
-  refine ⟨(H.lift g χ ≫ᵈ ι' :), ?_, fun ψ hψ => ?_⟩
-  · exact ((congrArg (fun t => H.lift g χ ≫ᵈ (t ≫ᵈ φ)) h).trans (H.lift_fac g χ) :)
-  · exact ((congrArg (ψ ≫ᵈ ·) h').symm.trans
+def isoComp {x' : D.Ob a} (H : IsCartesian φ) (ι : x' ⟶[𝟙 a] x) (ι' : x ⟶[𝟙 a] x')
+    (h : ι' ≫ᵈ ι = 𝟙ᵈ x) (h' : ι ≫ᵈ ι' = 𝟙ᵈ x') : IsCartesian (ι ≫ᵈ φ) where
+  lift g _ χ := (H.lift g χ ≫ᵈ ι' :)
+  lift_fac g _ χ := ((congrArg (fun t => H.lift g χ ≫ᵈ (t ≫ᵈ φ)) h).trans (H.lift_fac g χ) :)
+  lift_uniq ψ hψ := ((congrArg (ψ ≫ᵈ ·) h').symm.trans
       (congrArg (· ≫ᵈ ι') (H.lift_uniq (ψ ≫ᵈ ι :) hψ)) :)
 
 /-- Postcomposing a cartesian morphism with a vertical isomorphism gives a cartesian morphism. -/
-theorem comp_iso {y' : D.Ob a'} (H : IsCartesian φ) (ι : y ⟶[𝟙 a'] y') (ι' : y' ⟶[𝟙 a'] y)
-    (h : ι' ≫ᵈ ι = 𝟙ᵈ y') (h' : ι ≫ᵈ ι' = 𝟙ᵈ y) : IsCartesian (φ ≫ᵈ ι) := by
-  intro a₀ g z χ
-  refine ⟨H.lift g (χ ≫ᵈ ι' :), ?_, fun ψ hψ => H.lift_uniq ψ ?_⟩
-  · exact ((congrArg (· ≫ᵈ ι) (H.lift_fac g (χ ≫ᵈ ι' :))).trans (congrArg (χ ≫ᵈ ·) h) :)
-  · exact ((congrArg (fun t => ψ ≫ᵈ (φ ≫ᵈ t)) h').symm.trans (congrArg (· ≫ᵈ ι') hψ) :)
+def compIso {y' : D.Ob a'} (H : IsCartesian φ) (ι : y ⟶[𝟙 a'] y') (ι' : y' ⟶[𝟙 a'] y)
+    (h : ι' ≫ᵈ ι = 𝟙ᵈ y') (h' : ι ≫ᵈ ι' = 𝟙ᵈ y) : IsCartesian (φ ≫ᵈ ι) where
+  lift g _ χ := H.lift g (χ ≫ᵈ ι' :)
+  lift_fac g _ χ :=
+    ((congrArg (· ≫ᵈ ι) (H.lift_fac g (χ ≫ᵈ ι' :))).trans (congrArg (χ ≫ᵈ ·) h) :)
+  lift_uniq ψ hψ := H.lift_uniq ψ
+    ((congrArg (fun t => ψ ≫ᵈ (φ ≫ᵈ t)) h').symm.trans (congrArg (· ≫ᵈ ι') hψ) :)
 
 end IsCartesian
 
@@ -104,23 +106,29 @@ namespace VertEquivalence
 
 variable {E : Displayed.{v₁, u₁, v₃, u₃} A} (e : VertEquivalence D E)
 
-/-- **A vertical equivalence preserves cartesian morphisms.** -/
-theorem isCartesian_map {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f] y}
-    (H : IsCartesian φ) : IsCartesian (e.functor.map φ) := by
-  intro a₀ g z χ
-  let ε := e.counitIso
-  obtain ⟨χ', hχ'⟩ := e.map_surjective (ε.hom.app z ≫ᵈ χ :)
-  refine ⟨(ε.inv.app z ≫ᵈ e.functor.map (IsCartesian.lift H g χ') :), ?_, fun ψ hψ => ?_⟩
-  · exact (((congrArg (fun t => ε.inv.app z ≫ᵈ e.functor.map t)
-      (IsCartesian.lift_fac H g χ')).trans (congrArg (ε.inv.app z ≫ᵈ ·) hχ')).trans
-        (VertNatIso.inv_hom_id_app_assoc ε z χ) :)
-  · obtain ⟨ψ', hψ'⟩ := e.map_surjective (ε.hom.app z ≫ᵈ ψ :)
-    have h₁ : ψ' ≫ᵈ φ = χ' := e.map_injective
-      ((congrArg (· ≫ᵈ e.functor.map φ) hψ').trans
-        ((congrArg (ε.hom.app z ≫ᵈ ·) hψ).trans hχ'.symm) :)
-    have h₂ : ψ' = IsCartesian.lift H g χ' := IsCartesian.lift_uniq H ψ' h₁
+/-- **A vertical equivalence preserves cartesian morphisms.** The factorization of `χ` is the
+counit, followed by the image of the factorization of the preimage of `χ`. -/
+def isCartesianMap {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f] y}
+    (H : IsCartesian φ) : IsCartesian (e.functor.map φ) where
+  lift {_} g z χ :=
+    (e.counitIso.inv.app z ≫ᵈ
+      e.functor.map (H.lift g (e.preimage (e.counitIso.hom.app z ≫ᵈ χ :))) :)
+  lift_fac {_} g z χ :=
+    (((congrArg (fun t => e.counitIso.inv.app z ≫ᵈ e.functor.map t)
+      (H.lift_fac g (e.preimage (e.counitIso.hom.app z ≫ᵈ χ :)))).trans
+        (congrArg (e.counitIso.inv.app z ≫ᵈ ·)
+          (e.map_preimage (e.counitIso.hom.app z ≫ᵈ χ :)))).trans
+        (VertNatIso.inv_hom_id_app_assoc e.counitIso z χ) :)
+  lift_uniq {_ g z χ} ψ hψ := by
+    let ε := e.counitIso
+    have h₁ : e.preimage (ε.hom.app z ≫ᵈ ψ :) ≫ᵈ φ = e.preimage (ε.hom.app z ≫ᵈ χ :) :=
+      e.map_injective
+        (((congrArg (· ≫ᵈ e.functor.map φ) (e.map_preimage (ε.hom.app z ≫ᵈ ψ :))).trans
+          ((congrArg (ε.hom.app z ≫ᵈ ·) hψ).trans (e.map_preimage _).symm)) :)
+    have h₂ : e.preimage (ε.hom.app z ≫ᵈ ψ :) = H.lift g (e.preimage (ε.hom.app z ≫ᵈ χ :)) :=
+      H.lift_uniq _ h₁
     exact ((VertNatIso.inv_hom_id_app_assoc ε z ψ).symm.trans
-      (congrArg (ε.inv.app z ≫ᵈ ·) (hψ'.symm.trans (congrArg e.functor.map h₂))) :)
+      (congrArg (ε.inv.app z ≫ᵈ ·) ((e.map_preimage _).symm.trans (congrArg e.functor.map h₂))) :)
 
 end VertEquivalence
 
@@ -136,7 +144,7 @@ class Fib (D : Displayed.{v₁, u₁, v₂, u₂} A) where
   /-- The chosen cartesian lift of `f` at `y`. -/
   clift : {a a' : A} → (f : a ⟶ a') → (y : D.Ob a') → (pull f y ⟶[f] y)
   /-- The chosen lifts are cartesian. -/
-  clift_cartesian : ∀ {a a' : A} (f : a ⟶ a') (y : D.Ob a'), IsCartesian (clift f y)
+  isCartesianClift : ∀ {a a' : A} (f : a ⟶ a') (y : D.Ob a'), IsCartesian (clift f y)
 
 /-- A pre-split fibration: a fibration whose chosen pullbacks are strictly functorial on objects.
 These axioms are rewrite rules. -/
@@ -176,8 +184,9 @@ variable (D : Displayed.{v₁, u₁, v₂, u₂} A) [Fib D]
 /-- The chosen cartesian lift of `f` at `y`. -/
 def clift {a a' : A} (f : a ⟶ a') (y : D.Ob a') : (D.pull f y) ⟶[f] y := Fib.clift f y
 
-theorem clift_cartesian {a a' : A} (f : a ⟶ a') (y : D.Ob a') :
-    IsCartesian (D.clift f y) := Fib.clift_cartesian f y
+/-- The chosen lift is cartesian. -/
+def isCartesianClift {a a' : A} (f : a ⟶ a') (y : D.Ob a') :
+    IsCartesian (D.clift f y) := Fib.isCartesianClift f y
 
 end Lift
 
@@ -217,14 +226,14 @@ variable (D : Displayed.{v₁, u₁, v₂, u₂} A) [Fib D] {a a' a'' : A}
 
 /-- Vertical factorization: any `φ : x ⟶[f] y` factors through the chosen lift `clift f y` by a
 vertical morphism `x ⟶ pull f y`. -/
-noncomputable def cartesianFactor {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} (φ : x ⟶[f] y) :
+def cartesianFactor {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} (φ : x ⟶[f] y) :
     x ⟶[𝟙 a] (D.pull f y) :=
-  IsCartesian.lift (D.clift_cartesian f y) (𝟙 a) φ
+  IsCartesian.lift (D.isCartesianClift f y) (𝟙 a) φ
 
 @[rewrite_rule]
 theorem cartesianFactor_comp_clift {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} (φ : x ⟶[f] y) :
     D.cartesianFactor φ ≫ᵈ D.clift f y = φ :=
-  IsCartesian.lift_fac (D.clift_cartesian f y) (𝟙 a) φ
+  IsCartesian.lift_fac (D.isCartesianClift f y) (𝟙 a) φ
 
 @[rewrite_rule]
 theorem cartesianFactor_comp_clift_assoc {f : a ⟶ a'} {g : a' ⟶ a''} {x : D.Ob a} {y : D.Ob a'}
@@ -235,7 +244,7 @@ theorem cartesianFactor_comp_clift_assoc {f : a ⟶ a'} {g : a' ⟶ a''} {x : D.
 /-- Any vertical morphism factoring `φ` through the chosen lift agrees with `cartesianFactor φ`. -/
 theorem cartesianFactor_uniq {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} (φ : x ⟶[f] y)
     (β : x ⟶[𝟙 a] (D.pull f y)) (h : β ≫ᵈ D.clift f y = φ) : β = D.cartesianFactor φ :=
-  IsCartesian.lift_uniq (D.clift_cartesian f y) β h
+  IsCartesian.lift_uniq (D.isCartesianClift f y) β h
 
 @[rewrite_rule]
 theorem cartesianFactor_clift (f : a ⟶ a') (y : D.Ob a') :
@@ -243,7 +252,7 @@ theorem cartesianFactor_clift (f : a ⟶ a') (y : D.Ob a') :
   (D.cartesianFactor_uniq (D.clift f y) (𝟙ᵈ _) rfl).symm
 
 /-- The hom-set bijection defining a fibration: `(x ⟶[f] y) ≃ (x ⟶ pull f y)`. -/
-noncomputable def cartesianHomEquiv (f : a ⟶ a') (x : D.Ob a) (y : D.Ob a') :
+def cartesianHomEquiv (f : a ⟶ a') (x : D.Ob a) (y : D.Ob a') :
     (x ⟶[f] y) ≃ (x ⟶[𝟙 a] (D.pull f y)) where
   toFun φ := D.cartesianFactor φ
   invFun β := β ≫ᵈ D.clift f y
@@ -270,7 +279,7 @@ section PullMap
 variable (D : Displayed.{v₁, u₁, v₂, u₂} A) [Fib D] {a a' a'' : A}
 
 /-- Transport of a vertical morphism along `f`. -/
-noncomputable irreducible_def pullMap (f : a ⟶ a') {x y : D.Fiber a'} (β : x ⟶ y) :
+irreducible_def pullMap (f : a ⟶ a') {x y : D.Fiber a'} (β : x ⟶ y) :
     D.pull f x ⟶ D.pull f y :=
   D.cartesianFactor (D.clift f x ≫ᵈ β)
 
@@ -286,12 +295,12 @@ used to reason about `pullMap`. -/
 /-- `pullMap f` preserves identities. -/
 theorem pullMap_id_vert (f : a ⟶ a') (x : D.Fiber a') :
     D.pullMap f (𝟙ᵈ x) = 𝟙ᵈ (D.pull f x) :=
-  IsCartesian.hom_ext (φ := D.clift f x) (D.clift_cartesian f x) (D.pullMap_clift f (𝟙ᵈ x))
+  IsCartesian.hom_ext (φ := D.clift f x) (D.isCartesianClift f x) (D.pullMap_clift f (𝟙ᵈ x))
 
 /-- `pullMap f` preserves composition. -/
 theorem pullMap_comp_vert (f : a ⟶ a') {x y z : D.Fiber a'} (β : x ⟶ y) (γ : y ⟶ z) :
     D.pullMap f (β ≫ᵈ γ) = D.pullMap f β ≫ᵈ D.pullMap f γ := by
-  refine IsCartesian.hom_ext (φ := D.clift f z) (D.clift_cartesian f z) ?_
+  refine IsCartesian.hom_ext (φ := D.clift f z) (D.isCartesianClift f z) ?_
   calc D.pullMap f (β ≫ᵈ γ) ≫ᵈ D.clift f z = D.clift f x ≫ᵈ (β ≫ᵈ γ) := D.pullMap_clift f _
     _ = (D.pullMap f β ≫ᵈ D.clift f y) ≫ᵈ γ :=
       congrArg (· ≫ᵈ γ) (D.pullMap_clift f β).symm
@@ -311,7 +320,7 @@ theorem pullMap_id {x y : D.Fiber a} (β : x ⟶ y) : D.pullMap (𝟙 a) β = β
 /-- Transport along a composite is the composite of transports. -/
 theorem pullMap_comp (f : a ⟶ a') (g : a' ⟶ a'') {x y : D.Fiber a''} (β : x ⟶ y) :
     D.pullMap (f ≫ g) β = D.pullMap f (D.pullMap g β) := by
-  refine IsCartesian.hom_ext (φ := D.clift (f ≫ g) y) (D.clift_cartesian (f ≫ g) y) ?_
+  refine IsCartesian.hom_ext (φ := D.clift (f ≫ g) y) (D.isCartesianClift (f ≫ g) y) ?_
   calc D.pullMap (f ≫ g) β ≫ᵈ D.clift (f ≫ g) y = D.clift (f ≫ g) x ≫ᵈ β :=
         D.pullMap_clift (f ≫ g) β
     _ = D.clift f (D.pull g x) ≫ᵈ (D.pullMap g β ≫ᵈ D.clift g y) :=
@@ -357,7 +366,7 @@ attribute [rewrite_rule] pullMap_id_vert pullMap_comp_vert pullMap_id pullMap_co
   cartesianFactor_comp clift_vert clift_vert_assoc
 
 /-- The pullback functor `D.Fiber a' ⥤ D.Fiber a`. -/
-noncomputable def pullFunctor (f : a ⟶ a') : D.Fiber a' ⥤ D.Fiber a where
+def pullFunctor (f : a ⟶ a') : D.Fiber a' ⥤ D.Fiber a where
   obj y := D.pull f y
   map β := D.pullMap f β
   map_id y := D.pullMap_id_vert f y
@@ -421,7 +430,7 @@ with inverse the factorization of the chosen lift through it. -/
 theorem cartesianFactor_inv_comp {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'}
     {φ : x ⟶[f] y} (H : IsCartesian φ) :
     H.lift (𝟙 a) (D.clift f y) ≫ᵈ D.cartesianFactor φ = 𝟙ᵈ (D.pull f y) :=
-  IsCartesian.hom_ext (D.clift_cartesian f y) (H.lift_fac (𝟙 a) (D.clift f y))
+  IsCartesian.hom_ext (D.isCartesianClift f y) (H.lift_fac (𝟙 a) (D.clift f y))
 
 theorem cartesianFactor_comp_inv {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'}
     {φ : x ⟶[f] y} (H : IsCartesian φ) :
@@ -431,17 +440,14 @@ theorem cartesianFactor_comp_inv {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.O
 /-- A vertical functor out of a fibration preserves cartesian morphisms as soon as it sends the
 chosen lifts to cartesian morphisms: every cartesian morphism is a vertical isomorphism followed
 by a chosen lift. -/
-theorem VertFunctor.isCartesian_map_of_clift (P : VertFunctor D E)
+def VertFunctor.isCartesianMapOfClift (P : VertFunctor D E)
     (hP : ∀ {a a' : A} (f : a ⟶ a') (y : D.Ob a'), IsCartesian (P.map (D.clift f y)))
     {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f] y} (H : IsCartesian φ) :
-    IsCartesian (P.map φ) := by
-  have e : P.map φ = P.map (D.cartesianFactor φ) ≫ᵈ P.map (D.clift f y) :=
-    (congrArg P.map (D.cartesianFactor_comp_clift φ).symm).trans (P.map_comp _ _)
-  have h : IsCartesian (P.map (D.cartesianFactor φ) ≫ᵈ P.map (D.clift f y)) :=
-    IsCartesian.iso_comp (@hP _ _ f y) _ (P.map (H.lift (𝟙 a) (D.clift f y)))
-    (congrArg P.map (cartesianFactor_inv_comp H) :) (congrArg P.map (cartesianFactor_comp_inv H) :)
-  rw [e]
-  exact @h
+    IsCartesian (P.map φ) :=
+  ((congrArg P.map (D.cartesianFactor_comp_clift φ).symm).trans (P.map_comp _ _)) ▸
+    (hP f y).isoComp _ (P.map (H.lift (𝟙 a) (D.clift f y)))
+      (congrArg P.map (cartesianFactor_inv_comp H) :)
+      (congrArg P.map (cartesianFactor_comp_inv H) :)
 
 end Preservation
 
@@ -457,8 +463,8 @@ chosen lift at `G y`, followed by the counit. -/
 def VertEquivalence.fib (e : VertEquivalence D E) [Fib D] : Fib E where
   pull f y := e.functor.obj (D.pull f (e.inverse.obj y))
   clift f y := (e.functor.map (D.clift f (e.inverse.obj y)) ≫ᵈ e.counitIso.hom.app y :)
-  clift_cartesian f y :=
-    IsCartesian.comp_iso (e.isCartesian_map (D.clift_cartesian f _)) _ (e.counitIso.inv.app y)
+  isCartesianClift f y :=
+    (e.isCartesianMap (D.isCartesianClift f _)).compIso _ (e.counitIso.inv.app y)
       (VertNatIso.inv_hom_id_app e.counitIso y) (VertNatIso.hom_inv_id_app e.counitIso y)
 
 end Transfer

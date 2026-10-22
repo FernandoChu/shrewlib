@@ -133,12 +133,12 @@ def pull {A B : Cat.{u, u}} (u : A ⟶ B) (G : B ⥤ Cat.{u, u}) : A ⥤ Cat.{u,
 def clift {A B : Cat.{u, u}} (u : A ⟶ B) (G : B ⥤ Cat.{u, u}) : ICat.Hom u (pull u G) G :=
   LaxTrans.id (u.toFunctor ⋙ G)
 
-theorem isCartesian_clift {A B : Cat.{u, u}} (u : A ⟶ B) (G : B ⥤ Cat.{u, u}) :
-    IsCartesian (clift u G) := by
-  intro _ _ _ χ
-  refine ⟨χ, rfl, fun ψ hψ => ?_⟩
-  subst hψ
-  rfl
+/-- The chosen lift is cartesian: a transformation over `g ≫ u` is its own factorization. -/
+def isCartesianClift {A B : Cat.{u, u}} (u : A ⟶ B) (G : B ⥤ Cat.{u, u}) :
+    IsCartesian (clift u G) where
+  lift _ _ χ := χ
+  lift_fac _ _ _ := rfl
+  lift_uniq _ hψ := hψ
 
 end ICat
 
@@ -147,7 +147,7 @@ identity transformations as chosen lifts. -/
 instance ICat.preSplitFib : PreSplitFib ICat.{u} where
   pull u G := ICat.pull u G
   clift u G := ICat.clift u G
-  clift_cartesian u G := ICat.isCartesian_clift u G
+  isCartesianClift u G := ICat.isCartesianClift u G
   pull_id _ := rfl
   pull_comp _ _ _ := rfl
 

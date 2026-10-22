@@ -37,7 +37,7 @@ open scoped Displayed DoubleDisplayed
 
 variable {A : Type u₁} [Category.{v₁} A] {B : Displayed.{v₁, u₁, v₂, u₂} A} [SplitOpfib B]
 
-noncomputable section
+section
 
 namespace Unstraightening
 
@@ -273,10 +273,10 @@ identities. -/
 instance instD2SFib : D2SFib (Unstraightening F) where
   pull β c := vobj F β c
   pullLift _ _ := 𝟙 _
-  pullLift_cartesian := by intro _ _ _ _ _ _ _ _ χ; exact ⟨χ, rfl, fun _ h => h⟩
+  isCartesianPullLift _ _ := ⟨fun _ _ χ => χ, fun _ _ _ => rfl, fun _ h => h⟩
   push := @fun _ _ α b c => hobj F α b c
   pushLift _ _ _ := 𝟙 _
-  pushLift_opcartesian := by intro _ _ _ _ _ _ _ _ _ _ χ; exact ⟨χ, rfl, fun _ h => h⟩
+  isOpcartesianPushLift _ _ _ := ⟨fun _ _ χ => χ, fun _ _ _ => rfl, fun _ h => h⟩
 
 instance instPreSplitD2SFib : PreSplitD2SFib (Unstraightening F) where
   pull_id _ := rfl
@@ -300,7 +300,7 @@ variable {a a' : A}
 @[rewrite_rule]
 theorem pushMap_eq (α : a ⟶ a') {b : B.Ob a} {c c' : (Unstraightening F).Fiber b} (f : c ⟶ c') :
     pushMap (C := Unstraightening F) α f = hmor F α b f :=
-  (DoubleDisplayed.IsOpcartesian.desc_uniq (pushLift_opcartesian (C := Unstraightening F) α c) _
+  (DoubleDisplayed.IsOpcartesian.desc_uniq (isOpcartesianPushLift (C := Unstraightening F) α c) _
     rfl).symm
 
 /-- The pullback action of `Unstraightening F` on fiber morphisms is `vmor`. -/

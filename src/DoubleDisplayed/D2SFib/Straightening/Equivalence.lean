@@ -27,7 +27,7 @@ open scoped Displayed DoubleDisplayed
 
 variable {A : Type u₁} [Category.{v₁} A] {B : Displayed.{v₁, u₁, v₂, u₂} A} [SplitOpfib B]
 
-noncomputable section
+section
 
 namespace Unstraightening
 
@@ -78,7 +78,7 @@ end
 /-- **Straightening–unstraightening for D2SFibs**: the unstraightening `Φ = unstraighten` and the
 fiberwise functor `Ψ = straighten` are mutually inverse equivalences between functors
 `∫(Bᵈᵒ) ⥤ Cat` and dependent 2-sided split fibrations over `B`. -/
-noncomputable def straighteningEquiv (B : Displayed.{v₁, u₁, v₂, u₂} A) [SplitOpfib B] :
+def straighteningEquiv (B : Displayed.{v₁, u₁, v₂, u₂} A) [SplitOpfib B] :
     (B.dualOp.Total ⥤ Cat.{v₃, u₃}) ≌ D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B :=
   CategoryTheory.Equivalence.mk unstraighten straighten unitIso counitIso
 

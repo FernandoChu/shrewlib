@@ -12,7 +12,8 @@ folder has a `Readme.lean`.
   category and the codomain displayed category; `Straightening/` is straightening–unstraightening,
   `DCat ≃ cod Cat` over `Cat`.
 * `Opfibration/`: opcartesian morphisms and cloven, pre-split and split opfibrations;
-  `Straightening/` is the unstraightening of functors `A ⥤ Cat` by the Grothendieck construction.
+  `Straightening/` is the equivalence over `Cat` between functors `A ⥤ Cat` and split
+  opfibrations, by the Grothendieck construction.
 * `Fibration/`: cartesian morphisms and cloven, pre-split and split fibrations, the exact dual of
   `Opfibration/`.
 -/

@@ -92,7 +92,7 @@ variable (Φ : D2SFibHom C C')
 theorem map_pushMap {a a' : A} (α : a ⟶ a') {b : B.Ob a} {c c' : C.Fiber b} (f : c ⟶ c') :
     Φ.toObj.map (pushMap α f) = pushMap α (Φ.toObj.map f) := by
   refine DoubleDisplayed.IsOpcartesian.hom_ext (θ := pushLift α (Φ.toObj.obj c))
-    (pushLift_opcartesian α _) ?_
+    (isOpcartesianPushLift α _) ?_
   refine (congrArg Φ.toObj.map (pushLift_pushMap α f)).trans ?_
   exact (pushLift_pushMap α (Φ.toObj.map f)).symm
 

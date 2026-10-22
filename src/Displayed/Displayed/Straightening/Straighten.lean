@@ -59,6 +59,31 @@ instance (a : A) : SmallCategory (Fibre X a) where
   comp_id := by intros; rfl
   assoc := by intros; rfl
 
+variable (X) in
+/-- The fibres of `p : E ⥤ A`, displayed over `A`: the objects over `a` are those of
+`Fibre p a`, and the morphisms over `f` are the morphisms of `E` over `f`. -/
+def fibres : Displayed.{u, u, u, u} A where
+  Ob a := Fibre X a
+  Hom f x y := FibreHom X f x y
+  id x := ⟨𝟙 x.1, rfl⟩
+  comp s t := FibreHom.comp s t
+  id_comp _ := rfl
+  comp_id _ := rfl
+  assoc _ _ _ := rfl
+
+theorem fibres.comp_val {a a' a'' : A} {f : a ⟶ a'} {g : a' ⟶ a''} {x : Fibre X a}
+    {y : Fibre X a'} {z : Fibre X a''} (s : (fibres X).Hom f x y) (t : (fibres X).Hom g y z) :
+    Subtype.val (s ≫ᵈ t : FibreHom X (f ≫ g) x z) =
+      Subtype.val (s : FibreHom X f x y) ≫ Subtype.val (t : FibreHom X g y z) :=
+  rfl
+
+/-- Morphisms over equal base morphisms with the same underlying morphism of `E` are
+heterogeneously equal. -/
+theorem FibreHom.heq_of_val {a a' : A} {f f' : a ⟶ a'} (h : f = f') {x : Fibre X a}
+    {y : Fibre X a'} (s : FibreHom X f x y) (t : FibreHom X f' x y) (hv : s.1 = t.1) : s ≍ t := by
+  subst h
+  exact heq_of_eq (Subtype.ext hv)
+
 /-- The profunctor `F_p f : Fibre p a ⇸ Fibre p a'` of morphisms over `f`. -/
 def fibProf {a a' : A} (f : a ⟶ a') : Profunctor (Fibre X a) (Fibre X a') where
   obj := FibreHom X f

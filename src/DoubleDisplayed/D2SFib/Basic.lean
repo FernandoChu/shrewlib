@@ -43,14 +43,14 @@ class D2SFib (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) where
   /-- Chosen cartesian lift over `β`. -/
   pullLift : ∀ {a : A} {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') (c : C.Ob b'), pull β c ⟶[[β]] c
   /-- The chosen pullback lifts are cartesian (among morphisms of the same fiber). -/
-  pullLift_cartesian : ∀ {a : A} {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') (c : C.Ob b'),
+  isCartesianPullLift : ∀ {a : A} {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') (c : C.Ob b'),
     DoubleDisplayed.IsCartesian (pullLift β c)
   /-- Chosen pushforward along `α : a ⟶ a'`, over `B`'s pushforward `B.push`. -/
   push : {a a' : A} → (α : a ⟶ a') → {b : B.Ob a} → C.Ob b → C.Ob (B.push α b)
   /-- Chosen opcartesian lift over `B.olift α b`. -/
   pushLift : ∀ {a a' : A} (α : a ⟶ a') {b : B.Ob a} (c : C.Ob b), c ⟶[[B.olift α b]] push α c
   /-- The chosen pushforward lifts are opcartesian over `B`. -/
-  pushLift_opcartesian : ∀ {a a' : A} (α : a ⟶ a') {b : B.Ob a} (c : C.Ob b),
+  isOpcartesianPushLift : ∀ {a a' : A} (α : a ⟶ a') {b : B.Ob a} (c : C.Ob b),
     DoubleDisplayed.IsOpcartesian (pushLift α c)
 
 /-- A pre-split D2SFib: the chosen pullbacks and pushforwards are strictly functorial on objects
@@ -122,15 +122,15 @@ section PushMap
 variable {a a' a'' : A}
 
 /-- Functorial action of pushforward on vertical morphisms. -/
-noncomputable def pushMap (α : a ⟶ a') {b : B.Ob a} {c c' : C.Fiber b} (f : c ⟶ c') :
+def pushMap (α : a ⟶ a') {b : B.Ob a} {c c' : C.Fiber b} (f : c ⟶ c') :
     push α c ⟶ push α c' :=
-  DoubleDisplayed.IsOpcartesian.desc (pushLift_opcartesian α c) (B.id (B.push α b))
+  DoubleDisplayed.IsOpcartesian.desc (isOpcartesianPushLift α c) (B.id (B.push α b))
     (f ≫ᵈᵈ pushLift α c' :)
 
 /-- Descent characterization of `pushMap`. -/
 theorem pushLift_pushMap (α : a ⟶ a') {b : B.Ob a} {c c' : C.Fiber b} (f : c ⟶ c') :
     pushLift α c ≫ᵈᵈ pushMap α f = f ≫ᵈᵈ pushLift α c' :=
-  DoubleDisplayed.IsOpcartesian.desc_fac (pushLift_opcartesian α c) (B.id (B.push α b)) _
+  DoubleDisplayed.IsOpcartesian.desc_fac (isOpcartesianPushLift α c) (B.id (B.push α b)) _
 
 theorem pushLift_pushMap_assoc (α : a ⟶ a') {b : B.Ob a} {c c' : C.Fiber b} (f : c ⟶ c')
     {f' : a' ⟶ a''} {b'' : B.Ob a''} {g : B.push α b ⟶[f'] b''} {e : C.Ob b''}
@@ -141,13 +141,13 @@ theorem pushLift_pushMap_assoc (α : a ⟶ a') {b : B.Ob a} {c c' : C.Fiber b} (
 /-- `pushMap` preserves identities. -/
 theorem pushMap_id (α : a ⟶ a') {b : B.Ob a} (c : C.Fiber b) :
     pushMap α (𝟙ᵈᵈ c) = 𝟙ᵈᵈ (push α c) :=
-  DoubleDisplayed.IsOpcartesian.hom_ext (θ := pushLift α c) (pushLift_opcartesian α c)
+  DoubleDisplayed.IsOpcartesian.hom_ext (θ := pushLift α c) (isOpcartesianPushLift α c)
     (pushLift_pushMap α (𝟙ᵈᵈ c))
 
 /-- `pushMap` preserves composition. -/
 theorem pushMap_comp (α : a ⟶ a') {b : B.Ob a} {c c' c'' : C.Fiber b} (f : c ⟶ c')
     (g : c' ⟶ c'') : pushMap α (f ≫ᵈᵈ g) = pushMap α f ≫ᵈᵈ pushMap α g := by
-  refine DoubleDisplayed.IsOpcartesian.hom_ext (θ := pushLift α c) (pushLift_opcartesian α c) ?_
+  refine DoubleDisplayed.IsOpcartesian.hom_ext (θ := pushLift α c) (isOpcartesianPushLift α c) ?_
   refine (pushLift_pushMap α (f ≫ᵈᵈ g)).trans ?_
   refine (congrArg (f ≫ᵈᵈ ·) (pushLift_pushMap α g).symm).trans ?_
   exact (pushLift_pushMap_assoc α f (pushMap α g)).symm
@@ -160,7 +160,7 @@ theorem pushMap_idBase {b : B.Ob a} {c c' : C.Fiber b} (f : c ⟶ c') : pushMap 
 theorem pushMap_compBase (α : a ⟶ a') (α' : a' ⟶ a'') {b : B.Ob a} {c c' : C.Fiber b}
     (f : c ⟶ c') : pushMap (α ≫ α') f = pushMap α' (pushMap α f) := by
   refine DoubleDisplayed.IsOpcartesian.hom_ext (θ := pushLift (α ≫ α') c)
-    (pushLift_opcartesian (α ≫ α') c) ?_
+    (isOpcartesianPushLift (α ≫ α') c) ?_
   refine (pushLift_pushMap (α ≫ α') f).trans ?_
   refine (pushLift_pushMap_assoc α f (pushLift α' (push α c'))).symm.trans ?_
   exact congrArg (pushLift α c ≫ᵈᵈ ·) (pushLift_pushMap α' (pushMap α f)).symm
@@ -172,19 +172,19 @@ section PullMap
 variable {a : A}
 
 /-- The unique factorization through a chosen cartesian lift. -/
-noncomputable def pullDesc {b b' b₀ : B.Ob a} (β : b ⟶[𝟙 a] b') (c : C.Ob b')
+def pullDesc {b b' b₀ : B.Ob a} (β : b ⟶[𝟙 a] b') (c : C.Ob b')
     (β₀ : b₀ ⟶[𝟙 a] b) (c₀ : C.Ob b₀) (χ : c₀ ⟶[[β₀ ≫ᵈ β]] c) : c₀ ⟶[[β₀]] (pull β c) :=
-  (pullLift_cartesian β c β₀ c₀ χ).choose
+  (isCartesianPullLift β c).lift β₀ χ
 
 theorem pullDesc_fac {b b' b₀ : B.Ob a} (β : b ⟶[𝟙 a] b') (c : C.Ob b')
     (β₀ : b₀ ⟶[𝟙 a] b) (c₀ : C.Ob b₀) (χ : c₀ ⟶[[β₀ ≫ᵈ β]] c) :
     pullDesc β c β₀ c₀ χ ≫ᵈᵈ pullLift β c = χ :=
-  (pullLift_cartesian β c β₀ c₀ χ).choose_spec.1
+  (isCartesianPullLift β c).lift_fac β₀ χ
 
 theorem pullDesc_uniq {b b' b₀ : B.Ob a} (β : b ⟶[𝟙 a] b') (c : C.Ob b')
     (β₀ : b₀ ⟶[𝟙 a] b) (c₀ : C.Ob b₀) {χ : c₀ ⟶[[β₀ ≫ᵈ β]] c}
     (ξ : c₀ ⟶[[β₀]] (pull β c)) (hξ : ξ ≫ᵈᵈ pullLift β c = χ) : ξ = pullDesc β c β₀ c₀ χ :=
-  (pullLift_cartesian β c β₀ c₀ χ).choose_spec.2 ξ hξ
+  (isCartesianPullLift β c).lift_uniq ξ hξ
 
 /-- Two maps into `pull β c` agreeing after postcomposition with `pullLift β c` are equal. -/
 theorem pull_hom_ext {b b' b₀ : B.Ob a} {β : b ⟶[𝟙 a] b'} {c : C.Ob b'}
@@ -192,13 +192,8 @@ theorem pull_hom_ext {b b' b₀ : B.Ob a} {β : b ⟶[𝟙 a] b'} {c : C.Ob b'}
     (h : ξ ≫ᵈᵈ pullLift β c = ξ' ≫ᵈᵈ pullLift β c) : ξ = ξ' :=
   (pullDesc_uniq β c β₀ c₀ ξ rfl).trans (pullDesc_uniq β c β₀ c₀ ξ' h.symm).symm
 
-/-- The chosen cartesian lift is cartesian (as the `IsCartesian` predicate). -/
-theorem pullLift_isCartesian {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') (c : C.Ob b') :
-    DoubleDisplayed.IsCartesian (pullLift β c) :=
-  fun β₀ c₀ χ => pullLift_cartesian β c β₀ c₀ χ
-
 /-- Functorial action of pullback on vertical morphisms. -/
-noncomputable def pullMap {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') {c c' : C.Fiber b'} (f : c ⟶ c') :
+def pullMap {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') {c c' : C.Fiber b'} (f : c ⟶ c') :
     pull β c ⟶ pull β c' :=
   pullDesc β c' (B.id b) (pull β c) (pullLift β c ≫ᵈᵈ f :)
 
@@ -249,7 +244,7 @@ theorem pushMap_pullMap (α : a ⟶ a') {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') 
     (f : c ⟶ c') : pushMap α (pullMap β f) = pullMap (B.pushMap α β) (pushMap α f) := by
   refine pull_hom_ext (β := B.pushMap α β) (c := push α c') ?_
   refine DoubleDisplayed.IsOpcartesian.hom_ext (θ := pushLift α (pull β c))
-    (pushLift_opcartesian α _) ?_
+    (isOpcartesianPushLift α _) ?_
   refine (pushLift_pushMap_assoc α (pullMap β f)
     (pullLift (B.pushMap α β) (push α c'))).trans ?_
   refine (congrArg (pullMap β f ≫ᵈᵈ ·) (pushLift_pullLift α β c').symm).trans ?_
@@ -269,7 +264,7 @@ section Functors
 variable {a a' : A}
 
 /-- The pushforward functor on fibers. -/
-noncomputable def pushFunctor (α : a ⟶ a') (b : B.Ob a) :
+def pushFunctor (α : a ⟶ a') (b : B.Ob a) :
     C.Fiber b ⥤ C.Fiber (B.push α b) where
   obj c := push α c
   map f := pushMap α f
@@ -283,7 +278,7 @@ noncomputable def pushFunctor (α : a ⟶ a') (b : B.Ob a) :
     (pushFunctor α b).map f = pushMap α f := rfl
 
 /-- The pullback functor on fibers. -/
-noncomputable def pullFunctor {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') : C.Fiber b' ⥤ C.Fiber b where
+def pullFunctor {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') : C.Fiber b' ⥤ C.Fiber b where
   obj c := pull β c
   map f := pullMap β f
   map_id _ := rfl
@@ -338,20 +333,20 @@ variable {a a' a'' : A}
 `C` over `g : B.Hom α b b'` correspond to *vertical* morphisms
 `push α c ⟶ pull (B.opcartesianFactor g) c'` in the fiber over `B.push α b`. Its inverse composes
 with the two chosen lifts. -/
-noncomputable def d2sHomEquiv (α : a ⟶ a') {b : B.Ob a} {b' : B.Ob a'} (g : b ⟶[α] b')
+def d2sHomEquiv (α : a ⟶ a') {b : B.Ob a} {b' : B.Ob a'} (g : b ⟶[α] b')
     (c : C.Ob b) (c' : C.Ob b') : (c ⟶[[g]] c') ≃ (push α c ⟶ pull (B.opcartesianFactor g) c') where
   toFun θ := pullDesc (B.opcartesianFactor g) c' (B.id (B.push α b)) (push α c)
-    (DoubleDisplayed.IsOpcartesian.desc (pushLift_opcartesian α c) (B.opcartesianFactor g) θ)
+    (DoubleDisplayed.IsOpcartesian.desc (isOpcartesianPushLift α c) (B.opcartesianFactor g) θ)
   invFun f := pushLift α c ≫ᵈᵈ (f ≫ᵈᵈ pullLift (B.opcartesianFactor g) c')
   left_inv θ :=
     (congrArg (pushLift α c ≫ᵈᵈ ·) (pullDesc_fac (B.opcartesianFactor g) c' (B.id (B.push α b))
       (push α c) _)).trans
-      (DoubleDisplayed.IsOpcartesian.desc_fac (pushLift_opcartesian α c) (B.opcartesianFactor g) θ)
+      (DoubleDisplayed.IsOpcartesian.desc_fac (isOpcartesianPushLift α c) (B.opcartesianFactor g) θ)
   right_inv f := by
-    have h : DoubleDisplayed.IsOpcartesian.desc (pushLift_opcartesian α c) (B.opcartesianFactor g)
+    have h : DoubleDisplayed.IsOpcartesian.desc (isOpcartesianPushLift α c) (B.opcartesianFactor g)
         (pushLift α c ≫ᵈᵈ (f ≫ᵈᵈ pullLift (B.opcartesianFactor g) c')) =
           f ≫ᵈᵈ pullLift (B.opcartesianFactor g) c' :=
-      (DoubleDisplayed.IsOpcartesian.desc_uniq (pushLift_opcartesian α c) _ rfl).symm
+      (DoubleDisplayed.IsOpcartesian.desc_uniq (isOpcartesianPushLift α c) _ rfl).symm
     exact (congrArg (pullDesc (B.opcartesianFactor g) c' (B.id (B.push α b)) (push α c)) h).trans
       (pullDesc_uniq _ _ _ _ f rfl).symm
 

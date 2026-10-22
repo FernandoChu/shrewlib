@@ -191,19 +191,21 @@ def pullbackLift {A B : Cat.{u, u}} (u : A ⟶ B) (G : LaxNormal B) :
   map_id _ := rfl
   map_mul _ _ := rfl
 
-theorem isCartesian_pullbackLift {A B : Cat.{u, u}} (u : A ⟶ B) (G : LaxNormal B) :
-    IsCartesian (D := DCat) (pullbackLift u G) := by
-  intro C v H χ
-  refine ⟨⟨χ.obj, χ.map, χ.map_id, χ.map_mul⟩, rfl, fun ψ hψ => ?_⟩
-  subst hψ
-  rfl
+/-- The chosen lift is cartesian: a transformation over `v ≫ u` is its own factorization. -/
+def isCartesianPullbackLift {A B : Cat.{u, u}} (u : A ⟶ B) (G : LaxNormal B) :
+    IsCartesian (D := DCat) (pullbackLift u G) where
+  lift _ _ χ := ⟨χ.obj, χ.map, χ.map_id, χ.map_mul⟩
+  lift_fac _ _ _ := rfl
+  lift_uniq _ hψ := by
+    subst hψ
+    rfl
 
 /-- **`DCat` is a split fibration over `Cat`**, cloven by the pullbacks. Pullback along the
 identity and along composites holds on the nose. -/
 instance preSplitFibDCat : PreSplitFib DCat.{u} where
   pull u G := pullback u G
   clift u G := pullbackLift u G
-  clift_cartesian u G := isCartesian_pullbackLift u G
+  isCartesianClift u G := isCartesianPullbackLift u G
   pull_id _ := rfl
   pull_comp _ _ _ := rfl
 

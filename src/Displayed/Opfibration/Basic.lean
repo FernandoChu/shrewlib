@@ -7,7 +7,10 @@ import Mathlib.Tactic.IrreducibleDef
 
 The file starts with opcartesian morphisms (`IsOpcartesian`: the strong opcartesian property and
 its universal-property API), which vertical equivalences preserve
-(`VertEquivalence.isOpcartesian_map`).
+(`VertEquivalence.isOpcartesianMap`). `IsOpcartesian φ` carries the factorization through `φ` as
+data, with its uniqueness: Lean has no computable unique choice, so a `Prop` stating unique
+existence would make every construction from the factorizations, such as `pushMap`,
+noncomputable. By uniqueness it is a subsingleton.
 
 An `Opfib` structure on a displayed category `D` is a cloven opfibration: a chosen pushforward
 `push f x` for every base morphism `f : a ⟶ a'` and object `x` over `a`, and a chosen opcartesian
@@ -54,29 +57,31 @@ section Opcartesian
 variable {D : Displayed.{v₁, u₁, v₂, u₂} A}
 
 /-- `φ : x ⟶[f] y` is *opcartesian*: every displayed map out of `x` over `f ≫ g` factors uniquely
-through `φ` by a displayed map over `g`. (This is the *strong* opcartesian property.) -/
-def IsOpcartesian {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} (φ : x ⟶[f] y) : Prop :=
-  ∀ {a'' : A} (g : a' ⟶ a'') (z : D.Ob a'') (χ : x ⟶[f ≫ g] z),
-    ∃! ψ : y ⟶[g] z, φ ≫ᵈ ψ = χ
+through `φ` by a displayed map over `g`. (This is the *strong* opcartesian property.) The
+factorization is data, so that it computes; it is unique, so that this structure is a
+subsingleton. -/
+structure IsOpcartesian {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} (φ : x ⟶[f] y) where
+  /-- The factorization of `χ` through `φ`. -/
+  desc : ∀ {a'' : A} (g : a' ⟶ a'') {z : D.Ob a''}, (x ⟶[f ≫ g] z) → (y ⟶[g] z)
+  desc_fac : ∀ {a'' : A} (g : a' ⟶ a'') {z : D.Ob a''} (χ : x ⟶[f ≫ g] z), φ ≫ᵈ desc g χ = χ
+  /-- Any factorization of `χ` through `φ` agrees with `desc`. -/
+  desc_uniq : ∀ {a'' : A} {g : a' ⟶ a''} {z : D.Ob a''} {χ : x ⟶[f ≫ g] z} (ψ : y ⟶[g] z),
+    φ ≫ᵈ ψ = χ → ψ = desc g χ
+
+attribute [simp] IsOpcartesian.desc_fac
 
 namespace IsOpcartesian
 
 variable {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f] y}
 
-/-- The unique factorization of `χ` through an opcartesian `φ`. -/
-noncomputable def desc (H : IsOpcartesian φ) {a'' : A} (g : a' ⟶ a'') {z : D.Ob a''}
-    (χ : x ⟶[f ≫ g] z) : y ⟶[g] z :=
-  (H g z χ).choose
-
-@[simp]
-theorem desc_fac (H : IsOpcartesian φ) {a'' : A} (g : a' ⟶ a'') {z : D.Ob a''}
-    (χ : x ⟶[f ≫ g] z) : φ ≫ᵈ H.desc g χ = χ :=
-  (H g z χ).choose_spec.1
-
-/-- Any factorization of `χ` through `φ` agrees with `desc`. -/
-theorem desc_uniq (H : IsOpcartesian φ) {a'' : A} {g : a' ⟶ a''} {z : D.Ob a''}
-    {χ : x ⟶[f ≫ g] z} (ψ : y ⟶[g] z) (hψ : φ ≫ᵈ ψ = χ) : ψ = H.desc g χ :=
-  (H g z χ).choose_spec.2 ψ hψ
+instance : Subsingleton (IsOpcartesian φ) where
+  allEq H H' := by
+    obtain ⟨d, fac, _⟩ := H
+    obtain ⟨d', _, uniq'⟩ := H'
+    obtain rfl : @d = @d' := by
+      funext a'' g z χ
+      exact uniq' _ (fac g χ)
+    rfl
 
 /-- Two maps out of `y` that agree after precomposition with an opcartesian `φ` are equal. -/
 theorem hom_ext (H : IsOpcartesian φ) {a'' : A} {g : a' ⟶ a''} {z : D.Ob a''}
@@ -85,12 +90,13 @@ theorem hom_ext (H : IsOpcartesian φ) {a'' : A} {g : a' ⟶ a''} {z : D.Ob a''}
 
 /-- Precomposing an opcartesian morphism with a vertical isomorphism gives an opcartesian
 morphism. -/
-theorem iso_comp {x' : D.Ob a} (H : IsOpcartesian φ) (ι : x' ⟶[𝟙 a] x) (ι' : x ⟶[𝟙 a] x')
-    (h : ι' ≫ᵈ ι = 𝟙ᵈ x) (h' : ι ≫ᵈ ι' = 𝟙ᵈ x') : IsOpcartesian (ι ≫ᵈ φ) := by
-  intro a'' g z χ
-  refine ⟨H.desc g (ι' ≫ᵈ χ :), ?_, fun ψ hψ => H.desc_uniq ψ ?_⟩
-  · exact ((congrArg (ι ≫ᵈ ·) (H.desc_fac g (ι' ≫ᵈ χ :))).trans (congrArg (· ≫ᵈ χ) h') :)
-  · exact ((congrArg (fun t => t ≫ᵈ (φ ≫ᵈ ψ)) h).symm.trans (congrArg (ι' ≫ᵈ ·) hψ) :)
+def isoComp {x' : D.Ob a} (H : IsOpcartesian φ) (ι : x' ⟶[𝟙 a] x) (ι' : x ⟶[𝟙 a] x')
+    (h : ι' ≫ᵈ ι = 𝟙ᵈ x) (h' : ι ≫ᵈ ι' = 𝟙ᵈ x') : IsOpcartesian (ι ≫ᵈ φ) where
+  desc g _ χ := H.desc g (ι' ≫ᵈ χ :)
+  desc_fac g _ χ :=
+    ((congrArg (ι ≫ᵈ ·) (H.desc_fac g (ι' ≫ᵈ χ :))).trans (congrArg (· ≫ᵈ χ) h') :)
+  desc_uniq ψ hψ := H.desc_uniq ψ
+    ((congrArg (fun t => t ≫ᵈ (φ ≫ᵈ ψ)) h).symm.trans (congrArg (ι' ≫ᵈ ·) hψ) :)
 
 end IsOpcartesian
 
@@ -98,23 +104,29 @@ namespace VertEquivalence
 
 variable {E : Displayed.{v₁, u₁, v₃, u₃} A} (e : VertEquivalence D E)
 
-/-- **A vertical equivalence preserves opcartesian morphisms.** -/
-theorem isOpcartesian_map {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f] y}
-    (H : IsOpcartesian φ) : IsOpcartesian (e.functor.map φ) := by
-  intro a'' g z χ
-  let ε := e.counitIso
-  obtain ⟨χ', hχ'⟩ := e.map_surjective (χ ≫ᵈ ε.inv.app z :)
-  refine ⟨(e.functor.map (IsOpcartesian.desc H g χ') ≫ᵈ ε.hom.app z :), ?_, fun ψ hψ => ?_⟩
-  · exact (((congrArg (fun t => e.functor.map t ≫ᵈ ε.hom.app z)
-      (IsOpcartesian.desc_fac H g χ')).trans (congrArg (· ≫ᵈ ε.hom.app z) hχ')).trans
-        (congrArg (χ ≫ᵈ ·) (VertNatIso.inv_hom_id_app ε z)) :)
-  · obtain ⟨ψ', hψ'⟩ := e.map_surjective (ψ ≫ᵈ ε.inv.app z :)
-    have h₁ : φ ≫ᵈ ψ' = χ' := e.map_injective
-      ((congrArg (e.functor.map φ ≫ᵈ ·) hψ').trans
-        ((congrArg (· ≫ᵈ ε.inv.app z) hψ).trans hχ'.symm) :)
-    have h₂ : ψ' = IsOpcartesian.desc H g χ' := IsOpcartesian.desc_uniq H ψ' h₁
+/-- **A vertical equivalence preserves opcartesian morphisms.** The factorization of `χ` is the
+image of the factorization of the preimage of `χ`, followed by the counit. -/
+def isOpcartesianMap {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f] y}
+    (H : IsOpcartesian φ) : IsOpcartesian (e.functor.map φ) where
+  desc {_} g z χ :=
+    (e.functor.map (H.desc g (e.preimage (χ ≫ᵈ e.counitIso.inv.app z :))) ≫ᵈ
+      e.counitIso.hom.app z :)
+  desc_fac {_} g z χ :=
+    (((congrArg (fun t => e.functor.map t ≫ᵈ e.counitIso.hom.app z)
+      (H.desc_fac g (e.preimage (χ ≫ᵈ e.counitIso.inv.app z :)))).trans
+        (congrArg (· ≫ᵈ e.counitIso.hom.app z)
+          (e.map_preimage (χ ≫ᵈ e.counitIso.inv.app z :)))).trans
+        (congrArg (χ ≫ᵈ ·) (VertNatIso.inv_hom_id_app e.counitIso z)) :)
+  desc_uniq {_ g z χ} ψ hψ := by
+    let ε := e.counitIso
+    have h₁ : φ ≫ᵈ e.preimage (ψ ≫ᵈ ε.inv.app z :) = e.preimage (χ ≫ᵈ ε.inv.app z :) :=
+      e.map_injective
+        (((congrArg (e.functor.map φ ≫ᵈ ·) (e.map_preimage _)).trans
+          ((congrArg (· ≫ᵈ ε.inv.app z) hψ).trans (e.map_preimage _).symm)) :)
+    have h₂ : e.preimage (ψ ≫ᵈ ε.inv.app z :) = H.desc g (e.preimage (χ ≫ᵈ ε.inv.app z :)) :=
+      H.desc_uniq _ h₁
     exact ((congrArg (ψ ≫ᵈ ·) (VertNatIso.inv_hom_id_app ε z)).symm.trans
-      (congrArg (· ≫ᵈ ε.hom.app z) (hψ'.symm.trans (congrArg e.functor.map h₂))) :)
+      (congrArg (· ≫ᵈ ε.hom.app z) ((e.map_preimage _).symm.trans (congrArg e.functor.map h₂))) :)
 
 end VertEquivalence
 
@@ -130,7 +142,7 @@ class Opfib (D : Displayed.{v₁, u₁, v₂, u₂} A) where
   /-- The chosen opcartesian lift of `f` at `x`. -/
   olift : {a a' : A} → (f : a ⟶ a') → (x : D.Ob a) → (x ⟶[f] push f x)
   /-- The chosen lifts are opcartesian. -/
-  olift_opcartesian : ∀ {a a' : A} (f : a ⟶ a') (x : D.Ob a), IsOpcartesian (olift f x)
+  isOpcartesianOlift : ∀ {a a' : A} (f : a ⟶ a') (x : D.Ob a), IsOpcartesian (olift f x)
 
 /-- A pre-split opfibration: an opfibration whose chosen pushforwards are strictly functorial on
 objects. These axioms are rewrite rules. -/
@@ -173,8 +185,9 @@ variable (D : Displayed.{v₁, u₁, v₂, u₂} A) [Opfib D]
 /-- The chosen opcartesian lift of `f` at `x`. -/
 def olift {a a' : A} (f : a ⟶ a') (x : D.Ob a) : x ⟶[f] (D.push f x) := Opfib.olift f x
 
-theorem olift_opcartesian {a a' : A} (f : a ⟶ a') (x : D.Ob a) :
-    IsOpcartesian (D.olift f x) := Opfib.olift_opcartesian f x
+/-- The chosen lift is opcartesian. -/
+def isOpcartesianOlift {a a' : A} (f : a ⟶ a') (x : D.Ob a) :
+    IsOpcartesian (D.olift f x) := Opfib.isOpcartesianOlift f x
 
 end Lift
 
@@ -214,14 +227,14 @@ variable (D : Displayed.{v₁, u₁, v₂, u₂} A) [Opfib D] {a a' a'' : A}
 
 /-- Vertical factorization: any `φ : x ⟶[f] y` factors through the chosen lift `olift f x` by a
 vertical morphism `push f x ⟶ y`. -/
-noncomputable def opcartesianFactor {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} (φ : x ⟶[f] y) :
+def opcartesianFactor {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} (φ : x ⟶[f] y) :
     (D.push f x) ⟶[𝟙 a'] y :=
-  IsOpcartesian.desc (D.olift_opcartesian f x) (𝟙 a') φ
+  IsOpcartesian.desc (D.isOpcartesianOlift f x) (𝟙 a') φ
 
 @[rewrite_rule]
 theorem olift_comp_opcartesianFactor {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} (φ : x ⟶[f] y) :
     D.olift f x ≫ᵈ D.opcartesianFactor φ = φ :=
-  IsOpcartesian.desc_fac (D.olift_opcartesian f x) (𝟙 a') φ
+  IsOpcartesian.desc_fac (D.isOpcartesianOlift f x) (𝟙 a') φ
 
 @[rewrite_rule]
 theorem olift_comp_opcartesianFactor_assoc {f : a ⟶ a'} {g : a' ⟶ a''} {x : D.Ob a} {y : D.Ob a'}
@@ -233,15 +246,24 @@ theorem olift_comp_opcartesianFactor_assoc {f : a ⟶ a'} {g : a' ⟶ a''} {x : 
 `opcartesianFactor φ`. -/
 theorem opcartesianFactor_uniq {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} (φ : x ⟶[f] y)
     (β : (D.push f x) ⟶[𝟙 a'] y) (h : D.olift f x ≫ᵈ β = φ) : β = D.opcartesianFactor φ :=
-  IsOpcartesian.desc_uniq (D.olift_opcartesian f x) β h
+  IsOpcartesian.desc_uniq (D.isOpcartesianOlift f x) β h
 
 @[rewrite_rule]
 theorem opcartesianFactor_olift (f : a ⟶ a') (x : D.Ob a) :
     D.opcartesianFactor (D.olift f x) = 𝟙ᵈ (D.push f x) :=
   (D.opcartesianFactor_uniq (D.olift f x) (𝟙ᵈ _) rfl).symm
 
+/-- The factorizations of heterogeneously equal morphisms over equal base morphisms are
+heterogeneously equal. -/
+theorem opcartesianFactor_heq {f f' : a ⟶ a'} (h : f = f') {x : D.Ob a} {y : D.Ob a'}
+    {φ : x ⟶[f] y} {φ' : x ⟶[f'] y} (hφ : φ ≍ φ') :
+    D.opcartesianFactor φ ≍ D.opcartesianFactor φ' := by
+  subst h
+  cases hφ
+  rfl
+
 /-- The hom-set bijection defining an opfibration: `(x ⟶[f] y) ≃ (push f x ⟶ y)`. -/
-noncomputable def opcartesianHomEquiv (f : a ⟶ a') (x : D.Ob a) (y : D.Ob a') :
+def opcartesianHomEquiv (f : a ⟶ a') (x : D.Ob a) (y : D.Ob a') :
     (x ⟶[f] y) ≃ ((D.push f x) ⟶[𝟙 a'] y) where
   toFun φ := D.opcartesianFactor φ
   invFun β := D.olift f x ≫ᵈ β
@@ -268,7 +290,7 @@ section PushMap
 variable (D : Displayed.{v₁, u₁, v₂, u₂} A) [Opfib D] {a a' a'' : A}
 
 /-- Transport of a vertical morphism along `f`. -/
-noncomputable irreducible_def pushMap (f : a ⟶ a') {x y : D.Fiber a} (β : x ⟶ y) :
+irreducible_def pushMap (f : a ⟶ a') {x y : D.Fiber a} (β : x ⟶ y) :
     D.push f x ⟶ D.push f y :=
   D.opcartesianFactor (β ≫ᵈ D.olift f y)
 
@@ -284,12 +306,12 @@ used to reason about `pushMap`. -/
 /-- `pushMap f` preserves identities. -/
 theorem pushMap_id_vert (f : a ⟶ a') (x : D.Fiber a) :
     D.pushMap f (𝟙ᵈ x) = 𝟙ᵈ (D.push f x) :=
-  IsOpcartesian.hom_ext (φ := D.olift f x) (D.olift_opcartesian f x) (D.olift_pushMap f (𝟙ᵈ x))
+  IsOpcartesian.hom_ext (φ := D.olift f x) (D.isOpcartesianOlift f x) (D.olift_pushMap f (𝟙ᵈ x))
 
 /-- `pushMap f` preserves composition. -/
 theorem pushMap_comp_vert (f : a ⟶ a') {x y z : D.Fiber a} (β : x ⟶ y) (γ : y ⟶ z) :
     D.pushMap f (β ≫ᵈ γ) = D.pushMap f β ≫ᵈ D.pushMap f γ := by
-  refine IsOpcartesian.hom_ext (φ := D.olift f x) (D.olift_opcartesian f x) ?_
+  refine IsOpcartesian.hom_ext (φ := D.olift f x) (D.isOpcartesianOlift f x) ?_
   calc D.olift f x ≫ᵈ D.pushMap f (β ≫ᵈ γ) = β ≫ᵈ (γ ≫ᵈ D.olift f z) := D.olift_pushMap f _
     _ = β ≫ᵈ (D.olift f y ≫ᵈ D.pushMap f γ) :=
       congrArg (β ≫ᵈ ·) (D.olift_pushMap f γ).symm
@@ -309,7 +331,7 @@ theorem pushMap_id {x y : D.Fiber a} (β : x ⟶ y) : D.pushMap (𝟙 a) β = β
 /-- Transport along a composite is the composite of transports. -/
 theorem pushMap_comp (f : a ⟶ a') (g : a' ⟶ a'') {x y : D.Fiber a} (β : x ⟶ y) :
     D.pushMap (f ≫ g) β = D.pushMap g (D.pushMap f β) := by
-  refine IsOpcartesian.hom_ext (φ := D.olift (f ≫ g) x) (D.olift_opcartesian (f ≫ g) x) ?_
+  refine IsOpcartesian.hom_ext (φ := D.olift (f ≫ g) x) (D.isOpcartesianOlift (f ≫ g) x) ?_
   calc D.olift (f ≫ g) x ≫ᵈ D.pushMap (f ≫ g) β = β ≫ᵈ D.olift (f ≫ g) y :=
         D.olift_pushMap (f ≫ g) β
     _ = D.olift f x ≫ᵈ (D.pushMap f β ≫ᵈ D.olift g (D.push f y)) :=
@@ -355,7 +377,7 @@ attribute [rewrite_rule] pushMap_id_vert pushMap_comp_vert pushMap_id pushMap_co
   opcartesianFactor_comp vert_olift vert_olift_assoc
 
 /-- The pushforward functor `D.Fiber a ⥤ D.Fiber a'`. -/
-noncomputable def pushFunctor (f : a ⟶ a') : D.Fiber a ⥤ D.Fiber a' where
+def pushFunctor (f : a ⟶ a') : D.Fiber a ⥤ D.Fiber a' where
   obj x := D.push f x
   map β := D.pushMap f β
   map_id x := D.pushMap_id_vert f x
@@ -420,8 +442,8 @@ of the counit, followed by the image of the chosen lift at `G x`. -/
 def VertEquivalence.opfib (e : VertEquivalence D E) [Opfib D] : Opfib E where
   push f x := e.functor.obj (D.push f (e.inverse.obj x))
   olift f x := (e.counitIso.inv.app x ≫ᵈ e.functor.map (D.olift f (e.inverse.obj x)) :)
-  olift_opcartesian f x :=
-    IsOpcartesian.iso_comp (e.isOpcartesian_map (D.olift_opcartesian f _)) _ (e.counitIso.hom.app x)
+  isOpcartesianOlift f x :=
+    (e.isOpcartesianMap (D.isOpcartesianOlift f _)).isoComp _ (e.counitIso.hom.app x)
       (VertNatIso.hom_inv_id_app e.counitIso x) (VertNatIso.inv_hom_id_app e.counitIso x)
 
 end Transfer

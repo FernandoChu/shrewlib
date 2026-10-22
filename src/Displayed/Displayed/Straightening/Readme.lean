@@ -39,10 +39,10 @@ recall Displayed.Straightening.splitFibDCat : SplitFib DCat.{u}
 recall Displayed.Straightening.fibCodCat : Fib (cod Cat.{u, u})
 
 /-- Both functors preserve cartesian morphisms. -/
-recall Displayed.Straightening.isCartesian_unstraighten_map {A B : Cat.{u, u}} {u : A ⟶ B}
+recall Displayed.Straightening.isCartesianUnstraightenMap {A B : Cat.{u, u}} {u : A ⟶ B}
     {F : LaxNormal A} {G : LaxNormal B} {φ : DCat.Hom u F G} (H : IsCartesian φ) :
     IsCartesian (unstraighten.map φ)
 
-recall Displayed.Straightening.isCartesian_straighten_map {A B : Cat.{u, u}} {u : A ⟶ B}
+recall Displayed.Straightening.isCartesianStraightenMap {A B : Cat.{u, u}} {u : A ⟶ B}
     {X : (cod Cat.{u, u}).Ob A} {Y : (cod Cat.{u, u}).Ob B} {w : (cod Cat.{u, u}).Hom u X Y}
     (H : IsCartesian w) : IsCartesian (straighten.map w)

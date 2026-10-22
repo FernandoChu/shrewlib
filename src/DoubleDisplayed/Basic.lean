@@ -18,7 +18,7 @@ We provide:
 * the fiber category `DoubleDisplayed.Fiber C b`, whose laws hold by `rfl`;
 * vertical functors `DoubleDisplayed.VertFunctor`, whose functoriality is a rewrite rule.
 
-The double-level `IsOpcartesian` and `IsCartesian` predicates are in
+The double-level `IsOpcartesian` and `IsCartesian` structures are in
 `DoubleDisplayed/Cartesian.lean` and the total displayed category in `DoubleDisplayed/Total.lean`.
 -/
 

@@ -41,9 +41,13 @@ recall Displayed.VertEquivalence.total_functor_comp_π {A : Type u₁} [Category
     {D E : Displayed A} (e : VertEquivalence D E) : e.total.functor ⋙ E.π = D.π
 
 /-- The cartesian morphisms of `cod C` are the pullback squares. -/
-recall Displayed.cod.isCartesian_iff_isPullback {C : Type u} [Category.{v} C] {a a' : C}
-    {f : a ⟶ a'} {x : (cod C).Ob a} {y : (cod C).Ob a'} (φ : x ⟶[f] y) :
-    IsCartesian φ ↔ IsPullback φ.1 x.hom y.hom f
+recall Displayed.cod.isLimitOfIsCartesian {C : Type u} [Category.{v} C] {a a' : C}
+    {f : a ⟶ a'} {x : (cod C).Ob a} {y : (cod C).Ob a'} {φ : x ⟶[f] y} (H : IsCartesian φ) :
+    IsLimit (cod.cone φ)
+
+recall Displayed.cod.isCartesianOfIsLimit {C : Type u} [Category.{v} C] {a a' : C}
+    {f : a ⟶ a'} {x : (cod C).Ob a} {y : (cod C).Ob a'} {φ : x ⟶[f] y}
+    (P : IsLimit (cod.cone φ)) : IsCartesian φ
 
 /-- With chosen pullbacks, `cod C` is a fibration. -/
 recall Displayed.cod.fib {C : Type u} [Category.{v} C] [ChosenPullbacks C] : Fib (cod C)

@@ -22,7 +22,7 @@ out of the extended context, and the chosen lift of `σ : Δ ⟶ Γ` at `A` to t
 We provide:
 
 * the class `Comprehension D` of comprehension structures on a fibration `[Fib D]`, and the
-  property `FullComprehension D` that its comprehension functor is fully faithful;
+  class `FullComprehension D` of inverses to its comprehension functor on hom-types;
 * split comprehension categories, `SplitComprehension D`: a comprehension structure on a split
   fibration (`SplitFib D`). A full split comprehension category is
   `[SplitComprehension D] [FullComprehension D]`;
@@ -67,16 +67,15 @@ class Comprehension (D : Displayed.{v, u, v₂, u₂} C) [Fib D] where
   /-- The comprehension functor. -/
   compr : VertFunctor D (cod C)
   /-- The comprehension functor preserves cartesian morphisms. -/
-  isCartesian_compr_map : ∀ {a a' : C} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f] y},
+  isCartesianComprMap : ∀ {a a' : C} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f] y},
     IsCartesian φ → IsCartesian (compr.map φ)
 
-/-- A comprehension category is *full* if its comprehension functor is fully faithful, bijective
-on the displayed hom-types over each base morphism. This is a property of a `Comprehension D`,
-like Mathlib's `Functor.Full`, so that it combines with `SplitComprehension D`. -/
-class FullComprehension (D : Displayed.{v, u, v₂, u₂} C) [Fib D] [Comprehension D] : Prop where
+/-- A comprehension category is *full* if its comprehension functor is fully faithful. This is
+the data of an inverse on each displayed hom-type (`VertFunctor.FullyFaithful`), over a
+`Comprehension D`, so that it combines with `SplitComprehension D`. -/
+class FullComprehension (D : Displayed.{v, u, v₂, u₂} C) [Fib D] [Comprehension D] where
   /-- The comprehension functor is fully faithful. -/
-  compr_map_bijective : ∀ {a a' : C} (f : a ⟶ a') (x : D.Ob a) (y : D.Ob a'),
-    Function.Bijective (Comprehension.compr.map : (x ⟶[f] y) → _)
+  comprFullyFaithful : (Comprehension.compr (D := D)).FullyFaithful
 
 /-- A split comprehension category: a comprehension category whose fibration is split. As for
 `SplitFib`, the split fibration is an instance field, so that the comprehension structure is
@@ -98,7 +97,7 @@ def Comprehension.ofClift {D : Displayed.{v, u, v₂, u₂} C} [Fib D] (P : Vert
     (hP : ∀ {a a' : C} (f : a ⟶ a') (y : D.Ob a'), IsCartesian (P.map (D.clift f y))) :
     Comprehension D where
   compr := P
-  isCartesian_compr_map H := P.isCartesian_map_of_clift hP H
+  isCartesianComprMap H := P.isCartesianMapOfClift hP H
 
 section Comprehension
 
@@ -107,9 +106,10 @@ variable (D : Displayed.{v, u, v₂, u₂} C) [Fib D] [Comprehension D] {a a' : 
 /-- The comprehension functor of `D`. -/
 def compr : VertFunctor D (cod C) := Comprehension.compr
 
-theorem isCartesian_compr_map {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f] y}
+/-- The comprehension functor preserves cartesian morphisms. -/
+def isCartesianComprMap {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f] y}
     (H : IsCartesian φ) : IsCartesian ((D.compr).map φ) :=
-  Comprehension.isCartesian_compr_map H
+  Comprehension.isCartesianComprMap H
 
 /-- The extension `Γ.A` of the context `a` by `x`. -/
 def ext (x : D.Ob a) : C := ((D.compr).obj x).dom
@@ -134,7 +134,7 @@ theorem extMap_comp {a'' : C} {f : a ⟶ a'} {g : a' ⟶ a''} {x : D.Ob a} {y : 
 /-- The image of a cartesian morphism is a pullback square. -/
 theorem isPullback_extMap {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f] y}
     (H : IsCartesian φ) : IsPullback (D.extMap φ) (D.proj x) (D.proj y) f :=
-  (cod.isCartesian_iff_isPullback _).1 (D.isCartesian_compr_map H)
+  cod.isPullback_of_isCartesian (D.isCartesianComprMap H)
 
 /-- The morphism `q(σ, A) : Δ.A[σ] ⟶ Γ.A` over the substitution `σ : Δ ⟶ Γ`, the image of the
 chosen lift. -/
@@ -199,7 +199,7 @@ theorem q_proj (σ : Δ ⟶ Γ) (A : D.Ty Γ) : 𝐪(σ, A) ≫ 𝐩 A = 𝐩 A�
 
 /-- **Substitution is pullback**: `Δ ▹ A⦃σ⦄` is the pullback of `𝐩 A` along `σ`. -/
 theorem isPullback_q (σ : Δ ⟶ Γ) (A : D.Ty Γ) : IsPullback 𝐪(σ, A) 𝐩 A⦃σ⦄ (𝐩 A) σ :=
-  D.isPullback_extMap (D.clift_cartesian σ A)
+  D.isPullback_extMap (D.isCartesianClift σ A)
 
 end Substitution
 
@@ -210,9 +210,12 @@ variable (D : Displayed.{v, u, v₂, u₂} C) [Fib D] [Comprehension D] [FullCom
 
 /-- In a full comprehension category, morphisms over `f` are the morphisms between extended
 contexts that commute with the projections. -/
-noncomputable def comprHomEquiv (f : a ⟶ a') (x : D.Ob a) (y : D.Ob a') :
-    (x ⟶[f] y) ≃ ((D.compr).obj x ⟶[f] (D.compr).obj y) :=
-  Equiv.ofBijective _ (FullComprehension.compr_map_bijective f x y)
+def comprHomEquiv (f : a ⟶ a') (x : D.Ob a) (y : D.Ob a') :
+    (x ⟶[f] y) ≃ ((D.compr).obj x ⟶[f] (D.compr).obj y) where
+  toFun := (D.compr).map
+  invFun := FullComprehension.comprFullyFaithful.preimage
+  left_inv := FullComprehension.comprFullyFaithful.preimage_map
+  right_inv := FullComprehension.comprFullyFaithful.map_preimage
 
 end FullComprehension
 

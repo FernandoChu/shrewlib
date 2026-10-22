@@ -28,7 +28,7 @@ set_option maxHeartbeats 400000 in
 -- checking it unfolds both composites of functors.
 /-- The functor `∫(Bᵈᵒ) ⥤ Cat` underlying `Ψ C`: `⟨a, b⟩ ↦ C.Fiber b`, with a morphism `⟨α, β⟩`
 sent to `pushFunctor α ⋙ pullFunctor β`. -/
-noncomputable def straightenObj (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) [SplitD2SFib C] :
+def straightenObj (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) [SplitD2SFib C] :
     B.dualOp.Total ⥤ Cat.{v₃, u₃} where
   obj x := Cat.of (C.Fiber x.2)
   map {x _} F := (pushFunctor (C := C) F.base x.2 ⋙ pullFunctor (C := C) F.fiber).toCatHom
@@ -42,13 +42,13 @@ theorem straightenObj_map_toFunctor (C : DoubleDisplayed.{v₁, u₁, v₂, u₂
 
 /-- `Ψ` on morphisms: a D2SFib morphism `Φ` induces a natural transformation of functors into
 `Cat`, with component `Φ`'s fiber functor. -/
-noncomputable def straightenMap {E E' : D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B} (Φ : E ⟶ E') :
+def straightenMap {E E' : D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B} (Φ : E ⟶ E') :
     straightenObj E.C ⟶ straightenObj E'.C where
   app x := (Φ.toVertFunctor.fiber x.2).toCatHom
   naturality _ _ _ := rfl
 
 /-- **`Ψ`**: the functor from D2SFibs over `B` to functors `∫(Bᵈᵒ) ⥤ Cat`. -/
-noncomputable def straighten :
+def straighten :
     D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B ⥤ (B.dualOp.Total ⥤ Cat.{v₃, u₃}) where
   obj E := straightenObj E.C
   map Φ := straightenMap Φ

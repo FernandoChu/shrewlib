@@ -13,8 +13,8 @@ vertical, i.e. their components lie over identities of `Cat`. Consequently:
   to `Cat` (`straighteningEquiv_total`);
 * both `DCat` and `Cat^→` are fibrations over `Cat`: `DCat` is a `SplitFib` by pullback, and
   `Cat^→` gets a `Fib` instance from it by transfer along the equivalence;
-* both functors preserve cartesian morphisms (`isCartesian_unstraighten_map`,
-  `isCartesian_straighten_map`).
+* both functors preserve cartesian morphisms (`isCartesianUnstraightenMap`,
+  `isCartesianStraightenMap`).
 
 The unit `F ⟶ Str (Unstr F)` sends `x` to `⟨(a, x), rfl⟩`, and its inverse transports along the
 equation `X.base = a` of an object of the fibre. The counit `Unstr (Str p) ⟶ p` forgets the base
@@ -175,16 +175,16 @@ instance fibCodCat : Fib (cod Cat.{u, u}) :=
   straighteningEquiv.fib
 
 /-- **`(▷ᵈ)*` preserves cartesian morphisms.** -/
-theorem isCartesian_unstraighten_map {A B : Cat.{u, u}} {u : A ⟶ B} {F : LaxNormal A}
+def isCartesianUnstraightenMap {A B : Cat.{u, u}} {u : A ⟶ B} {F : LaxNormal A}
     {G : LaxNormal B} {φ : DCat.Hom u F G} (H : IsCartesian (D := DCat) φ) :
     IsCartesian (D := cod Cat.{u, u}) (unstraighten.map φ) :=
-  straighteningEquiv.isCartesian_map H
+  straighteningEquiv.isCartesianMap H
 
 /-- **The straightening preserves cartesian morphisms.** -/
-theorem isCartesian_straighten_map {A B : Cat.{u, u}} {u : A ⟶ B} {X : (cod Cat.{u, u}).Ob A}
+def isCartesianStraightenMap {A B : Cat.{u, u}} {u : A ⟶ B} {X : (cod Cat.{u, u}).Ob A}
     {Y : (cod Cat.{u, u}).Ob B}
     {w : (cod Cat.{u, u}).Hom u X Y} (H : IsCartesian (D := cod Cat.{u, u}) w) :
     IsCartesian (D := DCat) (straighten.map w) :=
-  straighteningEquiv.symm.isCartesian_map H
+  straighteningEquiv.symm.isCartesianMap H
 
 end Displayed.Straightening

@@ -23,7 +23,7 @@ open scoped Displayed DoubleDisplayed
 
 variable {A : Type u₁} [Category.{v₁} A] {B : Displayed.{v₁, u₁, v₂, u₂} A} [SplitOpfib B]
 
-noncomputable section
+section
 
 namespace Counit
 
