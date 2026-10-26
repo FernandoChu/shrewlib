@@ -6,13 +6,15 @@ import ComprehensionCategory.Model.Cat.TypeFormers.Sigma
 
 In this folder we define the category model: the comprehension category `ICat` over `Cat`, whose
 types in context `Γ` are the functors `Γ ⥤ Cat`, and whose context extension `Γ ▹ A` is the
-Grothendieck construction `Γ ⋉ A`. Its comprehension is the unstraightening of
-`Displayed/Opfibration/Straightening`. It is full and split, and it has Σ-types: `Σ[A] B` sends
-`γ` to the Grothendieck construction `A γ ⋉ B(γ, −)`.
+total category `Γ ⋉ A` of the unstraightening of `A`. It is full and split, and it has Σ-types:
+`Σ[A] B` sends `γ` to `A γ ⋉ B(γ, −)`.
 
 The files give its ingredients:
 
-* `Basic`: the comprehension structure on `ICat`, which is full and split.
+* `Extension`: the context extension `Γ ⋉ A`, and the morphisms `(f, 𝟙)` in it.
+* `Basic`: the comprehension functor `compr : ICat ⟶ cod Cat`, the unstraightening followed by
+  forgetting the opcleavage and taking total categories, which sends the chosen lifts to pullbacks
+  and is fully faithful, so that `ICat` is a full split comprehension category.
 * `TypeFormers/Sigma`: Σ-types, with their pairing and unpairing.
 -/
 
@@ -28,6 +30,14 @@ open scoped Displayed
 recall ComprehensionCategory.CatModel.splitComprehension : SplitComprehension ICat.{u}
 
 recall ComprehensionCategory.CatModel.fullComprehension : FullComprehension ICat.{u}
+
+/-- The chosen lifts go to pullbacks: `A ⋉ u^* G` is the pullback of `B ⋉ G` along `u`. -/
+recall ComprehensionCategory.CatModel.isCartesianComprClift {A B : Cat.{u, u}}
+    (u : A ⟶ B) (G : B ⥤ Cat.{u, u}) : IsCartesian (CatModel.compr.map (ICat.clift u G))
+
+/-- The comprehension functor is fully faithful: functors `A ⋉ F ⥤ B ⋉ G` over `u` are lax
+transformations `F ⇒ u ⋙ G`. -/
+recall ComprehensionCategory.CatModel.comprFullyFaithful : CatModel.compr.{u}.FullyFaithful
 
 /-- **The category model has Σ-types.** -/
 recall ComprehensionCategory.CatModel.hasSigma : HasSigma ICat.{u}

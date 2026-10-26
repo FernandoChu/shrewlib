@@ -1,4 +1,6 @@
 import Displayed.Displayed.Basic
+import Displayed.Displayed.Functor
+import Displayed.Displayed.DisplayedCat
 import Displayed.Displayed.Equivalence
 import Displayed.Displayed.Total
 import Displayed.Displayed.Codomain
@@ -9,6 +11,11 @@ import Displayed.Displayed.Straightening.Readme
 
 * `Basic`: displayed categories `Displayed A` over `A`, their fibers `Fiber`, vertical functors
   `VertFunctor` and vertical natural transformations `VertNatTrans`.
+* `Functor`: displayed functors `DispFunctor u` over a functor `u` between the bases, and the
+  functors they induce between total categories.
+* `DisplayedCat`: the displayed categories and displayed functors, displayed over `Cat`, and the
+  fully faithful functor `DisplayedCat ⟶ cod Cat` taking total categories, which sends
+  reindexings to pullbacks.
 * `Equivalence`: equivalences over the base (`VertEquivalence`), which are fully faithful.
 * `Total`: the total category `D.Total`, `π`, `ι`, and the induced functors, natural
   transformations and equivalences of total categories.

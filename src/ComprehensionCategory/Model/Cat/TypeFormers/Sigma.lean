@@ -1,13 +1,14 @@
 import ComprehensionCategory.Model.Cat.Basic
 import ComprehensionCategory.TypeFormers.Sigma
+import Tactic.KernelTactic
 
 /-!
 # Σ-types in the category model
 
 For `A : Γ ⥤ Cat` and `B : Γ ⋉ A ⥤ Cat`, the Σ-type `Σ[A] B : Γ ⥤ Cat`
-(`CatModel.Sigma.sigma B`) sends `γ` to the Grothendieck construction `A γ ⋉ B(γ, −)` of `B`
-restricted to the fibre over `γ`, and `f : γ ⟶ γ'` to the functor induced by the strict
-transformation with components `B(f, 𝟙)`. Then `Γ ▹ A ▹ B = Γ ⋉ A ⋉ B` and
+(`CatModel.Sigma.sigma B`) sends `γ` to the total category `A γ ⋉ B(γ, −)` of the
+unstraightening of `B` restricted to the fibre over `γ`, and `f : γ ⟶ γ'` to the functor induced
+by the strict transformation with components `B(f, 𝟙)`. Then `Γ ▹ A ▹ B = Γ ⋉ A ⋉ B` and
 `Γ ▹ Σ[A] B = Γ ⋉ Σ[A] B` are isomorphic over `Γ`, by `((γ, x), b) ↦ (γ, (x, b))`, and the category
 model has Σ-types (`CatModel.hasSigma`).
 
@@ -26,17 +27,14 @@ universe v₁ u₁ v u
 
 namespace ComprehensionCategory
 
-open CategoryTheory Displayed.Opfibration.Straightening Displayed.Opfibration.Straightening.Groth
-
-open Grothendieck (Hom)
+open CategoryTheory Displayed Displayed.Opfibration.Straightening CatModel
 
 namespace CatModel.Sigma
 
-variable {A : Type u₁} [Category.{v₁} A] {F : A ⥤ Cat.{v, u}}
-  (B : Grothendieck F ⥤ Cat.{v, u})
+variable {A : Type u₁} [Category.{v₁} A] {F : A ⥤ Cat.{v, u}} (B : A ⋉ F ⥤ Cat.{v, u})
 
 /-- The restriction `B(a, −) : F a ⥤ Cat` of `B` to the fibre over `a`. -/
-abbrev fib (a : A) : F.obj a ⥤ Cat.{v, u} := Grothendieck.ι F a ⋙ B
+abbrev fib (a : A) : F.obj a ⥤ Cat.{v, u} := incl F a ⋙ B
 
 /-- The transformation `B(f, 𝟙) : B(a, −) ⇒ B(a', F f −)`, strictly natural. -/
 def sigmaTrans {a a' : A} (f : a ⟶ a') :
@@ -69,66 +67,69 @@ theorem sigmaTrans_comp {a a' a'' : A} (f : a ⟶ a') (g : a' ⟶ a'') :
 
 /-- The Σ-type `Σ_F B : A ⥤ Cat`, sending `a` to `F a ⋉ B(a, −)`. -/
 def sigma : A ⥤ Cat.{v, u} where
-  obj a := Cat.of (Grothendieck (fib B a))
-  map f := (Groth.map (F.map f).toFunctor (sigmaTrans B f)).toCatHom
-  map_id a := Cat.Hom.ext ((congrArg (Groth.map _) (sigmaTrans_id B a)).trans (Groth.map_id' _))
-  map_comp f g := Cat.Hom.ext ((congrArg (Groth.map _) (sigmaTrans_comp B f g)).trans
-    (Groth.map_vcomp _ _ _ _))
+  obj a := Cat.of (F.obj a ⋉ fib B a)
+  map f := (unstraightenMap (u := (F.map f).toFunctor) (sigmaTrans B f)).total.toCatHom
+  map_id a := Cat.Hom.ext ((congrArg (fun α => (unstraightenMap α).total)
+    (sigmaTrans_id B a)).trans (total_unstraightenMap_id _))
+  map_comp f g := Cat.Hom.ext ((congrArg (fun α => (unstraightenMap α).total)
+    (sigmaTrans_comp B f g)).trans (total_unstraightenMap_vcomp _ _ _ _ _))
 
 /-! ## The isomorphism `Γ.A.B ≅ Γ.Σ_A B` -/
 
 /-- The transformation `B ⇒ π ⋙ Σ_F B` including `B(a, x)` into `F a ⋉ B(a, −)`, whose 2-cells
 are the morphisms `(φ, 𝟙) : (F f x, B(f, 𝟙) b) ⟶ (x', B(f, φ) b)`. -/
 def pairTrans : LaxTrans B (π F ⋙ Sigma.sigma B) where
-  app X := Grothendieck.ι (fib B X.base) X.fiber
-  naturality k b := ⟨k.fiber, eqToHom (obj_transport_incl B k b)⟩
-  naturality_naturality {X Y} k {b b'} β := Hom.ext' (by kernel_rfl') (by
-    kernel_exact map_eqToHom_comp_map_map (B.map (transport F k.base X.fiber)).toFunctor
-      (B.map ((Grothendieck.ι F Y.base).map k.fiber)).toFunctor
+  app X := incl (fib B X.1) X.2
+  naturality k b := (unstraightenObj (fib B _)).totalMk k.fiber (eqToHom (obj_transport_incl B k b))
+  naturality_naturality {X Y} k {b b'} β := Total.Hom.ext' (by kernel_rfl') (by
+    kernel_exact map_eqToHom_comp_map_map (B.map (transport F k.base X.2)).toFunctor
+      (B.map ((incl F Y.1).map k.fiber)).toFunctor
       (congrArg (fun k' => (B.map k').toFunctor) (transport_incl F k))
-      (obj_transport_comm B k.base (𝟙 X.fiber) b) β)
-  naturality_id {X} b := Hom.ext' (by kernel_rfl') (by
+      (obj_transport_comm B k.base (𝟙 X.2) b) β)
+  naturality_id {X} b := Total.Hom.ext' (by kernel_rfl') (by
     kernel_exact eqToHom_refl _ (obj_transport_incl B (𝟙 X) b))
-  naturality_comp {X Y Z} k l b := Hom.ext' (by kernel_rfl') (by
-    kernel_exact eqToHom_eq_map_map_comp (B.map ((Grothendieck.ι F Z.base).map l.fiber)).toFunctor
-      (B.map (transport F l.base Y.fiber)).toFunctor (obj_transport_incl B (k ≫ l) b)
-      (obj_transport_comm B l.base k.fiber ((B.map (transport F k.base X.fiber)).toFunctor.obj b))
+  naturality_comp {X Y Z} k l b := Total.Hom.ext' (by kernel_rfl') (by
+    kernel_exact eqToHom_eq_map_map_comp (B.map ((incl F Z.1).map l.fiber)).toFunctor
+      (B.map (transport F l.base Y.2)).toFunctor (obj_transport_incl B (k ≫ l) b)
+      (obj_transport_comm B l.base k.fiber ((B.map (transport F k.base X.2)).toFunctor.obj b))
       (obj_transport_incl B k b) (obj_transport_incl B l ((B.map k).toFunctor.obj b)))
 
 /-- `((a, x), b) ↦ (a, (x, b))`. -/
-def pair : A ⋉ F ⋉ B ⥤ A ⋉ Sigma.sigma B := Groth.map (π F) (pairTrans B)
+def pair : A ⋉ F ⋉ B ⥤ A ⋉ Sigma.sigma B := (unstraightenMap (u := π F) (pairTrans B)).total
+
+/-- The object `((a, x), b)` of `A ⋉ F ⋉ B` of an object `(a, (x, b))` of `A ⋉ Σ_F B`. -/
+abbrev unpairObj (X : A ⋉ Sigma.sigma B) : A ⋉ F ⋉ B :=
+  (unstraightenObj B).tot (a := (unstraightenObj F).tot X.2.1) X.2.2
 
 /-- `(a, (x, b)) ↦ ((a, x), b)` on morphisms. -/
-def unpairMap {X Y : Grothendieck (Sigma.sigma B)} (k : X ⟶ Y) :
-    (⟨⟨X.base, X.fiber.base⟩, X.fiber.fiber⟩ : A ⋉ F ⋉ B) ⟶
-      ⟨⟨Y.base, Y.fiber.base⟩, Y.fiber.fiber⟩ :=
-  ⟨⟨k.base, k.fiber.base⟩, eqToHom (obj_transport_incl B (Hom.mk (X := ⟨X.base, X.fiber.base⟩)
-    (Y := ⟨Y.base, Y.fiber.base⟩) k.base k.fiber.base) X.fiber.fiber).symm ≫ k.fiber.fiber⟩
+def unpairMap {X Y : A ⋉ Sigma.sigma B} (k : X ⟶ Y) : unpairObj B X ⟶ unpairObj B Y :=
+  (unstraightenObj B).totalMk ((unstraightenObj F).totalMk k.base k.fiber.base)
+    (eqToHom (obj_transport_incl B ((unstraightenObj F).totalMk k.base k.fiber.base)
+      X.2.2).symm ≫ k.fiber.fiber)
 
-theorem unpairMap_pair_map {X Y : Grothendieck B} (k : X ⟶ Y) : unpairMap B ((pair B).map k) = k :=
-  Hom.ext' (by kernel_rfl') (by
+theorem unpairMap_pair_map {X Y : A ⋉ F ⋉ B} (k : X ⟶ Y) :
+    unpairMap B ((pair B).map k) = k :=
+  Total.Hom.ext' (by kernel_rfl') (by
     kernel_exact eqToHom_comp_eqToHom_comp
-      (obj_transport_incl B (Hom.mk (X := ⟨X.base.base, X.base.fiber⟩)
-        (Y := ⟨Y.base.base, Y.base.fiber⟩) k.base.base k.base.fiber) X.fiber).symm
-      (obj_transport_incl B k.base X.fiber) k.fiber)
+      (obj_transport_incl B ((unstraightenObj F).totalMk k.base.base k.base.fiber) X.2).symm
+      (obj_transport_incl B k.base X.2) k.fiber)
 
-theorem pair_map_unpairMap {X Y : Grothendieck (Sigma.sigma B)} (k : X ⟶ Y) :
+theorem pair_map_unpairMap {X Y : A ⋉ Sigma.sigma B} (k : X ⟶ Y) :
     (pair B).map (unpairMap B k) = k :=
-  Hom.ext' (by kernel_rfl') (Hom.hext (by kernel_rfl') (by kernel_rfl') (by kernel_rfl') (by
+  Total.Hom.ext' (by kernel_rfl') (Total.Hom.hext (by kernel_rfl') (by kernel_rfl')
+    (by kernel_rfl') (by
     kernel_exact eqToHom_comp_eqToHom_comp
-      (obj_transport_incl B (Hom.mk (X := ⟨X.base, X.fiber.base⟩)
-        (Y := ⟨Y.base, Y.fiber.base⟩) k.base k.fiber.base) X.fiber.fiber)
-      (obj_transport_incl B (Hom.mk (X := ⟨X.base, X.fiber.base⟩)
-        (Y := ⟨Y.base, Y.fiber.base⟩) k.base k.fiber.base) X.fiber.fiber).symm k.fiber.fiber))
+      (obj_transport_incl B ((unstraightenObj F).totalMk k.base k.fiber.base) X.2.2)
+      (obj_transport_incl B ((unstraightenObj F).totalMk k.base k.fiber.base) X.2.2).symm
+      k.fiber.fiber))
 
 /-- `(a, (x, b)) ↦ ((a, x), b)`, inverse to `pair`. -/
 def unpair : A ⋉ Sigma.sigma B ⥤ A ⋉ F ⋉ B where
-  obj X := ⟨⟨X.base, X.fiber.base⟩, X.fiber.fiber⟩
+  obj X := unpairObj B X
   map k := unpairMap B k
   map_id X := by
-    kernel_exact (congrArg (unpairMap B) ((pair B).map_id
-      (⟨⟨X.base, X.fiber.base⟩, X.fiber.fiber⟩ : Grothendieck B))).symm.trans
-      (unpairMap_pair_map B (𝟙 (⟨⟨X.base, X.fiber.base⟩, X.fiber.fiber⟩ : Grothendieck B)))
+    kernel_exact (congrArg (unpairMap B) ((pair B).map_id (unpairObj B X))).symm.trans
+      (unpairMap_pair_map B (𝟙 (unpairObj B X)))
   map_comp {X Y Z} k l := by
     have h : (pair B).map (unpairMap B k ≫ unpairMap B l) = k ≫ l := by
       rw [Functor.map_comp]
@@ -148,8 +149,6 @@ theorem pair_π : pair B ⋙ π (Sigma.sigma B) = π B ⋙ π F :=
 end CatModel.Sigma
 
 /-! ## The category model has Σ-types -/
-
-open Displayed
 
 namespace CatModel
 

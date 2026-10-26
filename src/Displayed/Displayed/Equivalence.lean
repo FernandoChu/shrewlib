@@ -68,6 +68,13 @@ theorem map_injective (hF : F.FullyFaithful) {a a' : A} {f : a ⟶ a'} {x : D.Ob
     {y : D.Ob a'} {φ φ' : x ⟶[f] y} (h : F.map φ = F.map φ') : φ = φ' :=
   (hF.preimage_map φ).symm.trans ((congrArg hF.preimage h).trans (hF.preimage_map φ'))
 
+/-- The composite of fully faithful vertical functors is fully faithful. -/
+def comp {E' : Displayed.{v₁, u₁, v₂, u₂} A} {G : VertFunctor E E'} (hF : F.FullyFaithful)
+    (hG : G.FullyFaithful) : (F.comp G).FullyFaithful where
+  preimage ψ := hF.preimage (hG.preimage ψ)
+  map_preimage ψ := (congrArg G.map (hF.map_preimage _)).trans (hG.map_preimage ψ)
+  preimage_map φ := (congrArg hF.preimage (hG.preimage_map _)).trans (hF.preimage_map φ)
+
 end VertFunctor.FullyFaithful
 
 end FullyFaithful

@@ -1,5 +1,6 @@
 import Displayed.Opfibration.Basic
 import Displayed.Opfibration.DualOp
+import Displayed.Opfibration.SplitOpfibCat
 import Displayed.Opfibration.Straightening.Readme
 
 /-!
@@ -8,8 +9,10 @@ import Displayed.Opfibration.Straightening.Readme
 * `Basic`: opcartesian morphisms (`IsOpcartesian`), cloven opfibrations (`Opfib`), and basic
   definitions involving these.
 * `DualOp`: the dual opfibration of a split opfibration.
-* `Straightening/`: functors `A ⥤ Cat` and their Grothendieck construction, an equivalence
-  with the split opfibrations over `Cat` (see its `Readme.lean`).
+* `SplitOpfibCat`: the split opfibrations and displayed functors between them, a category displayed
+  over `Cat`.
+* `Straightening/`: functors `A ⥤ Cat` and their unstraightenings, an equivalence with the split
+  opfibrations over `Cat` (see its `Readme.lean`).
 
 `Fibration/` is the exact dual.
 -/

@@ -66,6 +66,24 @@ instance : Category D.Total where
 @[simp] theorem Total.comp_fiber {x y z : D.Total} (F : x ⟶ y) (G : y ⟶ z) :
     (F ≫ G).fiber = F.fiber ≫ᵈ G.fiber := rfl
 
+variable {D} in
+/-- Morphisms of the total category are determined by their bases and fibres. -/
+theorem Total.Hom.ext' {x y : D.Total} {F G : x ⟶ y} (hb : F.base = G.base)
+    (hf : F.fiber ≍ G.fiber) : F = G := by
+  obtain ⟨b, f⟩ := F
+  obtain ⟨b', f'⟩ := G
+  dsimp only at hb
+  subst hb
+  cases eq_of_heq hf
+  rfl
+
+variable {D} in
+/-- Heterogeneous extensionality for morphisms of the total category. -/
+theorem Total.Hom.hext {x x' y y' : D.Total} (hx : x = x') (hy : y = y') {F : x ⟶ y}
+    {G : x' ⟶ y'} (hb : F.base ≍ G.base) (hf : F.fiber ≍ G.fiber) : F ≍ G := by
+  subst hx hy
+  exact heq_of_eq (Total.Hom.ext' (eq_of_heq hb) hf)
+
 /-- A morphism of the total category, assembled from a base morphism and a displayed morphism over
 it. Unlike the anonymous constructor, its type is syntactically `_ ⟶ _`. -/
 def totalMk {a a' : A} {x : D.Ob a} {y : D.Ob a'} (f : a ⟶ a') (φ : x ⟶[f] y) :

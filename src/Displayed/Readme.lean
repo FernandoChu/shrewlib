@@ -13,7 +13,7 @@ folder has a `Readme.lean`.
   `DCat ≃ cod Cat` over `Cat`.
 * `Opfibration/`: opcartesian morphisms and cloven, pre-split and split opfibrations;
   `Straightening/` is the equivalence over `Cat` between functors `A ⥤ Cat` and split
-  opfibrations, by the Grothendieck construction.
+  opfibrations.
 * `Fibration/`: cartesian morphisms and cloven, pre-split and split fibrations, the exact dual of
   `Opfibration/`.
 -/

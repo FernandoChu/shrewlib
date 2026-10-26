@@ -167,7 +167,7 @@ files, (op)cartesian morphisms (in `Displayed/{Opfibration,Fibration}/Basic` and
 - `DoubleCategory/`: pseudo double categories, and the horizontal bicategory of globular squares.
 - `Displayed/`: categories displayed over a category, in three folders, each with a
   `Straightening/` subfolder: `Displayed/` (displayed categories in general, and their
-  straightening), `Opfibration/` (including the Grothendieck construction of functors `A ⥤ Cat`)
+  straightening), `Opfibration/` (including the unstraightening of functors `A ⥤ Cat`)
   and `Fibration/`.
 - `ComprehensionCategory/`: comprehension categories, their type formers, and models: the
   category model, with Σ-types, and the codomain model.
