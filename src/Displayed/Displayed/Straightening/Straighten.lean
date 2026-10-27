@@ -4,14 +4,14 @@ import Displayed.Displayed.Total
 /-!
 # Unstraightening and straightening as displayed functors over `Cat`
 
-* `unstraighten : VertFunctor DCat (cod Cat)` is `(▷ᵈ)*`: it sends `F : LaxNormal A` to the
+* `unstraighten : VertFunctor DCat (cod Cat)` sends `F : LaxNormal A` to the
   projection `π : Unstraightening F ⥤ A`, and a transformation with representable components over
-  `u` to the induced functor `(a, x) ↦ (u a, h x)`, `(f, s) ↦ (u f, map s)`. The square commutes by
-  `rfl`.
+  `u` to the induced functor `(a, x) ↦ (u a, obj x)`, `(f, s) ↦ (u f, map s)`. The square commutes
+  by `rfl`.
 * `straighten : VertFunctor (cod Cat) DCat` sends `p : E ⥤ A` to the lax normal functor of its
-  fibres, `a ↦ Fibre p a = {e // p e = a}`, with `F_p f x y` the morphisms of `E` over `f` and
-  composition as the composition constraint. A commuting square `w ⋙ p' = p ⋙ u` is sent to the
-  restriction of `w` to the fibres.
+  fibres, `a ↦ Fibre X a` of the objects `e` with `p e = a`, with `fibProf f` the profunctor of the
+  morphisms of `E` over `f` and composition as the composition constraint. A commuting square
+  `w ⋙ p' = p ⋙ u` is sent to the restriction of `w` to the fibres.
 
 The functoriality of both holds by `rfl`.
 -/
@@ -22,7 +22,7 @@ namespace Displayed.Straightening
 
 open CategoryTheory Bicategory Displayed
 
-open scoped Displayed
+open scoped Displayed Profunctor
 
 /-! ## Straightening -/
 
@@ -84,8 +84,8 @@ theorem FibreHom.heq_of_val {a a' : A} {f f' : a ⟶ a'} (h : f = f') {x : Fibre
   subst h
   exact heq_of_eq (Subtype.ext hv)
 
-/-- The profunctor `F_p f : Fibre p a ⇸ Fibre p a'` of morphisms over `f`. -/
-def fibProf {a a' : A} (f : a ⟶ a') : Profunctor (Fibre X a) (Fibre X a') where
+/-- The profunctor `Fibre X a ⇸ Fibre X a'` of the morphisms over `f`. -/
+def fibProf {a a' : A} (f : a ⟶ a') : Fibre X a ⇸ Fibre X a' where
   obj := FibreHom X f
   lmap k s := FibreHom.comp k s
   rmap k s := FibreHom.comp s k
@@ -95,7 +95,8 @@ def fibProf {a a' : A} (f : a ⟶ a') : Profunctor (Fibre X a) (Fibre X a') wher
   rmap_comp := by intros; rfl
   rmap_lmap _ _ _ := rfl
 
-/-- The composition constraint `F_p f ⊗ F_p g ⟶ F_p (f ≫ g)`: composition in `E`. -/
+/-- The composition constraint `Profunctor.comp (fibProf f) (fibProf g) ⟶ fibProf (f ≫ g)`:
+composition in `E`. -/
 def fibMul {a a' a'' : A} (f : a ⟶ a') (g : a' ⟶ a'') :
     Profunctor.Hom (Profunctor.comp (fibProf (X := X) f) (fibProf g)) (fibProf (f ≫ g)) where
   app _ _ := Profunctor.CompObj.lift (fun _ s t => FibreHom.comp s t) (fun _ _ _ => rfl)

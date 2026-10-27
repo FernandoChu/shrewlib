@@ -30,11 +30,11 @@ the total category. -/
 def compr : VertFunctor ICat.{u} (cod Cat.{u, u}) :=
   unstraighten.comp (SplitOpfibCat.forget.comp DisplayedCat.total)
 
-/-- **The comprehension functor sends the chosen lifts to cartesian morphisms**: `A ⋉ u^* G` is
-the pullback of `B ⋉ G` along `u`. -/
+/-- **The comprehension functor sends the chosen lifts to cartesian morphisms**: `A ⋉ ICat.pull u G`
+is the pullback of `B ⋉ G` along `u`. -/
 def isCartesianComprClift {A B : Cat.{u, u}} (u : A ⟶ B) (G : B ⥤ Cat.{u, u}) :
     IsCartesian (compr.map (ICat.clift u G)) :=
-  DisplayedCat.isCartesianTotalMapClift (u := u) (E := unstraightenObj G)
+  DisplayedCat.isCartesianTotalMapClift (u := u) (E := ∫ G)
 
 /-- **The comprehension functor is fully faithful.** -/
 def comprFullyFaithful : compr.{u}.FullyFaithful :=

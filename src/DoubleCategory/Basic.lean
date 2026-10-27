@@ -110,7 +110,7 @@ class DoubleCategory (C : Type u) [Category.{v} C] extends TwoSidedDispCat.{w₁
     (t : Sq g k l l') (t' : Sq g' k' l' l'') :
     hCompSq (vcomp s s') (vcomp t t') = vcomp (hCompSq s t) (hCompSq s' t')
   -- Left unitor
-  /-- The left unitor `hId x ⊙ h ⇒ h`. -/
+  /-- The left unitor, a square from `hId x ⊙ h` to `h`. -/
   lunitor {x y : C} (h : x ⇸ y) : Sq (𝟙 x) (𝟙 y) (hComp (hId x) h) h
   /-- The inverse of the left unitor. -/
   lunitorInv {x y : C} (h : x ⇸ y) : Sq (𝟙 x) (𝟙 y) h (hComp (hId x) h)
@@ -119,7 +119,7 @@ class DoubleCategory (C : Type u) [Category.{v} C] extends TwoSidedDispCat.{w₁
   lunitor_naturality {x x' y y' : C} {f : x ⟶ x'} {g : y ⟶ y'} {h : x ⇸ y} {h' : x' ⇸ y'}
     (s : Sq f g h h') : vcomp (lunitor h) s = vcomp (hCompSq (hIdSq f) s) (lunitor h')
   -- Right unitor
-  /-- The right unitor `h ⊙ hId y ⇒ h`. -/
+  /-- The right unitor, a square from `h ⊙ hId y` to `h`. -/
   runitor {x y : C} (h : x ⇸ y) : Sq (𝟙 x) (𝟙 y) (hComp h (hId y)) h
   /-- The inverse of the right unitor. -/
   runitorInv {x y : C} (h : x ⇸ y) : Sq (𝟙 x) (𝟙 y) h (hComp h (hId y))
@@ -128,7 +128,7 @@ class DoubleCategory (C : Type u) [Category.{v} C] extends TwoSidedDispCat.{w₁
   runitor_naturality {x x' y y' : C} {f : x ⟶ x'} {g : y ⟶ y'} {h : x ⇸ y} {h' : x' ⇸ y'}
     (s : Sq f g h h') : vcomp (runitor h) s = vcomp (hCompSq s (hIdSq g)) (runitor h')
   -- Associator
-  /-- The associator `(h ⊙ k) ⊙ l ⇒ h ⊙ (k ⊙ l)`. -/
+  /-- The associator, a square from `(h ⊙ k) ⊙ l` to `h ⊙ (k ⊙ l)`. -/
   associator {w x y z : C} (h : w ⇸ x) (k : x ⇸ y) (l : y ⇸ z) :
     Sq (𝟙 w) (𝟙 z) (hComp (hComp h k) l) (hComp h (hComp k l))
   /-- The inverse of the associator. -/

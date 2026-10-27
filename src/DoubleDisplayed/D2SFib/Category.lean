@@ -5,7 +5,7 @@ import DoubleDisplayed.D2SFib.Basic
 
 We define the morphisms of D2SFibs — vertical functors preserving the chosen pull/push data on the
 nose (`D2SFibHom`) — and bundle D2SFibs into the category `D2SFibCat B`, the displayed adaptation
-of the category `D2SFib(A, B)`.
+of the category of dependent 2-sided split fibrations between `A` and `B`.
 
 As for `D2SFib`, the preservation of chosen pullbacks and pushforwards on objects lives in a
 separate structure `D2SFibHomObj`, and is a rewrite rule, so that the preservation of the chosen
@@ -123,7 +123,7 @@ theorem map_d2sHomEquiv_symm {a a' : A} {α : a ⟶ a'} {b : B.Ob a} {b' : B.Ob 
 
 end D2SFibHom
 
-/-- Bundled D2SFibs: the objects of the category `D2SFib(A, B)`. -/
+/-- Bundled D2SFibs: the objects of the category `D2SFibCat B`. -/
 structure D2SFibCat (B : Displayed.{v₁, u₁, v₂, u₂} A) [SplitOpfib B] where
   /-- The underlying doubly displayed category. -/
   C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B

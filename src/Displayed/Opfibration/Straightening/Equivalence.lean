@@ -12,8 +12,9 @@ opfibration `D` over `A` is isomorphic over `A` to the unstraightening of its st
 straightening on objects, and on morphisms the preimage under the unstraightening of the
 conjugate by the counit.
 
-The objects of `∫ Str D` over `a` are those of `D`, and its morphisms `x ⟶[f] y` are the vertical
-morphisms `push f x ⟶ y`. The counit `∫ Str D ⟶ D` is the identity on objects and sends
+The objects of `unstraightenObj (straightenObj D)` over `a` are those of `D`, and its morphisms
+`x ⟶[f] y` are the vertical morphisms `push f x ⟶ y`. The counit
+`unstraightenObj (straightenObj D) ⟶ D` is the identity on objects and sends
 `φ : push f x ⟶ y` to `olift f x ≫ φ`; its inverse sends `χ : x ⟶[f] y` to its opcartesian
 factorization. The two composites are identities by `rfl`: a morphism is its chosen lift followed
 by its factorization, and the factorization of `olift f x ≫ φ` is `φ`.
@@ -49,7 +50,7 @@ def counitInv : X ⟶[𝟙 A] unstraighten.obj (straightenObj X) where
   map_id _ := rfl
   map_comp _ _ := rfl
 
-/-- **The counit** `Unstr (Str D) ≅ D`, an isomorphism over `A`. -/
+/-- **The counit** `unstraighten.obj (straightenObj X) ≅ X`, an isomorphism over `A`. -/
 def counitIso : (unstraighten.obj (straightenObj X) : SplitOpfibCat.Fiber A) ≅ X where
   hom := counitHom X
   inv := counitInv X

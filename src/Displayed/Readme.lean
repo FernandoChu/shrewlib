@@ -11,9 +11,10 @@ folder has a `Readme.lean`.
 * `Displayed/`: displayed categories in general, vertical functors and equivalences, the total
   category and the codomain displayed category; `Straightening/` is straightening–unstraightening,
   `DCat ≃ cod Cat` over `Cat`.
-* `Opfibration/`: opcartesian morphisms and cloven, pre-split and split opfibrations;
+* `Opfibration/`: opcartesian morphisms and cloven, pre-split and split opfibrations, which
+  compose;
   `Straightening/` is the equivalence over `Cat` between functors `A ⥤ Cat` and split
   opfibrations.
-* `Fibration/`: cartesian morphisms and cloven, pre-split and split fibrations, the exact dual of
+* `Fibration/`: cartesian morphisms and cloven, pre-split and split fibrations, the dual of
   `Opfibration/`.
 -/

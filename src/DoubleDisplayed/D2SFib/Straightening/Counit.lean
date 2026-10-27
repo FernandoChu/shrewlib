@@ -3,14 +3,14 @@ import DoubleDisplayed.D2SFib.Straightening.Straighten
 import Mathlib.Tactic.IrreducibleDef
 
 /-!
-# The counit `Ψ ⋙ Φ ≅ 𝟭`
+# The counit `straighten ⋙ unstraighten ≅ 𝟭`
 
-The unstraightening of `Ψ C` is isomorphic to `C`. Objects
-agree definitionally, and so do hom-types: a morphism of `Unstraightening (Ψ C)` over
+The unstraightening of `straightenObj C` is isomorphic to `C`. Objects
+agree definitionally, and so do hom-types: a morphism of `Unstraightening (straightenObj C)` over
 `g : B.Hom α b b'` is, by the rewrite rules, a vertical morphism
-`push α c ⟶ pull (B.opcartesianFactor g) c'` of `C`. So the counit acts on morphisms by
-`d2sHomEquiv⁻¹`, its functoriality is `d2sHomEquiv_comp`, and it preserves the chosen lifts by
-`rfl`.
+`push α c ⟶ pull (B.opcartesianFactor g) c'` of `C`. So the counit acts on morphisms by the
+inverse of `d2sHomEquiv`, its functoriality is `d2sHomEquiv_comp`, and it preserves the chosen lifts
+by `rfl`.
 -/
 
 universe v₁ u₁ v₂ u₂ v₃ u₃
@@ -31,7 +31,7 @@ variable {C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B} [SplitD2SF
 
 variable {a a' a'' : A} {α : a ⟶ a'} {α' : a' ⟶ a''} {b : B.Ob a} {b' : B.Ob a'} {b'' : B.Ob a''}
 
-/-- The hom-types of `Unstraightening (Ψ C)` are the targets of `d2sHomEquiv`. -/
+/-- The hom-types of `Unstraightening (straightenObj C)` are the targets of `d2sHomEquiv`. -/
 theorem hom_eq (g : b ⟶[α] b') (c : C.Ob b) (c' : C.Ob b') :
     (Unstraightening (straightenObj C)).Hom g c c' =
       (push α c ⟶ pull (B.opcartesianFactor g) c') := rfl
@@ -60,8 +60,8 @@ theorem map_id' (c : C.Ob b) :
   rw [map_def (C := C)]; rfl
 
 set_option maxHeartbeats 800000 in
--- Composition in `Unstraightening (Ψ C)` unfolds to the composite of `d2sHomEquiv_comp` through
--- the fibers of `Ψ C`, which is a long definitional computation.
+-- Composition in `Unstraightening (straightenObj C)` unfolds to the composite of `d2sHomEquiv_comp`
+-- through the fibers of `straightenObj C`, which is a long definitional computation.
 theorem invMap_comp {g : b ⟶[α] b'} {g' : b' ⟶[α'] b''} {c : C.Ob b} {c' : C.Ob b'}
     {c'' : C.Ob b''} (θ : c ⟶[[g]] c') (θ' : c' ⟶[[g']] c'') :
     invMap (C := C) (θ ≫ᵈᵈ θ') = invMap θ ≫ᵈᵈ invMap θ' := by
@@ -129,7 +129,8 @@ theorem map_naturality {E E' : D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B}
 end Counit
 
 /-- **The counit component of the equivalence**: the unstraightening of
-`Ψ E` is isomorphic to `E`, by the identity on objects and `d2sHomEquiv` on morphisms. -/
+`straightenObj E.C` is isomorphic to `E`, by the identity on objects and `d2sHomEquiv` on
+morphisms. -/
 def counitApp (E : D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B) :
     unstraightenObj (straightenObj E.C) ≅ E where
   hom := Counit.homD2S (C := E.C)
@@ -139,7 +140,7 @@ def counitApp (E : D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B) :
   inv_hom_id := D2SFibHom.ext (VertFunctor.ext (fun _ => rfl)
     (fun θ => heq_of_eq (Counit.map_invMap (C := E.C) θ)))
 
-/-- **The counit** `Ψ ⋙ Φ ≅ 𝟭` of the equivalence. -/
+/-- **The counit** `straighten ⋙ unstraighten ≅ 𝟭` of the equivalence. -/
 def counitIso : straighten ⋙ unstraighten ≅ 𝟭 (D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B) :=
   NatIso.ofComponents (fun E => counitApp E) (fun Φ =>
     D2SFibHom.ext (VertFunctor.ext (fun _ => rfl)

@@ -329,10 +329,9 @@ section HomEquiv
 
 variable {a a' a'' : A}
 
-/-- **The two-sided hom equivalence** `hom(α_! c, β^* c') ≅ hom(c, c')`: morphisms of
-`C` over `g : B.Hom α b b'` correspond to *vertical* morphisms
-`push α c ⟶ pull (B.opcartesianFactor g) c'` in the fiber over `B.push α b`. Its inverse composes
-with the two chosen lifts. -/
+/-- **The two-sided hom equivalence**: morphisms of `C` over `g : B.Hom α b b'` correspond to
+*vertical* morphisms `push α c ⟶ pull (B.opcartesianFactor g) c'` in the fiber over `B.push α b`.
+Its inverse composes with the two chosen lifts. -/
 def d2sHomEquiv (α : a ⟶ a') {b : B.Ob a} {b' : B.Ob a'} (g : b ⟶[α] b')
     (c : C.Ob b) (c' : C.Ob b') : (c ⟶[[g]] c') ≃ (push α c ⟶ pull (B.opcartesianFactor g) c') where
   toFun θ := pullDesc (B.opcartesianFactor g) c' (B.id (B.push α b)) (push α c)

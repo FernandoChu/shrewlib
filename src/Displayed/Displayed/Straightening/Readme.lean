@@ -6,9 +6,9 @@ import Displayed.Displayed.Straightening.Equivalence
 In this folder we compare two categories displayed over `Cat`:
 
 * `DCat`: which has as objects over a category `A`, the lax normal functors from `A` to the
-  bicategory of profunctors; a morphism over `u : A ⟶ B` is a lax transformation `F ⇒ G ∘ u` whose
-  components are representable profunctors;
-* `cod Cat`, the arrow category `Cat^→` equipped its codomain functor.
+  bicategory of profunctors; a morphism over `u : A ⟶ B` from `F` to `G` is a lax transformation
+  from `F` to `G` restricted along `u`, whose components are representable profunctors;
+* `cod Cat`, the arrow category of `Cat` equipped with its codomain functor.
 
 There are two vertical functors over `Cat` between them, `unstraighten : DCat ⟶ cod Cat` and
 `straighten : cod Cat ⟶ DCat`, and they form an equivalence over `Cat`, `straighteningEquiv`.
@@ -20,7 +20,7 @@ The files give its ingredients:
 * `Unstraighten`: the functor `unstraighten`, which acts as a sort of Grothendieck construction
   on profunctors.
 * `Straighten`: the functor `straighten`, sending `p : E ⥤ A` to the lax normal functor from `A` to
-  `Prof` that sends `a : A` to the fibre of `p` over `a`.
+  `ProfCat` that sends `a : A` to the fibre of `p` over `a`.
 * `Equivalence`: the unit and counit, and the equivalence `straighteningEquiv`.
 -/
 

@@ -3,6 +3,7 @@ import Displayed.Displayed.Functor
 import Displayed.Displayed.DisplayedCat
 import Displayed.Displayed.Equivalence
 import Displayed.Displayed.Total
+import Displayed.Displayed.Sigma
 import Displayed.Displayed.Codomain
 import Displayed.Displayed.Straightening.Readme
 
@@ -19,6 +20,8 @@ import Displayed.Displayed.Straightening.Readme
 * `Equivalence`: equivalences over the base (`VertEquivalence`), which are fully faithful.
 * `Total`: the total category `D.Total`, `π`, `ι`, and the induced functors, natural
   transformations and equivalences of total categories.
+* `Sigma`: the composite `D.sigmaDisp E` over `A` of `D` over `A` and `E` over `D.Total`, whose
+  total category is that of `E`, up to reassociation.
 * `Codomain`: the codomain displayed category `cod C`.
 * `Straightening/`: straightening–unstraightening for displayed categories.
 -/

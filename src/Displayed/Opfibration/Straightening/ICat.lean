@@ -14,11 +14,11 @@ with identities and composites. This is the direction of Mathlib's lax transform
 With the functor laws as rules, `G (𝟙 a) y` is `y` and `G (f ≫ g) y` is `G g (G f y)`, so the unit
 and composition laws of the 2-cells, which are rules too, are plain equations.
 
-The category `ICat_lax = Cat ⋉⁻ [−, Cat]_lax` of indexed categories and lax transformations is
+The category of indexed categories and lax transformations is
 displayed over `Cat` (`ICat`): an object over `A` is a functor `A ⥤ Cat`, and a morphism over
-`u : A ⟶ B` from `F` to `G` is a lax transformation `F ⇒ u ⋙ G`. Its laws hold by `rfl`.
-Reindexing `u^* G = u ⋙ G` and the identity transformations make it a split fibration over `Cat`,
-whose splitting laws hold by `rfl`.
+`u : A ⟶ B` from `F` to `G` is a lax transformation `LaxTrans F (u ⋙ G)`. Its laws hold by
+`rfl`. Reindexing `ICat.pull u G = u ⋙ G` and the identity transformations make it a split fibration
+over `Cat`, whose splitting laws hold by `rfl`.
 -/
 
 universe v₁ u₁ v₂ u₂ v u
@@ -109,9 +109,10 @@ end LaxTrans
 
 /-! ## The displayed category of indexed categories -/
 
-/-- `ICat_lax`, displayed over `Cat`: an object over `A` is a functor `A ⥤ Cat`, and a morphism
-over `u : A ⟶ B` from `F` to `G` is a lax transformation `F ⇒ u ⋙ G`. Composition restricts the
-second transformation along the first base functor. -/
+/-- The indexed categories and lax transformations, displayed over `Cat`: an object over `A` is a
+functor `A ⥤ Cat`, and a morphism over `u : A ⟶ B` from `F` to `G` is a lax transformation
+`LaxTrans F (u ⋙ G)`. Composition restricts the second transformation along the first base
+functor. -/
 def ICat : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
   Ob A := A ⥤ Cat.{u, u}
   Hom u F G := LaxTrans F (u.toFunctor ⋙ G)
@@ -125,11 +126,11 @@ def ICat : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
 
 namespace ICat
 
-/-- Reindexing `u^* G = u ⋙ G` of `G : B ⥤ Cat` along `u : A ⟶ B`. -/
+/-- Reindexing `pull u G = u ⋙ G` of `G : B ⥤ Cat` along `u : A ⟶ B`. -/
 def pull {A B : Cat.{u, u}} (u : A ⟶ B) (G : B ⥤ Cat.{u, u}) : A ⥤ Cat.{u, u} :=
   u.toFunctor ⋙ G
 
-/-- The cartesian lift `u^* G ⟶[u] G`: the identity transformation. -/
+/-- The cartesian lift `pull u G ⟶[u] G`: the identity transformation. -/
 def clift {A B : Cat.{u, u}} (u : A ⟶ B) (G : B ⥤ Cat.{u, u}) : ICat.Hom u (pull u G) G :=
   LaxTrans.id (u.toFunctor ⋙ G)
 
@@ -142,8 +143,8 @@ def isCartesianClift {A B : Cat.{u, u}} (u : A ⟶ B) (G : B ⥤ Cat.{u, u}) :
 
 end ICat
 
-/-- **`ICat` is a split fibration over `Cat`**, cloven by reindexing `u^* G = u ⋙ G`, with the
-identity transformations as chosen lifts. -/
+/-- **`ICat` is a split fibration over `Cat`**, cloven by reindexing `ICat.pull u G = u ⋙ G`, with
+the identity transformations as chosen lifts. -/
 instance ICat.preSplitFib : PreSplitFib ICat.{u} where
   pull u G := ICat.pull u G
   clift u G := ICat.clift u G

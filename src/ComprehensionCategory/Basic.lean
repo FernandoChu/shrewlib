@@ -7,8 +7,9 @@ A comprehension category over `C` (Jacobs, *Comprehension categories and the sem
 dependency*; here in the displayed form of Ahrens, Lumsdaine and North, *Comprehension categories*)
 is a fibration `D` over `C`, whose objects over `Γ` are thought of as types in context `Γ`,
 with a vertical functor `compr : D ⟶ cod C` to the codomain displayed category that preserves
-cartesian morphisms. It sends a type `A` over `Γ` to a morphism `p_A : Γ.A ⟶ Γ`, the projection
-out of the extended context, and the chosen lift of `σ : Δ ⟶ Γ` at `A` to the pullback square
+cartesian morphisms. It sends a type `A` over `Γ` to a morphism `𝐩 A : Γ ▹ A ⟶ Γ`, the
+projection out of the extended context, and the chosen lift of `σ : Δ ⟶ Γ` at `A` to the pullback
+square
 
 ```
   Δ ▹ A⦃σ⦄ --𝐪(σ, A)--> Γ ▹ A
@@ -111,10 +112,10 @@ def isCartesianComprMap {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f]
     (H : IsCartesian φ) : IsCartesian ((D.compr).map φ) :=
   Comprehension.isCartesianComprMap H
 
-/-- The extension `Γ.A` of the context `a` by `x`. -/
+/-- The extension `D.ext x` of the context `a` by `x`. -/
 def ext (x : D.Ob a) : C := ((D.compr).obj x).dom
 
-/-- The projection `p_A : Γ.A ⟶ Γ`. -/
+/-- The projection `D.proj x : D.ext x ⟶ a`. -/
 def proj (x : D.Ob a) : D.ext x ⟶ a := ((D.compr).obj x).hom
 
 /-- The action of the comprehension functor on a morphism over `f`, between extended contexts. -/
@@ -136,7 +137,7 @@ theorem isPullback_extMap {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[
     (H : IsCartesian φ) : IsPullback (D.extMap φ) (D.proj x) (D.proj y) f :=
   cod.isPullback_of_isCartesian (D.isCartesianComprMap H)
 
-/-- The morphism `q(σ, A) : Δ.A[σ] ⟶ Γ.A` over the substitution `σ : Δ ⟶ Γ`, the image of the
+/-- The morphism `D.q σ x : D.ext (D.pull σ x) ⟶ D.ext x` over `σ : a ⟶ a'`, the image of the
 chosen lift. -/
 def q (σ : a ⟶ a') (x : D.Ob a') : D.ext (D.pull σ x) ⟶ D.ext x := D.extMap (D.clift σ x)
 

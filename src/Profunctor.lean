@@ -6,8 +6,9 @@ import Mathlib.CategoryTheory.Bicategory.Basic
 
 A profunctor `P : A ⇸ B` between small categories consists of sets `P.obj a b` with a
 contravariant action `P.lmap` of `A` and a covariant action `P.rmap` of `B` that commute; this is
-the same data as a functor `Aᵒᵖ × B ⥤ Type u`. Profunctors compose by the coend
-`(P ⊗ Q) a c = ∫^b P a b × Q b c`, realised as a quotient, and form the bicategory `ProfCat`.
+the same data as a functor `Aᵒᵖ × B ⥤ Type u`. Profunctors compose by the coend:
+`(comp P Q).obj a c` is the coend over `b` of `P.obj a b × Q.obj b c`, realised as a quotient, and
+form the bicategory `ProfCat`.
 
 The category laws, the action laws of profunctors, and the naturality of their morphisms are
 declared as rewrite rules. They are oriented so that composites are right-associated, `lmap` is
@@ -20,7 +21,8 @@ open CategoryTheory
 
 universe u
 
-/-- A profunctor `A ⇸ B`: a family of types `obj a b`, contravariant in `a` and covariant in `b`. -/
+/-- A profunctor from `A` to `B`: a family of types `obj a b`, contravariant in `a` and covariant in
+`b`. -/
 structure Profunctor (A : Type u) [SmallCategory A] (B : Type u) [SmallCategory B] where
   /-- The type of elements of `P` over `(a, b)`. -/
   obj : A → B → Type u
@@ -42,13 +44,16 @@ attribute [rewrite_rule] Profunctor.lmap_id Profunctor.lmap_comp Profunctor.rmap
 
 namespace Profunctor
 
+/-- `A ⇸ B` is the type of profunctors from `A` to `B`. -/
+scoped infixr:10 " ⇸ " => Profunctor
+
 variable {A B C D : Type u} [SmallCategory A] [SmallCategory B] [SmallCategory C]
   [SmallCategory D]
 
 /-! ## Morphisms of profunctors -/
 
 /-- A morphism of profunctors: a family of maps commuting with both actions. -/
-structure Hom (P Q : Profunctor A B) where
+structure Hom (P Q : A ⇸ B) where
   /-- The component at `(a, b)`. -/
   app (a : A) (b : B) : P.obj a b → Q.obj a b
   app_lmap {a a' : A} {b : B} (f : a' ⟶ a) (x : P.obj a b) :
@@ -58,11 +63,11 @@ structure Hom (P Q : Profunctor A B) where
 
 attribute [rewrite_rule] Hom.app_lmap Hom.app_rmap
 
-theorem Hom.ext' {P Q : Profunctor A B} {η θ : Hom P Q} (h : ∀ a b x, η.app a b x = θ.app a b x) :
+theorem Hom.ext' {P Q : A ⇸ B} {η θ : Hom P Q} (h : ∀ a b x, η.app a b x = θ.app a b x) :
     η = θ := by
   cases η; cases θ; congr; funext a b x; exact h a b x
 
-instance category : Category (Profunctor A B) where
+instance category : Category (A ⇸ B) where
   Hom := Hom
   id P := { app _ _ x := x, app_lmap := by intros; rfl, app_rmap := by intros; rfl }
   comp η θ :=
@@ -72,7 +77,7 @@ instance category : Category (Profunctor A B) where
   comp_id _ := rfl
   assoc _ _ _ := rfl
 
-theorem hom_ext {P Q : Profunctor A B} {η θ : P ⟶ Q}
+theorem hom_ext {P Q : A ⇸ B} {η θ : P ⟶ Q}
     (h : ∀ a b x, Hom.app η a b x = Hom.app θ a b x) : η = θ :=
   Hom.ext' h
 
@@ -83,7 +88,7 @@ macro "hom_ext" x:ident : tactic =>
 /-! ## The identity profunctor -/
 
 /-- The identity profunctor `(a, a') ↦ (a ⟶ a')`. Its laws hold by the category rewrite rules. -/
-def hom (A : Type u) [SmallCategory A] : Profunctor A A where
+def hom (A : Type u) [SmallCategory A] : A ⇸ A where
   obj a a' := a ⟶ a'
   lmap f h := f ≫ h
   rmap g h := h ≫ g
@@ -95,19 +100,19 @@ def hom (A : Type u) [SmallCategory A] : Profunctor A A where
 
 /-! ## Composition -/
 
-/-- The relation generating the coend `∫^b P a b × Q b c`. -/
-inductive CompRel (P : Profunctor A B) (Q : Profunctor B C) (a : A) (c : C) :
+/-- The relation generating the coend over `b` of `P.obj a b × Q.obj b c`. -/
+inductive CompRel (P : A ⇸ B) (Q : B ⇸ C) (a : A) (c : C) :
     (Σ b : B, P.obj a b × Q.obj b c) → (Σ b : B, P.obj a b × Q.obj b c) → Prop
   | intro {b b' : B} (g : b ⟶ b') (p : P.obj a b) (q : Q.obj b' c) :
       CompRel P Q a c ⟨b', P.rmap g p, q⟩ ⟨b, p, Q.lmap g q⟩
 
-/-- The coend `∫^b P a b × Q b c`. -/
-def CompObj (P : Profunctor A B) (Q : Profunctor B C) (a : A) (c : C) : Type u :=
+/-- The coend over `b` of `P.obj a b × Q.obj b c`. -/
+def CompObj (P : A ⇸ B) (Q : B ⇸ C) (a : A) (c : C) : Type u :=
   Quot (CompRel P Q a c)
 
 namespace CompObj
 
-variable {P : Profunctor A B} {Q : Profunctor B C} {a : A} {c : C}
+variable {P : A ⇸ B} {Q : B ⇸ C} {a : A} {c : C}
 
 /-- The class of `(p, q)` in the coend. -/
 def mk (b : B) (p : P.obj a b) (q : Q.obj b c) : CompObj P Q a c :=
@@ -138,8 +143,9 @@ def rmap {c' : C} (h : c ⟶ c') : CompObj P Q a c → CompObj P Q a c' :=
 
 end CompObj
 
-/-- The composite `P ⊗ Q : A ⇸ C` of `P : A ⇸ B` and `Q : B ⇸ C`. -/
-def comp (P : Profunctor A B) (Q : Profunctor B C) : Profunctor A C where
+/-- The composite `comp P Q : A ⇸ C` of `P : A ⇸ B` and
+`Q : B ⇸ C`. -/
+def comp (P : A ⇸ B) (Q : B ⇸ C) : A ⇸ C where
   obj := CompObj P Q
   lmap := CompObj.lmap
   rmap := CompObj.rmap
@@ -151,16 +157,16 @@ def comp (P : Profunctor A B) (Q : Profunctor B C) : Profunctor A C where
 
 /-! ## Whiskering -/
 
-/-- Left whiskering `P ◁ η : P ⊗ Q ⟶ P ⊗ Q'`. -/
-def whiskerLeft (P : Profunctor A B) {Q Q' : Profunctor B C} (η : Q ⟶ Q') :
+/-- Left whiskering `whiskerLeft P η : comp P Q ⟶ comp P Q'`. -/
+def whiskerLeft (P : A ⇸ B) {Q Q' : B ⇸ C} (η : Q ⟶ Q') :
     Hom (comp P Q) (comp P Q') where
   app _ _ := CompObj.lift (fun b p q => CompObj.mk b p (Hom.app η b _ q))
     (fun g p q => CompObj.sound g p (Hom.app η _ _ q))
   app_lmap := by intros; rename_i x; induction x using CompObj.ind; rfl
   app_rmap := by intros; rename_i x; induction x using CompObj.ind; rfl
 
-/-- Right whiskering `η ▷ Q : P ⊗ Q ⟶ P' ⊗ Q`. -/
-def whiskerRight {P P' : Profunctor A B} (η : P ⟶ P') (Q : Profunctor B C) :
+/-- Right whiskering `whiskerRight η Q : comp P Q ⟶ comp P' Q`. -/
+def whiskerRight {P P' : A ⇸ B} (η : P ⟶ P') (Q : B ⇸ C) :
     Hom (comp P Q) (comp P' Q) where
   app _ _ := CompObj.lift (fun b p q => CompObj.mk b (Hom.app η _ b p) q)
     (fun g p q => CompObj.sound g (Hom.app η _ _ p) q)
@@ -169,8 +175,8 @@ def whiskerRight {P P' : Profunctor A B} (η : P ⟶ P') (Q : Profunctor B C) :
 
 /-! ## Unitors and associator -/
 
-/-- The left unitor `hom A ⊗ P ≅ P`, sending `[h, p]` to `P.lmap h p`. -/
-def leftUnitor (P : Profunctor A B) : comp (hom A) P ≅ P where
+/-- The left unitor `comp (hom A) P ≅ P`, sending `CompObj.mk _ h p` to `P.lmap h p`. -/
+def leftUnitor (P : A ⇸ B) : comp (hom A) P ≅ P where
   hom := ({
     app _ _ := CompObj.lift (fun _ h p => P.lmap h p) (fun _ _ _ => rfl)
     app_lmap := by intros; rename_i x; induction x using CompObj.ind; rfl
@@ -185,8 +191,8 @@ def leftUnitor (P : Profunctor A B) : comp (hom A) P ≅ P where
     rfl
   inv_hom_id := by hom_ext x; rfl
 
-/-- The right unitor `P ⊗ hom B ≅ P`, sending `[p, h]` to `P.rmap h p`. -/
-def rightUnitor (P : Profunctor A B) : comp P (hom B) ≅ P where
+/-- The right unitor `comp P (hom B) ≅ P`, sending `CompObj.mk _ p h` to `P.rmap h p`. -/
+def rightUnitor (P : A ⇸ B) : comp P (hom B) ≅ P where
   hom := ({
     app _ _ := CompObj.lift (fun _ p h => P.rmap h p) (fun _ _ _ => rfl)
     app_lmap := by intros; rename_i x; induction x using CompObj.ind; rfl
@@ -201,8 +207,9 @@ def rightUnitor (P : Profunctor A B) : comp P (hom B) ≅ P where
     rfl
   inv_hom_id := by hom_ext x; rfl
 
-/-- The components of the associator, `[[p, q], r] ↦ [p, [q, r]]`. -/
-def assocHom (P : Profunctor A B) (Q : Profunctor B C) (R : Profunctor C D) (a : A) (d : D) :
+/-- The components of the associator, sending the class of `((p, q), r)` to that of
+`(p, (q, r))`. -/
+def assocHom (P : A ⇸ B) (Q : B ⇸ C) (R : C ⇸ D) (a : A) (d : D) :
     CompObj (comp P Q) R a d → CompObj P (comp Q R) a d :=
   CompObj.lift
     (fun c x r => CompObj.lift (fun b p q => CompObj.mk b p (CompObj.mk c q r))
@@ -211,8 +218,9 @@ def assocHom (P : Profunctor A B) (Q : Profunctor B C) (R : Profunctor C D) (a :
       induction x using CompObj.ind with
       | h b p q => exact congrArg (CompObj.mk b p) (CompObj.sound g q r))
 
-/-- The components of the inverse associator, `[p, [q, r]] ↦ [[p, q], r]`. -/
-def assocInv (P : Profunctor A B) (Q : Profunctor B C) (R : Profunctor C D) (a : A) (d : D) :
+/-- The components of the inverse associator, sending the class of `(p, (q, r))` to that of
+`((p, q), r)`. -/
+def assocInv (P : A ⇸ B) (Q : B ⇸ C) (R : C ⇸ D) (a : A) (d : D) :
     CompObj P (comp Q R) a d → CompObj (comp P Q) R a d :=
   CompObj.lift
     (fun b p y => CompObj.lift (fun c q r => CompObj.mk c (CompObj.mk b p q) r)
@@ -221,8 +229,8 @@ def assocInv (P : Profunctor A B) (Q : Profunctor B C) (R : Profunctor C D) (a :
       induction y using CompObj.ind with
       | h c q r => exact congrArg (CompObj.mk c · r) (CompObj.sound g p q))
 
-/-- The associator `(P ⊗ Q) ⊗ R ≅ P ⊗ (Q ⊗ R)`. -/
-def associator (P : Profunctor A B) (Q : Profunctor B C) (R : Profunctor C D) :
+/-- The associator `comp (comp P Q) R ≅ comp P (comp Q R)`. -/
+def associator (P : A ⇸ B) (Q : B ⇸ C) (R : C ⇸ D) :
     comp (comp P Q) R ≅ comp P (comp Q R) where
   hom := ({
     app := assocHom P Q R
@@ -270,7 +278,7 @@ instance : CoeSort ProfCat (Type u) := ⟨ProfCat.carrier⟩
 open Profunctor
 
 instance bicategory : Bicategory ProfCat where
-  Hom A B := Profunctor A B
+  Hom A B := A ⇸ B
   id A := hom A
   comp P Q := comp P Q
   homCategory _ _ := Profunctor.category

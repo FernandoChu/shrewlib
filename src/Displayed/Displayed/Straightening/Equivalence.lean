@@ -5,20 +5,22 @@ import Displayed.Fibration.Basic
 /-!
 # Straightening–unstraightening for displayed categories
 
-Straightening–unstraightening: `(▷ᵈ)* : DCat → Cat^→` is part of an equivalence over `Cat`, in the
-displayed sense (`straighteningEquiv : VertEquivalence DCat (cod Cat)`): the unit and counit are
-vertical, i.e. their components lie over identities of `Cat`. Consequently:
+Straightening–unstraightening: `unstraighten : VertFunctor DCat (cod Cat)` is part of an
+equivalence over `Cat`, in the displayed sense
+(`straighteningEquiv : VertEquivalence DCat (cod Cat)`): the unit and counit are vertical, i.e.
+their components lie over identities of `Cat`. Consequently:
 
 * the equivalence of total categories `DCat.Total ≌ (cod Cat).Total` commutes with the projections
   to `Cat` (`straighteningEquiv_total`);
-* both `DCat` and `Cat^→` are fibrations over `Cat`: `DCat` is a `SplitFib` by pullback, and
-  `Cat^→` gets a `Fib` instance from it by transfer along the equivalence;
+* both `DCat` and `cod Cat` are fibrations over `Cat`: `DCat` is a `SplitFib` by pullback, and
+  `cod Cat` gets a `Fib` instance from it by transfer along the equivalence;
 * both functors preserve cartesian morphisms (`isCartesianUnstraightenMap`,
   `isCartesianStraightenMap`).
 
-The unit `F ⟶ Str (Unstr F)` sends `x` to `⟨(a, x), rfl⟩`, and its inverse transports along the
-equation `X.base = a` of an object of the fibre. The counit `Unstr (Str p) ⟶ p` forgets the base
-component, and its inverse sends `e` to `(p e, ⟨e, rfl⟩)`. Their naturality holds by `rfl`.
+The unit `F ⟶ straightenObj (unstraightenObj F)` sends `x` to `⟨(a, x), rfl⟩`, and its inverse
+transports along the equation `X.base = a` of an object of the fibre. The counit
+`unstraightenObj (straightenObj X) ⟶ X` forgets the base component, and its inverse sends `e` to
+`(p e, ⟨e, rfl⟩)`. Their naturality holds by `rfl`.
 -/
 
 universe u
@@ -88,7 +90,7 @@ theorem unitInv_unitHom :
 
 end Unit
 
-/-- **The unit** `𝟭 ≅ Str ∘ Unstr`, vertical over `Cat`. -/
+/-- **The unit** `VertFunctor.id DCat ≅ unstraighten.comp straighten`, vertical over `Cat`. -/
 def unitIso : VertFunctor.id DCat.{u} ≅ unstraighten.comp straighten :=
   VertNatIso.ofComponents
     (fun F => ⟨unitHom F, unitInv F, unitHom_unitInv F, unitInv_unitHom F⟩) (fun _ => rfl)
@@ -144,7 +146,8 @@ theorem counitInv_counitHom :
 
 end Counit
 
-/-- **The counit** `Unstr ∘ Str ≅ 𝟭`, vertical over `Cat`. -/
+/-- **The counit** `straighten.comp unstraighten ≅ VertFunctor.id (cod Cat)`, vertical
+over `Cat`. -/
 def counitIso : straighten.comp unstraighten ≅ VertFunctor.id (cod Cat.{u, u}) :=
   VertNatIso.ofComponents
     (fun X => ⟨counitHom X, counitInv X, counitHom_counitInv X, counitInv_counitHom X⟩)
@@ -152,7 +155,7 @@ def counitIso : straighten.comp unstraighten ≅ VertFunctor.id (cod Cat.{u, u})
 
 /-! ## Straightening–unstraightening -/
 
-/-- **Straightening–unstraightening**: `(▷ᵈ)* : DCat → Cat^→` is an equivalence
+/-- **Straightening–unstraightening**: `unstraighten : VertFunctor DCat (cod Cat)` is an equivalence
 over `Cat`, with inverse the straightening. -/
 def straighteningEquiv : VertEquivalence DCat.{u} (cod Cat.{u, u}) where
   functor := unstraighten
@@ -160,8 +163,8 @@ def straighteningEquiv : VertEquivalence DCat.{u} (cod Cat.{u, u}) where
   unitIso := unitIso
   counitIso := counitIso
 
-/-- The induced equivalence `DCat ≌ Cat^→` of total categories. It commutes with the projections
-to `Cat` (`straighteningEquiv_total_functor_comp_π`). -/
+/-- The induced equivalence `DCat.Total ≌ (cod Cat).Total` of total categories. It commutes with the
+projections to `Cat` (`straighteningEquiv_total_functor_comp_π`). -/
 def straighteningEquivTotal : DCat.{u}.Total ≌ (cod Cat.{u, u}).Total :=
   straighteningEquiv.total
 
@@ -169,12 +172,12 @@ theorem straighteningEquivTotal_functor_comp_π :
     straighteningEquivTotal.{u}.functor ⋙ (cod Cat.{u, u}).π = DCat.π :=
   rfl
 
-/-- **`Cat^→` is a fibration over `Cat`**, with the cleavage transferred from `DCat` along the
+/-- **`cod Cat` is a fibration over `Cat`**, with the cleavage transferred from `DCat` along the
 equivalence. -/
 instance fibCodCat : Fib (cod Cat.{u, u}) :=
   straighteningEquiv.fib
 
-/-- **`(▷ᵈ)*` preserves cartesian morphisms.** -/
+/-- **`unstraighten` preserves cartesian morphisms.** -/
 def isCartesianUnstraightenMap {A B : Cat.{u, u}} {u : A ⟶ B} {F : LaxNormal A}
     {G : LaxNormal B} {φ : DCat.Hom u F G} (H : IsCartesian (D := DCat) φ) :
     IsCartesian (D := cod Cat.{u, u}) (unstraighten.map φ) :=

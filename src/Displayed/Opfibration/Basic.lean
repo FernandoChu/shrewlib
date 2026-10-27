@@ -32,7 +32,9 @@ From an `Opfib` (or a (pre-)split one, where noted) we derive, all as rewrite ru
 These make the dual opfibration of `B` (`Opfibration/DualOp.lean`) a displayed category whose laws
 hold by `rfl`. Since the interchange rule has `pushMap` on its right-hand side, and `pushMap` is
 defined by a factorization that the rules rewrite back into `pushMap`, `pushMap` is an
-`irreducible_def`: unfolding it would loop.
+`irreducible_def`: unfolding it would loop. It is unfolded by `pushMap_eq_desc`, stated with
+`Opfib.olift` and `IsOpcartesian.desc`, on which no rule is keyed, to compute it in concrete
+opfibrations.
 
 Finally, an opcleavage transfers along an equivalence over `A` (`VertEquivalence.opfib`).
 
@@ -298,6 +300,16 @@ irreducible_def pushMap (f : a ⟶ a') {x y : D.Fiber a} (β : x ⟶ y) :
 theorem olift_pushMap (f : a ⟶ a') {x y : D.Fiber a} (β : x ⟶ y) :
     D.olift f x ≫ᵈ D.pushMap f β = β ≫ᵈ D.olift f y := by
   rw [pushMap_def]
+
+/-- `pushMap` unfolded, stated with `IsOpcartesian.desc` and `Opfib.olift`, on which no rule is
+keyed. Unlike `pushMap_def`, which the rules below turn into `pushMap f β = pushMap f β`, it can
+be used after them: it compares `pushMap` in two opfibrations whose factorizations agree, such as
+an opfibration and its reindexing. -/
+theorem pushMap_eq_desc (f : a ⟶ a') {x y : D.Fiber a} (β : x ⟶ y) :
+    D.pushMap f β =
+      (Opfib.isOpcartesianOlift f x).desc (𝟙 a') (D.comp (f := 𝟙 a) β (Opfib.olift f y)) := by
+  rw [pushMap_def]
+  rfl
 
 /-! The laws of `pushMap` and `opcartesianFactor` below are proved before the interchange rule
 `vert_olift` is declared: once it is a rule, `olift_pushMap` holds by `rfl` and can no longer be

@@ -4,15 +4,15 @@ import Displayed.Displayed.Total
 /-!
 # Unstraightening of a lax normal functor into `ProfCat`
 
-A lax normal (strictly unitary) functor `F : C ⥤ᴸ ProfCat` out of a category `C`, viewed as the
-locally discrete bicategory `LocallyDiscrete C`, unstraightens to a category `Unstraightening F`
-over `C`:
+A lax normal functor `F : StrictlyUnitaryLaxFunctor (LocallyDiscrete C) ProfCat` out of a category
+`C`, viewed as the locally discrete bicategory `LocallyDiscrete C`, unstraightens to a category
+`Unstraightening F` over `C`:
 
 * an object is a pair `(c, x)` of `c : C` and `x : F c`;
 * a morphism `(c, x) ⟶ (c', y)` is a pair `(f, u)` of `f : c ⟶ c'` and `u : F f x y`;
 * the identity of `(c, x)` is `(𝟙 c, 𝟙 x)`;
-* the composite of `(f, u)` and `(g, v)` is `(f ≫ g, μ [u, v])`, where `μ : F f ⊗ F g ⟶ F (f ≫ g)`
-  is the composition constraint of `F`.
+* the composite of `(f, u)` and `(g, v)` is `(f ≫ g, mul u v)`, where `mul` is the composition
+  constraint `F.mapComp f g` of `F` on elements.
 
 The rewrite rules below make the structure of `F` computational:
 
@@ -29,9 +29,9 @@ elements, with no `eqToHom` or `cast` anywhere. The projection `π : Unstraighte
 the second component, and `fiberInclusion c : F c ⥤ Unstraightening F` includes `F c` as the
 fibre over `c`.
 
-Finally, `unstraighten : VertFunctor DCat (cod Cat)` is `(▷ᵈ)*`: it sends `F : LaxNormal A` to the
+Finally, `unstraighten : VertFunctor DCat (cod Cat)` sends `F : LaxNormal A` to the
 projection `π : Unstraightening F ⥤ A`, and a transformation with representable components over
-`u` to the induced functor `(a, x) ↦ (u a, h x)`, `(f, s) ↦ (u f, map s)`. The square commutes,
+`u` to the induced functor `(a, x) ↦ (u a, obj x)`, `(f, s) ↦ (u f, map s)`. The square commutes,
 and the functor laws hold, by `rfl`.
 -/
 
@@ -109,11 +109,12 @@ end Unstraightening
 
 /-! ## Unstraightening -/
 
-/-- `(▷ᵈ)*` on objects: the projection of the unstraightening. -/
+/-- `unstraighten` on objects: the projection of the unstraightening. -/
 def unstraightenObj {A : Cat.{u, u}} (F : LaxNormal A) : (cod Cat.{u, u}).Ob A :=
   ⟨Cat.of (Unstraightening F), Unstraightening.π.toCatHom⟩
 
-/-- `(▷ᵈ)*` on morphisms: the functor induced by a transformation with representable components. -/
+/-- `unstraighten` on morphisms: the functor induced by a transformation with representable
+components. -/
 def unstraightenMap {A B : Cat.{u, u}} {u : A ⟶ B} {F : LaxNormal A} {G : LaxNormal B}
     (φ : ReprHom u F G) : Unstraightening F ⥤ Unstraightening G where
   obj X := ⟨u.toFunctor.obj X.base, φ.obj X.fiber⟩
@@ -121,12 +122,12 @@ def unstraightenMap {A B : Cat.{u, u}} {u : A ⟶ B} {F : LaxNormal A} {G : LaxN
   map_id _ := rfl
   map_comp _ _ := rfl
 
-/-- `(▷ᵈ)*` on morphisms, as a commuting square over `u`. -/
+/-- `unstraighten` on morphisms, as a commuting square over `u`. -/
 def unstraightenHom {A B : Cat.{u, u}} {u : A ⟶ B} {F : LaxNormal A} {G : LaxNormal B}
     (φ : ReprHom u F G) : unstraightenObj F ⟶[u] unstraightenObj G :=
   ⟨(unstraightenMap φ).toCatHom, rfl⟩
 
-/-- **The unstraightening functor `(▷ᵈ)* : DCat → Cat^→` over `Cat`.** -/
+/-- **The unstraightening functor `unstraighten : VertFunctor DCat (cod Cat)`.** -/
 def unstraighten : VertFunctor DCat.{u} (cod Cat.{u, u}) where
   obj F := unstraightenObj F
   map φ := unstraightenHom φ

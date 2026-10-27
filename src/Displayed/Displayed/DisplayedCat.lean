@@ -14,10 +14,11 @@ sending `D` to the projection `π : D.Total ⥤ A`:
 * It is fully faithful (`DisplayedCat.totalFullyFaithful`). A functor `Z ⥤ E.Total` over
   `v : Z ⥤ B` is given by its displayed components (`TotalLift`); those of a functor `W` with
   `W ⋙ π = v` are obtained by substituting this equation (`TotalLift.ofFunctor`). Over `D.π ⋙ u`,
-  such a lift is a displayed functor `D ⟶ E` over `u`.
-* It sends the reindexing `u^* E ⟶[u] E` (`DisplayedCat.clift`), given by identities, to a
-  cartesian morphism of `cod Cat` (`DisplayedCat.isCartesianTotalMapClift`): the total category of
-  `u^* E` is the pullback of `E.Total` along `u`.
+  such a lift is a displayed functor from `D` to `E` over `u`.
+* It sends the morphism `DisplayedCat.pull u E ⟶[u] E` (`DisplayedCat.clift`) out of the
+  reindexing, given by identities, to a cartesian morphism of `cod Cat`
+  (`DisplayedCat.isCartesianTotalMapClift`): the total category of `DisplayedCat.pull u E` is the
+  pullback of `E.Total` along `u`.
 -/
 
 universe v₁ u₁ v₂ u₂ v₃ u₃ u
@@ -157,7 +158,7 @@ section Pull
 
 variable {A B : Cat.{u, u}} (u : A ⟶ B) (E : Displayed.{u, u, u, u} B)
 
-/-- The reindexing `u^* E` of `E` along `u : A ⟶ B`: the objects of `E` over `u a`, and the
+/-- The reindexing `pull u E` of `E` along `u : A ⟶ B`: the objects of `E` over `u a`, and the
 morphisms of `E` over `u f`. -/
 def pull : Displayed.{u, u, u, u} A where
   Ob a := E.Ob (u.toFunctor.obj a)
@@ -168,7 +169,7 @@ def pull : Displayed.{u, u, u, u} A where
   comp_id _ := rfl
   assoc _ _ _ := rfl
 
-/-- The morphism `u^* E ⟶[u] E`, given by identities. -/
+/-- The morphism `pull u E ⟶[u] E`, given by identities. -/
 def clift : DispFunctor u.toFunctor (pull u E) E where
   obj x := x
   map φ := φ
@@ -177,28 +178,28 @@ def clift : DispFunctor u.toFunctor (pull u E) E where
 
 variable {u E} {Z : Type u₁} [Category.{v₁} Z]
 
-/-- A lift over `v ⋙ u` into `E` is a lift over `v` into `u^* E`. -/
+/-- A lift over `v ⋙ u` into `E` is a lift over `v` into `pull u E`. -/
 def _root_.Displayed.TotalLift.toPull {v : Z ⥤ A} (s : TotalLift (v ⋙ u.toFunctor) E) :
     TotalLift v (pull u E) :=
   ⟨s.obj, s.map, s.map_id, s.map_comp⟩
 
-/-- Followed by `(u^* E).Total ⥤ E.Total`, the functor of a lift over `v` into `u^* E` is that
+/-- Followed by `(pull u E).Total ⥤ E.Total`, the functor of a lift over `v` into `pull u E` is that
 of the same lift over `v ⋙ u` into `E`. -/
 theorem _root_.Displayed.TotalLift.toPull_functor_comp {v : Z ⥤ A}
     (s : TotalLift (v ⋙ u.toFunctor) E) : s.toPull.functor ⋙ (clift u E).total = s.functor :=
   Functor.hext (fun _ => rfl) fun _ _ _ => HEq.rfl
 
-/-- The lift into `u^* E` of a functor `Ψ` over `v`, read off its composite with
-`(u^* E).Total ⥤ E.Total`, is that of `Ψ`. -/
+/-- The lift into `pull u E` of a functor `Ψ` over `v`, read off its composite with
+`(pull u E).Total ⥤ E.Total`, is that of `Ψ`. -/
 theorem _root_.Displayed.TotalLift.toPull_ofFunctor {v : Z ⥤ A} (Ψ : Z ⥤ (pull u E).Total)
     (hΨ : Ψ ⋙ (pull u E).π = v) (h : (Ψ ⋙ (clift u E).total) ⋙ E.π = v ⋙ u.toFunctor) :
     (TotalLift.ofFunctor (Ψ ⋙ (clift u E).total) h).toPull = TotalLift.ofFunctor Ψ hΨ := by
   subst hΨ
   rfl
 
-/-- **Reindexing goes to pullbacks**: `(u^* E).Total` is the pullback of `E.Total` along `u`.
+/-- **Reindexing goes to pullbacks**: `(pull u E).Total` is the pullback of `E.Total` along `u`.
 The factorization of a functor `χ : Z ⥤ E.Total` over `r ⋙ g ⋙ u` has the same displayed
-components, read as a lift over `r ⋙ g` into `u^* E`. -/
+components, read as a lift over `r ⋙ g` into `pull u E`. -/
 def isCartesianTotalMapClift : IsCartesian (total.map (clift u E)) where
   lift g z χ := ⟨(TotalLift.ofFunctor χ.1.toFunctor
     (show χ.1.toFunctor ⋙ E.π = (z.hom.toFunctor ⋙ g.toFunctor) ⋙ u.toFunctor from

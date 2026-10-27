@@ -17,5 +17,5 @@ The files are:
   like the (op)fibrations of `Displayed/`.
 * `Category`: the category `D2SFibCat B` of split D2SFibs, whose morphisms preserve the chosen
   lifts.
-* `Straightening/`: the equivalence `∫(Bᵈᵒ) ⥤ Cat ≌ D2SFibCat B`.
+* `Straightening/`: the equivalence `(Bᵒᵖ.Total ⥤ Cat) ≌ D2SFibCat B`.
 -/

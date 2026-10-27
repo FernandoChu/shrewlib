@@ -5,34 +5,35 @@ import Rules.Functor
 import Displayed.Fibration.Basic
 
 /-!
-# The category of displayed categories, `DCat = Cat ▷⁻ [−, Cat_Prof]^{lax,normal}`
+# The category of displayed categories, `DCat`
 
-A lax normal (strictly unitary) functor `F : LocallyDiscrete C ⥤ᴸ ProfCat` gives, for each
-`f : c ⟶ c'`, a profunctor `prof F f : F c ⇸ F c'`, and its composition constraint acts on
-elements as `mul : prof F f x y → prof F g y z → prof F (f ≫ g) x z`. With the rules of
-`Rules.Bicategory`, `prof F (𝟙 c) x y` is `x ⟶ y` on the nose, and `mul` satisfies the unit and
-associativity laws (`id_mul`, `mul_id`, `mul_assoc`) and restricts to composition on the fibers
+A lax normal functor `F : StrictlyUnitaryLaxFunctor (LocallyDiscrete C) ProfCat` gives, for each
+`f : c ⟶ c'`, a profunctor `prof F f : F.obj ⟨c⟩ ⇸ F.obj ⟨c'⟩`, and its composition
+constraint acts on elements as `mul : prof F f x y → prof F g y z → prof F (f ≫ g) x z`. With the
+rules of `Rules.Bicategory`, `prof F (𝟙 c) x y` is `x ⟶ y` on the nose, and `mul` satisfies the unit
+and associativity laws (`id_mul`, `mul_id`, `mul_assoc`) and restricts to composition on the fibers
 (`mul_eq_comp`).
 
 Over a small category `A`, the objects of `DCat` are the lax normal functors
-`F : LocallyDiscrete A ⥤ᴸ ProfCat` (`LaxNormal A`). A morphism over `u : A ⟶ B` from `F` to
-`G : LaxNormal B` is a lax transformation `F ⇒ G ∘ u` whose components are representable
-profunctors `(h_a)_*`. By Yoneda, such a transformation amounts to (`ReprHom`)
+`F : StrictlyUnitaryLaxFunctor (LocallyDiscrete A) ProfCat` (`LaxNormal A`). A morphism over
+`u : A ⟶ B` from `F` to `G : LaxNormal B` is a lax transformation from `F` to `G` restricted along
+`u`, whose components are the representable profunctors of functors
+`F.obj ⟨a⟩ ⥤ G.obj ⟨u a⟩`. By Yoneda, such a transformation amounts to (`ReprHom`)
 
-* functors `h_a : F a ⥤ G (u a)`, recorded by their action `obj` on objects, and
-* maps `map : F f x y → G (u f) (h x) (h y)` (the 2-cells `F f ⊗ (h_{a'})_* ⟶ (h_a)_* ⊗ G (u f)`
+* the component functors, recorded by their action `obj` on objects, and
+* maps `map : prof F f x y → prof G (u f) (obj x) (obj y)` (the 2-cells of the transformation,
   evaluated at identities),
 
-such that `map` preserves the units (`map_id`: by normality `F (𝟙 a) x y` is `x ⟶ y`, so this is
-also the action of `h_a` on morphisms) and the composition constraints (`map_mul`). Naturality of
-`map` in `x` and `y` follows from `map_mul`, since the actions of `F (𝟙 a)` on `F f` are
-instances of the composition constraint.
+such that `map` preserves the units (`map_id`: by normality `prof F (𝟙 a) x y` is `x ⟶ y`, so
+this is also the action of the component functors on morphisms) and the composition constraints
+(`map_mul`). Naturality of `map` in `x` and `y` follows from `map_mul`, since the actions of
+`prof F (𝟙 a)` on `prof F f` are instances of the composition constraint.
 
 `DCat` is a category displayed over `Cat`, with laws holding by `rfl` (`map_id` and `map_mul` are
 rewrite rules). Mathlib's `Functor.map_id` and `Functor.map_comp` are rules too, so the pullback
-`u^* G` of `G` along `u` (`pullback`) satisfies `(v ⋙ u)^* G ≡ v^* (u^* G)`. The morphism
-`u^* G ⟶[u] G` given by identities is cartesian, and these lifts make `DCat` a split fibration
-(a `SplitFib` instance).
+`pullback u G` of `G` along `u` satisfies `pullback (v ⋙ u) G = pullback v (pullback u G)` by
+`rfl`. The morphism `pullback u G ⟶[u] G` given by identities is cartesian, and these lifts make
+`DCat` a split fibration (a `SplitFib` instance).
 -/
 
 universe v₁ u₁ u
@@ -54,16 +55,16 @@ section LaxNormal
 variable {C : Type u₁} [Category.{v₁} C]
   {F : StrictlyUnitaryLaxFunctor (LocallyDiscrete C) ProfCat.{u}}
 
-/-- The profunctor `F f : F c ⇸ F c'`. -/
+/-- The profunctor `F.map f : F.obj ⟨c⟩ ⇸ F.obj ⟨c'⟩`. -/
 abbrev prof (F : StrictlyUnitaryLaxFunctor (LocallyDiscrete C) ProfCat.{u}) {c c' : C}
-    (f : c ⟶ c') : Profunctor (F.obj ⟨c⟩) (F.obj ⟨c'⟩) :=
+    (f : c ⟶ c') : F.obj ⟨c⟩ ⇸ F.obj ⟨c'⟩ :=
   F.map f.toLoc
 
-/-- Normality: the elements of `F (𝟙 c)` are the morphisms of `F c`, definitionally. -/
+/-- Normality: the elements of `prof F (𝟙 c)` are the morphisms of `F.obj ⟨c⟩`, definitionally. -/
 theorem prof_id_obj (c : C) (x y : F.obj ⟨c⟩) : (prof F (𝟙 c)).obj x y = (x ⟶ y) :=
   rfl
 
-/-- The composition constraint of `F`, `μ : F f ⊗ F g ⟶ F (f ≫ g)`, on the class of `(u, v)`. -/
+/-- The composition constraint `F.mapComp f g` of `F`, on the class of `(u, v)`. -/
 abbrev mul {c c' c'' : C} {f : c ⟶ c'} {g : c' ⟶ c''} {x : F.obj ⟨c⟩} {y : F.obj ⟨c'⟩}
     {z : F.obj ⟨c''⟩} (u : (prof F f).obj x y) (v : (prof F g).obj y z) :
     (prof F (f ≫ g)).obj x z :=
@@ -107,9 +108,10 @@ end LaxNormal
 
 /-! ## Morphisms with representable components -/
 
-/-- A lax transformation `F ⇒ G ∘ u` with representable components, as a map of elements. -/
+/-- A lax transformation from `F` to `G` restricted along `u`, with representable components, as
+a map of elements. -/
 structure ReprHom {A B : Cat.{u, u}} (u : A ⟶ B) (F : LaxNormal A) (G : LaxNormal B) where
-  /-- The components `h_a : F a ⥤ G (u a)` on objects. -/
+  /-- The component functors `F.obj ⟨a⟩ ⥤ G.obj ⟨u a⟩`, on objects. -/
   obj : {a : A} → F.obj ⟨a⟩ → G.obj ⟨u.toFunctor.obj a⟩
   /-- The 2-cells, on elements. -/
   map : {a a' : A} → {f : a ⟶ a'} → {x : F.obj ⟨a⟩} → {y : F.obj ⟨a'⟩} →
@@ -157,7 +159,7 @@ def DCat : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
 
 /-! ## Pullbacks and the fibration property -/
 
-/-- The pullback `u^* G` of a lax normal functor along `u : A ⟶ B`. -/
+/-- The pullback of a lax normal functor along `u : A ⟶ B`. -/
 def pullback {A B : Cat.{u, u}} (u : A ⟶ B) (G : LaxNormal B) : LaxNormal A where
   obj a := G.obj ⟨u.toFunctor.obj a.as⟩
   map f := G.map (u.toFunctor.map f.as).toLoc
@@ -183,7 +185,7 @@ def pullback {A B : Cat.{u, u}} (u : A ⟶ B) (G : LaxNormal B) : LaxNormal A wh
   map_id _ := rfl
   mapId_eq_eqToHom _ := rfl
 
-/-- The cartesian lift of `G` along `u`: identities `u^* G ⟶[u] G`. -/
+/-- The cartesian lift of `G` along `u`: identities `pullback u G ⟶[u] G`. -/
 def pullbackLift {A B : Cat.{u, u}} (u : A ⟶ B) (G : LaxNormal B) :
     DCat.Hom u (pullback u G) G where
   obj x := x
