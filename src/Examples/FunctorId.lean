@@ -35,6 +35,6 @@ theorem map_id_apply' {A : Type u} [Category.{v} A] (F : A ⥤ Type w) (a : A) (
 #guard_msgs in
 #print axioms map_id_apply'
 
-/-- info: 'CategoryTheory.FunctorToTypes.map_id_apply' depends on axioms: [propext, Quot.sound] -/
+/-- info: 'CategoryTheory.Functor.map_id_apply' depends on axioms: [propext, Quot.sound] -/
 #guard_msgs in
-#print axioms FunctorToTypes.map_id_apply
+#print axioms Functor.map_id_apply

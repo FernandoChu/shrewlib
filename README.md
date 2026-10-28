@@ -2,8 +2,8 @@
 
 Experiments with user-declared rewrite rules in Lean 4, in the style of Agda's
 `{-# REWRITE #-}` pragma ([Cockx, Tabareau, Winterhalter, *The Taming of the Rew*, POPL 2021]).
-They need a patched Lean, on the branch `rewrite-rules-v4.35.0-rc2` of the fork in
-`../lean4-v4.35.0-rc2`, built and linked in elan as the toolchain `rewrite-rc2`.
+They need a patched Lean, on the branch `local-rewrite-rules-v4.36.0-rc2` of the fork in
+`../lean4-v4.36.0-rc2`, built and linked in elan as the toolchain `rewrite-v4.36.0-rc2`.
 
 ## Usage
 
@@ -173,7 +173,7 @@ files, (op)cartesian morphisms (in `Displayed/{Opfibration,Fibration}/Basic` and
   category model, with Σ-types, and the codomain model.
 - `DoubleDisplayed/`: categories doubly displayed over a displayed category, and dependent 2-sided
   fibrations with their straightening.
-- `mathlib4/`: Mathlib master, pinned to `v4.35.0-rc2`, used as a path dependency.
+- `mathlib4/`: Mathlib, checked out at its `v4.36.0-rc2` tag, used as a path dependency.
 
 ## Building
 
