@@ -29,10 +29,10 @@ From a `Fib` (or a (pre-)split one, where noted) we derive, all as rewrite rules
 Finally, a cleavage transfers along an equivalence over `A` (`VertEquivalence.fib`).
 
 As for `pushMap`, `pullMap` is an `irreducible_def`, since the rules rewrite its definition back
-into it. Composites are normalized to be right-associated, so the `_assoc` forms of the rules are
-not literally dual to those of `Opfibration/Basic.lean`: here the rules must also see `clift f y`
-followed by further morphisms, as in `cartesianFactor φ ≫ᵈ (clift f y ≫ᵈ χ)` and
-`clift f x ≫ᵈ (β ≫ᵈ χ)`.
+into it, and it is unfolded by `pullMap_eq_lift`. Composites are normalized to be
+right-associated, so the `_assoc` forms of the rules are not literally dual to those of
+`Opfibration/Basic.lean`: here the rules must also see `clift f y` followed by further morphisms,
+as in `cartesianFactor φ ≫ᵈ (clift f y ≫ᵈ χ)` and `clift f x ≫ᵈ (β ≫ᵈ χ)`.
 -/
 
 universe v₁ u₁ v₂ u₂ v₃ u₃
@@ -251,6 +251,15 @@ theorem cartesianFactor_clift (f : a ⟶ a') (y : D.Ob a') :
     D.cartesianFactor (D.clift f y) = 𝟙ᵈ (D.pull f y) :=
   (D.cartesianFactor_uniq (D.clift f y) (𝟙ᵈ _) rfl).symm
 
+/-- The factorizations of heterogeneously equal morphisms over equal base morphisms are
+heterogeneously equal. -/
+theorem cartesianFactor_heq {f f' : a ⟶ a'} (h : f = f') {x : D.Ob a} {y : D.Ob a'}
+    {φ : x ⟶[f] y} {φ' : x ⟶[f'] y} (hφ : φ ≍ φ') :
+    D.cartesianFactor φ ≍ D.cartesianFactor φ' := by
+  subst h
+  cases hφ
+  rfl
+
 /-- The hom-set bijection defining a fibration: `(x ⟶[f] y) ≃ (x ⟶ pull f y)`. -/
 def cartesianHomEquiv (f : a ⟶ a') (x : D.Ob a) (y : D.Ob a') :
     (x ⟶[f] y) ≃ (x ⟶[𝟙 a] (D.pull f y)) where
@@ -287,6 +296,15 @@ irreducible_def pullMap (f : a ⟶ a') {x y : D.Fiber a'} (β : x ⟶ y) :
 theorem pullMap_clift (f : a ⟶ a') {x y : D.Fiber a'} (β : x ⟶ y) :
     D.pullMap f β ≫ᵈ D.clift f y = D.clift f x ≫ᵈ β := by
   rw [pullMap_def]
+
+/-- `pullMap` unfolded, stated with `IsCartesian.lift` and `Fib.clift`, on which no rule is keyed.
+Unlike `pullMap_def`, which the rules below turn into `pullMap f β = pullMap f β`, it can be used
+after them: it compares `pullMap` in two fibrations whose factorizations agree. -/
+theorem pullMap_eq_lift (f : a ⟶ a') {x y : D.Fiber a'} (β : x ⟶ y) :
+    D.pullMap f β =
+      (Fib.isCartesianClift f y).lift (𝟙 a) (D.comp (g := 𝟙 a') (Fib.clift f x) β) := by
+  rw [pullMap_def]
+  rfl
 
 /-! The laws of `pullMap` and `cartesianFactor` below are proved before the interchange rule
 `clift_vert` is declared: once it is a rule, `pullMap_clift` holds by `rfl` and can no longer be

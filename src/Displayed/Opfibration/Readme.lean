@@ -16,7 +16,7 @@ import Displayed.Opfibration.Straightening.Readme
 * `Straightening/`: functors `A ⥤ Cat` and their unstraightenings, an equivalence with the split
   opfibrations over `Cat` (see its `Readme.lean`).
 
-`Fibration/` is the exact dual, except for `Sigma`.
+`Fibration/` is the exact dual.
 -/
 
 universe v₁ u₁ v₂ u₂ v₃ u₃

@@ -12,12 +12,11 @@ opfibration `D` over `A` is isomorphic over `A` to the unstraightening of its st
 straightening on objects, and on morphisms the preimage under the unstraightening of the
 conjugate by the counit.
 
-The objects of `unstraightenObj (straightenObj D)` over `a` are those of `D`, and its morphisms
-`x ⟶[f] y` are the vertical morphisms `push f x ⟶ y`. The counit
-`unstraightenObj (straightenObj D) ⟶ D` is the identity on objects and sends
-`φ : push f x ⟶ y` to `olift f x ≫ φ`; its inverse sends `χ : x ⟶[f] y` to its opcartesian
-factorization. The two composites are identities by `rfl`: a morphism is its chosen lift followed
-by its factorization, and the factorization of `olift f x ≫ φ` is `φ`.
+The objects of `∫ (straightenObj D)` over `a` are those of `D`, and its morphisms `x ⟶[f] y` are
+the vertical morphisms `push f x ⟶ y`. The counit `∫ (straightenObj D) ⟶ D` is the identity on
+objects and sends `φ : push f x ⟶ y` to `olift f x ≫ φ`; its inverse sends `χ : x ⟶[f] y` to its
+opcartesian factorization. The two composites are identities by `rfl`: a morphism is its chosen
+lift followed by its factorization, and the factorization of `olift f x ≫ φ` is `φ`.
 -/
 
 universe u

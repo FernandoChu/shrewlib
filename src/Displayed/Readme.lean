@@ -15,6 +15,7 @@ folder has a `Readme.lean`.
   compose;
   `Straightening/` is the equivalence over `Cat` between functors `A ⥤ Cat` and split
   opfibrations.
-* `Fibration/`: cartesian morphisms and cloven, pre-split and split fibrations, the dual of
-  `Opfibration/`.
+* `Fibration/`: cartesian morphisms and cloven, pre-split and split fibrations, which compose;
+  `Straightening/` is the equivalence over `Cat` between functors `Aᵒᵖ ⥤ Cat` and split fibrations.
+  It is the dual of `Opfibration/`.
 -/
