@@ -170,7 +170,7 @@ def straightenMap {B : Cat.{u, u}} {u : A ⟶ B} {Y : (cod Cat.{u, u}).Ob B} (w 
 
 end Straighten
 
-/-- **The straightening functor `Cat^→ → DCat` over `Cat`.** -/
+/-- **The straightening functor `straighten : VertFunctor (cod Cat) DCat`.** -/
 def straighten : VertFunctor (cod Cat.{u, u}) DCat.{u} where
   obj X := straightenObj X
   map w := straightenMap w

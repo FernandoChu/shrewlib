@@ -1,3 +1,4 @@
+import Displayed.Displayed.Functor
 import Displayed.Fibration.Basic
 import Mathlib.CategoryTheory.LocallyCartesianClosed.ChosenPullbacksAlong
 
@@ -8,7 +9,7 @@ The arrow category of `C`, displayed over `C` by the codomain: an object over `a
 `p : X ⟶ a`, and a morphism over `f : a ⟶ a'` from `p : X ⟶ a` to `q : Y ⟶ a'` is a morphism
 `h : X ⟶ Y` with `h ≫ q = p ≫ f`. The laws hold by `rfl`, since the category laws of `C` are rules
 and the equation is a proposition. For `C = Cat` it is the arrow
-category `Cat^→` of `Displayed/Displayed/Straightening`.
+category of `Cat` used in `Displayed/Displayed/Straightening`.
 
 We show that the cartesian morphisms are the pullback squares: the square of a cartesian morphism
 is a limit (`isLimitOfIsCartesian`), and a morphism whose square is a limit is cartesian
@@ -16,9 +17,11 @@ is a limit (`isLimitOfIsCartesian`), and a morphism whose square is a limit is c
 `IsPullback`, a `Prop`, from which the lifts could only be chosen. So if `C` has chosen pullbacks
 (Mathlib's `ChosenPullbacks C`, whose limit cones are computable), `cod C` is a fibration
 (`cod.fib`).
+
+A functor `F : C ⥤ C'` acts on the codomain displayed categories (`codMap F`), by `F.map`.
 -/
 
-universe v u
+universe v u v₂ u₂
 
 open CategoryTheory Limits
 
@@ -119,5 +122,17 @@ instance fib [ChosenPullbacks C] : Fib (cod C) where
   isCartesianClift f y := isCartesianOfIsLimit (ChosenPullbacksAlong.isLimitPullbackCone y.hom f)
 
 end cod
+
+/-! ## Functoriality -/
+
+variable {C' : Type u₂} [Category.{v₂} C']
+
+/-- The action of a functor `F : C ⥤ C'` on the codomain displayed categories, sending `p : X ⟶ a`
+to `F.map p`, and a square to its image. -/
+def codMap (F : C ⥤ C') : DispFunctor F (cod C) (cod C') where
+  obj x := ⟨F.obj x.dom, F.map x.hom⟩
+  map φ := ⟨F.map φ.1, (congrArg F.map (cod.w φ) :)⟩
+  map_id _ := rfl
+  map_comp _ _ := rfl
 
 end Displayed

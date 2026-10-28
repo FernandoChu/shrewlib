@@ -1,4 +1,5 @@
 import ComprehensionCategory.Basic
+import ComprehensionCategory.Map
 import ComprehensionCategory.TypeFormers.Sigma
 import ComprehensionCategory.Model.Cat.Readme
 import ComprehensionCategory.Model.Codomain.Readme
@@ -11,6 +12,8 @@ Comprehension categories as displayed categories, their type formers, and models
 * `Basic`: comprehension categories (`Comprehension D` on a fibration `[Fib D]`,
   `FullComprehension`, `SplitComprehension`), context extension, and the notation
   `D.Ty Γ`, `Γ ▹ A`, `A⦃σ⦄`, `𝐩 A`, `𝐪(σ, A)`.
+* `Map`: maps of comprehension categories over a functor of the bases, with a comparison
+  `F.obj (Γ ▹ A) ⟶ F.obj Γ ▹ M.obj A`, and their pseudo and strict versions.
 * `TypeFormers/`: what it means to have a (strict) type former.
   * `Sigma`: Σ-types `Σ[A] B`, with `Γ ▹ A ▹ B ≅ Γ ▹ Σ[A] B`.
 * `Model/`: comprehension categories, one folder each, with a `Readme.lean`. Their

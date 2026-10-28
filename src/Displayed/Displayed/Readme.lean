@@ -22,7 +22,8 @@ import Displayed.Displayed.Straightening.Readme
   transformations and equivalences of total categories.
 * `Sigma`: the composite `D.sigmaDisp E` over `A` of `D` over `A` and `E` over `D.Total`, whose
   total category is that of `E`, up to reassociation.
-* `Codomain`: the codomain displayed category `cod C`.
+* `Codomain`: the codomain displayed category `cod C`, and the action `codMap F` of a functor on
+  it.
 * `Straightening/`: straightening–unstraightening for displayed categories.
 -/
 

@@ -4,12 +4,11 @@ import Displayed.Displayed.Codomain
 # Comprehension categories
 
 A comprehension category over `C` (Jacobs, *Comprehension categories and the semantics of type
-dependency*; here in the displayed form of Ahrens, Lumsdaine and North, *Comprehension categories*)
-is a fibration `D` over `C`, whose objects over `Γ` are thought of as types in context `Γ`,
-with a vertical functor `compr : D ⟶ cod C` to the codomain displayed category that preserves
-cartesian morphisms. It sends a type `A` over `Γ` to a morphism `𝐩 A : Γ ▹ A ⟶ Γ`, the
-projection out of the extended context, and the chosen lift of `σ : Δ ⟶ Γ` at `A` to the pullback
-square
+dependency*), here in displayed form, is a fibration `D` over `C`, whose objects over `Γ` are
+thought of as types in context `Γ`, with a vertical functor `compr : D ⟶ cod C` to the codomain
+displayed category that preserves cartesian morphisms. It sends a type `A` over `Γ` to a morphism
+`𝐩 A : Γ ▹ A ⟶ Γ`, the projection out of the extended context, and the chosen lift of
+`σ : Δ ⟶ Γ` at `A` to the pullback square
 
 ```
   Δ ▹ A⦃σ⦄ --𝐪(σ, A)--> Γ ▹ A
