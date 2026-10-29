@@ -1,4 +1,4 @@
-import Displayed.Displayed.Straightening.Equivalence
+import Displayed.Straightening.Equivalence
 
 /-!
 # Straightening for displayed categories

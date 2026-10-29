@@ -1,4 +1,4 @@
-import Displayed.Displayed.Codomain
+import Displayed.Fibration.Codomain
 
 /-!
 # Comprehension categories

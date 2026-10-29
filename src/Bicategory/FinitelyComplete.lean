@@ -1,7 +1,6 @@
 import Bicategory.Comma
 import Bicategory.Spans
-import Mathlib.CategoryTheory.Bicategory.End
-import Mathlib.CategoryTheory.Monoidal.Mon
+import Bicategory.Monad
 
 /-!
 # Finitely complete 2-categories
@@ -32,18 +31,6 @@ open CategoryTheory Bicategory
 universe w v u
 
 namespace CategoryTheory
-
-/-! ## Monads in a bicategory -/
-
-namespace Bicategory
-
-/-- A monad in a bicategory `B` is a 1-morphism `t : a ⟶ a` together with 2-morphisms
-`η : 𝟙 a ⟶ t` and `μ : t ≫ t ⟶ t` satisfying the monad laws: a monoid object in the monoidal
-category `a ⟶ a`, dually to Mathlib's `Bicategory.Comonad`. -/
-abbrev Monad {B : Type u} [Bicategory.{w, v} B] {a : B} (t : a ⟶ a) :=
-  MonObj t
-
-end Bicategory
 
 namespace TwoCategory
 

@@ -112,7 +112,9 @@ files, (op)cartesian morphisms (in `Displayed/{Opfibration,Fibration}/Basic` and
 
 - `Rules/`: rules on Mathlib's lemmas: the category and functor laws, locally discrete
   bicategories, pullback cones and strict pseudofunctors.
-- `Tactic/`: `kernel_exact` and `kernel_rfl'`, which check definitional equalities in the kernel.
+- `Tactic/`: `kernel_exact`, `kernel_rfl'` and `kernel_rfl`, which check definitional equalities in
+  the kernel. `kernel_rfl` first makes the implicit arguments of whiskerings canonical and, if
+  needed, goes through weak head normal forms.
 - `Examples/`: small examples of the rules.
 - `Profunctor.lean`: profunctors as a structure with actions `lmap`/`rmap`; composition as a
   coend quotient; the bicategory `ProfCat`. The action laws and the naturality of 2-cells are
@@ -122,8 +124,8 @@ files, (op)cartesian morphisms (in `Displayed/{Opfibration,Fibration}/Basic` and
   right-associated without identities, unitors and associators are `Iso.refl`, and whiskering is
   functorial, unital and associative, so the coherence laws hold by `rfl`. (Rules can't be stated
   for `[Bicategory B] [Bicategory.Strict B]`, since the `Strict` instance would not occur in their
-  left-hand sides.) It also has `kernel_rfl`, which checks `rfl` in the kernel, after making the
-  implicit arguments of whiskerings canonical and, if needed, going through weak head normal forms.
+  left-hand sides.) `Cat` is a 2-category (`Cat.twoCategory`).
+  - `StrictPseudofunctor`: the whiskered forms of the laws of strict pseudofunctors, as rules.
   - `Pullback`: 2-pullbacks `IsPullback`, Mathlib's limit pullback cones `IsLimit t` in the
     underlying category with the 2-dimensional universal property, and `HasPullbacks`, the same
     for Mathlib's chosen pullbacks. The equations of Mathlib's pullback cones and induced 1-cells
@@ -134,6 +136,7 @@ files, (op)cartesian morphisms (in `Displayed/{Opfibration,Fibration}/Basic` and
     The induced 1-cells compute by rules. Comma objects are unique up to isomorphism of apexes,
     pasting a pullback on their left gives a comma object (`IsComma.pasteLeft`), and in the
     2-category `Cat`, `Comma L R` is a comma object, with the universal property by `rfl`.
+    `comma_ext` and `comma_ext₂` apply extensionality into chosen comma objects.
   - `Arrow`: the arrow 2-category `Arr B`, whose 1-cells are commutative squares and whose 2-cells
     are pairs of 2-cells `(α, β)` with `α ▷ g = f ◁ β`. The equations of squares and of their
     2-cells are rules, so the latter needs no transport, and the laws hold by `rfl`.
@@ -142,10 +145,13 @@ files, (op)cartesian morphisms (in `Displayed/{Opfibration,Fibration}/Basic` and
     `StrictPseudofunctor`). Squares and their 2-cells act on `f/B` by the 1- and 2-dimensional
     universal property of comma objects, and the functor laws of these actions are rules, so the
     laws of `L` and `R` hold by `rfl` (checked by `kernel_rfl`).
-  - `Monad`: strict 2-monads and 2-comonads on a 2-category, whose (co)unit and (co)multiplication
-    are 2-natural; their 1-dimensional naturality is a rule, so the 2-dimensional one needs no
-    transport. Their strict (co)algebras form 2-categories `Alg M` and `Coalg M`, whose laws hold
-    by `rfl`. The laws of Mathlib's strict pseudofunctors are rules (`Rules/StrictPseudofunctor`).
+  - `Monad`: monads in a bicategory (`Bicategory.Monad`, as monoids in `a ⟶ a`, dually to
+    Mathlib's comonads).
+  - `TwoMonad`: strict 2-monads and 2-comonads on a 2-category, whose (co)unit and
+    (co)multiplication are 2-natural; their 1-dimensional naturality is a rule, so the
+    2-dimensional one needs no transport. Their strict (co)algebras form 2-categories `Alg M` and
+    `Coalg M`, whose laws hold by `rfl`. The unit laws of 2-monads are rules from the end of the
+    file on.
   - `AlgebraicFactorization`: `R` is a 2-monad (`rMonad`, with unit `(Lf, 𝟙)` and multiplication
     `(π_f, 𝟙)`, composing the universal 2-cells of `f/B` and `Rf/B`) and `L` a 2-comonad
     (`lComonad`, with counit `(𝟙, Rf)` and comultiplication `(𝟙, σ_f)`, induced by a 2-cell from
@@ -160,15 +166,13 @@ files, (op)cartesian morphisms (in `Displayed/{Opfibration,Fibration}/Basic` and
     associator, and the matcher of rules does not see through the instances of Mathlib's category
     of spans, so their composites do not compute.
   - `FinitelyComplete`: finitely complete 2-categories (Mathlib's terminal object and pullbacks,
-    with the 2-dimensional universal property, and comma objects), monads in a bicategory
-    (`Bicategory.Monad`, as monoids in `a ⟶ a`, dually to Mathlib's comonads), and the arrow
-    object `comma (𝟙 a) (𝟙 a)` as a monad in `Spans B`: an internal category. Its laws hold by the
+    with the 2-dimensional universal property, and comma objects), and the arrow object `comma (𝟙 a) (𝟙 a)` as a monad in `Spans B`: an internal category. Its laws hold by the
     universal property of the comma object and `kernel_rfl`.
 - `DoubleCategory/`: pseudo double categories, and the horizontal bicategory of globular squares.
-- `Displayed/`: categories displayed over a category, in three folders, each with a
-  `Straightening/` subfolder: `Displayed/` (displayed categories in general, and their
-  straightening), `Opfibration/` (including the unstraightening of functors `A ⥤ Cat`)
-  and `Fibration/`.
+- `Displayed/`: categories displayed over a category, in four folders: `Displayed/` (displayed
+  categories in general), `Opfibration/` (including the unstraightening of functors `A ⥤ Cat`),
+  `Fibration/` (including the codomain fibration), and `Straightening/`
+  (straightening–unstraightening for displayed categories, `DCat ≃ cod Cat`).
 - `ComprehensionCategory/`: comprehension categories, their type formers, and models: the
   category model, with Σ-types, and the codomain model.
 - `DoubleDisplayed/`: categories doubly displayed over a displayed category, and dependent 2-sided

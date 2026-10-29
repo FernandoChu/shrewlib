@@ -1,4 +1,4 @@
-import Displayed.Displayed.Straightening.DCat
+import Displayed.Straightening.DCat
 import Displayed.Displayed.Total
 
 /-!

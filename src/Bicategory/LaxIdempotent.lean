@@ -1,4 +1,4 @@
-import Bicategory.Monad
+import Bicategory.TwoMonad
 import Bicategory.Adjunction
 
 /-!
@@ -11,7 +11,7 @@ with a modification `δ : Tη ⟶ ηT`, that is 2-cells `δ x : T η_x ⟶ η_{T
 ```
 Equivalently, `μ_x ⊣ η_{T x}` with identity counit and unit `δ x`, see Kelly–Lack, *On
 property-like structures*. The types of these equations agree by the unit laws of `M` and the
-naturality of `η`, which are rules here.
+naturality of `η`, which are rules (`TwoMonad`).
 
 The point of lax idempotence is that algebra structures are adjoint to units. Call a *retraction*
 of `η_x` a 1-cell `a : T x ⟶ x` with `η_x ≫ a = 𝟙` (the unit law of an algebra), and *split* if
@@ -34,35 +34,6 @@ universe w v u
 namespace CategoryTheory.TwoCategory
 
 variable {C : Type u} [TwoCategory.{w, v} C]
-
-/-! ## The unit laws as rules -/
-
-namespace PreTwoMonad
-
-variable (M : PreTwoMonad C)
-
-attribute [rewrite_rule] PreTwoMonad.unit_left PreTwoMonad.unit_right
-
-@[rewrite_rule]
-theorem unit_left_assoc {x z : C} (k : M.T.obj x ⟶ z) : M.η (M.T.obj x) ≫ M.μ x ≫ k = k :=
-  congrArg (· ≫ k) (M.unit_left x)
-
-@[rewrite_rule]
-theorem unit_right_assoc {x z : C} (k : M.T.obj x ⟶ z) : M.T.map (M.η x) ≫ M.μ x ≫ k = k :=
-  congrArg (· ≫ k) (M.unit_right x)
-
-/-- The naturality of `η`, mapped by `T`: the two normal forms of `T (η x ≫ T m)` agree. -/
-@[rewrite_rule]
-theorem map_η_naturality {x y : C} (m : x ⟶ y) :
-    M.T.map (M.η x) ≫ M.T.map (M.T.map m) = M.T.map m ≫ M.T.map (M.η y) := by
-  kernel_exact congrArg M.T.map (M.η_naturality m)
-
-@[rewrite_rule]
-theorem map_η_naturality_assoc {x y z : C} (m : x ⟶ y) (k : M.T.obj (M.T.obj y) ⟶ z) :
-    M.T.map (M.η x) ≫ M.T.map (M.T.map m) ≫ k = M.T.map m ≫ M.T.map (M.η y) ≫ k :=
-  congrArg (· ≫ k) (M.map_η_naturality m)
-
-end PreTwoMonad
 
 namespace TwoMonad
 

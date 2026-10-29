@@ -61,12 +61,6 @@ instance sigmaOpfib : Opfib (D.sigmaDisp E) where
 
 end Opfib
 
-/-! The chosen lifts of a split `D` in `D.Total` are split, as rules: the rules for `E` are keyed
-on the identities and composites of `D.Total`, which `totalOlift (𝟙 a) x` and
-`totalOlift (f ≫ g) x` are only up to unfolding. -/
-
-attribute [rewrite_rule] totalOlift_id totalOlift_comp
-
 /-- The composite of a split opfibration and a pre-split one is pre-split. The pushforward along
 `f ≫ g` in `E` is along `olift (f ≫ g) x`, so `D` needs to be split. -/
 @[instance_reducible]

@@ -430,8 +430,14 @@ section TotalSplit
 
 variable (D : Displayed.{v₁, u₁, v₂, u₂} A) [SplitFib D] {a a' a'' : A}
 
+/-! The chosen lifts of a split `D` in `D.Total` are split, as rules: rules keyed on the
+identities and composites of `D.Total` then apply to `totalClift (𝟙 a) y` and
+`totalClift (f ≫ g) y`, which are these only up to unfolding. -/
+
+@[rewrite_rule]
 theorem totalClift_id (y : D.Ob a) : D.totalClift (𝟙 a) y = 𝟙 (D.tot y) := rfl
 
+@[rewrite_rule]
 theorem totalClift_comp (f : a ⟶ a') (g : a' ⟶ a'') (y : D.Ob a'') :
     D.totalClift (f ≫ g) y = D.totalClift f (D.pull g y) ≫ D.totalClift g y := rfl
 

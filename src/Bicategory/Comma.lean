@@ -397,14 +397,42 @@ class HasCommas where
   /-- The chosen comma cone is a comma object. -/
   isComma {a b c : B} (f : a ⟶ c) (g : b ⟶ c) : IsComma (commaCone f g)
 
+/-! ## Extensionality for chosen comma objects -/
+
+open Lean Meta Elab Tactic in
+/-- Applies `IsComma.ext` to an equation of 1-cells into a chosen comma object `comma f g`,
+reading `f` and `g` off the goal. -/
+elab "comma_ext" : tactic => withMainContext do
+  let some (ty, _, _) := (← whnfR (← getMainTarget)).eq? |
+    throwError "comma_ext: the goal is not an equation"
+  let some P ← whnfUntil ty.appArg! ``HasCommas.comma |
+    throwError "comma_ext: not a 1-cell into a chosen comma object"
+  let f ← Term.exprToSyntax (P.getArg! (P.getAppNumArgs - 2))
+  let g ← Term.exprToSyntax (P.getArg! (P.getAppNumArgs - 1))
+  evalTactic (← `(tactic| refine (HasCommas.isComma $f $g).ext ?_))
+
+open Lean Meta Elab Tactic in
+/-- Applies `IsComma.hom_ext` to an equation of 2-cells between 1-cells into a chosen comma object
+`comma f g`, reading `f` and `g` off the goal. -/
+elab "comma_ext₂" : tactic => withMainContext do
+  let some (ty, _, _) := (← whnfR (← getMainTarget)).eq? |
+    throwError "comma_ext₂: the goal is not an equation"
+  let some (_, _, u, v) := (← whnfR ty).app4? ``Quiver.Hom |
+    throwError "comma_ext₂: not an equation of 2-cells"
+  let oneCell ← whnfR (← inferType u)
+  let some P ← whnfUntil oneCell.appArg! ``HasCommas.comma |
+    throwError "comma_ext₂: not a 2-cell into a chosen comma object"
+  let f ← Term.exprToSyntax (P.getArg! (P.getAppNumArgs - 2))
+  let g ← Term.exprToSyntax (P.getArg! (P.getAppNumArgs - 1))
+  let u ← Term.exprToSyntax u
+  let v ← Term.exprToSyntax v
+  evalTactic (← `(tactic| refine (HasCommas.isComma $f $g).hom_ext (u := $u) (v := $v) ?_ ?_))
+
 end CategoryTheory.TwoCategory
 
 /-! ## Comma objects in `Cat` -/
 
 namespace CategoryTheory
-
-instance Cat.twoCategory : TwoCategory Cat.{v, u} :=
-  { Cat.bicategory, Cat.bicategory.strict with }
 
 namespace Comma
 

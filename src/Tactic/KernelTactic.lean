@@ -6,7 +6,7 @@ import Lean
 Comparing terms that the rules reduce in many steps is slow in the elaborator, which first tries
 hard to unify the arguments of applications with the same head, while the kernel is fast. The
 tactics `kernel_exact` and `kernel_rfl'` hand such comparisons to the kernel, as `kernel_rfl` in
-`Bicategory/Basic`.
+`Tactic/KernelRfl`.
 -/
 
 open Lean Meta Elab Tactic in

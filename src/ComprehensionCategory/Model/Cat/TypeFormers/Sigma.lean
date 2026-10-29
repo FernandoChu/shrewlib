@@ -56,21 +56,16 @@ section Pull
 
 variable {Δ Γ : Cat.{u, u}} (σ : Δ ⟶ Γ) (A : ICat.{u}.Ty Γ) (B : ICat.{u}.Ty (Γ ▹ A))
 
-/-- `HEq` from equations on both sides. -/
-private theorem heq_of_eq_of_heq_of_eq {α β : Sort _} {a a' : α} {b b' : β} (h₁ : a = a')
-    (h : a' ≍ b') (h₂ : b = b') : a ≍ b := by
-  subst h₁ h₂
-  exact h
-
 /-- Transport in `sigmaOb A B` along `σ f` is transport in `sigmaOb A⦃σ⦄ B⦃𝐪(σ, A)⦄` along `f`:
 both unfold to the same factorization. -/
 theorem pushMap_sigmaOb_pull {δ δ' : Δ} (f : δ ⟶ δ')
     {X Y : (sigmaOb A⦃σ⦄ B⦃𝐪(σ, A)⦄).toDisplayed.Fiber δ} (β : X ⟶ Y) :
     (sigmaOb A B).toDisplayed.pushMap (σ.toFunctor.map f) β ≍
       (sigmaOb A⦃σ⦄ B⦃𝐪(σ, A)⦄).toDisplayed.pushMap f β :=
-  heq_of_eq_of_heq_of_eq
+  heq_of_eq_of_heq
     (pushMap_eq_desc (sigmaOb A B).toDisplayed (σ.toFunctor.map f) (x := X) (y := Y) β)
-    (by kernel_rfl') (pushMap_eq_desc (sigmaOb A⦃σ⦄ B⦃𝐪(σ, A)⦄).toDisplayed f β)
+    (heq_of_heq_of_eq (by kernel_rfl')
+      (pushMap_eq_desc (sigmaOb A⦃σ⦄ B⦃𝐪(σ, A)⦄).toDisplayed f β).symm)
 
 /-- The pushforward functors of `sigmaOb A B` along `σ f` and of `sigmaOb A⦃σ⦄ B⦃𝐪(σ, A)⦄` along
 `f` agree. The cast along the equality of their types, checked in the kernel, keeps the elaborator

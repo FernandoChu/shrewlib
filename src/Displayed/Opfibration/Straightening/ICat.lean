@@ -1,4 +1,4 @@
-import ComprehensionCategory.Basic
+import Displayed.Fibration.Basic
 import Rules.Functor
 import Mathlib.CategoryTheory.Category.Cat
 

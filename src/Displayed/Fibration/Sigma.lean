@@ -63,12 +63,6 @@ instance sigmaFib : Fib (D.sigmaDisp E) where
 
 end Fib
 
-/-! The chosen lifts of a split `D` in `D.Total` are split, as rules: the rules for `E` are keyed
-on the identities and composites of `D.Total`, which `totalClift (𝟙 a) y` and
-`totalClift (f ≫ g) y` are only up to unfolding. -/
-
-attribute [rewrite_rule] totalClift_id totalClift_comp
-
 /-- The composite of a split fibration and a pre-split one is pre-split. The pullback along
 `f ≫ g` in `E` is along `clift (f ≫ g) y`, so `D` needs to be split. -/
 @[instance_reducible]

@@ -1,3 +1,4 @@
+import Displayed.Fibration.DisplayedCat
 import ComprehensionCategory.Model.Cat.Extension
 import Displayed.Opfibration.SplitOpfibCat
 import ComprehensionCategory.Basic

@@ -97,6 +97,13 @@ theorem Fiber.id_def (a : A) (x : D.Fiber a) : 𝟙 x = 𝟙ᵈ x := rfl
 theorem Fiber.comp_def {a : A} {x y z : D.Fiber a} (φ : x ⟶ y) (ψ : y ⟶ z) :
     φ ≫ ψ = φ ≫ᵈ ψ := rfl
 
+variable {D} in
+/-- Cancellation of a vertical isomorphism `i : x ≅ y` before a displayed morphism. -/
+theorem _root_.CategoryTheory.Iso.inv_hom_id_displayed {a a' : A} {g : a ⟶ a'}
+    {x y : D.Fiber a} (i : x ≅ y) {z : D.Ob a'} (ψ : y ⟶[g] z) :
+    i.inv ≫ᵈ (i.hom ≫ᵈ ψ) = ψ :=
+  (congrArg (· ≫ᵈ ψ) i.inv_hom_id :)
+
 end Fiber
 
 

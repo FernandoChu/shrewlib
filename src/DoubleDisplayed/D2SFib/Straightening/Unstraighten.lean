@@ -101,37 +101,31 @@ theorem vmap_hmap (α : a ⟶ a') {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') :
   (congrArg Cat.Hom.toFunctor (F.map_comp (dualVert β) (dualHoriz α b))).symm.trans
     (congrArg Cat.Hom.toFunctor (F.map_comp (dualHoriz α b') (dualVert (B.pushMap α β))))
 
-omit [SplitOpfib B] in
-/-- Equal functors act heterogeneously equally on morphisms. -/
-theorem _root_.CategoryTheory.Functor.map_heq_of_eq {C D : Type*} [Category C] [Category D]
-    {G G' : C ⥤ D} (h : G = G') {X Y : C} (f : X ⟶ Y) : G.map f ≍ G'.map f := by
-  subst h; rfl
-
 /-! The actions on morphisms along identities, composites and the interchange are first stated as
 `≍`, before the corresponding rules on objects are declared: once they are, `hobj F (𝟙 a) b c` is no
 longer recognizably its own unfolding `(hmap F (𝟙 a) b).obj c`. The rules on objects then make the
 two sides of each `≍` have the same type. -/
 
 theorem hmor_idBase_heq (b : B.Ob a) {c c' : F.obj (Bᵒᵖ.tot b)} (θ : c ⟶ c') :
-    hmor F (𝟙 a) b θ ≍ θ := Functor.map_heq_of_eq (hmap_id F b) θ
+    hmor F (𝟙 a) b θ ≍ θ := Functor.hcongr_hom (hmap_id F b) θ
 
 theorem hmor_compBase_heq (α : a ⟶ a') (α' : a' ⟶ a'') (b : B.Ob a)
     {c c' : F.obj (Bᵒᵖ.tot b)} (θ : c ⟶ c') :
     hmor F (α ≫ α') b θ ≍ hmor F α' (B.push α b) (hmor F α b θ) :=
-  Functor.map_heq_of_eq (hmap_comp F α α' b) θ
+  Functor.hcongr_hom (hmap_comp F α α' b) θ
 
 theorem vmor_idBase_heq (b : B.Ob a) {c c' : F.obj (Bᵒᵖ.tot b)} (θ : c ⟶ c') :
-    vmor F (B.id b) θ ≍ θ := Functor.map_heq_of_eq (vmap_id F b) θ
+    vmor F (B.id b) θ ≍ θ := Functor.hcongr_hom (vmap_id F b) θ
 
 theorem vmor_compBase_heq {b b' b'' : B.Ob a} (β : b ⟶[𝟙 a] b') (γ : b' ⟶[𝟙 a] b'')
     {c c' : F.obj (Bᵒᵖ.tot b'')} (θ : c ⟶ c') :
     vmor F (β ≫ᵈ γ) θ ≍ vmor F β (vmor F γ θ) :=
-  Functor.map_heq_of_eq (vmap_comp F β γ) θ
+  Functor.hcongr_hom (vmap_comp F β γ) θ
 
 theorem hmor_vmor_heq (α : a ⟶ a') {b b' : B.Ob a} (β : b ⟶[𝟙 a] b')
     {c c' : F.obj (Bᵒᵖ.tot b')} (θ : c ⟶ c') :
     hmor F α b (vmor F β θ) ≍ vmor F (B.pushMap α β) (hmor F α b' θ) :=
-  Functor.map_heq_of_eq (vmap_hmap F α β) θ
+  Functor.hcongr_hom (vmap_hmap F α β) θ
 
 @[rewrite_rule]
 theorem hobj_id (b : B.Ob a) (c : F.obj (Bᵒᵖ.tot b)) : hobj F (𝟙 a) b c = c :=
@@ -353,12 +347,12 @@ theorem kapp_vmap (κ : F ⟶ F') {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') :
 
 theorem kmor_hmor_heq (κ : F ⟶ F') (α : a ⟶ a') (b : B.Ob a) {c c' : F.obj (Bᵒᵖ.tot b)}
     (θ : c ⟶ c') : kmor κ (hmor F α b θ) ≍ hmor F' α b (kmor κ θ) :=
-  Functor.map_heq_of_eq (kapp_hmap κ α b) θ
+  Functor.hcongr_hom (kapp_hmap κ α b) θ
 
 theorem kmor_vmor_heq (κ : F ⟶ F') {b b' : B.Ob a} (β : b ⟶[𝟙 a] b')
     {c c' : F.obj (Bᵒᵖ.tot b')} (θ : c ⟶ c') :
     kmor κ (vmor F β θ) ≍ vmor F' β (kmor κ θ) :=
-  Functor.map_heq_of_eq (kapp_vmap κ β) θ
+  Functor.hcongr_hom (kapp_vmap κ β) θ
 
 @[rewrite_rule]
 theorem kobj_hobj (κ : F ⟶ F') (α : a ⟶ a') (b : B.Ob a) (c : F.obj (Bᵒᵖ.tot b)) :

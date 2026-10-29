@@ -435,8 +435,14 @@ section TotalSplit
 
 variable (D : Displayed.{v₁, u₁, v₂, u₂} A) [SplitOpfib D] {a a' a'' : A}
 
+/-! The chosen lifts of a split `D` in `D.Total` are split, as rules: rules keyed on the
+identities and composites of `D.Total` then apply to `totalOlift (𝟙 a) x` and
+`totalOlift (f ≫ g) x`, which are these only up to unfolding. -/
+
+@[rewrite_rule]
 theorem totalOlift_id (x : D.Ob a) : D.totalOlift (𝟙 a) x = 𝟙 (D.tot x) := rfl
 
+@[rewrite_rule]
 theorem totalOlift_comp (f : a ⟶ a') (g : a' ⟶ a'') (x : D.Ob a) :
     D.totalOlift (f ≫ g) x = D.totalOlift f x ≫ D.totalOlift g (D.push f x) := rfl
 

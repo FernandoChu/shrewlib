@@ -115,6 +115,19 @@ theorem commaMap₂_whiskerRight {m m' : f ⟶ g} (α : m ⟶ m') (n : g ⟶ h) 
     commaMap₂ (α ▷ n) = commaMap₂ α ▷ commaMap n :=
   (isComma _ _).hom_ext (by kernel_rfl) (by kernel_rfl)
 
+/-- Whiskering with `commaMap m` and the legs of comma objects, from the universal property. -/
+@[rewrite_rule]
+theorem whiskerRight_commaMap_left {f g : Arr B} (m : f ⟶ g) {x : B} {u v : x ⟶ f.commaObj}
+    (θ : u ⟶ v) : θ ▷ commaMap m ▷ (commaCone g.hom (𝟙 g.cod)).left =
+      θ ▷ (commaCone f.hom (𝟙 f.cod)).left ▷ m.left := by
+  kernel_rfl
+
+@[rewrite_rule]
+theorem whiskerRight_commaMap_right {f g : Arr B} (m : f ⟶ g) {x : B} {u v : x ⟶ f.commaObj}
+    (θ : u ⟶ v) : θ ▷ commaMap m ▷ (commaCone g.hom (𝟙 g.cod)).right =
+      θ ▷ (commaCone f.hom (𝟙 f.cod)).right ▷ m.right := by
+  kernel_rfl
+
 end Arr
 
 open Arr

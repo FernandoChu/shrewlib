@@ -116,25 +116,6 @@ theorem lMap_comp_compMap_assoc {z : B} (k : f.commaObj ⟶ z) :
 theorem unitCell_whiskerRight_compMap : f.unitCell ▷ f.compMap = 𝟙 (𝟙 f.commaObj) := by
   comma_ext₂ <;> kernel_rfl
 
-/-- `Lf` whiskered with `τ_f` is the identity, in the normal form of whiskerings. -/
-@[rewrite_rule]
-theorem lMap_whiskerLeft_counitCell_whiskerRight {z : B} (k : f.commaObj ⟶ z) :
-    f.lMap ◁ f.counitCell ▷ k = 𝟙 (f.lMap ≫ k) := by
-  kernel_exact congrArg (· ▷ k) f.lMap_whiskerLeft_counitCell
-
-/-- Whiskering with `commaMap m` and the legs of comma objects, from the universal property. -/
-@[rewrite_rule]
-theorem whiskerRight_commaMap_left {f g : Arr B} (m : f ⟶ g) {x : B} {u v : x ⟶ f.commaObj}
-    (θ : u ⟶ v) : θ ▷ commaMap m ▷ (commaCone g.hom (𝟙 g.cod)).left =
-      θ ▷ (commaCone f.hom (𝟙 f.cod)).left ▷ m.left := by
-  kernel_rfl
-
-@[rewrite_rule]
-theorem whiskerRight_commaMap_right {f g : Arr B} (m : f ⟶ g) {x : B} {u v : x ⟶ f.commaObj}
-    (θ : u ⟶ v) : θ ▷ commaMap m ▷ (commaCone g.hom (𝟙 g.cod)).right =
-      θ ▷ (commaCone f.hom (𝟙 f.cod)).right ▷ m.right := by
-  kernel_rfl
-
 /-! ## `R` is lax idempotent -/
 
 /-- `R` applied to the unit `(Lf, 𝟙)` is `j_f`. -/
@@ -164,19 +145,6 @@ theorem lMap_comp_lMap : f.lMap ≫ (R.obj f).lMap = f.lMap ≫ f.unitMap := by
 theorem lMap_comp_lMap_assoc {z : B} (k : (R.obj f).commaObj ⟶ z) :
     f.lMap ≫ (R.obj f).lMap ≫ k = f.lMap ≫ f.unitMap ≫ k := by
   kernel_exact congrArg (· ≫ k) f.lMap_comp_lMap
-
-/-- The naturality of `L` at `R.map m`, whose left side is `commaMap m`: the matcher does not see
-it as the projection `(R.map m).left`. -/
-@[rewrite_rule]
-theorem commaMap_comp_lMap {g : Arr B} (m : f ⟶ g) :
-    commaMap m ≫ (R.obj g).lMap = (R.obj f).lMap ≫ commaMap (R.map m) :=
-  lMap_naturality (R.map m)
-
-@[rewrite_rule]
-theorem commaMap_comp_lMap_assoc {g : Arr B} (m : f ⟶ g) {z : B}
-    (k : (R.obj g).commaObj ⟶ z) :
-    commaMap m ≫ (R.obj g).lMap ≫ k = (R.obj f).lMap ≫ commaMap (R.map m) ≫ k := by
-  kernel_exact congrArg (· ≫ k) (f.commaMap_comp_lMap m)
 
 /-- `ζ` is natural. -/
 theorem unitCell_naturality {g : Arr B} (m : f ⟶ g) :

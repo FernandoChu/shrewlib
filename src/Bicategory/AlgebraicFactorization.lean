@@ -1,5 +1,5 @@
 import Bicategory.Factorization
-import Bicategory.Monad
+import Bicategory.TwoMonad
 
 /-!
 # The comma factorization is an algebraic factorization
@@ -31,37 +31,6 @@ namespace CategoryTheory.TwoCategory
 variable {B : Type u} [TwoCategory.{w, v} B] [HasCommas B]
 
 open HasCommas Arr
-
-/-! ## Extensionality for comma objects -/
-
-open Lean Meta Elab Tactic in
-/-- Applies `IsComma.ext` to an equation of 1-cells into a chosen comma object `comma f g`,
-reading `f` and `g` off the goal. -/
-elab "comma_ext" : tactic => withMainContext do
-  let some (ty, _, _) := (← whnfR (← getMainTarget)).eq? |
-    throwError "comma_ext: the goal is not an equation"
-  let some P ← whnfUntil ty.appArg! ``HasCommas.comma |
-    throwError "comma_ext: not a 1-cell into a chosen comma object"
-  let f ← Term.exprToSyntax (P.getArg! (P.getAppNumArgs - 2))
-  let g ← Term.exprToSyntax (P.getArg! (P.getAppNumArgs - 1))
-  evalTactic (← `(tactic| refine (HasCommas.isComma $f $g).ext ?_))
-
-open Lean Meta Elab Tactic in
-/-- Applies `IsComma.hom_ext` to an equation of 2-cells between 1-cells into a chosen comma object
-`comma f g`, reading `f` and `g` off the goal. -/
-elab "comma_ext₂" : tactic => withMainContext do
-  let some (ty, _, _) := (← whnfR (← getMainTarget)).eq? |
-    throwError "comma_ext₂: the goal is not an equation"
-  let some (_, _, u, v) := (← whnfR ty).app4? ``Quiver.Hom |
-    throwError "comma_ext₂: not an equation of 2-cells"
-  let oneCell ← whnfR (← inferType u)
-  let some P ← whnfUntil oneCell.appArg! ``HasCommas.comma |
-    throwError "comma_ext₂: not a 2-cell into a chosen comma object"
-  let f ← Term.exprToSyntax (P.getArg! (P.getAppNumArgs - 2))
-  let g ← Term.exprToSyntax (P.getArg! (P.getAppNumArgs - 1))
-  let u ← Term.exprToSyntax u
-  let v ← Term.exprToSyntax v
-  evalTactic (← `(tactic| refine (HasCommas.isComma $f $g).hom_ext (u := $u) (v := $v) ?_ ?_))
 
 /-- Proves an equation of 1- or 2-cells of arrows whose components are 1- or 2-cells into comma
 objects: after unfolding the given definitions and the operations of `Arr B`, it reduces by
@@ -103,6 +72,12 @@ def counitCell :
 theorem lMap_whiskerLeft_counitCell : f.lMap ◁ f.counitCell = 𝟙 f.lMap := by
   comma_ext₂ <;> kernel_rfl
 
+/-- `Lf` whiskered with `τ_f` is the identity, in the normal form of whiskerings. -/
+@[rewrite_rule]
+theorem lMap_whiskerLeft_counitCell_whiskerRight {z : B} (k : f.commaObj ⟶ z) :
+    f.lMap ◁ f.counitCell ▷ k = 𝟙 (f.lMap ≫ k) := by
+  kernel_exact congrArg (· ▷ k) f.lMap_whiskerLeft_counitCell
+
 /-- `Lf` is natural in squares: the equation of the square `L.map m`, in the form in which it
 appears in composites. -/
 @[rewrite_rule]
@@ -123,6 +98,19 @@ theorem lMap_naturality_whiskerLeft {f g : Arr B} (m : f ⟶ g) {z : B} {k k' : 
 theorem lMap_naturality_whiskerRight {f g : Arr B} (m : f ⟶ g) {z : B} {u u' : z ⟶ f.dom}
     (θ : u ⟶ u') : θ ▷ m.left ▷ g.lMap = θ ▷ f.lMap ▷ commaMap m :=
   eq_of_heq (whiskerRight_congr θ (lMap_naturality m))
+
+/-- The naturality of `L` at `R.map m`, whose left side is `commaMap m`: the matcher does not see
+it as the projection `(R.map m).left`. -/
+@[rewrite_rule]
+theorem commaMap_comp_lMap {g : Arr B} (m : f ⟶ g) :
+    commaMap m ≫ (R.obj g).lMap = (R.obj f).lMap ≫ commaMap (R.map m) :=
+  lMap_naturality (R.map m)
+
+@[rewrite_rule]
+theorem commaMap_comp_lMap_assoc {g : Arr B} (m : f ⟶ g) {z : B}
+    (k : (R.obj g).commaObj ⟶ z) :
+    commaMap m ≫ (R.obj g).lMap ≫ k = (R.obj f).lMap ≫ commaMap (R.map m) ≫ k := by
+  kernel_exact congrArg (· ≫ k) (f.commaMap_comp_lMap m)
 
 /-- `τ` is natural in squares. -/
 @[rewrite_rule]

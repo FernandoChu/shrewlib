@@ -1,5 +1,5 @@
-import Displayed.Displayed.Straightening.Straighten
-import Displayed.Displayed.Straightening.Unstraighten
+import Displayed.Straightening.Straighten
+import Displayed.Straightening.Unstraighten
 import Displayed.Fibration.Basic
 
 /-!

@@ -136,12 +136,6 @@ def fullyFaithful : e.functor.FullyFaithful where
 
 section OfFullyFaithful
 
-/-- Cancellation of a vertical isomorphism `i : x ≅ y` before a displayed morphism. -/
-theorem _root_.CategoryTheory.Iso.inv_hom_id_displayed {a a' : A} {g : a ⟶ a'}
-    {x y : E.Fiber a} (i : x ≅ y) {z : E.Ob a'} (ψ : y ⟶[g] z) :
-    i.inv ≫ᵈ (i.hom ≫ᵈ ψ) = ψ :=
-  (congrArg (· ≫ᵈ ψ) i.inv_hom_id :)
-
 variable {F : VertFunctor D E} (hF : F.FullyFaithful)
   (G : ∀ {a : A}, E.Ob a → D.Ob a) (ε : ∀ {a : A} (y : E.Ob a), (F.obj (G y) : E.Fiber a) ≅ y)
 
