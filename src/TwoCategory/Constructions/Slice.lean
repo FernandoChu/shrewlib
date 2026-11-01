@@ -1,4 +1,4 @@
-import Bicategory.Basic
+import TwoCategory.Basic
 
 /-!
 # The strict slice 2-category

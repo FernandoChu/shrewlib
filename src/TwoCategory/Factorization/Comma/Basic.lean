@@ -1,5 +1,5 @@
-import Bicategory.Arrow
-import Bicategory.Comma
+import TwoCategory.Constructions.Arrow
+import TwoCategory.Limits.Comma
 import Mathlib.CategoryTheory.Bicategory.Functor.StrictPseudofunctor
 
 /-!

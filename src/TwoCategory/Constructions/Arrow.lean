@@ -1,4 +1,4 @@
-import Bicategory.Basic
+import TwoCategory.Basic
 
 /-!
 # The arrow 2-category
@@ -15,6 +15,10 @@ The equations of squares are rules (also reassociated and whiskered), so the two
 equation of 2-cells have the same type `m.left ≫ g.hom ⟶ n.left ≫ g.hom`, and it is stated without
 transport. It is a rule too. Composites and whiskerings are computed componentwise, and the laws of
 the 2-category hold by `rfl`.
+
+Mathlib's `Arrow` is only the 1-category of arrows, so it would cover objects and 1-cells at most.
+It is not used: its category instance would clash with the one from the 2-category structure, and
+its squares are those of `Comma`, stated with `(𝟭 B).map`, so their equation is not a usable rule.
 -/
 
 open CategoryTheory Bicategory

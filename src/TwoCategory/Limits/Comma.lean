@@ -1,4 +1,4 @@
-import Bicategory.Pullback
+import TwoCategory.Limits.Pullback
 import Mathlib.CategoryTheory.Category.Cat
 import Mathlib.CategoryTheory.Comma.Basic
 
@@ -37,9 +37,9 @@ The apexes of two comma objects over the same cospan are isomorphic in the under
 (`IsComma.apexIso`), compatibly with the cones. `HasCommas B` chooses a comma object of every
 cospan.
 
-Pasting a pullback (`Bicategory.Pullback`) on the left of a comma object gives a comma object
-(`IsComma.pasteLeft`): if `s` is a comma object of `f` and `g`, and `t` is a pullback of `s.left`
-along `h : a' ⟶ a`, then `s.pasteLeft t` is a comma object of `h ≫ f` and `g`:
+Pasting a pullback (`TwoCategory.Limits.Pullback`) on the left of a comma object gives a comma
+object (`IsComma.pasteLeft`): if `s` is a comma object of `f` and `g`, and `t` is a pullback of
+`s.left` along `h : a' ⟶ a`, then `s.pasteLeft t` is a comma object of `h ≫ f` and `g`:
 ```
    q ──t.snd───▶ p ──s.right──▶ b
    │              │       ⇗      │
@@ -51,7 +51,7 @@ along `h : a' ⟶ a`, then `s.pasteLeft t` is a comma object of `h ≫ f` and `g
 In `Cat`, Mathlib's comma category `Comma L R` is a comma object of `L` and `R`
 (`Comma.isComma`).
 
-The laws of the 2-category are rules (`Bicategory.Basic`), so cones are precomposed without
+The laws of the 2-category are rules (`TwoCategory.Basic`), so cones are precomposed without
 associators: `(s.precomposing x).obj (𝟙 p) = s`, `(s.precomposing x).obj (h ≫ k) =
 (precomp h).obj ((s.precomposing y).obj k)`, `precomp (𝟙 x) = 𝟭 _` and
 `precomp (h ≫ k) = precomp k ⋙ precomp h` hold by `rfl`, as do the functor laws.

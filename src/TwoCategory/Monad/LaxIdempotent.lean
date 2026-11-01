@@ -1,5 +1,5 @@
-import Bicategory.TwoMonad
-import Bicategory.Adjunction
+import TwoCategory.Monad.Basic
+import TwoCategory.Adjunction
 
 /-!
 # Lax idempotent 2-monads

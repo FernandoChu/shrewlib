@@ -8,5 +8,5 @@ path = "mathlib4"
 [[lean_lib]]
 name = "Rewrite"
 srcDir = "src"
-globs = ["Rules.+", "Examples.+", "Profunctor", "Bicategory.+", "DoubleCategory.+", "Displayed.+", "ComprehensionCategory.+", "DoubleDisplayed.+", "Tactic.+"]
+globs = ["Rules.+", "Examples.+", "Profunctor", "TwoCategory.+", "DoubleCategory.+", "Displayed.+", "ComprehensionCategory.+", "DoubleDisplayed.+", "Tactic.+"]
 leanOptions = { pp.unicode.fun = true, relaxedAutoImplicit = false, weak.linter.mathlibStandardSet = true, maxSynthPendingDepth = 3 }

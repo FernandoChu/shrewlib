@@ -1,15 +1,15 @@
-import Bicategory.Comma
-import Bicategory.Spans
-import Bicategory.Monad
+import TwoCategory.Limits.Comma
+import TwoCategory.Constructions.Spans.Basic
+import TwoCategory.Monad.Bicategory
 
 /-!
 # Finitely complete 2-categories
 
 A 2-category is *finitely complete* (`FinitelyComplete`) if it has chosen comma objects and finite
 conical (strict 2-)limits. As for categories, finite conical limits are given by a terminal object
-and pullbacks: Mathlib's `Limits.HasTerminal` and `Limits.HasPullbacks` for the underlying
-1-category, with the 2-dimensional universal property (`HasTerminal`, `HasPullbacks`): for a
-2-terminal object `⊤`, there is a unique 2-cell between any two 1-cells `x ⟶ ⊤`.
+and pullbacks: Mathlib's `Limits.HasTerminal` and chosen pullbacks (`ChosenPullbacks`) for the
+underlying 1-category, with the 2-dimensional universal property (`HasTerminal`, `HasPullbacks`):
+for a 2-terminal object `⊤`, there is a unique 2-cell between any two 1-cells `x ⟶ ⊤`.
 
 The *arrow object* of an object `a` is the comma object of `𝟙 a` and `𝟙 a`. As a span
 `arrowSpan a` from `a` to `a`, by its legs, it is a monad (`Bicategory.Monad`, a monoid in the
@@ -61,21 +61,19 @@ are given by a terminal object and pullbacks. -/
 class FinitelyComplete extends HasCommas B where
   [hasTerminal : Limits.HasTerminal B]
   [hasTerminal₂ : HasTerminal B]
-  [hasPullbacks : Limits.HasPullbacks B]
-  [hasPullbacks₂ : HasPullbacks B]
+  [chosenPullbacks : ChosenPullbacks B]
+  [hasPullbacks : HasPullbacks B]
 
 attribute [instance] FinitelyComplete.hasTerminal FinitelyComplete.hasTerminal₂
-  FinitelyComplete.hasPullbacks
 
-attribute [instance_reducible, instance] FinitelyComplete.hasPullbacks₂
+attribute [instance_reducible, instance] FinitelyComplete.chosenPullbacks
+  FinitelyComplete.hasPullbacks
 
 /-! ## The arrow object -/
 
-noncomputable section
-
 namespace FinitelyComplete
 
-open HasCommas Limits
+open HasCommas
 
 variable [FinitelyComplete B] (a : B)
 
@@ -125,8 +123,6 @@ instance arrowMonad : Bicategory.Monad (arrowSpan a) where
   mul_assoc := arrow_mul_assoc a
 
 end FinitelyComplete
-
-end
 
 end TwoCategory
 

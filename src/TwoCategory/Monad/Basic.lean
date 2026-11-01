@@ -1,4 +1,4 @@
-import Bicategory.StrictPseudofunctor
+import TwoCategory.StrictPseudofunctor
 import Tactic.KernelTactic
 
 /-!
@@ -19,7 +19,7 @@ with the actions, and a 2-cell is a 2-cell `α` with `a ◁ α = T α ▷ a'`. T
 2-cells are rules, and the laws of the 2-category hold by `rfl`. Dually, `Coalg M` for 2-comonads.
 
 The laws of strict 2-functors, including their whiskered forms, are rules
-(`Bicategory/StrictPseudofunctor`).
+(`TwoCategory.StrictPseudofunctor`).
 -/
 
 open CategoryTheory Bicategory

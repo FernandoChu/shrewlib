@@ -7,7 +7,7 @@ import Mathlib.CategoryTheory.Monoidal.Mon
 A monad in a bicategory `B` is a 1-morphism `t : a ⟶ a` with a unit `𝟙 a ⟶ t` and a multiplication
 `t ≫ t ⟶ t` satisfying the monad laws: a monoid object in the monoidal category `a ⟶ a`
 (`Bicategory.Monad`), dually to Mathlib's `Bicategory.Comonad`. For the strict 2-monads on a
-2-category, see `TwoMonad`.
+2-category, see `TwoCategory.Monad.Basic`.
 -/
 
 universe w v u

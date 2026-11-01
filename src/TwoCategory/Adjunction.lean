@@ -1,4 +1,4 @@
-import Bicategory.Basic
+import TwoCategory.Basic
 import Mathlib.CategoryTheory.Bicategory.Adjunction.Basic
 import Tactic.KernelTactic
 

@@ -1,4 +1,4 @@
-import Bicategory.Basic
+import TwoCategory.Basic
 
 /-!
 # Spans in a 2-category
@@ -16,8 +16,9 @@ These equations are rules (the former also reassociated and whiskered), so the c
 those of `B`, with their conditions by `rfl`.
 
 If `B` has pullbacks, these are the hom-categories of the bicategory of spans `Spans B`
-(`Bicategory.Spans`). Mathlib's spans `Span Wₗ Wᵣ a b` are not used: the matcher of rules does not
-see through the instances of their category, so composites of their morphisms do not compute.
+(`TwoCategory.Constructions.Spans.Basic`). Mathlib's spans `Span Wₗ Wᵣ a b` are not used: the
+matcher of rules does not see through the instances of their category, so composites of their
+morphisms do not compute.
 -/
 
 open CategoryTheory Bicategory

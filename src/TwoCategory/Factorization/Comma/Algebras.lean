@@ -1,16 +1,16 @@
-import Bicategory.AlgebraicFactorization
-import Bicategory.Slice
-import Bicategory.LaxIdempotent
+import TwoCategory.Factorization.Comma.AWFS
+import TwoCategory.Constructions.Slice
+import TwoCategory.Monad.LaxIdempotent
 
 /-!
 # `R` is lax idempotent; `R`-algebras are split reflections of `Lf` over the codomain
 
 Let `f : A ⟶ B` be a 1-cell of a 2-category with comma objects, factored as `f = Lf ≫ Rf` through
-`f/B` (`Bicategory.Factorization`).
+`f/B` (`TwoCategory.Factorization.Comma.Basic`).
 
 ## `R` is lax idempotent
 
-The 2-monad `R` is lax idempotent (`rLaxIdempotent`, see `Bicategory.LaxIdempotent`), with
+The 2-monad `R` is lax idempotent (`rLaxIdempotent`, see `TwoCategory.Monad.LaxIdempotent`), with
 `δ_f = (ζ_f, 𝟙) : R(η_f) ⟶ η_{Rf}`. Here `R(η_f) = (j_f, 𝟙)` where `j_f : f/B ⟶ Rf/B` is induced
 by the cone `(q_f ≫ Lf, Rf, ν_f)`, and `ζ_f : j_f ⟶ L(Rf)` is induced by the 2-cells
 `τ_f : q_f ≫ Lf ⟶ 𝟙` and `𝟙 Rf`. The laws of `δ` reduce, by the universal property of `Rf/B`, to
@@ -101,16 +101,6 @@ theorem unitMap_comp_compMap : f.unitMap ≫ f.compMap = 𝟙 f.commaObj := by
 theorem unitMap_comp_compMap_assoc {z : B} (k : f.commaObj ⟶ z) :
     f.unitMap ≫ f.compMap ≫ k = k :=
   congrArg (· ≫ k) f.unitMap_comp_compMap
-
-/-- `L(Rf)` is a section of the composition `π_f`: the left unit law of `R`. -/
-@[rewrite_rule]
-theorem lMap_comp_compMap : (R.obj f).lMap ≫ f.compMap = 𝟙 f.commaObj := by
-  comma_ext; kernel_rfl
-
-@[rewrite_rule]
-theorem lMap_comp_compMap_assoc {z : B} (k : f.commaObj ⟶ z) :
-    (R.obj f).lMap ≫ f.compMap ≫ k = k :=
-  congrArg (· ≫ k) f.lMap_comp_compMap
 
 /-- `ζ_f` is sent to the identity by the composition `π_f`. -/
 theorem unitCell_whiskerRight_compMap : f.unitCell ▷ f.compMap = 𝟙 (𝟙 f.commaObj) := by
