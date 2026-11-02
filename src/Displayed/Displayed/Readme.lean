@@ -1,5 +1,4 @@
 import Displayed.Displayed.Basic
-import Displayed.Displayed.Functor
 import Displayed.Displayed.DisplayedCat
 import Displayed.Displayed.Equivalence
 import Displayed.Displayed.Total
@@ -12,13 +11,12 @@ import Displayed.Displayed.Codomain
 * `Basic`: displayed categories `Displayed A` over `A`, their fibers `Fiber`, displayed functors
   `DispFunctor u` over a functor `u` between the bases, vertical functors `VertFunctor`, the
   displayed functors over `𝟭 A`, and vertical natural transformations `VertNatTrans`.
-* `Functor`: the functors that displayed functors induce between total categories, and functors
-  into a total category given by their displayed components (`TotalLift`).
-* `DisplayedCat`: the displayed categories and displayed functors, displayed over `Cat`, the
-  fully faithful functor `DisplayedCat ⟶ cod Cat` taking total categories, and reindexing.
+* `DisplayedCat`: the displayed categories and displayed functors, displayed over `Cat`, and
+  reindexing. Its equivalence with `cod Cat` is in `CodCatEquiv/`.
 * `Equivalence`: equivalences over the base (`VertEquivalence`), which are fully faithful.
-* `Total`: the total category `D.Total`, `π`, `ι`, and the induced functors, natural
-  transformations and equivalences of total categories.
+* `Total`: the total category `D.Total`, `π`, `ι`, and the functors that displayed functors induce
+  between total categories, as well as the natural transformations and equivalences that vertical
+  ones induce.
 * `Sigma`: the composite `D.sigmaDisp E` over `A` of `D` over `A` and `E` over `D.Total`, whose
   total category is that of `E`, up to reassociation.
 * `Codomain`: the codomain displayed category `cod C`, and the action `codMap F` of a functor on

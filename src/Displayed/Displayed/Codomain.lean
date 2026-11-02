@@ -1,4 +1,4 @@
-import Displayed.Displayed.Functor
+import Displayed.Displayed.Basic
 
 /-!
 # The codomain displayed category

@@ -1,4 +1,5 @@
 import Displayed.Fibration.Basic
+import Displayed.Fibration.CartesianFunctor
 import Displayed.Fibration.Codomain
 import Displayed.Fibration.DisplayedCat
 import Displayed.Fibration.DualFib
@@ -15,9 +16,13 @@ The exact dual of `Opfibration/`, whose `Readme.lean` explains the design.
   `pull f y` and `clift f y : pull f y ⟶[f] y`, the cartesian factorization, the transport
   `pullMap` and its functors, and split versions (`PreSplitFib`, `SplitFib`). Cleavages transfer
   along equivalences over the base.
+* `CartesianFunctor`: cartesian functors, displayed functors over a functor that preserve the
+  chosen cartesian lifts strictly, with identities and composites; vertical ones preserve all
+  cartesian morphisms.
 * `Codomain`: the cartesian morphisms of the codomain displayed category `cod C` are the pullback
   squares, so `cod C` is a fibration if `C` has chosen pullbacks.
-* `DisplayedCat`: taking total categories sends reindexings of displayed categories to pullbacks.
+* `DisplayedCat`: `DisplayedCat` is a split fibration over `Cat`, by reindexing. Taking total
+  categories sends reindexings to pullbacks, in `CodCatEquiv/Fibration`.
 * `DualFib`: the dual fibration of a split fibration.
 * `Sigma`: fibrations compose, and so do split fibrations.
 * `SplitFibCat`: the split fibrations and displayed functors between them, a category displayed

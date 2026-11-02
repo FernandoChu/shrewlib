@@ -13,8 +13,8 @@ form the bicategory `ProfCat`.
 The category laws, the action laws of profunctors, and the naturality of their morphisms are
 declared as rewrite rules. They are oriented so that composites are right-associated, `lmap` is
 outermost, and components of morphisms are innermost. As a result, most coherence laws of
-`ProfCat` hold by `rfl` once the quotients are reduced to generators. Requires the `rewrite-rules`
-fork of Lean.
+`ProfCat` hold by `rfl` once the quotients are reduced to generators. Profunctors are determined by
+their elements and actions (`Profunctor.ext`). Requires the `rewrite-rules` fork of Lean.
 -/
 
 open CategoryTheory
@@ -49,6 +49,24 @@ scoped infixr:10 " ⇸ " => Profunctor
 
 variable {A B C D : Type u} [SmallCategory A] [SmallCategory B] [SmallCategory C]
   [SmallCategory D]
+
+/-- Profunctors are determined by their elements and actions. The actions are compared on
+heterogeneously equal elements, as the types of elements of the two profunctors are only equal. -/
+theorem ext {P Q : A ⇸ B} (hobj : ∀ a b, P.obj a b = Q.obj a b)
+    (hlmap : ∀ {a a' : A} {b : B} (f : a' ⟶ a) (x : P.obj a b) (y : Q.obj a b), x ≍ y →
+      P.lmap f x ≍ Q.lmap f y)
+    (hrmap : ∀ {a : A} {b b' : B} (g : b ⟶ b') (x : P.obj a b) (y : Q.obj a b), x ≍ y →
+      P.rmap g x ≍ Q.rmap g y) : P = Q := by
+  obtain ⟨obj, lmap, rmap, _, _, _, _, _⟩ := P
+  obtain ⟨obj', lmap', rmap', _, _, _, _, _⟩ := Q
+  obtain rfl : obj = obj' := funext fun a => funext (hobj a)
+  obtain rfl : @lmap = @lmap' := by
+    funext a a' b f x
+    exact eq_of_heq (hlmap f x x HEq.rfl)
+  obtain rfl : @rmap = @rmap' := by
+    funext a b b' g x
+    exact eq_of_heq (hrmap g x x HEq.rfl)
+  rfl
 
 /-! ## Morphisms of profunctors -/
 

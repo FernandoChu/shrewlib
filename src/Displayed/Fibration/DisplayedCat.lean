@@ -2,15 +2,20 @@ import Displayed.Displayed.DisplayedCat
 import Displayed.Fibration.Basic
 
 /-!
-# Reindexing in `DisplayedCat` goes to pullbacks
+# `DisplayedCat` is a split fibration
 
-Taking total categories, `DisplayedCat.total : DisplayedCat ⟶ cod Cat`, sends the morphism
-`DisplayedCat.clift u E : DisplayedCat.pull u E ⟶[u] E` out of the reindexing to a cartesian
-morphism of `cod Cat` (`DisplayedCat.isCartesianTotalMapClift`): the total category of
-`DisplayedCat.pull u E` is the pullback of `E.Total` along `u`.
+Reindexing along `u : A ⟶ B`, `DisplayedCat.pull u E`, is precomposition with `u`, with the
+morphism `DisplayedCat.clift u E : DisplayedCat.pull u E ⟶[u] E` given by identities. It is
+cartesian in `DisplayedCat` (`DisplayedCat.isCartesianClift`): a displayed functor over `w ≫ u`
+into `E` is a displayed functor over `w` into `pull u E`, with the same components. Precomposition
+is strictly unital and associative, so these lifts make `DisplayedCat` a split fibration over `Cat`
+(`DisplayedCat.splitFib`), whose splitting laws hold by `rfl`.
+
+That taking total categories sends these lifts to pullbacks, and the cleavage of `cod Cat`, are in
+`Displayed/CodCatEquiv/Fibration`.
 -/
 
-universe v₁ u₁ u
+universe u
 
 open CategoryTheory
 
@@ -18,21 +23,31 @@ namespace Displayed.DisplayedCat
 
 open scoped Displayed
 
-variable {A B : Cat.{u, u}} {u : A ⟶ B} {E : Displayed.{u, u, u, u} B}
+section Split
 
-/-- **Reindexing goes to pullbacks**: `(pull u E).Total` is the pullback of `E.Total` along `u`.
-The factorization of a functor `χ : Z ⥤ E.Total` over `r ⋙ g ⋙ u` has the same displayed
-components, read as a lift over `r ⋙ g` into `pull u E`. -/
-def isCartesianTotalMapClift : IsCartesian (total.map (clift u E)) where
-  lift g z χ := ⟨(TotalLift.ofFunctor χ.1.toFunctor
-    (show χ.1.toFunctor ⋙ E.π = (z.hom.toFunctor ⋙ g.toFunctor) ⋙ u.toFunctor from
-      congrArg Cat.Hom.toFunctor χ.2)).toPull.functor.toCatHom, rfl⟩
-  lift_fac _ _ _ := CodHom.ext (Cat.Hom.ext
-    ((TotalLift.toPull_functor_comp _).trans (TotalLift.functor_ofFunctor _ _)))
-  lift_uniq {_ g z _} ψ hψ := by
+variable {A B : Cat.{u, u}} (u : A ⟶ B) (E : Displayed.{u, u, u, u} B)
+
+/-- The chosen lift is cartesian: a displayed functor over `w ≫ u` is its own factorization. -/
+def isCartesianClift : IsCartesian (D := DisplayedCat) (clift u E) where
+  lift _ _ χ := ⟨χ.obj, χ.map, χ.map_id, χ.map_comp⟩
+  lift_fac _ _ _ := rfl
+  lift_uniq _ hψ := by
     subst hψ
-    exact CodHom.ext (Cat.Hom.ext ((congrArg TotalLift.functor (TotalLift.toPull_ofFunctor
-      ψ.1.toFunctor (show ψ.1.toFunctor ⋙ (pull u E).π = z.hom.toFunctor ⋙ g.toFunctor from
-        congrArg Cat.Hom.toFunctor ψ.2) _)).trans (TotalLift.functor_ofFunctor _ _)).symm)
+    rfl
+
+/-- **`DisplayedCat` is a split fibration over `Cat`**, cloven by reindexing. Reindexing along the
+identity and along composites holds on the nose. -/
+instance preSplitFib : PreSplitFib DisplayedCat.{u} where
+  pull u E := pull u E
+  clift u E := clift u E
+  isCartesianClift u E := isCartesianClift u E
+  pull_id _ := rfl
+  pull_comp _ _ _ := rfl
+
+instance splitFib : SplitFib DisplayedCat.{u} where
+  clift_id _ := rfl
+  clift_comp _ _ _ := rfl
+
+end Split
 
 end Displayed.DisplayedCat

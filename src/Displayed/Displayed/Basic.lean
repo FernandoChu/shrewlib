@@ -81,6 +81,25 @@ scoped notation:80 φ:81 " ≫ᵈ " ψ:80 => Displayed.comp _ φ ψ
 `y` lying over the base morphism `f`. -/
 scoped notation:10 x " ⟶[" f "] " y => Displayed.Hom _ f x y
 
+/-- Displayed categories are determined by their objects, morphisms, identities and composition,
+compared heterogeneously since their types depend on the objects and morphisms. (The kernel can
+reject an `rfl` between two displayed categories that it accepts on each component.) -/
+theorem ext_heq {D E : Displayed.{v₁, u₁, v₂, u₂} A} (hOb : D.Ob = E.Ob) (hHom : @D.Hom ≍ @E.Hom)
+    (hid : @D.id ≍ @E.id) (hcomp : @D.comp ≍ @E.comp) : D = E := by
+  obtain ⟨Ob, Hom, id, comp, _, _, _⟩ := D
+  obtain ⟨Ob', Hom', id', comp', _, _, _⟩ := E
+  -- Restated on the fields, so that the substitutions do not go through projections of `mk`,
+  -- which the rules on `Displayed.comp` and `Displayed.id` would rewrite.
+  change Ob = Ob' at hOb
+  subst hOb
+  change @Hom ≍ @Hom' at hHom
+  obtain rfl := eq_of_heq hHom
+  change @id ≍ @id' at hid
+  obtain rfl := eq_of_heq hid
+  change @comp ≍ @comp' at hcomp
+  obtain rfl := eq_of_heq hcomp
+  rfl
+
 variable (D : Displayed.{v₁, u₁, v₂, u₂} A)
 
 section Fiber

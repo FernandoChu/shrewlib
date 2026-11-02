@@ -9,15 +9,16 @@ The total category `D.Total` of `D : Displayed A` has as objects pairs `⟨a, x�
 are those of `A` and `D`, which hold definitionally. The projection `π : D.Total ⥤ A` forgets the
 displayed component, and `ι a : D.Fiber a ⥤ D.Total` includes the fiber over `a`.
 
-Vertical functors and natural transformations induce functors and natural transformations between
-total categories over `A` (`VertFunctor.totalFunctor`), and a vertical equivalence induces an
-equivalence of total categories whose functors commute with the projections to `A`
-(`VertEquivalence.total`).
+A displayed functor over `u : A ⥤ B` induces a functor between the total categories over `u`
+(`DispFunctor.total`); for a vertical functor, `u` is `𝟭 A`, and `D.π ⋙ 𝟭 A` is `D.π` by a rule.
+Vertical natural transformations induce natural transformations between these functors
+(`VertFunctor.totalFunctor`), and a vertical equivalence induces an equivalence of total
+categories whose functors commute with the projections to `A` (`VertEquivalence.total`).
 
 `DoubleDisplayed/Total.lean` is the analogue one level up.
 -/
 
-universe v₁ u₁ v₂ u₂ v₃ u₃
+universe v₁ u₁ v₂ u₂ v₃ u₃ v₄ u₄
 
 open CategoryTheory
 
@@ -132,23 +133,28 @@ theorem π_map_ι_map {a : A} {x y : D.Fiber a} (β : x ⟶ y) :
 
 end Total
 
-
 /-! ## Total functors -/
+
+section DispFunctor
+
+variable {D} {B : Type u₃} [Category.{v₃} B] {u : A ⥤ B} {E : Displayed.{v₃, u₃, v₄, u₄} B}
+
+/-- The functor between total categories induced by a displayed functor over `u`. -/
+def DispFunctor.total (H : DispFunctor u D E) : D.Total ⥤ E.Total where
+  obj X := ⟨u.obj X.1, H.obj X.2⟩
+  map g := ⟨u.map g.base, H.map g.fiber⟩
+  map_id _ := rfl
+  map_comp _ _ := rfl
+
+/-- The functor induced by a displayed functor over `u` lies over `u`, strictly. -/
+theorem DispFunctor.total_comp_π (H : DispFunctor u D E) : H.total ⋙ E.π = D.π ⋙ u :=
+  rfl
+
+end DispFunctor
 
 section Functors
 
 variable {D} {E : Displayed.{v₁, u₁, v₃, u₃} A}
-
-/-- The functor between total categories induced by a vertical functor. -/
-def VertFunctor.total (F : VertFunctor D E) : D.Total ⥤ E.Total where
-  obj X := ⟨X.1, F.obj X.2⟩
-  map g := ⟨g.base, F.map g.fiber⟩
-  map_id _ := rfl
-  map_comp _ _ := rfl
-
-/-- The functor induced by a vertical functor lies over `A`, strictly. -/
-theorem VertFunctor.total_comp_π (F : VertFunctor D E) : F.total ⋙ E.π = D.π :=
-  rfl
 
 /-- The natural transformation between total functors induced by a vertical natural
 transformation. Its components lie over identities. -/

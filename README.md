@@ -128,10 +128,12 @@ files, (op)cartesian morphisms (in `Displayed/{Opfibration,Fibration}/Basic` and
   `Factorization/` (AWFSs; in `Comma/`, the comma factorization `f = Lf ≫ Rf` is an AWFS whose
   2-monad `R` is lax idempotent, and `R`-algebras are split reflections).
 - `DoubleCategory/`: pseudo double categories, and the horizontal bicategory of globular squares.
-- `Displayed/`: categories displayed over a category, in four folders: `Displayed/` (displayed
+- `Displayed/`: categories displayed over a category, in five folders: `Displayed/` (displayed
   categories in general), `Opfibration/` (including the unstraightening of functors `A ⥤ Cat`),
-  `Fibration/` (including the codomain fibration), and `Straightening/`
-  (straightening–unstraightening for displayed categories, `DCat ≃ cod Cat`).
+  `Fibration/` (including the codomain fibration), `Straightening/`
+  (straightening–unstraightening for displayed categories, an isomorphism
+  `LaxNormalCat ≅ DisplayedCat` over `Cat`), and `CodCatEquiv/` (the equivalence
+  `DisplayedCat ≃ cod Cat` over `Cat`, taking total categories).
 - `ComprehensionCategory/`: comprehension categories, their type formers, and models: the
   category model, with Σ-types, and the codomain model.
 - `DoubleDisplayed/`: categories doubly displayed over a displayed category, and dependent 2-sided

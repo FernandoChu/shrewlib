@@ -2,6 +2,7 @@ import Displayed.Displayed.Readme
 import Displayed.Fibration.Readme
 import Displayed.Opfibration.Readme
 import Displayed.Straightening.Readme
+import Displayed.CodCatEquiv.Readme
 
 /-!
 # Displayed categories
@@ -18,6 +19,8 @@ folder has a `Readme.lean`.
 * `Fibration/`: cartesian morphisms and cloven, pre-split and split fibrations, which compose;
   `Straightening/` is the equivalence over `Cat` between functors `Aᵒᵖ ⥤ Cat` and split fibrations.
   It is the dual of `Opfibration/`.
-* `Straightening/`: straightening–unstraightening for displayed categories, `DCat ≃ cod Cat` over
-  `Cat`, and the fibrations over `Cat` it gives.
+* `Straightening/`: straightening–unstraightening for displayed categories, the isomorphism
+  `LaxNormalCat ≅ DisplayedCat` over `Cat`, and the fibrations over `Cat` it gives.
+* `CodCatEquiv/`: the equivalence `DisplayedCat ≃ cod Cat` over `Cat` taking total categories:
+  displayed categories over `A` are the functors into `A`.
 -/

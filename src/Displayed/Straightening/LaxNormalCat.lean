@@ -5,16 +5,24 @@ import Rules.Functor
 import Displayed.Fibration.Basic
 
 /-!
-# The category of displayed categories, `DCat`
+# Lax normal functors into profunctors, `LaxNormalCat`
+
+`LaxNormalCat` is the straightened counterpart of `DisplayedCat`
+(`Displayed/Displayed/DisplayedCat.lean`): by Bénabou's correspondence, a category displayed over
+`A` is a lax normal functor from `A` to the bicategory of profunctors, and the straightening
+equivalence `LaxNormalCat ≃ DisplayedCat` of this folder makes this precise. It plays the role that
+`ICat`, the functors into `Cat`, plays for (op)fibrations.
 
 A lax normal functor `F : StrictlyUnitaryLaxFunctor (LocallyDiscrete C) ProfCat` gives, for each
 `f : c ⟶ c'`, a profunctor `prof F f : F.obj ⟨c⟩ ⇸ F.obj ⟨c'⟩`, and its composition
 constraint acts on elements as `mul : prof F f x y → prof F g y z → prof F (f ≫ g) x z`. With the
 rules of `Rules.Bicategory`, `prof F (𝟙 c) x y` is `x ⟶ y` on the nose, and `mul` satisfies the unit
-and associativity laws (`id_mul`, `mul_id`, `mul_assoc`) and restricts to composition on the fibers
-(`mul_eq_comp`).
+and associativity laws (`id_mul`, `mul_id`, `mul_assoc`). On elements over identities, it is the
+composition of the fibers (`mul_eq_comp`) and their actions on the profunctors (`lmap_eq_mul`,
+`rmap_eq_mul`). So a lax normal functor is determined by its categories, its elements and `mul`
+(`LaxNormal.ext`).
 
-Over a small category `A`, the objects of `DCat` are the lax normal functors
+Over a small category `A`, the objects of `LaxNormalCat` are the lax normal functors
 `F : StrictlyUnitaryLaxFunctor (LocallyDiscrete A) ProfCat` (`LaxNormal A`). A morphism over
 `u : A ⟶ B` from `F` to `G : LaxNormal B` is a lax transformation from `F` to `G` restricted along
 `u`, whose components are the representable profunctors of functors
@@ -29,11 +37,12 @@ this is also the action of the component functors on morphisms) and the composit
 (`map_mul`). Naturality of `map` in `x` and `y` follows from `map_mul`, since the actions of
 `prof F (𝟙 a)` on `prof F f` are instances of the composition constraint.
 
-`DCat` is a category displayed over `Cat`, with laws holding by `rfl` (`map_id` and `map_mul` are
-rewrite rules). Mathlib's `Functor.map_id` and `Functor.map_comp` are rules too, so the pullback
-`pullback u G` of `G` along `u` satisfies `pullback (v ⋙ u) G = pullback v (pullback u G)` by
-`rfl`. The morphism `pullback u G ⟶[u] G` given by identities is cartesian, and these lifts make
-`DCat` a split fibration (a `SplitFib` instance).
+`LaxNormalCat` is a category displayed over `Cat`, with laws holding by `rfl` (`map_id` and
+`map_mul` are rewrite rules). Mathlib's `Functor.map_id` and `Functor.map_comp` are rules too, so
+the pullback `pullback u G` of `G` along `u` satisfies
+`pullback (v ⋙ u) G = pullback v (pullback u G)` by `rfl`. The morphism `pullback u G ⟶[u] G` given
+by identities is cartesian, and these lifts make `LaxNormalCat` a split fibration (a `SplitFib`
+instance).
 -/
 
 universe v₁ u₁ u
@@ -104,7 +113,77 @@ theorem mul_eq_comp {c : C} {x y z : F.obj ⟨c⟩} (h : x ⟶ y) (h' : y ⟶ z)
       (prof F (𝟙 c)).lmap h (mul (f := 𝟙 c) (𝟙 y) h') := rfl
   exact s₁.trans (s₂.trans (congrArg ((prof F (𝟙 c)).lmap h) (id_mul (𝟙 c) h')))
 
+/-- The action of `F c` on `prof F f` on the left is the composition constraint, as for
+`mul_eq_comp`. -/
+theorem lmap_eq_mul {c c' : C} (f : c ⟶ c') {x x' : F.obj ⟨c⟩} {y : F.obj ⟨c'⟩} (h : x' ⟶ x)
+    (v : (prof F f).obj x y) : (prof F f).lmap h v = mul (f := 𝟙 c) h v := by
+  let μ := F.mapComp (𝟙 c).toLoc f.toLoc
+  let P := Profunctor.comp (prof F (𝟙 c)) (prof F f)
+  have s₁ : mul (f := 𝟙 c) h v = Profunctor.Hom.app μ x' y (P.lmap h (CompObj.mk x (𝟙 x) v)) :=
+    congrArg (Profunctor.Hom.app μ x' y)
+      (show CompObj.mk x h v = P.lmap h (CompObj.mk x (𝟙 x) v) from rfl)
+  have s₂ : Profunctor.Hom.app μ x' y (P.lmap h (CompObj.mk x (𝟙 x) v)) =
+      (prof F f).lmap h (mul (f := 𝟙 c) (𝟙 x) v) := rfl
+  exact (s₁.trans (s₂.trans (congrArg ((prof F f).lmap h) (id_mul f v)))).symm
+
+/-- The action of `F c'` on `prof F f` on the right is the composition constraint. -/
+theorem rmap_eq_mul {c c' : C} (f : c ⟶ c') {x : F.obj ⟨c⟩} {y y' : F.obj ⟨c'⟩} (h : y ⟶ y')
+    (u : (prof F f).obj x y) : (prof F f).rmap h u = mul (g := 𝟙 c') u h := by
+  let μ := F.mapComp f.toLoc (𝟙 c').toLoc
+  let P := Profunctor.comp (prof F f) (prof F (𝟙 c'))
+  have s₁ : mul (g := 𝟙 c') u h = Profunctor.Hom.app μ x y' (P.rmap h (CompObj.mk y u (𝟙 y))) :=
+    congrArg (Profunctor.Hom.app μ x y')
+      (show CompObj.mk y u h = P.rmap h (CompObj.mk y u (𝟙 y)) from rfl)
+  have s₂ : Profunctor.Hom.app μ x y' (P.rmap h (CompObj.mk y u (𝟙 y))) =
+      (prof F f).rmap h (mul (g := 𝟙 c') u (𝟙 y)) := rfl
+  exact (s₁.trans (s₂.trans (congrArg ((prof F f).rmap h) (mul_id f u)))).symm
+
 end LaxNormal
+
+/-- **Lax normal functors are determined by their elements**: the categories `F.obj a`, the
+elements of the profunctors `F.map f` with their actions, and the composition constraints on
+elements. The data are compared on heterogeneously equal arguments, as their types are only equal
+once the categories `F.obj a` are. The 2-cells and units are determined by the structure: the
+2-cells of `LocallyDiscrete A` are identities, and `F` is strictly unitary. -/
+theorem LaxNormal.ext {A : Cat.{u, u}} {F G : LaxNormal A} (hobj : ∀ a, F.obj a = G.obj a)
+    (hprof : ∀ {a b : LocallyDiscrete A} (f : a ⟶ b) {x : F.obj a} {x' : G.obj a} {y : F.obj b}
+      {y' : G.obj b}, x ≍ x' → y ≍ y' → (F.map f).obj x y = (G.map f).obj x' y')
+    (hlmap : ∀ {a b : LocallyDiscrete A} (f : a ⟶ b) {x₁ x₂ : F.obj a} {x₁' x₂' : G.obj a}
+      {y : F.obj b} {y' : G.obj b} (k : x₂ ⟶ x₁) (k' : x₂' ⟶ x₁') (s : (F.map f).obj x₁ y)
+      (s' : (G.map f).obj x₁' y'), x₁ ≍ x₁' → x₂ ≍ x₂' → y ≍ y' → k ≍ k' → s ≍ s' →
+        (F.map f).lmap k s ≍ (G.map f).lmap k' s')
+    (hrmap : ∀ {a b : LocallyDiscrete A} (f : a ⟶ b) {x : F.obj a} {x' : G.obj a}
+      {y₁ y₂ : F.obj b} {y₁' y₂' : G.obj b} (k : y₁ ⟶ y₂) (k' : y₁' ⟶ y₂')
+      (s : (F.map f).obj x y₁) (s' : (G.map f).obj x' y₁'), x ≍ x' → y₁ ≍ y₁' → y₂ ≍ y₂' →
+        k ≍ k' → s ≍ s' → (F.map f).rmap k s ≍ (G.map f).rmap k' s')
+    (hmul : ∀ {a b c : LocallyDiscrete A} (f : a ⟶ b) (g : b ⟶ c) {x : F.obj a} {x' : G.obj a}
+      {y : F.obj b} {y' : G.obj b} {z : F.obj c} {z' : G.obj c} (s : (F.map f).obj x y)
+      (s' : (G.map f).obj x' y') (t : (F.map g).obj y z) (t' : (G.map g).obj y' z'),
+      x ≍ x' → y ≍ y' → z ≍ z' → s ≍ s' → t ≍ t' →
+        (F.mapComp f g).app x z (CompObj.mk y s t) ≍
+          (G.mapComp f g).app x' z' (CompObj.mk y' s' t')) :
+    F = G := by
+  obtain ⟨⟨⟨⟨⟨obj, map⟩, map₂⟩, map₂_id, _⟩, mapId, mapComp, _, _, _, _, _⟩, _, mapId_eq⟩ := F
+  obtain ⟨⟨⟨⟨⟨obj', map'⟩, map₂'⟩, map₂_id', _⟩, mapId', mapComp', _, _, _, _, _⟩, _,
+    mapId_eq'⟩ := G
+  obtain rfl : obj = obj' := funext hobj
+  obtain rfl : @map = @map' := by
+    funext a b f
+    exact Profunctor.ext (fun _ _ => hprof f HEq.rfl HEq.rfl)
+      (fun k s s' h => hlmap f k k s s' HEq.rfl HEq.rfl HEq.rfl HEq.rfl h)
+      (fun k s s' h => hrmap f k k s s' HEq.rfl HEq.rfl HEq.rfl HEq.rfl h)
+  obtain rfl : @map₂ = @map₂' := by
+    funext a b f g η
+    obtain rfl := LocallyDiscrete.eq_of_hom η
+    obtain rfl : η = 𝟙 f := Subsingleton.elim _ _
+    exact (map₂_id f).trans (map₂_id' f).symm
+  obtain rfl : mapId = mapId' := funext fun a => (mapId_eq a).trans (mapId_eq' a).symm
+  obtain rfl : @mapComp = @mapComp' := by
+    funext a b c f g
+    refine Profunctor.hom_ext fun x z w => ?_
+    induction w using CompObj.ind with
+    | h y s t => exact eq_of_heq (hmul f g s s t t HEq.rfl HEq.rfl HEq.rfl HEq.rfl HEq.rfl)
+  rfl
 
 /-! ## Morphisms with representable components -/
 
@@ -137,10 +216,24 @@ theorem ext {φ ψ : ReprHom u F G} (hobj : ∀ (a : A) (x : F.obj ⟨a⟩), φ.
     funext a a' f x y s; exact eq_of_heq (hmap a a' f x y s)
   rfl
 
+/-- Transformations between equal lax normal functors are heterogeneously equal if they agree on
+heterogeneously equal objects and elements. -/
+theorem hext {F' : LaxNormal A} {G' : LaxNormal B} (hF : F = F') (hG : G = G') {φ : ReprHom u F G}
+    {φ' : ReprHom u F' G'}
+    (hobj : ∀ {a : A} (x : F.obj ⟨a⟩) (x' : F'.obj ⟨a⟩), x ≍ x' → φ.obj x ≍ φ'.obj x')
+    (hmap : ∀ {a a' : A} {f : a ⟶ a'} {x : F.obj ⟨a⟩} {y : F.obj ⟨a'⟩} {x' : F'.obj ⟨a⟩}
+      {y' : F'.obj ⟨a'⟩} (s : (prof F f).obj x y) (s' : (prof F' f).obj x' y'), x ≍ x' → y ≍ y' →
+        s ≍ s' → φ.map s ≍ φ'.map s') :
+    φ ≍ φ' := by
+  subst hF hG
+  exact heq_of_eq (ext (fun _ x => eq_of_heq (hobj x x HEq.rfl))
+    (fun _ _ _ _ _ s => hmap s s HEq.rfl HEq.rfl HEq.rfl))
+
 end ReprHom
 
-/-- `DCat`, the category of displayed categories, displayed over `Cat`. -/
-def DCat : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
+/-- `LaxNormalCat`, displayed over `Cat`: the lax normal functors from `A` into profunctors over
+`A`, and the transformations with representable components over `u : A ⟶ B`. -/
+def LaxNormalCat : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
   Ob := LaxNormal
   Hom := ReprHom
   id _ :=
@@ -187,7 +280,7 @@ def pullback {A B : Cat.{u, u}} (u : A ⟶ B) (G : LaxNormal B) : LaxNormal A wh
 
 /-- The cartesian lift of `G` along `u`: identities `pullback u G ⟶[u] G`. -/
 def pullbackLift {A B : Cat.{u, u}} (u : A ⟶ B) (G : LaxNormal B) :
-    DCat.Hom u (pullback u G) G where
+    LaxNormalCat.Hom u (pullback u G) G where
   obj x := x
   map s := s
   map_id _ := rfl
@@ -195,23 +288,23 @@ def pullbackLift {A B : Cat.{u, u}} (u : A ⟶ B) (G : LaxNormal B) :
 
 /-- The chosen lift is cartesian: a transformation over `v ≫ u` is its own factorization. -/
 def isCartesianPullbackLift {A B : Cat.{u, u}} (u : A ⟶ B) (G : LaxNormal B) :
-    IsCartesian (D := DCat) (pullbackLift u G) where
+    IsCartesian (D := LaxNormalCat) (pullbackLift u G) where
   lift _ _ χ := ⟨χ.obj, χ.map, χ.map_id, χ.map_mul⟩
   lift_fac _ _ _ := rfl
   lift_uniq _ hψ := by
     subst hψ
     rfl
 
-/-- **`DCat` is a split fibration over `Cat`**, cloven by the pullbacks. Pullback along the
+/-- **`LaxNormalCat` is a split fibration over `Cat`**, cloven by the pullbacks. Pullback along the
 identity and along composites holds on the nose. -/
-instance preSplitFibDCat : PreSplitFib DCat.{u} where
+instance preSplitFibLaxNormalCat : PreSplitFib LaxNormalCat.{u} where
   pull u G := pullback u G
   clift u G := pullbackLift u G
   isCartesianClift u G := isCartesianPullbackLift u G
   pull_id _ := rfl
   pull_comp _ _ _ := rfl
 
-instance splitFibDCat : SplitFib DCat.{u} where
+instance splitFibLaxNormalCat : SplitFib LaxNormalCat.{u} where
   clift_id _ := rfl
   clift_comp _ _ _ := rfl
 
