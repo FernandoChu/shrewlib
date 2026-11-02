@@ -245,16 +245,11 @@ def straightenCartesian :
   map_clift _ _ := rfl
 
 /-- **`unstraighten` preserves cartesian morphisms.** -/
-def isCartesianUnstraightenMap {A B : Cat.{u, u}} {u : A ⟶ B} {F : LaxNormal A}
-    {G : LaxNormal B} {φ : LaxNormalCat.Hom u F G} (H : IsCartesian (D := LaxNormalCat) φ) :
-    IsCartesian (D := DisplayedCat) (unstraighten.map φ) :=
-  straighteningEquiv.isCartesianMap H
+def isCartesianUnstraightenMap : unstraighten.{u}.PreservesCartesian :=
+  straighteningEquiv.isCartesianMap
 
 /-- **The straightening preserves cartesian morphisms.** -/
-def isCartesianStraightenMap {A B : Cat.{u, u}} {u : A ⟶ B} {X : DisplayedCat.{u}.Ob A}
-    {Y : DisplayedCat.{u}.Ob B} {w : DisplayedCat.Hom u X Y}
-    (H : IsCartesian (D := DisplayedCat) w) :
-    IsCartesian (D := LaxNormalCat) (straighten.map w) :=
-  straighteningEquiv.symm.isCartesianMap H
+def isCartesianStraightenMap : straighten.{u}.PreservesCartesian :=
+  straighteningEquiv.symm.isCartesianMap
 
 end Displayed.Straightening

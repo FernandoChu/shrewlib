@@ -27,6 +27,8 @@ We provide:
   fibration (`SplitFib D`). A full split comprehension category is
   `[SplitComprehension D] [FullComprehension D]`;
 * `Comprehension.ofClift`: it suffices that the chosen lifts go to cartesian morphisms;
+* `Comprehension.comap`: a comprehension structure pulled back along a vertical functor that
+  preserves cartesian morphisms;
 * the extended context `D.ext A`, the projection `D.proj A : D.ext A ⟶ Γ`, and the morphism
   `D.q σ A : D.ext (D.pull σ A) ⟶ D.ext A` with its pullback square (`isPullback_q`);
 * over a split fibration, the rule that substitution commutes with weakening,
@@ -48,7 +50,7 @@ not syntactically `D.Ob Γ` or `D.Ty Γ`, as for the functors `Γ ⥤ Cat` of th
 explicit forms `D.ext A`, … are needed.
 -/
 
-universe v u v₂ u₂
+universe v u v₂ u₂ v₃ u₃
 
 open CategoryTheory Limits
 
@@ -69,8 +71,7 @@ class Comprehension (D : Displayed.{v, u, v₂, u₂} C) [Fib D] where
   /-- The comprehension functor. -/
   compr : VertFunctor D (cod C)
   /-- The comprehension functor preserves cartesian morphisms. -/
-  isCartesianComprMap : ∀ {a a' : C} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f] y},
-    IsCartesian φ → IsCartesian (compr.map φ)
+  isCartesianComprMap : compr.PreservesCartesian
 
 /-- A comprehension category is *full* if its comprehension functor is fully faithful. This is
 the data of an inverse on each displayed hom-type (`VertFunctor.FullyFaithful`), over a
@@ -99,7 +100,16 @@ def Comprehension.ofClift {D : Displayed.{v, u, v₂, u₂} C} [Fib D] (P : Vert
     (hP : ∀ {a a' : C} (f : a ⟶ a') (y : D.Ob a'), IsCartesian (P.map (D.clift f y))) :
     Comprehension D where
   compr := P
-  isCartesianComprMap H := P.isCartesianMapOfClift hP H
+  isCartesianComprMap := P.isCartesianMapOfClift hP
+
+/-- The comprehension structure pulled back along a vertical functor `E : D ⟶ D'` that preserves
+cartesian morphisms: its comprehension functor is `E ⋙ᵥ compr`. -/
+@[instance_reducible]
+def Comprehension.comap {D : Displayed.{v, u, v₂, u₂} C} {D' : Displayed.{v, u, v₃, u₃} C} [Fib D]
+    [Fib D'] [Comprehension D'] (E : VertFunctor D D') (hE : E.PreservesCartesian) :
+    Comprehension D where
+  compr := E ⋙ᵥ Comprehension.compr (D := D')
+  isCartesianComprMap H := Comprehension.isCartesianComprMap (hE H)
 
 section Comprehension
 
@@ -109,9 +119,8 @@ variable (D : Displayed.{v, u, v₂, u₂} C) [Fib D] [Comprehension D] {a a' : 
 def compr : VertFunctor D (cod C) := Comprehension.compr
 
 /-- The comprehension functor preserves cartesian morphisms. -/
-def isCartesianComprMap {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f] y}
-    (H : IsCartesian φ) : IsCartesian ((D.compr).map φ) :=
-  Comprehension.isCartesianComprMap H
+def isCartesianComprMap : (D.compr).PreservesCartesian :=
+  Comprehension.isCartesianComprMap
 
 /-- The extension `D.ext x` of the context `a` by `x`. -/
 def ext (x : D.Ob a) : C := ((D.compr).obj x).dom

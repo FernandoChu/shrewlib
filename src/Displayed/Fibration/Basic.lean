@@ -6,8 +6,9 @@ import Mathlib.Tactic.IrreducibleDef
 # Fibrations
 
 The exact dual of `Opfibration/Basic.lean`, whose sections this file mirrors. It starts with
-cartesian morphisms (`IsCartesian`, whose factorizations are data), which vertical equivalences
-preserve (`VertEquivalence.isCartesianMap`).
+cartesian morphisms (`IsCartesian`, whose factorizations are data), and displayed functors that
+preserve them (`DispFunctor.PreservesCartesian`), such as vertical equivalences
+(`VertEquivalence.isCartesianMap`).
 
 A `Fib` structure on a displayed category `D` is a cloven fibration: a chosen pullback `pull f y`
 for every base morphism `f : a ⟶ a'` and object `y` over `a'`, and a chosen cartesian lift
@@ -35,7 +36,7 @@ right-associated, so the `_assoc` forms of the rules are not literally dual to t
 as in `cartesianFactor φ ≫ᵈ (clift f y ≫ᵈ χ)` and `clift f x ≫ᵈ (β ≫ᵈ χ)`.
 -/
 
-universe v₁ u₁ v₂ u₂ v₃ u₃
+universe v₁ u₁ v₂ u₂ v₃ u₃ v₄ u₄ v₅ u₅
 
 open CategoryTheory
 
@@ -102,14 +103,22 @@ def compIso {y' : D.Ob a'} (H : IsCartesian φ) (ι : y ⟶[𝟙 a'] y') (ι' : 
 
 end IsCartesian
 
+/-- A displayed functor *preserves cartesian morphisms* if it sends cartesian morphisms to
+cartesian morphisms; since `IsCartesian` is data, this is a function on the factorizations. This is
+what is usually called a cartesian, or fibred, functor. `CartesianFunctor` is the strict notion,
+for cleavages: it preserves the chosen lifts on the nose. -/
+abbrev DispFunctor.PreservesCartesian {B : Type u₄} [Category.{v₄} B] {u : A ⥤ B}
+    {E : Displayed.{v₄, u₄, v₅, u₅} B} (F : DispFunctor u D E) : Type _ :=
+  ∀ {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f] y},
+    IsCartesian φ → IsCartesian (F.map φ)
+
 namespace VertEquivalence
 
 variable {E : Displayed.{v₁, u₁, v₃, u₃} A} (e : VertEquivalence D E)
 
 /-- **A vertical equivalence preserves cartesian morphisms.** The factorization of `χ` is the
 counit, followed by the image of the factorization of the preimage of `χ`. -/
-def isCartesianMap {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f] y}
-    (H : IsCartesian φ) : IsCartesian (e.functor.map φ) where
+def isCartesianMap : e.functor.PreservesCartesian := fun {_ _ _ _ _ φ} H => {
   lift {_} g z χ :=
     (e.counitIso.inv.app z ≫ᵈ
       e.functor.map (H.lift g (e.preimage (e.counitIso.hom.app z ≫ᵈ χ :))) :)
@@ -128,7 +137,7 @@ def isCartesianMap {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x 
     have h₂ : e.preimage (ε.hom.app z ≫ᵈ ψ :) = H.lift g (e.preimage (ε.hom.app z ≫ᵈ χ :)) :=
       H.lift_uniq _ h₁
     exact ((VertNatIso.inv_hom_id_app_assoc ε z ψ).symm.trans
-      (congrArg (ε.inv.app z ≫ᵈ ·) ((e.map_preimage _).symm.trans (congrArg e.functor.map h₂))) :)
+      (congrArg (ε.inv.app z ≫ᵈ ·) ((e.map_preimage _).symm.trans (congrArg e.functor.map h₂))) :) }
 
 end VertEquivalence
 
@@ -465,9 +474,8 @@ theorem cartesianFactor_comp_inv {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.O
 chosen lifts to cartesian morphisms: every cartesian morphism is a vertical isomorphism followed
 by a chosen lift. -/
 def VertFunctor.isCartesianMapOfClift (P : VertFunctor D E)
-    (hP : ∀ {a a' : A} (f : a ⟶ a') (y : D.Ob a'), IsCartesian (P.map (D.clift f y)))
-    {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f] y} (H : IsCartesian φ) :
-    IsCartesian (P.map φ) :=
+    (hP : ∀ {a a' : A} (f : a ⟶ a') (y : D.Ob a'), IsCartesian (P.map (D.clift f y))) :
+    P.PreservesCartesian := fun {a _ f _ y φ} H =>
   ((congrArg P.map (D.cartesianFactor_comp_clift φ).symm).trans (P.map_comp _ _)) ▸
     (hP f y).isoComp _ (P.map (H.lift (𝟙 a) (D.clift f y)))
       (congrArg P.map (cartesianFactor_inv_comp H) :)

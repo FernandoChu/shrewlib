@@ -1,0 +1,38 @@
+import ComprehensionCategory.Model.Displayed.Basic
+import ComprehensionCategory.Model.Displayed.TypeFormers.Sigma
+
+/-!
+# The displayed category model
+
+In this folder we define the displayed category model: the comprehension category `LaxNormalCat`
+over `Cat`, whose types in context `Γ` are the lax normal functors from `Γ` to profunctors, the
+categories displayed over `Γ` in Bénabou's sense. Its comprehension functor is the composite
+equivalence `LaxNormalCat ≃ DisplayedCat ≃ cod Cat` over `Cat`, so the context extension `Γ ▹ F` is
+the total category of the unstraightening of `F`. It is full and split: a split replacement of the
+codomain comprehension category `cod Cat`. It has Σ-types: `Σ[F] G` is the straightening of the
+composite of the unstraightenings of `F` and `G`.
+
+* `Basic`: the comprehension functor `unstraighten ⋙ᵥ DisplayedCat.total`, which preserves cartesian
+  morphisms and is fully faithful, as a composite of equivalences.
+* `TypeFormers/Sigma`: Σ-types, whose pairing reassociates the pairs, since unstraightening undoes
+  straightening on the nose.
+-/
+
+universe u
+
+open CategoryTheory Displayed ComprehensionCategory Straightening
+
+/-! ## Main results -/
+
+/-- **The displayed category model** is a full split comprehension category over `Cat`. -/
+recall ComprehensionCategory.DisplayedModel.splitComprehension : SplitComprehension LaxNormalCat.{u}
+
+recall ComprehensionCategory.DisplayedModel.fullComprehension : FullComprehension LaxNormalCat.{u}
+
+/-- Its comprehension functor is the composite equivalence `LaxNormalCat ≃ DisplayedCat ≃ cod Cat`.
+-/
+recall ComprehensionCategory.DisplayedModel.compr :
+    VertFunctor LaxNormalCat.{u} (cod Cat.{u, u})
+
+/-- **The displayed category model has Σ-types.** -/
+recall ComprehensionCategory.DisplayedModel.hasSigma : HasSigma LaxNormalCat.{u}

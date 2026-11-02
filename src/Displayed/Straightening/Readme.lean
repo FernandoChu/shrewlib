@@ -70,10 +70,7 @@ recall Displayed.Straightening.straightenCartesian :
     CartesianFunctor (𝟭 Cat.{u, u}) DisplayedCat.{u} LaxNormalCat.{u}
 
 /-- Both functors preserve cartesian morphisms. -/
-recall Displayed.Straightening.isCartesianUnstraightenMap {A B : Cat.{u, u}} {u : A ⟶ B}
-    {F : LaxNormal A} {G : LaxNormal B} {φ : LaxNormalCat.Hom u F G} (H : IsCartesian φ) :
-    IsCartesian (unstraighten.map φ)
+recall Displayed.Straightening.isCartesianUnstraightenMap :
+    unstraighten.{u}.PreservesCartesian
 
-recall Displayed.Straightening.isCartesianStraightenMap {A B : Cat.{u, u}} {u : A ⟶ B}
-    {X : DisplayedCat.{u}.Ob A} {Y : DisplayedCat.{u}.Ob B} {w : DisplayedCat.Hom u X Y}
-    (H : IsCartesian w) : IsCartesian (straighten.map w)
+recall Displayed.Straightening.isCartesianStraightenMap : straighten.{u}.PreservesCartesian

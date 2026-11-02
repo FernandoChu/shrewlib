@@ -49,8 +49,7 @@ variable (F : C ⥤ C') (D : Displayed.{v₁, u₁, v₃, u₃} C) [Fib D] [Comp
 morphisms, with natural comparisons `F.obj (Γ ▹ A) ⟶ F.obj Γ ▹ obj A` over `F.obj Γ`. -/
 structure ComprehensionMap extends DispFunctor F D E where
   /-- The displayed functor preserves cartesian morphisms. -/
-  isCartesianMap : ∀ {a a' : C} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f] y},
-    IsCartesian φ → IsCartesian (map φ)
+  isCartesianMap : toDispFunctor.PreservesCartesian
   /-- The comparison from the image of the extended context. -/
   cmp : ∀ {Γ : C} (A : D.Ty Γ), F.obj (Γ ▹ A) ⟶ F.obj Γ ▹ obj A
   /-- The comparison lies over `F.obj Γ`. -/
@@ -71,8 +70,7 @@ morphisms, with which the comprehension functors commute on objects. This axiom 
 rule. -/
 structure PreStrictComprehensionMap extends DispFunctor F D E where
   /-- The displayed functor preserves cartesian morphisms. -/
-  isCartesianMap : ∀ {a a' : C} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f] y},
-    IsCartesian φ → IsCartesian (map φ)
+  isCartesianMap : toDispFunctor.PreservesCartesian
   /-- The comprehension functors commute on objects: `F.obj Γ ▹ obj A` is `F.obj (Γ ▹ A)`, with
   projection `F.map (𝐩 A)`. -/
   compr_obj : ∀ {Γ : C} (A : D.Ty Γ), E.compr.obj (obj A) = (codMap F).obj (D.compr.obj A)

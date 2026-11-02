@@ -201,7 +201,7 @@ between the total categories. -/
 abbrev VertFunctor (D : Displayed.{v₁, u₁, v₂, u₂} A) (E : Displayed.{v₁, u₁, v₃, u₃} A) :=
   DispFunctor (𝟭 A) D E
 
-variable {E : Displayed.{v₁, u₁, v₃, u₃} A} {E' : Displayed.{v₁, u₁, v₂, u₂} A}
+variable {E : Displayed.{v₁, u₁, v₃, u₃} A} {E' : Displayed.{v₁, u₁, v₄, u₄} A}
 
 /-- The identity vertical functor. -/
 abbrev VertFunctor.id (D : Displayed.{v₁, u₁, v₂, u₂} A) : VertFunctor D D :=

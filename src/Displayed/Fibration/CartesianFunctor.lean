@@ -14,7 +14,8 @@ Both are rewrite rules. The rule on objects makes the equation on lifts well typ
 equation, so the functor preserving the chosen pullbacks (`PreCartesianFunctor`) is a field of
 `CartesianFunctor` rather than a parent, as for `D2SFibHom`.
 
-This is the strict notion, for cleavages, stronger than preserving cartesian morphisms. A vertical
+This is the strict notion, for cleavages, stronger than preserving cartesian morphisms
+(`DispFunctor.PreservesCartesian`), which is what is usually called a cartesian functor. A vertical
 cartesian functor does preserve all cartesian morphisms (`CartesianFunctor.isCartesianMap`), since
 every cartesian morphism is a vertical isomorphism followed by a chosen lift. Cartesian functors
 have identities and compose, over the identity and composite functors, with laws by `rfl`.
@@ -77,10 +78,9 @@ end CartesianFunctor
 /-- **A vertical cartesian functor preserves cartesian morphisms**: the chosen lifts go to chosen
 lifts, which are cartesian. -/
 def CartesianFunctor.isCartesianMap {D : Displayed.{v₁, u₁, v₃, u₃} A}
-    {E : Displayed.{v₁, u₁, v₄, u₄} A} [Fib D] [Fib E] (H : CartesianFunctor (𝟭 A) D E) {a a' : A}
-    {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f] y} (hφ : IsCartesian φ) :
-    IsCartesian (H.toDispFunctor.map φ) :=
+    {E : Displayed.{v₁, u₁, v₄, u₄} A} [Fib D] [Fib E] (H : CartesianFunctor (𝟭 A) D E) :
+    H.toDispFunctor.PreservesCartesian :=
   VertFunctor.isCartesianMapOfClift H.toDispFunctor
-    (fun f y => by kernel_exact E.isCartesianClift f (H.toDispFunctor.obj y)) hφ
+    fun f y => by kernel_exact E.isCartesianClift f (H.toDispFunctor.obj y)
 
 end Displayed

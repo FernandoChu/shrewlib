@@ -42,7 +42,7 @@ Finally, an opcleavage transfers along an equivalence over `A` (`VertEquivalence
 `clift f y : pull f y ⟶[f] y`. Its sections mirror the sections of this file.
 -/
 
-universe v₁ u₁ v₂ u₂ v₃ u₃
+universe v₁ u₁ v₂ u₂ v₃ u₃ v₄ u₄ v₅ u₅
 
 open CategoryTheory
 
@@ -102,14 +102,20 @@ def isoComp {x' : D.Ob a} (H : IsOpcartesian φ) (ι : x' ⟶[𝟙 a] x) (ι' : 
 
 end IsOpcartesian
 
+/-- A displayed functor *preserves opcartesian morphisms* if it sends opcartesian morphisms to
+opcartesian morphisms; since `IsOpcartesian` is data, this is a function on the factorizations. -/
+abbrev DispFunctor.PreservesOpcartesian {B : Type u₄} [Category.{v₄} B] {u : A ⥤ B}
+    {E : Displayed.{v₄, u₄, v₅, u₅} B} (F : DispFunctor u D E) : Type _ :=
+  ∀ {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f] y},
+    IsOpcartesian φ → IsOpcartesian (F.map φ)
+
 namespace VertEquivalence
 
 variable {E : Displayed.{v₁, u₁, v₃, u₃} A} (e : VertEquivalence D E)
 
 /-- **A vertical equivalence preserves opcartesian morphisms.** The factorization of `χ` is the
 image of the factorization of the preimage of `χ`, followed by the counit. -/
-def isOpcartesianMap {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f] y}
-    (H : IsOpcartesian φ) : IsOpcartesian (e.functor.map φ) where
+def isOpcartesianMap : e.functor.PreservesOpcartesian := fun {_ _ _ _ _ φ} H => {
   desc {_} g z χ :=
     (e.functor.map (H.desc g (e.preimage (χ ≫ᵈ e.counitIso.inv.app z :))) ≫ᵈ
       e.counitIso.hom.app z :)
@@ -128,7 +134,7 @@ def isOpcartesianMap {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : 
     have h₂ : e.preimage (ψ ≫ᵈ ε.inv.app z :) = H.desc g (e.preimage (χ ≫ᵈ ε.inv.app z :)) :=
       H.desc_uniq _ h₁
     exact ((congrArg (ψ ≫ᵈ ·) (VertNatIso.inv_hom_id_app ε z)).symm.trans
-      (congrArg (· ≫ᵈ ε.hom.app z) ((e.map_preimage _).symm.trans (congrArg e.functor.map h₂))) :)
+      (congrArg (· ≫ᵈ ε.hom.app z) ((e.map_preimage _).symm.trans (congrArg e.functor.map h₂))) :) }
 
 end VertEquivalence
 

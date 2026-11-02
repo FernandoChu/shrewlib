@@ -7,8 +7,9 @@ import Displayed.Opfibration.Straightening.Readme
 /-!
 # Opfibrations
 
-* `Basic`: opcartesian morphisms (`IsOpcartesian`), cloven opfibrations (`Opfib`), and basic
-  definitions involving these.
+* `Basic`: opcartesian morphisms (`IsOpcartesian`), displayed functors preserving them
+  (`DispFunctor.PreservesOpcartesian`), cloven opfibrations (`Opfib`), and basic definitions
+  involving these.
 * `DualOp`: the dual opfibration of a split opfibration.
 * `Sigma`: opfibrations compose, and so do split opfibrations.
 * `SplitOpfibCat`: the split opfibrations and displayed functors between them, a category displayed
@@ -29,8 +30,7 @@ open scoped Displayed
 
 /-- A vertical equivalence preserves opcartesian morphisms. -/
 recall Displayed.VertEquivalence.isOpcartesianMap {A : Type u₁} [Category.{v₁} A]
-    {D E : Displayed A} (e : VertEquivalence D E) {a a' : A} {f : a ⟶ a'} {x : D.Ob a}
-    {y : D.Ob a'} {φ : x ⟶[f] y} (H : IsOpcartesian φ) : IsOpcartesian (e.functor.map φ)
+    {D E : Displayed A} (e : VertEquivalence D E) : e.functor.PreservesOpcartesian
 
 /-- An opcleavage transfers along a vertical equivalence. -/
 recall Displayed.VertEquivalence.opfib {A : Type u₁} [Category.{v₁} A] {D E : Displayed A}

@@ -5,6 +5,8 @@ import ComprehensionCategory.TypeFormers.Op
 import ComprehensionCategory.TypeFormers.Hom
 import ComprehensionCategory.Model.Cat.Readme
 import ComprehensionCategory.Model.Codomain.Readme
+import ComprehensionCategory.Model.Discrete.Readme
+import ComprehensionCategory.Model.Displayed.Readme
 
 /-!
 # Comprehension categories
@@ -24,6 +26,12 @@ Comprehension categories as displayed categories, their type formers, and models
   `TypeFormers/` folders mirror the one above.
   * `Cat/`: the category model `ICat` over `Cat`, with Σ-types, opposite types and Hom-types.
   * `Codomain/`: `cod C`, for a category with chosen pullbacks.
+  * `Discrete/`: the discrete model `ISet` over `Cat`, whose types are functors into `Type u`,
+    with the comprehension of the category model along the embedding of sets as discrete
+    categories, which is a strict map of comprehension categories.
+  * `Displayed/`: the displayed category model `LaxNormalCat` over `Cat`, whose types are the
+    lax normal functors into profunctors, with the equivalence `LaxNormalCat ≃ cod Cat` as
+    comprehension functor: a split replacement of `cod Cat`, with Σ-types.
 
 -/
 

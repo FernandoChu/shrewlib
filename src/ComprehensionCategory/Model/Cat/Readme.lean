@@ -22,9 +22,11 @@ The files give its ingredients:
   and is fully faithful, so that `ICat` is a full split comprehension category.
 * `TypeFormers/Sigma`: Σ-types, whose pairing is the inverse of the counit of
   straightening–unstraightening at the composite.
+* `Discrete`: discrete categories `discrete' S`, whose morphisms are the proofs of equalities, and
+  the embedding `discreteFunctor : Type u ⥤ Cat`. It imports no rewrite rules.
 * `OpFunctor`: the opposite functor `opFunctor' : Cat ⥤ Cat`, involutive on the nose, by taking
-  the opposite category structure on the same objects, and discrete categories `discrete' S`,
-  which are their own opposites, by `propext`. It imports no rewrite rules.
+  the opposite category structure on the same objects; discrete categories are their own
+  opposites, by `propext`. It imports no rewrite rules.
 * `TypeFormers/Op`: opposite types, `A ⋙ opFunctor'`, whose rules hold by `rfl`.
 * `TypeFormers/Hom`: Hom-types, whose stability holds by `rfl` and Hom-op by `propext`.
 -/
