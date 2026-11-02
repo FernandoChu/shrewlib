@@ -18,13 +18,17 @@ horizontal and vertical morphisms of `Bᵒᵖ.Total`.
 
 The functoriality of `F` along these, and the interchange of vertical with horizontal morphisms,
 are rewrite rules. They have their own heads `hobj`, `hmor`, `vobj` and `vmor`, rather than
-`Functor.obj` and `Functor.map`, so that they are only tried where they can apply. (A rule
-`F.map (u ≫ v) = F.map u ≫ F.map v` for arbitrary morphisms of `Bᵒᵖ.Total` would not do: these
-compute, so `F.map u` and `F.map (dualHoriz _ _ ≫ dualVert _)` would stop being definitionally
-equal.) The naturality of a transformation `κ` along these morphisms is a rule too. As a result,
-composition in `Unstraightening F` is `hmor α' θ ≫ vmor (B.pushMap α' (B.opcartesianFactor g)) θ'`,
-with no `eqToHom`, and its laws, its `D2SFib` structure and the functoriality of `unstraighten` hold
-by `rfl`.
+`Functor.obj` and `Functor.map`, so that they are only tried where they can apply. (The functor
+laws `F.map (𝟙 x) ↦ 𝟙 (F.obj x)` and `F.map (u ≫ v) ↦ F.map u ≫ F.map v` of `Rules.Functor`, which
+this file sees through `Displayed/Displayed/Basic.lean`, do not do this. The morphisms of
+`Bᵒᵖ.Total` compute, so for a variable `u`, `F.map u` is not definitionally equal to
+`F.map (dualHoriz _ _) ≫ F.map (dualVert _)`, the splitting of `F.map (dualHoriz _ _ ≫ dualVert _)`.
+They do fire along identities and composites of the chosen morphisms, which are rules in
+`Displayed/Opfibration/DualOp.lean`, so `hmap_id`, `hmap_comp`, `vmap_id` and `vmap_comp` hold by
+`rfl`.) The naturality of a transformation `κ` along these morphisms is a rule too. As a
+result, composition in `Unstraightening F` is
+`hmor α' θ ≫ vmor (B.pushMap α' (B.opcartesianFactor g)) θ'`, with no `eqToHom`, and its laws, its
+`D2SFib` structure and the functoriality of `unstraighten` hold by `rfl`.
 -/
 
 universe v₁ u₁ v₂ u₂ v₃ u₃
@@ -78,23 +82,19 @@ def vmor {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') {c c' : F.obj (Bᵒᵖ.tot b')}
     vobj F β c ⟶ vobj F β c' :=
   (vmap F β).map θ
 
-theorem hmap_id (b : B.Ob a) : hmap F (𝟙 a) b = 𝟭 _ := by
-  change (F.map (𝟙 (Bᵒᵖ.tot b))).toFunctor = _
-  rw [F.map_id]; rfl
+theorem hmap_id (b : B.Ob a) : hmap F (𝟙 a) b = 𝟭 _ :=
+  rfl
 
 theorem hmap_comp (α : a ⟶ a') (α' : a' ⟶ a'') (b : B.Ob a) :
-    hmap F (α ≫ α') b = hmap F α b ⋙ hmap F α' (B.push α b) := by
-  change (F.map (dualHoriz α b ≫ dualHoriz α' (B.push α b))).toFunctor = _
-  rw [F.map_comp]; rfl
+    hmap F (α ≫ α') b = hmap F α b ⋙ hmap F α' (B.push α b) :=
+  rfl
 
-theorem vmap_id (b : B.Ob a) : vmap F (B.id b) = 𝟭 _ := by
-  change (F.map (𝟙 (Bᵒᵖ.tot b))).toFunctor = _
-  rw [F.map_id]; rfl
+theorem vmap_id (b : B.Ob a) : vmap F (B.id b) = 𝟭 _ :=
+  rfl
 
 theorem vmap_comp {b b' b'' : B.Ob a} (β : b ⟶[𝟙 a] b') (γ : b' ⟶[𝟙 a] b'') :
-    vmap F (β ≫ᵈ γ) = vmap F γ ⋙ vmap F β := by
-  change (F.map (dualVert γ ≫ dualVert β)).toFunctor = _
-  rw [F.map_comp]; rfl
+    vmap F (β ≫ᵈ γ) = vmap F γ ⋙ vmap F β :=
+  rfl
 
 theorem vmap_hmap (α : a ⟶ a') {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') :
     vmap F β ⋙ hmap F α b = hmap F α b' ⋙ vmap F (B.pushMap α β) :=

@@ -1,4 +1,4 @@
-import Rules.Category
+import Rules.Functor
 import Mathlib.CategoryTheory.Category.Basic
 import Mathlib.CategoryTheory.Functor.Basic
 import Mathlib.CategoryTheory.Iso
@@ -19,12 +19,19 @@ We provide:
 
 * the structure `Displayed` and scoped notation `𝟙ᵈ x`, `φ ≫ᵈ ψ` and `x ⟶[f] y`;
 * the fiber category `Displayed.Fiber D a`, whose laws hold by `rfl`;
-* vertical functors `VertFunctor D E` (functors over the identity of `A`), whose laws are rewrite
-  rules, with scoped notation `F ⋙ᵥ G` for their composite, and vertical natural transformations
-  `VertNatTrans F G` (with components over identities), forming the category `VertFunctor D E`.
-  As in Mathlib's functor categories, vertical natural isomorphisms are the isomorphisms `F ≅ G`
-  of this category; the `VertNatIso` namespace has their components (`VertNatIso.app`,
-  `VertNatIso.hom_inv_id_app`, …) and `VertNatIso.ofComponents`.
+* displayed functors `DispFunctor u D E` over a functor `u : A ⥤ B`, whose laws are rewrite rules
+  and are stated with the functor laws of `u` as rules (this file imports `Rules.Functor`), with
+  identities and composites over the identity and composite functors;
+* vertical functors `VertFunctor D E`, the displayed functors over `𝟭 A`, with scoped notation
+  `F ⋙ᵥ G` for their composite, and vertical natural transformations `VertNatTrans F G` (with
+  components over identities), forming the category `VertFunctor D E`. As in Mathlib's functor
+  categories, vertical natural isomorphisms are the isomorphisms `F ≅ G` of this category; the
+  `VertNatIso` namespace has their components (`VertNatIso.app`, `VertNatIso.hom_inv_id_app`, …)
+  and `VertNatIso.ofComponents`.
+
+A vertical functor sends a morphism over `f` to one over `(𝟭 A).map f`, which is `f` by unfolding
+`𝟭 A`. The composite of two vertical functors lies over `𝟭 A ⋙ 𝟭 A`, which is `𝟭 A` by the rule
+`Functor.id_comp`, so it is again a vertical functor.
 
 The cancellation lemmas of vertical natural isomorphisms are not rewrite rules: they are keyed on
 displayed composition, and trying them on every displayed composite is too slow.
@@ -35,7 +42,7 @@ The total category is in `Displayed/Displayed/Total.lean`, and equivalences over
 Requires the `rewrite-rules` fork of Lean.
 -/
 
-universe v₁ u₁ v₂ u₂ v₃ u₃
+universe v₁ u₁ v₂ u₂ v₃ u₃ v₄ u₄ v₅ u₅ v₆ u₆ v₇ u₇
 
 open CategoryTheory
 
@@ -107,6 +114,64 @@ theorem _root_.CategoryTheory.Iso.inv_hom_id_displayed {a a' : A} {g : a ⟶ a'}
 
 end Fiber
 
+/-! ## Displayed functors -/
+
+section DispFunctor
+
+variable {B : Type u₄} [Category.{v₄} B]
+
+/-- A displayed functor over `u : A ⥤ B`: objects over `a` go to objects over `u a`, and
+morphisms over `f` to morphisms over `u f`. Its laws are stated with the functor laws of `u` as
+rules, so that `u (𝟙 a)` is `𝟙 (u a)` and `u (f ≫ g)` is `u f ≫ u g`. -/
+structure DispFunctor (u : A ⥤ B) (D : Displayed.{v₁, u₁, v₂, u₂} A)
+    (E : Displayed.{v₄, u₄, v₅, u₅} B) where
+  /-- The action on objects. -/
+  obj : {a : A} → D.Ob a → E.Ob (u.obj a)
+  /-- The action on morphisms, over the image of the base morphism. -/
+  map : {a a' : A} → {f : a ⟶ a'} → {x : D.Ob a} → {y : D.Ob a'} → (x ⟶[f] y) →
+    (obj x ⟶[u.map f] obj y)
+  map_id : ∀ {a : A} (x : D.Ob a), map (𝟙ᵈ x) = 𝟙ᵈ (obj x)
+  map_comp : ∀ {a a' a'' : A} {f : a ⟶ a'} {g : a' ⟶ a''} {x : D.Ob a} {y : D.Ob a'}
+    {z : D.Ob a''} (φ : x ⟶[f] y) (ψ : y ⟶[g] z), map (φ ≫ᵈ ψ) = map φ ≫ᵈ map ψ
+
+attribute [rewrite_rule] DispFunctor.map_id DispFunctor.map_comp
+
+namespace DispFunctor
+
+variable {u : A ⥤ B} {D : Displayed.{v₁, u₁, v₂, u₂} A} {E : Displayed.{v₄, u₄, v₅, u₅} B}
+
+/-- Displayed functors are determined by their actions on objects and morphisms. -/
+theorem ext {H K : DispFunctor u D E} (hobj : ∀ {a : A} (x : D.Ob a), H.obj x = K.obj x)
+    (hmap : ∀ {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} (φ : x ⟶[f] y),
+      H.map φ ≍ K.map φ) : H = K := by
+  obtain ⟨obj, map, _, _⟩ := H
+  obtain ⟨obj', map', _, _⟩ := K
+  obtain rfl : @obj = @obj' := by
+    funext a x
+    exact hobj x
+  obtain rfl : @map = @map' := by
+    funext a a' f x y φ
+    exact eq_of_heq (hmap φ)
+  rfl
+
+/-- The identity displayed functor, over the identity functor. -/
+protected def id (D : Displayed.{v₁, u₁, v₂, u₂} A) : DispFunctor (𝟭 A) D D where
+  obj x := x
+  map φ := φ
+  map_id _ := rfl
+  map_comp _ _ := rfl
+
+/-- Composition of displayed functors, over the composite functor. -/
+def comp {C : Type u₆} [Category.{v₆} C] {v : B ⥤ C} {E' : Displayed.{v₆, u₆, v₇, u₇} C}
+    (H : DispFunctor u D E) (K : DispFunctor v E E') : DispFunctor (u ⋙ v) D E' where
+  obj x := K.obj (H.obj x)
+  map φ := K.map (H.map φ)
+  map_id _ := rfl
+  map_comp _ _ := rfl
+
+end DispFunctor
+
+end DispFunctor
 
 /-! ## Vertical functors -/
 
@@ -114,34 +179,20 @@ section VertFunctor
 
 /-- A vertical functor: a displayed functor over the identity of `A`, i.e. a functor over `A`
 between the total categories. -/
-structure VertFunctor (D : Displayed.{v₁, u₁, v₂, u₂} A) (E : Displayed.{v₁, u₁, v₃, u₃} A) where
-  /-- The action on objects, fiberwise. -/
-  obj : {a : A} → D.Ob a → E.Ob a
-  /-- The action on morphisms, over the same base morphism. -/
-  map : {a a' : A} → {f : a ⟶ a'} → {x : D.Ob a} → {y : D.Ob a'} → (x ⟶[f] y) →
-    (obj x ⟶[f] obj y)
-  map_id : ∀ {a : A} (x : D.Ob a), map (𝟙ᵈ x) = 𝟙ᵈ (obj x)
-  map_comp : ∀ {a a' a'' : A} {f : a ⟶ a'} {g : a' ⟶ a''} {x : D.Ob a} {y : D.Ob a'}
-    {z : D.Ob a''} (φ : x ⟶[f] y) (ψ : y ⟶[g] z), map (φ ≫ᵈ ψ) = map φ ≫ᵈ map ψ
-
-attribute [rewrite_rule] VertFunctor.map_id VertFunctor.map_comp
+abbrev VertFunctor (D : Displayed.{v₁, u₁, v₂, u₂} A) (E : Displayed.{v₁, u₁, v₃, u₃} A) :=
+  DispFunctor (𝟭 A) D E
 
 variable {E : Displayed.{v₁, u₁, v₃, u₃} A} {E' : Displayed.{v₁, u₁, v₂, u₂} A}
 
 /-- The identity vertical functor. -/
-def VertFunctor.id (D : Displayed.{v₁, u₁, v₂, u₂} A) : VertFunctor D D where
-  obj x := x
-  map φ := φ
-  map_id _ := rfl
-  map_comp _ _ := rfl
+abbrev VertFunctor.id (D : Displayed.{v₁, u₁, v₂, u₂} A) : VertFunctor D D :=
+  DispFunctor.id D
 
-/-- Composition of vertical functors. -/
-def VertFunctor.comp {D : Displayed.{v₁, u₁, v₂, u₂} A} (F : VertFunctor D E)
-    (G : VertFunctor E E') : VertFunctor D E' where
-  obj x := G.obj (F.obj x)
-  map φ := G.map (F.map φ)
-  map_id _ := rfl
-  map_comp _ _ := rfl
+/-- Composition of vertical functors, their composite as displayed functors: it lies over
+`𝟭 A ⋙ 𝟭 A`, which is `𝟭 A` by the rule `Functor.id_comp`. -/
+abbrev VertFunctor.comp {D : Displayed.{v₁, u₁, v₂, u₂} A} (F : VertFunctor D E)
+    (G : VertFunctor E E') : VertFunctor D E' :=
+  DispFunctor.comp F G
 
 /-- Notation for composition of vertical functors, mirroring `⋙` for functors: `F ⋙ᵥ G` is `F`
 followed by `G`. -/

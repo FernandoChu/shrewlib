@@ -9,11 +9,11 @@ import Displayed.Displayed.Codomain
 /-!
 # Displayed categories in general
 
-* `Basic`: displayed categories `Displayed A` over `A`, their fibers `Fiber`, vertical functors
-  `VertFunctor` and vertical natural transformations `VertNatTrans`.
-* `Functor`: displayed functors `DispFunctor u` over a functor `u` between the bases, the
-  functors they induce between total categories, and functors into a total category given by
-  their displayed components (`TotalLift`).
+* `Basic`: displayed categories `Displayed A` over `A`, their fibers `Fiber`, displayed functors
+  `DispFunctor u` over a functor `u` between the bases, vertical functors `VertFunctor`, the
+  displayed functors over `𝟭 A`, and vertical natural transformations `VertNatTrans`.
+* `Functor`: the functors that displayed functors induce between total categories, and functors
+  into a total category given by their displayed components (`TotalLift`).
 * `DisplayedCat`: the displayed categories and displayed functors, displayed over `Cat`, the
   fully faithful functor `DisplayedCat ⟶ cod Cat` taking total categories, and reindexing.
 * `Equivalence`: equivalences over the base (`VertEquivalence`), which are fully faithful.

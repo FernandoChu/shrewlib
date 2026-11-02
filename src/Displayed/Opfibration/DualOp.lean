@@ -14,6 +14,8 @@ a type `C`, and the elaborator picks the reading that typechecks.
 Composition is `ψ ≫ B.pushMap g φ`. Since the splitting of `B` and the functoriality of
 `pushMap` hold definitionally, so do the laws of `Bᵒᵖ`, and every identity between the chosen
 horizontal and vertical morphisms `dualHoriz`/`dualVert` of its total category holds by `rfl`.
+Those along identities and composites are rewrite rules, so that the functor rules of
+`Rules.Functor` fire on the images of such chosen morphisms.
 -/
 
 universe v₁ u₁ v₂ u₂
@@ -85,12 +87,6 @@ theorem π_map_dualHoriz {a a' : A} (α : a ⟶ a') (b : B.Ob a) :
 theorem π_map_dualVert {a : A} {b b' : B.Fiber a} (β : b ⟶ b') :
     Bᵒᵖ.π.map (dualVert β) = 𝟙 a := rfl
 
-theorem dualVert_id {a : A} (b : B.Fiber a) : dualVert (𝟙 b) = 𝟙 (Bᵒᵖ.tot b) := rfl
-
-/-- `dualVert` is contravariant. -/
-theorem dualVert_comp {a : A} {b₁ b₂ b₃ : B.Fiber a} (u : b₁ ⟶ b₂) (v : b₂ ⟶ b₃) :
-    dualVert (u ≫ v) = dualVert v ≫ dualVert u := rfl
-
 /-- Every morphism of `Bᵒᵖ.Total` factors as a chosen horizontal morphism followed by a
 vertical one. -/
 theorem dual_factor {a a' : A} {b : B.Ob a} {b' : B.Ob a'}
@@ -101,13 +97,30 @@ transports it along `B.pushMap`. -/
 theorem dualVert_comp_dualHoriz {a a' : A} (α : a ⟶ a') {b b' : B.Fiber a} (β : b ⟶ b') :
     dualVert β ≫ dualHoriz α b = dualHoriz α b' ≫ dualVert (B.pushMap α β) := rfl
 
+/-! The chosen morphisms along identities and composites are rewrite rules, so that the rules
+`Functor.map_id` and `Functor.map_comp` fire on the image of `dualHoriz (𝟙 a) b` or
+`dualVert (β ≫ᵈ γ)` under a functor out of `Bᵒᵖ.Total`: these morphisms compute to `totalMk`s,
+never to identities or composites. The vertical patterns are in their most unfolded forms `B.id b`
+and `β ≫ᵈ γ`, which the identities and composites of the fibers unfold to. -/
+
 /-- The chosen horizontal morphism over an identity is the identity. -/
+@[rewrite_rule]
 theorem dualHoriz_id {a : A} (b : B.Ob a) : dualHoriz (𝟙 a) b = 𝟙 (Bᵒᵖ.tot b) := rfl
 
 /-- Splitness of `Bᵒᵖ.Total`: the chosen horizontal morphism over a composite is the composite
 of the chosen horizontal morphisms. -/
+@[rewrite_rule]
 theorem dualHoriz_comp {a a' a'' : A} (α : a ⟶ a') (α' : a' ⟶ a'') (b : B.Ob a) :
-    dualHoriz α b ≫ dualHoriz α' (B.push α b) = dualHoriz (α ≫ α') b := rfl
+    dualHoriz (α ≫ α') b = dualHoriz α b ≫ dualHoriz α' (B.push α b) := rfl
+
+/-- The chosen vertical morphism of an identity is the identity. -/
+@[rewrite_rule]
+theorem dualVert_id {a : A} (b : B.Ob a) : dualVert (B.id b) = 𝟙 (Bᵒᵖ.tot b) := rfl
+
+/-- `dualVert` is contravariant. -/
+@[rewrite_rule]
+theorem dualVert_comp {a : A} {b₁ b₂ b₃ : B.Ob a} (β : b₁ ⟶[𝟙 a] b₂) (γ : b₂ ⟶[𝟙 a] b₃) :
+    dualVert (β ≫ᵈ γ) = dualVert γ ≫ dualVert β := rfl
 
 end Total
 
