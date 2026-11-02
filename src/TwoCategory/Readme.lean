@@ -21,8 +21,9 @@ Strict bicategories, whose laws are rules and hold by `rfl`. Each folder has a `
   associators; an adjunction is determined by its counit.
 * `Constructions/`: the arrow 2-category `Arr B`, the strict slice `Slice b`, and spans.
 * `Limits/`: 2-pullbacks, comma objects and finitely complete 2-categories.
-* `Monad/`: monads in a bicategory, strict 2-monads with their 2-categories of algebras, lax
-  idempotent 2-monads, and distributive laws of a 2-comonad over a 2-monad.
+* `Monad/`: monads in a bicategory, strict 2-monads with their 2-categories of algebras,
+  pseudo-algebras, lax idempotent 2-monads, whose pseudo-, normal pseudo- and strict algebras are
+  left adjoints of the units, and distributive laws of a 2-comonad over a 2-monad.
 * `Factorization/`: AWFSs, and in `Comma/` the comma factorization `f = Lf ≫ Rf` through `f/B`, an
   AWFS whose 2-monad `R` is lax idempotent.
 -/

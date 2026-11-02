@@ -123,9 +123,10 @@ files, (op)cartesian morphisms (in `Displayed/{Opfibration,Fibration}/Basic` and
   hold by `rfl`. `Basic` has `TwoCategory`, strict pseudofunctors and adjunctions are at the top
   level, and there are four folders: `Constructions/` (the arrow 2-category, strict slices and
   spans), `Limits/` (2-pullbacks, comma objects and finitely complete 2-categories), `Monad/`
-  (monads in a bicategory, strict 2-monads and their algebras, lax idempotent 2-monads,
-  distributive laws) and `Factorization/` (AWFSs; in `Comma/`, the comma factorization `f = Lf ≫ Rf`
-  is an AWFS whose 2-monad `R` is lax idempotent, and `R`-algebras are split reflections).
+  (monads in a bicategory, strict 2-monads and their algebras, pseudo-algebras, lax idempotent
+  2-monads, whose algebras are left adjoints of the units, distributive laws) and
+  `Factorization/` (AWFSs; in `Comma/`, the comma factorization `f = Lf ≫ Rf` is an AWFS whose
+  2-monad `R` is lax idempotent, and `R`-algebras are split reflections).
 - `DoubleCategory/`: pseudo double categories, and the horizontal bicategory of globular squares.
 - `Displayed/`: categories displayed over a category, in four folders: `Displayed/` (displayed
   categories in general), `Opfibration/` (including the unstraightening of functors `A ⥤ Cat`),
