@@ -29,7 +29,7 @@ open CategoryTheory Displayed Opfibration.Straightening
 /-- The comprehension functor of the category model: unstraighten, forget the opcleavage, and take
 the total category. -/
 def compr : VertFunctor ICat.{u} (cod Cat.{u, u}) :=
-  unstraighten.comp (SplitOpfibCat.forget.comp DisplayedCat.total)
+  unstraighten ⋙ᵥ SplitOpfibCat.forget ⋙ᵥ DisplayedCat.total
 
 /-- **The comprehension functor sends the chosen lifts to cartesian morphisms**: `A ⋉ ICat.pull u G`
 is the pullback of `B ⋉ G` along `u`. -/

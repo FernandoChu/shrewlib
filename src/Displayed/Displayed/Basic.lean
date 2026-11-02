@@ -20,10 +20,11 @@ We provide:
 * the structure `Displayed` and scoped notation `𝟙ᵈ x`, `φ ≫ᵈ ψ` and `x ⟶[f] y`;
 * the fiber category `Displayed.Fiber D a`, whose laws hold by `rfl`;
 * vertical functors `VertFunctor D E` (functors over the identity of `A`), whose laws are rewrite
-  rules, and vertical natural transformations `VertNatTrans F G` (with components over identities),
-  forming the category `VertFunctor D E`. As in Mathlib's functor categories, vertical natural
-  isomorphisms are the isomorphisms `F ≅ G` of this category; the `VertNatIso` namespace has their
-  components (`VertNatIso.app`, `VertNatIso.hom_inv_id_app`, …) and `VertNatIso.ofComponents`.
+  rules, with scoped notation `F ⋙ᵥ G` for their composite, and vertical natural transformations
+  `VertNatTrans F G` (with components over identities), forming the category `VertFunctor D E`.
+  As in Mathlib's functor categories, vertical natural isomorphisms are the isomorphisms `F ≅ G`
+  of this category; the `VertNatIso` namespace has their components (`VertNatIso.app`,
+  `VertNatIso.hom_inv_id_app`, …) and `VertNatIso.ofComponents`.
 
 The cancellation lemmas of vertical natural isomorphisms are not rewrite rules: they are keyed on
 displayed composition, and trying them on every displayed composite is too slow.
@@ -141,6 +142,10 @@ def VertFunctor.comp {D : Displayed.{v₁, u₁, v₂, u₂} A} (F : VertFunctor
   map φ := G.map (F.map φ)
   map_id _ := rfl
   map_comp _ _ := rfl
+
+/-- Notation for composition of vertical functors, mirroring `⋙` for functors: `F ⋙ᵥ G` is `F`
+followed by `G`. -/
+scoped infixr:80 " ⋙ᵥ " => Displayed.VertFunctor.comp
 
 end VertFunctor
 

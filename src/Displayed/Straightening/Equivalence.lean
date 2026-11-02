@@ -90,8 +90,8 @@ theorem unitInv_unitHom :
 
 end Unit
 
-/-- **The unit** `VertFunctor.id DCat ≅ unstraighten.comp straighten`, vertical over `Cat`. -/
-def unitIso : VertFunctor.id DCat.{u} ≅ unstraighten.comp straighten :=
+/-- **The unit** `VertFunctor.id DCat ≅ unstraighten ⋙ᵥ straighten`, vertical over `Cat`. -/
+def unitIso : VertFunctor.id DCat.{u} ≅ unstraighten ⋙ᵥ straighten :=
   VertNatIso.ofComponents
     (fun F => ⟨unitHom F, unitInv F, unitHom_unitInv F, unitInv_unitHom F⟩) (fun _ => rfl)
 
@@ -146,9 +146,9 @@ theorem counitInv_counitHom :
 
 end Counit
 
-/-- **The counit** `straighten.comp unstraighten ≅ VertFunctor.id (cod Cat)`, vertical
-over `Cat`. -/
-def counitIso : straighten.comp unstraighten ≅ VertFunctor.id (cod Cat.{u, u}) :=
+/-- **The counit** `straighten ⋙ᵥ unstraighten ≅ VertFunctor.id (cod Cat)`, vertical over
+`Cat`. -/
+def counitIso : straighten ⋙ᵥ unstraighten ≅ VertFunctor.id (cod Cat.{u, u}) :=
   VertNatIso.ofComponents
     (fun X => ⟨counitHom X, counitInv X, counitHom_counitInv X, counitInv_counitHom X⟩)
     (fun _ => rfl)
