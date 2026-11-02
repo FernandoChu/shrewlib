@@ -1,5 +1,6 @@
 import ComprehensionCategory.Model.Cat.Basic
 import ComprehensionCategory.Model.Cat.TypeFormers.Sigma
+import ComprehensionCategory.Model.Cat.TypeFormers.Op
 
 /-!
 # The category model
@@ -8,7 +9,7 @@ In this folder we define the category model: the comprehension category `ICat` o
 types in context `Γ` are the functors `Γ ⥤ Cat`, and whose context extension `Γ ▹ A` is the
 total category `Γ ⋉ A` of the unstraightening of `A`. It is full and split, and it has Σ-types:
 `Σ[A] B` is the straightening of the composite of the split opfibrations `∫ A` over
-`Γ` and `∫ B` over `Γ ⋉ A`.
+`Γ` and `∫ B` over `Γ ⋉ A`. It has opposite types: `Aᵒᵖ` is the pointwise opposite of `A`.
 
 The files give its ingredients:
 
@@ -18,6 +19,9 @@ The files give its ingredients:
   and is fully faithful, so that `ICat` is a full split comprehension category.
 * `TypeFormers/Sigma`: Σ-types, whose pairing is the inverse of the counit of
   straightening–unstraightening at the composite.
+* `OpFunctor`: the opposite functor `opFunctor' : Cat ⥤ Cat`, involutive on the nose, by taking
+  the opposite category structure on the same objects. It imports no rewrite rules.
+* `TypeFormers/Op`: opposite types, `A ⋙ opFunctor'`, whose rules hold by `rfl`.
 -/
 
 universe u
@@ -43,3 +47,13 @@ recall ComprehensionCategory.CatModel.comprFullyFaithful : CatModel.compr.{u}.Fu
 
 /-- **The category model has Σ-types.** -/
 recall ComprehensionCategory.CatModel.hasSigma : HasSigma ICat.{u}
+
+/-- The opposite functor is involutive on the nose, and is Mathlib's `Cat.opFunctor` up to
+isomorphism. -/
+recall ComprehensionCategory.CatModel.opFunctor'_comp_opFunctor' :
+    CatModel.opFunctor'.{u} ⋙ CatModel.opFunctor' = 𝟭 _
+
+recall ComprehensionCategory.CatModel.opFunctor'Iso : CatModel.opFunctor'.{u} ≅ Cat.opFunctor
+
+/-- **The category model has opposite types.** -/
+recall ComprehensionCategory.CatModel.hasOp : HasOp ICat.{u}

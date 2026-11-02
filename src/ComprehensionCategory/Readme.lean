@@ -1,6 +1,7 @@
 import ComprehensionCategory.Basic
 import ComprehensionCategory.Map
 import ComprehensionCategory.TypeFormers.Sigma
+import ComprehensionCategory.TypeFormers.Op
 import ComprehensionCategory.Model.Cat.Readme
 import ComprehensionCategory.Model.Codomain.Readme
 
@@ -16,9 +17,10 @@ Comprehension categories as displayed categories, their type formers, and models
   `F.obj (Γ ▹ A) ⟶ F.obj Γ ▹ M.obj A`, and their pseudo and strict versions.
 * `TypeFormers/`: what it means to have a (strict) type former.
   * `Sigma`: Σ-types `Σ[A] B`, with `Γ ▹ A ▹ B ≅ Γ ▹ Σ[A] B`.
+  * `Op`: opposite types `Aᵒᵖ`, with `(Aᵒᵖ)ᵒᵖ = A`.
 * `Model/`: comprehension categories, one folder each, with a `Readme.lean`. Their
   `TypeFormers/` folders mirror the one above.
-  * `Cat/`: the category model `ICat` over `Cat`, with Σ-types.
+  * `Cat/`: the category model `ICat` over `Cat`, with Σ-types and opposite types.
   * `Codomain/`: `cod C`, for a category with chosen pullbacks.
 
 -/
@@ -40,3 +42,10 @@ recall Displayed.isPullback_q {C : Type u} [Category.{v} C] (D : Displayed.{v, u
 recall Displayed.pull_sigma {C : Type u} [Category.{v} C] (D : Displayed.{v, u, v₂, u₂} C)
     [Fib D] [Comprehension D] [PreSigma D] {Δ Γ : C} (σ : Δ ⟶ Γ) (A : D.Ty Γ)
     (B : D.Ty (Γ ▹ A)) : (Σ[A] B)⦃σ⦄ = Σ[A⦃σ⦄] B⦃𝐪(σ, A)⦄
+
+/-- Opposite types are involutive, and stable under substitution. -/
+recall Displayed.op_op {C : Type u} [Category.{v} C] (D : Displayed.{v, u, v₂, u₂} C) [Fib D]
+    [HasOp D] {Γ : C} (A : D.Ty Γ) : (Aᵒᵖ)ᵒᵖ = A
+
+recall Displayed.pull_op {C : Type u} [Category.{v} C] (D : Displayed.{v, u, v₂, u₂} C) [Fib D]
+    [HasOp D] {Δ Γ : C} (σ : Δ ⟶ Γ) (A : D.Ty Γ) : (Aᵒᵖ)⦃σ⦄ = A⦃σ⦄ᵒᵖ
