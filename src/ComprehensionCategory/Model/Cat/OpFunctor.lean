@@ -72,4 +72,69 @@ def opFunctor'ObjIso (C : Cat.{u, u}) : opFunctor'.obj C ≅ Cat.opFunctor.obj C
 def opFunctor'Iso : opFunctor'.{u} ≅ Cat.opFunctor :=
   NatIso.ofComponents opFunctor'ObjIso fun _ => rfl
 
+/-! ## Discrete categories are self-opposite -/
+
+/-- Two category structures with the same morphisms are equal if the morphisms are subsingletons:
+then the identities and composites agree. -/
+theorem category_eq_of_hom_eq {C : Type u} (c d : Category.{u} C)
+    (h : ∀ x y, @Quiver.Hom C c.toQuiver x y = @Quiver.Hom C d.toQuiver x y)
+    [∀ x y, Subsingleton (@Quiver.Hom C d.toQuiver x y)] : c = d := by
+  obtain @⟨@⟨@⟨H⟩, id, comp⟩, _, _, _⟩ := c
+  obtain @⟨@⟨@⟨H'⟩, id', comp'⟩, _, _, _⟩ := d
+  obtain rfl : H = H' := funext fun x => funext fun y => h x y
+  obtain rfl : @id = @id' := funext fun _ => Subsingleton.elim _ _
+  obtain rfl : @comp = @comp' := by
+    funext _ _ _ _ _
+    exact Subsingleton.elim _ _
+  rfl
+
+/-- The discrete category structure on `S`, whose morphisms `s ⟶ t` are the proofs of `s = t`.
+Unlike Mathlib's `Discrete S`, whose morphisms form the structure `Discrete.Hom s t`, it is equal
+to its opposite (`opCategory'_discreteCategory'`), since `(t = s) = (s = t)`. -/
+@[instance_reducible]
+def discreteCategory' (S : Type u) : Category.{u} S where
+  Hom s t := ULift.{u} (PLift (s = t))
+  id _ := ⟨⟨rfl⟩⟩
+  comp f g := ⟨⟨f.down.down.trans g.down.down⟩⟩
+  id_comp _ := rfl
+  comp_id _ := rfl
+  assoc _ _ _ := rfl
+
+/-- The discrete category on `S`. -/
+def discrete' (S : Type u) : Cat.{u, u} :=
+  @Cat.of S (discreteCategory' S)
+
+instance (S : Type u) (s t : S) : Subsingleton (@Quiver.Hom S (discreteCategory' S).toQuiver s t) :=
+  inferInstanceAs (Subsingleton (ULift (PLift (s = t))))
+
+/-- **A discrete category is its own opposite**, by `propext`. -/
+theorem opCategory'_discreteCategory' (S : Type u) :
+    opCategory' (discreteCategory' S) = discreteCategory' S :=
+  category_eq_of_hom_eq _ _ fun _ _ =>
+    congrArg (fun p : Prop => ULift.{u} (PLift p)) (propext eq_comm)
+
+theorem opFunctor'_obj_discrete' (S : Type u) : opFunctor'.obj (discrete' S) = discrete' S :=
+  congrArg (@Cat.of S) (opCategory'_discreteCategory' S)
+
+/-- The functor between discrete categories of a function. -/
+def discreteMap' {S T : Type u} (k : S → T) : discrete' S ⟶ discrete' T :=
+  Cat.Hom.ofFunctor
+    { obj s := k s
+      map e := ⟨⟨congrArg k e.down.down⟩⟩ }
+
+/-- Functors into discrete categories are determined by their objects, also between equal
+category structures. -/
+theorem catHom_heq_of_obj {S T : Type u} {c c' : Category.{u} S} {d d' : Category.{u} T}
+    (hc : c = c') (hd : d = d') [∀ x y, Subsingleton (@Quiver.Hom T d'.toQuiver x y)]
+    (F : @Cat.of S c ⟶ @Cat.of T d) (G : @Cat.of S c' ⟶ @Cat.of T d')
+    (hobj : ∀ x, F.toFunctor.obj x = G.toFunctor.obj x) : F ≍ G := by
+  subst hc hd
+  exact heq_of_eq (Cat.Hom.ext (Functor.ext hobj fun _ _ _ => Subsingleton.elim _ _))
+
+/-- The opposite of the functor of a function is that functor. -/
+theorem opFunctor'_map_discreteMap' {S T : Type u} (k : S → T) :
+    opFunctor'.map (discreteMap' k) ≍ discreteMap' k :=
+  catHom_heq_of_obj (opCategory'_discreteCategory' S) (opCategory'_discreteCategory' T) _ _
+    fun _ => rfl
+
 end ComprehensionCategory.CatModel

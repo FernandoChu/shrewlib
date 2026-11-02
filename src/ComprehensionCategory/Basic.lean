@@ -28,7 +28,9 @@ We provide:
   `[SplitComprehension D] [FullComprehension D]`;
 * `Comprehension.ofClift`: it suffices that the chosen lifts go to cartesian morphisms;
 * the extended context `D.ext A`, the projection `D.proj A : D.ext A ⟶ Γ`, and the morphism
-  `D.q σ A : D.ext (D.pull σ A) ⟶ D.ext A` with its pullback square (`isPullback_q`).
+  `D.q σ A : D.ext (D.pull σ A) ⟶ D.ext A` with its pullback square (`isPullback_q`);
+* over a split fibration, the rule that substitution commutes with weakening,
+  `A⦃𝐩 B⦄⦃𝐪(σ, B)⦄ = A⦃σ⦄⦃𝐩 B⦃σ⦄⦄` (`pull_q_pull_proj`).
 
 ## Notation
 
@@ -202,6 +204,26 @@ theorem isPullback_q (σ : Δ ⟶ Γ) (A : D.Ty Γ) : IsPullback 𝐪(σ, A) �
   D.isPullback_extMap (D.isCartesianClift σ A)
 
 end Substitution
+
+section Weakening
+
+variable (D : Displayed.{v, u, v₂, u₂} C) [PreSplitFib D] [Comprehension D] {Δ Γ : C}
+
+/-- **Substitution commutes with weakening**: `A⦃𝐩 B⦄⦃𝐪(σ, B)⦄ = A⦃σ⦄⦃𝐩 B⦃σ⦄⦄`. Over a split
+fibration, both sides are the substitution along a side of the square `q_proj`. It is a rewrite
+rule, stated with `Fib.pull`, on which the rules for substitution are keyed; `pull_q_pull_proj` is
+the rule for `D.pull`. -/
+@[rewrite_rule]
+theorem fibPull_q_pull_proj (σ : Δ ⟶ Γ) (B A : D.Ty Γ) :
+    Fib.pull 𝐪(σ, B) (Fib.pull (𝐩 B) A) = Fib.pull (𝐩 B⦃σ⦄) (Fib.pull σ A) :=
+  congrArg (Fib.pull · A) (D.q_proj σ B)
+
+/-- **Substitution commutes with weakening**: `A⦃𝐩 B⦄⦃𝐪(σ, B)⦄ = A⦃σ⦄⦃𝐩 B⦃σ⦄⦄`. -/
+@[rewrite_rule]
+theorem pull_q_pull_proj (σ : Δ ⟶ Γ) (B A : D.Ty Γ) : A⦃𝐩 B⦄⦃𝐪(σ, B)⦄ = A⦃σ⦄⦃𝐩 B⦃σ⦄⦄ :=
+  D.fibPull_q_pull_proj σ B A
+
+end Weakening
 
 section FullComprehension
 
