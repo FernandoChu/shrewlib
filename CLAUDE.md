@@ -63,8 +63,10 @@ The categories displayed over `Cat` of indexed categories and of (op)fibrations 
   `straighteningEquivLax : VertEquivalence ICatLax SplitOpfibLax`.
 
 `DisplayedCat`/`LaxNormalCat` and `DiscOpfibCat`/`IDisc` have no suffix: their objects have no
-chosen lifts, or all functors between them preserve them. Prove a straightening theorem once, for
-the most general morphisms, and obtain the others by restriction.
+chosen lifts, or all functors between them preserve them. Construct the functors of an
+equivalence both ways, with an explicit unit and counit, rather than through
+`VertEquivalence.ofFullyFaithful`, so that its inverse is the expected construction and compares
+with others by `rfl`, as the strict straightening with the lax one (`straightenStr_comp_forget`).
 
 ## Kernel tactics
 

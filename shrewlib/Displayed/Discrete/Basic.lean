@@ -45,6 +45,12 @@ def DiscOpfibCat : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
   comp_id _ := rfl
   assoc _ _ _ := rfl
 
+/-- The split opcleavage of an object of `DiscOpfibCat`. The instance `DiscOpfibOb.splitOpfib` does
+not apply to it, since `DiscOpfibCat.Ob A` is not reducibly `DiscOpfibOb A`. -/
+instance DiscOpfibCat.splitOpfib {A : Cat.{u, u}} (X : DiscOpfibCat.Ob A) :
+    SplitOpfib (DiscOpfibOb.toDisplayed X) :=
+  DiscOpfibOb.splitOpfib X
+
 /-- The vertical functor forgetting the discreteness. -/
 def DiscOpfibCat.forget : VertFunctor DiscOpfibCat.{u} SplitOpfibLax.{u} where
   obj X := { toDisplayed := X.toDisplayed, splitOpfib := X.splitOpfib }

@@ -28,8 +28,11 @@ The files give its ingredients:
   `ICatOpLax`, whose reindexing along `u` sends `G` to `reindex u G`.
 * `Unstraighten`: the functor `unstraighten`, and the inverse of its action on morphisms. Transport
   in `∫⁻ F` along `f` is `F.map f.op`, as a rule (`unstraightenPullMap`).
-* `Straighten`: the straightening of a split fibration `D`, the functor `Aᵒᵖ ⥤ Cat` of its fibres.
-* `Equivalence`: the counit, and the equivalence `straighteningEquivLax`.
+* `Straighten`: the straightening `straighten`, sending a split fibration `D` to the functor
+  `Aᵒᵖ ⥤ Cat` of its fibres, and a displayed functor `H` to the lax transformation with components
+  `H` and 2-cells the cartesian factorizations of the images of the chosen lifts.
+* `Equivalence`: the unit, which is the identity, the counit, and the equivalence
+  `straighteningEquivLax`.
 -/
 
 universe v₁ u₁ v u

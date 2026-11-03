@@ -43,6 +43,12 @@ def SplitOpfibLax : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
   comp_id _ := rfl
   assoc _ _ _ := rfl
 
+/-- The split opcleavage of an object of `SplitOpfibLax`. The instance `SplitOpfibOb.splitOpfib`
+does not apply to it, since `SplitOpfibLax.Ob A` is not reducibly `SplitOpfibOb A`. -/
+instance SplitOpfibLax.splitOpfib {A : Cat.{u, u}} (X : SplitOpfibLax.Ob A) :
+    SplitOpfib (SplitOpfibOb.toDisplayed X) :=
+  SplitOpfibOb.splitOpfib X
+
 /-- The vertical functor forgetting the split opcleavage. -/
 def SplitOpfibLax.forget : VertFunctor SplitOpfibLax.{u} DisplayedCat.{u} where
   obj X := X.toDisplayed

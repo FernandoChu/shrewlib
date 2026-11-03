@@ -44,6 +44,12 @@ def SplitFibLax : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
   comp_id _ := rfl
   assoc _ _ _ := rfl
 
+/-- The split cleavage of an object of `SplitFibLax`. The instance `SplitFibOb.splitFib` does not
+apply to it, since `SplitFibLax.Ob A` is not reducibly `SplitFibOb A`. -/
+instance SplitFibLax.splitFib {A : Cat.{u, u}} (X : SplitFibLax.Ob A) :
+    SplitFib (SplitFibOb.toDisplayed X) :=
+  SplitFibOb.splitFib X
+
 /-- The vertical functor forgetting the split cleavage. -/
 def SplitFibLax.forget : VertFunctor SplitFibLax.{u} DisplayedCat.{u} where
   obj X := X.toDisplayed

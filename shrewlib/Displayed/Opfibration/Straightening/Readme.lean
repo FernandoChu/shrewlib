@@ -22,8 +22,11 @@ The files give its ingredients:
   whose reindexing along `u` sends `G` to `u ⋙ G`.
 * `Unstraighten`: the functor `unstraighten`, and the inverse of its action on morphisms. Transport
   in `∫ F` along `f` is `F f`, as a rule (`unstraightenPushMap`).
-* `Straighten`: the straightening of a split opfibration `D`, the functor `A ⥤ Cat` of its fibres.
-* `Equivalence`: the counit, and the equivalence `straighteningEquivLax`.
+* `Straighten`: the straightening `straighten`, sending a split opfibration `D` to the functor
+  `A ⥤ Cat` of its fibres, and a displayed functor `H` to the lax transformation with components
+  `H` and 2-cells the opcartesian factorizations of the images of the chosen lifts.
+* `Equivalence`: the unit, which is the identity, the counit, and the equivalence
+  `straighteningEquivLax`.
 
 The same holds with strict morphisms, between `ICatStr`, whose morphisms are the strict
 transformations, and `SplitOpfibStr` (`Opfibration/SplitOpfibStr.lean`), whose morphisms are the
@@ -32,8 +35,9 @@ opcartesian functors:
 * `ICatStr`: strict transformations, `ICatStr`, and its inclusion into `ICatLax`. A strict
   transformation `τ` unstraightens to an opcartesian functor `τ.unstraighten`, and to the functor
   `τ.dualTotal` between the total categories of the dual opfibrations.
-* `Str`: the equivalence `straighteningEquivStr`, whose unit is the identity and whose counit is
-  that of `straighteningEquivLax`.
+* `Str`: the equivalence `straighteningEquivStr`, whose functors are those of
+  `straighteningEquivLax` on the underlying lax morphisms, whose unit is the identity and whose
+  counit is that of `straighteningEquivLax`.
 -/
 
 universe v₁ u₁ v u
@@ -52,9 +56,13 @@ recall Displayed.Opfibration.Straightening.ICatLax.splitFib : SplitFib ICatLax.{
 recall Displayed.Opfibration.Straightening.straighteningEquivStr :
     VertEquivalence ICatStr.{u} SplitOpfibStr.{u}
 
-/-- With strict morphisms, the unstraightening is that of the underlying lax transformations. -/
+/-- With strict morphisms, the unstraightening and the straightening are those of the underlying
+lax morphisms. -/
 recall Displayed.Opfibration.Straightening.unstraightenStr_comp_forget :
     unstraightenStr.{u} ⋙ᵥ SplitOpfibStr.forget = ICatStr.forget ⋙ᵥ unstraighten
+
+recall Displayed.Opfibration.Straightening.straightenStr_comp_forget :
+    straightenStr.{u} ⋙ᵥ ICatStr.forget = SplitOpfibStr.forget ⋙ᵥ straighten
 
 /-- The unstraightening `∫ F` of `F : A ⥤ Cat` is a split opfibration. -/
 recall Displayed.Opfibration.Straightening.unstraightenSplitOpfib {A : Type u₁}

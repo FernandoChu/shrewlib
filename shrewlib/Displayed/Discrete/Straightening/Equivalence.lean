@@ -5,15 +5,14 @@ import Displayed.Opfibration.Straightening.Equivalence
 /-!
 # Straightening–unstraightening for discrete opfibrations
 
-The unstraightening `IDisc ⟶ DiscOpfibCat` is an equivalence over `Cat` (`straighteningEquiv`). It
-is fully faithful (`unstraightenFullyFaithful`), and every discrete opfibration `X` over `A` is
-isomorphic over `A` to the unstraightening of its straightening (`counitIso`), so
-`VertEquivalence.ofFullyFaithful` assembles the equivalence.
+The unstraightening `IDisc ⟶ DiscOpfibCat` is an equivalence over `Cat` (`straighteningEquiv`),
+with inverse the straightening `straighten`.
 
 Everything is that of the split opfibrations (`Opfibration/Straightening`), restricted to the
 discrete ones: the counit is the identity on objects and sends `φ : push f x ⟶ y` to
 `olift f x ≫ φ`, and its inverse sends a morphism to its opcartesian factorization. In the other
-direction, straightening undoes unstraightening on the nose (`straightenObj_unstraightenObj`).
+direction, straightening undoes unstraightening on the nose (`straightenObj_unstraightenObj`), so
+the unit is the identity.
 -/
 
 universe u
@@ -47,6 +46,12 @@ def counitIso : (unstraighten.obj (straightenObj X) : DiscOpfibCat.Fiber A) ≅ 
 
 end Counit
 
+/-- **The counit** `straighten ⋙ unstraighten ≅ 𝟭`. -/
+def counitNatIso : straighten.{u} ⋙ᵥ unstraighten ≅ VertFunctor.id DiscOpfibCat.{u} :=
+  VertNatIso.ofComponents (fun X => counitIso X) fun {_ _ _ X _} H =>
+    DispFunctor.ext (fun _ => rfl) fun {_ _ f x _} φ =>
+      heq_of_eq (H.map_comp (f := f) (g := 𝟙 _) (X.toDisplayed.olift f x) φ).symm
+
 /-! ## Straightening–unstraightening -/
 
 /-- Straightening undoes unstraightening on the nose: the fibres of `∫ X` are the values of `X`,
@@ -58,8 +63,12 @@ theorem straightenObj_unstraightenObj {A : Cat.{u, u}} (X : IDiscOb.{u} A) :
 /-- **Straightening–unstraightening for discrete opfibrations**: the unstraightening is an
 equivalence over `Cat` between the functors into discrete categories and the discrete
 opfibrations. -/
-def straighteningEquiv : VertEquivalence IDisc.{u} DiscOpfibCat.{u} :=
-  VertEquivalence.ofFullyFaithful unstraightenFullyFaithful (fun X => straightenObj X)
-    (fun X => counitIso X)
+def straighteningEquiv : VertEquivalence IDisc.{u} DiscOpfibCat.{u} where
+  functor := unstraighten
+  inverse := straighten
+  unitIso := VertNatIso.ofComponents (fun X => Iso.refl X) fun _ =>
+    Opfibration.Straightening.LaxTrans.ext' (fun _ _ => rfl) (fun _ _ _ _ => HEq.rfl)
+      (fun _ _ => HEq.rfl)
+  counitIso := counitNatIso
 
 end Displayed.Discrete.Straightening

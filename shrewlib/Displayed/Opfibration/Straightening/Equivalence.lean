@@ -6,17 +6,20 @@ import Displayed.Displayed.Equivalence
 # Straightening–unstraightening for split opfibrations
 
 The unstraightening `ICatLax ⟶ SplitOpfibLax` is an equivalence over `Cat`
-(`straighteningEquivLax`). It is fully faithful (`unstraightenFullyFaithful`), and every split
-opfibration `D` over `A` is isomorphic over `A` to the unstraightening of its straightening
-(`counitIso`), so `VertEquivalence.ofFullyFaithful` assembles the equivalence. Its inverse is the
-straightening on objects, and on morphisms the preimage under the unstraightening of the
-conjugate by the counit.
+(`straighteningEquivLax`), with inverse the straightening `straighten`.
+
+The unit `F ≅ straightenObj (∫ F)` is the identity: the fibres of `∫ F` are those of `F`, and its
+transport along `f` is `F f` (`unstraightenPushMap`). Its naturality holds by `rfl`: the
+straightening of `∫ α` has the components of `α`, and its 2-cells are the factorizations of the
+images of the identities, which are the 2-cells of `α`.
 
 The objects of `∫ (straightenObj D)` over `a` are those of `D`, and its morphisms `x ⟶[f] y` are
 the vertical morphisms `push f x ⟶ y`. The counit `∫ (straightenObj D) ⟶ D` is the identity on
 objects and sends `φ : push f x ⟶ y` to `olift f x ≫ φ`; its inverse sends `χ : x ⟶[f] y` to its
 opcartesian factorization. The two composites are identities by `rfl`: a morphism is its chosen
-lift followed by its factorization, and the factorization of `olift f x ≫ φ` is `φ`.
+lift followed by its factorization, and the factorization of `olift f x ≫ φ` is `φ`. Its
+naturality with respect to a displayed functor `H` is that `H (olift f x)` is the chosen lift
+followed by its factorization.
 -/
 
 universe u
@@ -58,14 +61,47 @@ def counitIso : (unstraighten.obj (straightenObj X) : SplitOpfibLax.Fiber A) ≅
 
 end Counit
 
+/-- **The counit** `straighten ⋙ unstraighten ≅ 𝟭`. -/
+def counitNatIso : straighten.{u} ⋙ᵥ unstraighten ≅ VertFunctor.id SplitOpfibLax.{u} :=
+  VertNatIso.ofComponents (fun X => counitIso X) fun {_ _ _ X _} H =>
+    DispFunctor.ext (fun _ => rfl) fun {_ _ f x _} φ =>
+      heq_of_eq (H.map_comp (f := f) (g := 𝟙 _) (X.toDisplayed.olift f x) φ).symm
+
+/-! ## The unit -/
+
+/-- The unit at `F`: `F ≅ straightenObj (∫ F)`, by identities. -/
+def unitIso {A : Cat.{u, u}} (F : ICatLax.Ob A) :
+    ((VertFunctor.id ICatLax).obj F : ICatLax.Fiber A) ≅ (unstraighten ⋙ᵥ straighten).obj F where
+  hom :=
+    { app := fun _ => 𝟭 _
+      naturality := fun _ _ => 𝟙 _
+      naturality_naturality := fun _ _ _ _ => rfl
+      naturality_id := fun _ => rfl
+      naturality_comp := fun _ _ _ => rfl }
+  inv :=
+    { app := fun _ => 𝟭 _
+      naturality := fun _ _ => 𝟙 _
+      naturality_naturality := fun _ _ _ _ => rfl
+      naturality_id := fun _ => rfl
+      naturality_comp := fun _ _ _ => rfl }
+  hom_inv_id := LaxTrans.ext' (fun _ _ => rfl) (fun _ _ _ _ => HEq.rfl) (fun _ _ => HEq.rfl)
+  inv_hom_id := LaxTrans.ext' (fun _ _ => rfl) (fun _ _ _ _ => HEq.rfl) (fun _ _ => HEq.rfl)
+
+/-- **The unit** `𝟭 ≅ unstraighten ⋙ straighten`, by identities. -/
+def unitNatIso : VertFunctor.id ICatLax.{u} ≅ unstraighten ⋙ᵥ straighten :=
+  VertNatIso.ofComponents (fun F => unitIso F) fun _ =>
+    LaxTrans.ext' (fun _ _ => rfl) (fun _ _ _ _ => HEq.rfl) (fun _ _ => HEq.rfl)
+
 /-! ## Straightening–unstraightening -/
 
 /-- **Straightening–unstraightening for split opfibrations**: the unstraightening is an
 equivalence over `Cat` between `ICatLax` and the split opfibrations, with all displayed functors as
 morphisms. -/
-def straighteningEquivLax : VertEquivalence ICatLax.{u} SplitOpfibLax.{u} :=
-  VertEquivalence.ofFullyFaithful unstraightenFullyFaithful (fun X => straightenObj X)
-    (fun X => counitIso X)
+def straighteningEquivLax : VertEquivalence ICatLax.{u} SplitOpfibLax.{u} where
+  functor := unstraighten
+  inverse := straighten
+  unitIso := unitNatIso
+  counitIso := counitNatIso
 
 /-- The induced equivalence of total categories, over `Cat`. -/
 def straighteningEquivLaxTotal : ICatLax.{u}.Total ≌ SplitOpfibLax.{u}.Total :=

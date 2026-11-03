@@ -25,8 +25,10 @@ The files give its ingredients:
 * `Unstraighten`: the unstraightening of a functor into discrete categories has discrete fibres;
   the functor `unstraighten`, which is `IDisc.forget` followed by the unstraightening of the split
   opfibrations, and is fully faithful.
-* `Straighten`: the straightening of a discrete opfibration `X`, the functor of its fibres.
-* `Equivalence`: the counit, and the equivalence `straighteningEquiv`.
+* `Straighten`: the straightening `straighten`, sending a discrete opfibration `X` to the functor of
+  its fibres, and a displayed functor to its straightening as one between split opfibrations.
+* `Equivalence`: the unit, which is the identity, the counit, and the equivalence
+  `straighteningEquiv`.
 -/
 
 universe u

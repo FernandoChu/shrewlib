@@ -1,6 +1,6 @@
 import Displayed.Opfibration.Straightening.ICatStr
 import Displayed.Opfibration.SplitOpfibStr
-import Displayed.Opfibration.Straightening.Straighten
+import Displayed.Opfibration.Straightening.Equivalence
 
 /-!
 # Straightening–unstraightening for split opfibrations, with strict morphisms
@@ -14,7 +14,8 @@ functors (`straighteningEquivStr`).
   (`unstraightenStr_comp_forget`).
 * `straightenStr` sends a split opfibration to the functor of its fibres (`straightenObj`), and an
   opcartesian functor `H` to the strict transformation whose components are `H` on the fibres:
-  `H` commutes with the pushforward functors on the nose, by the rules of opcartesian functors.
+  `H` commutes with the pushforward functors on the nose, by the rules of opcartesian functors. It
+  is `straighten` on the underlying displayed functors (`straightenStr_comp_forget`).
 * The unit `F ≅ straightenObj (∫ F)` is the identity, since the fibres of `∫ F` are those of `F`
   and its transport is `F`, by `unstraightenPushMap`.
 * The counit `∫ (straightenObj X) ≅ X` is that of the lax equivalence (`counitHom`, `counitInv`):
@@ -64,6 +65,14 @@ def straightenStr : VertFunctor SplitOpfibStr.{u} ICatStr.{u} where
   map H := straightenStrMap H
   map_id _ := rfl
   map_comp _ _ := rfl
+
+/-- The straightening with strict morphisms is the straightening of their underlying displayed
+functors: the 2-cells of the latter are the factorizations of the chosen lifts, which are
+identities. -/
+theorem straightenStr_comp_forget :
+    straightenStr.{u} ⋙ᵥ ICatStr.forget = SplitOpfibStr.forget ⋙ᵥ straighten :=
+  DispFunctor.ext (fun _ => rfl) fun _ =>
+    heq_of_eq (LaxTrans.ext' (fun _ _ => rfl) (fun _ _ _ _ => HEq.rfl) (fun _ _ => HEq.rfl))
 
 /-! ## The unit and counit -/
 
