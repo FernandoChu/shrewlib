@@ -6,9 +6,9 @@ import Mathlib.CategoryTheory.Category.Cat
 # Unstraightening: the dependent 2-sided Grothendieck construction
 
 Given `F : Bᵒᵖ.Total ⥤ Cat`, we build a doubly displayed category `Unstraightening F` over `B`
-(the dependent 2-sided Grothendieck construction), equip it with a `D2SFib` structure
-(`unstraightenObj F`), and assemble the whole thing into the functor
-`unstraighten : (Bᵒᵖ.Total ⥤ Cat) ⥤ D2SFibCat B`.
+(the dependent 2-sided Grothendieck construction), and equip it with a `D2SFib` structure
+(`unstraightenObj F`). Its action on morphisms, over arbitrary opcartesian functors, is in
+`Str/Unstraighten.lean`.
 
 The objects of `Unstraightening F` over `b : B.Ob a` are the objects of `F.obj ⟨a, b⟩`, and a
 morphism over `g : B.Hom α b b'` from `c` to `c'` is a morphism
@@ -25,10 +25,9 @@ this file sees through `Displayed/Displayed/Basic.lean`, do not do this. The mor
 `F.map (dualHoriz _ _) ≫ F.map (dualVert _)`, the splitting of `F.map (dualHoriz _ _ ≫ dualVert _)`.
 They do fire along identities and composites of the chosen morphisms, which are rules in
 `Displayed/Opfibration/DualOp.lean`, so `hmap_id`, `hmap_comp`, `vmap_id` and `vmap_comp` hold by
-`rfl`.) The naturality of a transformation `κ` along these morphisms is a rule too. As a
-result, composition in `Unstraightening F` is
-`hmor α' θ ≫ vmor (B.pushMap α' (B.opcartesianFactor g)) θ'`, with no `eqToHom`, and its laws, its
-`D2SFib` structure and the functoriality of `unstraighten` hold by `rfl`.
+`rfl`.) As a result, composition in `Unstraightening F` is
+`hmor α' θ ≫ vmor (B.pushMap α' (B.opcartesianFactor g)) θ'`, with no `eqToHom`, and its laws and
+its `D2SFib` structure hold by `rfl`.
 -/
 
 universe v₁ u₁ v₂ u₂ v₃ u₃
@@ -306,117 +305,11 @@ theorem pullMap_eq {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') {c c' : (Unstraighten
 
 end Maps
 
-/-! ### `unstraighten` on morphisms -/
-
-variable {F} {F' : Bᵒᵖ.Total ⥤ Cat.{v₃, u₃}}
-
-section Naturality
-
-variable {a a' : A}
-
-/-- The component of a natural transformation `κ : F ⟶ F'`, on objects. -/
-def kobj (κ : F ⟶ F') {x : Bᵒᵖ.Total} (c : F.obj x) : F'.obj x := (κ.app x).toFunctor.obj c
-
-/-- The component of a natural transformation `κ : F ⟶ F'`, on morphisms. -/
-def kmor (κ : F ⟶ F') {x : Bᵒᵖ.Total} {c c' : F.obj x} (θ : c ⟶ c') :
-    kobj κ c ⟶ kobj κ c' :=
-  (κ.app x).toFunctor.map θ
-
-@[rewrite_rule]
-theorem kobj_id {x : Bᵒᵖ.Total} (c : F.obj x) : kobj (𝟙 F) c = c := rfl
-
-@[rewrite_rule]
-theorem kmor_idNat {x : Bᵒᵖ.Total} {c c' : F.obj x} (θ : c ⟶ c') : kmor (𝟙 F) θ = θ := rfl
-
-@[rewrite_rule]
-theorem kobj_comp {F'' : Bᵒᵖ.Total ⥤ Cat.{v₃, u₃}} (κ : F ⟶ F') (κ' : F' ⟶ F'')
-    {x : Bᵒᵖ.Total} (c : F.obj x) : kobj (κ ≫ κ') c = kobj κ' (kobj κ c) := rfl
-
-@[rewrite_rule]
-theorem kmor_compNat {F'' : Bᵒᵖ.Total ⥤ Cat.{v₃, u₃}} (κ : F ⟶ F') (κ' : F' ⟶ F'')
-    {x : Bᵒᵖ.Total} {c c' : F.obj x} (θ : c ⟶ c') :
-    kmor (κ ≫ κ') θ = kmor κ' (kmor κ θ) := rfl
-
-theorem kapp_hmap (κ : F ⟶ F') (α : a ⟶ a') (b : B.Ob a) :
-    hmap F α b ⋙ (κ.app _).toFunctor = (κ.app _).toFunctor ⋙ hmap F' α b :=
-  congrArg Cat.Hom.toFunctor (κ.naturality (dualHoriz α b))
-
-theorem kapp_vmap (κ : F ⟶ F') {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') :
-    vmap F β ⋙ (κ.app _).toFunctor = (κ.app _).toFunctor ⋙ vmap F' β :=
-  congrArg Cat.Hom.toFunctor (κ.naturality (dualVert β))
-
-theorem kmor_hmor_heq (κ : F ⟶ F') (α : a ⟶ a') (b : B.Ob a) {c c' : F.obj (Bᵒᵖ.tot b)}
-    (θ : c ⟶ c') : kmor κ (hmor F α b θ) ≍ hmor F' α b (kmor κ θ) :=
-  Functor.hcongr_hom (kapp_hmap κ α b) θ
-
-theorem kmor_vmor_heq (κ : F ⟶ F') {b b' : B.Ob a} (β : b ⟶[𝟙 a] b')
-    {c c' : F.obj (Bᵒᵖ.tot b')} (θ : c ⟶ c') :
-    kmor κ (vmor F β θ) ≍ vmor F' β (kmor κ θ) :=
-  Functor.hcongr_hom (kapp_vmap κ β) θ
-
-@[rewrite_rule]
-theorem kobj_hobj (κ : F ⟶ F') (α : a ⟶ a') (b : B.Ob a) (c : F.obj (Bᵒᵖ.tot b)) :
-    kobj κ (hobj F α b c) = hobj F' α b (kobj κ c) :=
-  Functor.congr_obj (kapp_hmap κ α b) c
-
-@[rewrite_rule]
-theorem kobj_vobj (κ : F ⟶ F') {b b' : B.Ob a} (β : b ⟶[𝟙 a] b')
-    (c : F.obj (Bᵒᵖ.tot b')) : kobj κ (vobj F β c) = vobj F' β (kobj κ c) :=
-  Functor.congr_obj (kapp_vmap κ β) c
-
-@[rewrite_rule]
-theorem kmor_id (κ : F ⟶ F') {x : Bᵒᵖ.Total} (c : F.obj x) : kmor κ (𝟙 c) = 𝟙 _ :=
-  (κ.app x).toFunctor.map_id c
-
-@[rewrite_rule]
-theorem kmor_comp (κ : F ⟶ F') {x : Bᵒᵖ.Total} {c c' c'' : F.obj x} (θ : c ⟶ c')
-    (θ' : c' ⟶ c'') : kmor κ (θ ≫ θ') = kmor κ θ ≫ kmor κ θ' :=
-  (κ.app x).toFunctor.map_comp θ θ'
-
-@[rewrite_rule]
-theorem kmor_hmor (κ : F ⟶ F') (α : a ⟶ a') (b : B.Ob a) {c c' : F.obj (Bᵒᵖ.tot b)}
-    (θ : c ⟶ c') : kmor κ (hmor F α b θ) = hmor F' α b (kmor κ θ) :=
-  eq_of_heq (kmor_hmor_heq κ α b θ)
-
-@[rewrite_rule]
-theorem kmor_vmor (κ : F ⟶ F') {b b' : B.Ob a} (β : b ⟶[𝟙 a] b')
-    {c c' : F.obj (Bᵒᵖ.tot b')} (θ : c ⟶ c') :
-    kmor κ (vmor F β θ) = vmor F' β (kmor κ θ) :=
-  eq_of_heq (kmor_vmor_heq κ β θ)
-
-theorem kmor_comp' (κ : F ⟶ F') {a a' a'' : A} {α : a ⟶ a'} {α' : a' ⟶ a''} {b : B.Ob a}
-    {b' : B.Ob a'} {b'' : B.Ob a''} {g : b ⟶[α] b'} {g' : b' ⟶[α'] b''} {c : Ob F b}
-    {c' : Ob F b'} {c'' : Ob F b''} (θ : Hom F g c c') (θ' : Hom F g' c' c'') :
-    kmor κ (comp' F θ θ') = comp' F' (kmor κ θ) (kmor κ θ') := rfl
-
-end Naturality
-
 end Unstraightening
 
 /-- Bundled form: the object of `D2SFibCat B` carried by the unstraightening. -/
 def unstraightenObj (F : Bᵒᵖ.Total ⥤ Cat.{v₃, u₃}) : D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B :=
   ⟨Unstraightening F⟩
-
-/-- `unstraighten` on morphisms: a natural transformation `κ : F ⟶ F'` induces a morphism of
-D2SFibs, by the components of `κ`. -/
-def unstraightenMap {F F' : Bᵒᵖ.Total ⥤ Cat.{v₃, u₃}} (κ : F ⟶ F') :
-    unstraightenObj F ⟶ unstraightenObj F' where
-  toObj :=
-    { obj := fun c => Unstraightening.kobj κ c
-      map := fun θ => Unstraightening.kmor κ θ
-      map_id := fun _ => rfl
-      map_comp := fun θ θ' => Unstraightening.kmor_comp' κ θ θ'
-      obj_pull := by intros; rfl
-      obj_push := by intros; rfl }
-  map_pullLift := by intros; rfl
-  map_pushLift := by intros; rfl
-
-/-- **`unstraighten`**: the unstraightening as a functor into `D2SFibCat B`. -/
-def unstraighten : (Bᵒᵖ.Total ⥤ Cat.{v₃, u₃}) ⥤ D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B where
-  obj F := unstraightenObj F
-  map κ := unstraightenMap κ
-  map_id _ := rfl
-  map_comp _ _ := rfl
 
 end
 

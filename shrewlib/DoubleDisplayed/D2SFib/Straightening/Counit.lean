@@ -3,9 +3,9 @@ import DoubleDisplayed.D2SFib.Straightening.Straighten
 import Mathlib.Tactic.IrreducibleDef
 
 /-!
-# The counit `straighten ⋙ unstraighten ≅ 𝟭`
+# The counit of straightening–unstraightening
 
-The unstraightening of `straightenObj C` is isomorphic to `C`. Objects
+The unstraightening of `straightenObj C` is isomorphic to `C` (`counitApp`). Objects
 agree definitionally, and so do hom-types: a morphism of `Unstraightening (straightenObj C)` over
 `g : B.Hom α b b'` is, by the rewrite rules, a vertical morphism
 `push α c ⟶ pull (B.opcartesianFactor g) c'` of `C`. So the counit acts on morphisms by the
@@ -119,16 +119,9 @@ def invD2S : D2SFibMap (OpcartesianFunctor.id B) C (Unstraightening (straightenO
   map_pullLift := by intros; exact invMap_pullLift (C := C) _ _
   map_pushLift := by intros; exact invMap_pushLift (C := C) _
 
-/-- The counit commutes with D2SFib morphisms. -/
-theorem map_naturality {E E' : D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B} (Φ : E ⟶ E') {g : b ⟶[α] b'}
-    {c : E.C.Ob b} {c' : E.C.Ob b'} (θ : (Unstraightening (straightenObj E.C)).Hom g c c') :
-    Φ.toObj.map (map (C := E.C) θ) =
-      map (C := E'.C) ((unstraightenMap (straightenMap Φ)).toObj.map θ) :=
-  (congrArg Φ.toObj.map (map_def (C := E.C) θ)).trans (map_def (C := E'.C) _).symm
-
 end Counit
 
-/-- **The counit component of the equivalence**: the unstraightening of
+/-- **The counit at `E`**: the unstraightening of
 `straightenObj E.C` is isomorphic to `E`, by the identity on objects and `d2sHomEquiv` on
 morphisms. -/
 def counitApp (E : D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B) :
@@ -139,12 +132,6 @@ def counitApp (E : D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B) :
     (fun θ => heq_of_eq (Counit.invMap_map (C := E.C) θ)))
   inv_hom_id := D2SFibMap.ext (DDFunctor.ext (fun _ => rfl)
     (fun θ => heq_of_eq (Counit.map_invMap (C := E.C) θ)))
-
-/-- **The counit** `straighten ⋙ unstraighten ≅ 𝟭` of the equivalence. -/
-def counitIso : straighten ⋙ unstraighten ≅ 𝟭 (D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B) :=
-  NatIso.ofComponents (fun E => counitApp E) (fun Φ =>
-    D2SFibMap.ext (DDFunctor.ext (fun _ => rfl)
-      (fun θ => heq_of_eq (Counit.map_naturality Φ θ).symm)))
 
 end
 

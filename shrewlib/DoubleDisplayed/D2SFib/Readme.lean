@@ -28,7 +28,7 @@ The files are:
   `SplitOpfibStr`, a split fibration by precomposition.
 * `D2SFibStr`: the split D2SFibs over all split opfibrations, doubly displayed over
   `SplitOpfibStr`, a split fibration by reindexing.
-* `Straightening/`: the equivalence `(Bᵒᵖ.Total ⥤ Cat) ≌ D2SFibCat B`, and its extension to an
-  equivalence `DProfStr ≃ D2SFibStr` of fibred categories over `SplitOpfibStr`, and over
-  `ICatStr`.
+* `Straightening/`: the equivalence `DProfStr ≃ D2SFibStr` of fibred categories over
+  `SplitOpfibStr`, which over a single `B` is an equivalence `(Bᵒᵖ.Total ⥤ Cat) ≌ D2SFibCat B`, and
+  its reindexing over `ICatStr`.
 -/

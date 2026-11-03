@@ -5,13 +5,13 @@ import Mathlib.CategoryTheory.Category.Cat
 /-!
 # Straightening: from D2SFibs to functors `Bᵒᵖ.Total ⥤ Cat`
 
-`straighten` sends a D2SFib `C` to the functor
-`⟨a, b⟩ ↦ C.Fiber b` on the total category of the dual opfibration, with a morphism `⟨α, β⟩` sent
-to `pushFunctor α ⋙ pullFunctor β`.
+The straightening of a D2SFib `C` is the functor `⟨a, b⟩ ↦ C.Fiber b` on the total category of
+the dual opfibration, with a morphism `⟨α, β⟩` sent to `pushFunctor α ⋙ pullFunctor β`
+(`straightenObj`). Its action on morphisms, over arbitrary opcartesian functors, is in
+`Str/Straighten.lean`.
 
 Since the functoriality and interchange of `push`/`pull` and of `pushMap`/`pullMap` hold
-definitionally, `straightenObj C` is a functor by `rfl`, and so is the naturality of
-`straightenMap`.
+definitionally, `straightenObj C` is a functor by `rfl`.
 -/
 
 universe v₁ u₁ v₂ u₂ v₃ u₃
@@ -40,21 +40,6 @@ theorem straightenObj_map_toFunctor (C : DoubleDisplayed.{v₁, u₁, v₂, u₂
     {x x' : Bᵒᵖ.Total} (F : x ⟶ x') :
     ((straightenObj C).map F).toFunctor
       = pushFunctor (C := C) F.base x.2 ⋙ pullFunctor (C := C) F.fiber := rfl
-
-/-- `straighten` on morphisms: a D2SFib morphism `Φ` induces a natural transformation of functors
-into `Cat`, with component `Φ`'s fiber functor. -/
-def straightenMap {E E' : D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B} (Φ : E ⟶ E') :
-    straightenObj E.C ⟶ straightenObj E'.C where
-  app x := (Φ.toDDFunctor.fiber x.2).toCatHom
-  naturality _ _ _ := rfl
-
-/-- **`straighten`**: the functor from D2SFibs over `B` to functors `Bᵒᵖ.Total ⥤ Cat`. -/
-def straighten :
-    D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B ⥤ (Bᵒᵖ.Total ⥤ Cat.{v₃, u₃}) where
-  obj E := straightenObj E.C
-  map Φ := straightenMap Φ
-  map_id _ := rfl
-  map_comp _ _ := rfl
 
 /-- `straightenObj C` sends a chosen horizontal morphism to the pushforward functor. -/
 theorem straightenObj_map_dualHoriz (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) [SplitD2SFib C]

@@ -17,7 +17,7 @@ along `H` is its reindexing along `H`, with `D2SFibMap.reindexLift` as chosen li
 fibration of D2SFibs presented as functors into a total category, by pullback, is not.
 -/
 
-universe u
+universe v₁ u₁ v₂ u₂ v₃ u₃
 
 namespace DoubleDisplayed
 
@@ -25,10 +25,13 @@ open CategoryTheory Displayed
 
 open scoped Displayed
 
+-- The universes of the displayed categories and of the fibers only occur in the levels of
+-- `D2SFibStr` through the `max` of the levels of their objects and morphisms.
+set_option linter.checkUnivs false in
 /-- **The fibred category of D2SFibs**, doubly displayed over `SplitOpfibStr`: over `B`, the split
 D2SFibs over `B`, and over an opcartesian functor `H`, the maps of D2SFibs over `H`. -/
-def D2SFibStr : DoubleDisplayed.{u, u + 1, u, u + 1, u, u + 1} SplitOpfibStr.{u} where
-  Ob {_} (B : SplitOpfibOb _) := D2SFibCat.{u, u, u, u, u, u} B.toDisplayed
+def D2SFibStr : DoubleDisplayed SplitOpfibStr.{v₁, u₁, v₂, u₂} where
+  Ob {_} (B : SplitOpfibOb.{v₁, u₁, v₂, u₂} _) := D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B.toDisplayed
   Hom {_ _ u B B'} (H : OpcartesianFunctor u.toFunctor (SplitOpfibOb.toDisplayed B)
       (SplitOpfibOb.toDisplayed B')) E E' :=
     D2SFibMap H (D2SFibCat.C E) (D2SFibCat.C E')
@@ -40,13 +43,14 @@ def D2SFibStr : DoubleDisplayed.{u, u + 1, u, u + 1, u, u + 1} SplitOpfibStr.{u}
 
 /-- The D2SFib structure of an object of `D2SFibStr`. The instance `D2SFibCat.str` does not apply
 to it, since `D2SFibStr.Ob B` is not reducibly `D2SFibCat B`. -/
-instance {A : Cat.{u, u}} {B : SplitOpfibStr.Ob A} (E : D2SFibStr.Ob B) :
+instance {A : Cat.{v₁, u₁}} {B : SplitOpfibStr.{v₁, u₁, v₂, u₂}.Ob A}
+    (E : D2SFibStr.{v₁, u₁, v₂, u₂, v₃, u₃}.Ob B) :
     SplitD2SFib (D2SFibCat.C (B := SplitOpfibOb.toDisplayed B) E) :=
   D2SFibCat.str E
 
 /-- The chosen pullback of a D2SFib along an opcartesian functor `H` is its reindexing along `H`,
 with `D2SFibMap.reindexLift` as chosen lift. -/
-instance D2SFibStr.ddFib : DDFib D2SFibStr.{u} where
+instance D2SFibStr.ddFib : DDFib D2SFibStr.{v₁, u₁, v₂, u₂, v₃, u₃} where
   pull {_ _ u B B'} (H : OpcartesianFunctor u.toFunctor (SplitOpfibOb.toDisplayed B)
       (SplitOpfibOb.toDisplayed B')) (E : D2SFibCat (SplitOpfibOb.toDisplayed B')) :=
     (⟨E.C.reindex H.toDispFunctor⟩ : D2SFibCat (SplitOpfibOb.toDisplayed B))
@@ -58,12 +62,12 @@ instance D2SFibStr.ddFib : DDFib D2SFibStr.{u} where
       lift_fac := fun {_ _ _} _ {_} _ => rfl
       lift_uniq := fun {_ _ _ _ _ _} _ h => by subst h; rfl }
 
-instance D2SFibStr.preSplitDDFib : PreSplitDDFib D2SFibStr.{u} where
+instance D2SFibStr.preSplitDDFib : PreSplitDDFib D2SFibStr.{v₁, u₁, v₂, u₂, v₃, u₃} where
   pull_id _ := rfl
   pull_comp _ _ _ := rfl
 
 /-- **`D2SFibStr` is a split fibration over `SplitOpfibStr`**, by reindexing. -/
-instance D2SFibStr.splitDDFib : SplitDDFib D2SFibStr.{u} where
+instance D2SFibStr.splitDDFib : SplitDDFib D2SFibStr.{v₁, u₁, v₂, u₂, v₃, u₃} where
   clift_id _ := rfl
   clift_comp _ _ _ := rfl
 

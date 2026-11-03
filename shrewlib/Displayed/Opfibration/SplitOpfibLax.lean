@@ -14,7 +14,7 @@ This is not in `Basic.lean` since displayed functors over a functor need the fun
 (`Rules.Functor`), which should not reach every file using opfibrations.
 -/
 
-universe u
+universe v₁ u₁ v₂ u₂ u
 
 open CategoryTheory
 
@@ -23,9 +23,9 @@ namespace Displayed
 open scoped Displayed
 
 /-- A split opfibration over `A`: a displayed category over `A` with a split opcleavage. -/
-structure SplitOpfibOb (A : Cat.{u, u}) where
+structure SplitOpfibOb (A : Cat.{v₁, u₁}) where
   /-- The displayed category. -/
-  toDisplayed : Displayed.{u, u, u, u} A
+  toDisplayed : Displayed.{v₁, u₁, v₂, u₂} A
   /-- Its split opcleavage. -/
   [splitOpfib : SplitOpfib toDisplayed]
 
@@ -35,7 +35,7 @@ attribute [instance] SplitOpfibOb.splitOpfib
 `A`, and a morphism over `u` is a displayed functor over `u`, with no condition on the
 opcleavages. -/
 def SplitOpfibLax : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
-  Ob A := SplitOpfibOb A
+  Ob A := SplitOpfibOb.{u, u, u, u} A
   Hom u X Y := DispFunctor u.toFunctor X.toDisplayed Y.toDisplayed
   id X := DispFunctor.id X.toDisplayed
   comp H K := H.comp K

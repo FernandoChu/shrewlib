@@ -1,6 +1,7 @@
 import DoubleDisplayed.D2SFib.Straightening.Str.Unstraighten
 import DoubleDisplayed.D2SFib.Straightening.Str.Straighten
-import DoubleDisplayed.D2SFib.Straightening.Equivalence
+import DoubleDisplayed.D2SFib.Straightening.Unit
+import DoubleDisplayed.D2SFib.Straightening.Counit
 import DoubleDisplayed.Equivalence
 import Tactic.KernelTactic
 
@@ -10,11 +11,13 @@ import Tactic.KernelTactic
 The unstraightening of dependent profunctors extends to an equivalence `DProfStr ≃ D2SFibStr` over
 `SplitOpfibStr` (`straighteningEquivStr`), whose functors are `unstraightenStr` and
 `straightenStr`: dependent profunctors are the same as split D2SFibs, naturally in the split
-opfibration they lie over. Over a single `B`, its functors are those of `straighteningEquiv B`
-(`unstraightenStr_map_vert`, `straightenStr_map_vert`).
+opfibration they lie over. The base is in `Cat.{v₁, u₁}`, the split opfibrations are in
+`Displayed.{v₁, u₁, v₂, u₂}`, and the dependent profunctors and the fibers of the D2SFibs are in
+`Cat.{v₃, u₃}`, all independent. Over a single split opfibration `B`, its fiber is an equivalence
+between the functors `Bᵒᵖ.Total ⥤ Cat` and the category `D2SFibCat B`.
 
-The unit and counit are given explicitly, by the components of `straighteningEquiv B`
-(`D2SFib/Straightening/Equivalence.lean`):
+The unit and counit are given explicitly, by components defined for a single `B`
+(`D2SFib/Straightening/Unit.lean` and `Counit.lean`):
 
 * the unit `𝟭 ≅ unstraightenStr ⋙ straightenStr` at `P` is the identity on each `P ⟨a, x⟩`, which
   is the fiber of `Unstraightening P` over `x` on the nose (`unitApp`);
@@ -24,7 +27,7 @@ The unit and counit are given explicitly, by the components of `straighteningEqu
 
 Their naturality in `B` is their naturality with respect to the morphisms over arbitrary
 opcartesian functors, which holds by `rfl` for the unit, and for the counit since a map of D2SFibs
-preserves the chosen lifts (`Counit.map_naturality`).
+preserves the chosen lifts (`Counit.map_naturality_str`).
 
 Both functors are cartesian (`unstraightenStrCartesian`, `straightenStrCartesian`), so that this is
 an equivalence of fibred categories over `SplitOpfibStr`. The unstraightening of
@@ -33,7 +36,7 @@ an equivalence of fibred categories over `SplitOpfibStr`. The unstraightening of
 extensionality.
 -/
 
-universe u
+universe v₁ u₁ v₂ u₂ v₃ u₃
 
 namespace DoubleDisplayed.D2SFib.Straightening
 
@@ -44,7 +47,8 @@ open scoped Displayed DoubleDisplayed
 /-! ## The unit -/
 
 /-- The unit at `P`: `P ≅ straightenObj (Unstraightening P)`, by identity functors. -/
-def unitStrApp {A : Cat.{u, u}} {B : SplitOpfibStr.Ob A} (P : DProfStr.Ob B) :
+def unitStrApp {A : Cat.{v₁, u₁}} {B : SplitOpfibStr.{v₁, u₁, v₂, u₂}.Ob A}
+    (P : DProfStr.{v₁, u₁, v₂, u₂, v₃, u₃}.Ob B) :
     ((VertFunctor.id DProfStr).obj P : DProfStr.Fiber B) ≅
       (unstraightenStr.comp straightenStr).obj P where
   hom := (unitApp P).hom
@@ -53,7 +57,8 @@ def unitStrApp {A : Cat.{u, u}} {B : SplitOpfibStr.Ob A} (P : DProfStr.Ob B) :
   inv_hom_id := (unitApp P).inv_hom_id
 
 /-- **The unit** `𝟭 ≅ unstraightenStr ⋙ straightenStr` over `SplitOpfibStr`. -/
-def unitStrIso : VertFunctor.id DProfStr.{u} ≅ unstraightenStr.comp straightenStr :=
+def unitStrIso :
+    VertFunctor.id DProfStr.{v₁, u₁, v₂, u₂, v₃, u₃} ≅ unstraightenStr.comp straightenStr :=
   VertNatIso.ofComponents (fun P => unitStrApp P) fun _ =>
     NatTrans.ext (funext fun _ => Cat.ext (Functor.ext (fun _ => rfl) (fun _ _ _ => rfl)))
 
@@ -61,10 +66,10 @@ def unitStrIso : VertFunctor.id DProfStr.{u} ≅ unstraightenStr.comp straighten
 
 namespace Counit
 
-variable {A A' : Cat.{u, u}} {u : A ⟶ A'} {B : Displayed.{u, u, u, u} A}
-  {B' : Displayed.{u, u, u, u} A'} [SplitOpfib B] [SplitOpfib B']
-  {H : OpcartesianFunctor u.toFunctor B B'} {C : DoubleDisplayed.{u, u, u, u, u, u} B}
-  {C' : DoubleDisplayed.{u, u, u, u, u, u} B'} [SplitD2SFib C] [SplitD2SFib C']
+variable {A A' : Cat.{v₁, u₁}} {u : A ⟶ A'} {B : Displayed.{v₁, u₁, v₂, u₂} A}
+  {B' : Displayed.{v₁, u₁, v₂, u₂} A'} [SplitOpfib B] [SplitOpfib B']
+  {H : OpcartesianFunctor u.toFunctor B B'} {C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B}
+  {C' : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B'} [SplitD2SFib C] [SplitD2SFib C']
 
 /-- The counit commutes with maps of D2SFibs over arbitrary opcartesian functors. -/
 theorem map_naturality_str (Φ : D2SFibMap H C C') {a a' : A} {α : a ⟶ a'} {b : B.Ob a}
@@ -78,7 +83,8 @@ end Counit
 
 /-- The counit at `E`: `unstraightenObj (straightenObj E.C) ≅ E`, by the identity on objects and
 `d2sHomEquiv` on morphisms. -/
-def counitStrApp {A : Cat.{u, u}} {B : SplitOpfibStr.Ob A} (E : D2SFibStr.Ob B) :
+def counitStrApp {A : Cat.{v₁, u₁}} {B : SplitOpfibStr.{v₁, u₁, v₂, u₂}.Ob A}
+    (E : D2SFibStr.{v₁, u₁, v₂, u₂, v₃, u₃}.Ob B) :
     ((straightenStr.comp unstraightenStr).obj E : D2SFibStr.Fiber B) ≅
       (VertFunctor.id D2SFibStr).obj E where
   hom := (counitApp E).hom
@@ -87,7 +93,8 @@ def counitStrApp {A : Cat.{u, u}} {B : SplitOpfibStr.Ob A} (E : D2SFibStr.Ob B) 
   inv_hom_id := (counitApp E).inv_hom_id
 
 /-- **The counit** `straightenStr ⋙ unstraightenStr ≅ 𝟭` over `SplitOpfibStr`. -/
-def counitStrIso : straightenStr.comp unstraightenStr ≅ VertFunctor.id D2SFibStr.{u} :=
+def counitStrIso :
+    straightenStr.comp unstraightenStr ≅ VertFunctor.id D2SFibStr.{v₁, u₁, v₂, u₂, v₃, u₃} :=
   VertNatIso.ofComponents (fun E => counitStrApp E) fun Φ =>
     D2SFibMap.ext (DDFunctor.ext (fun _ => rfl)
       (fun θ => heq_of_eq (Counit.map_naturality_str Φ θ).symm))
@@ -97,35 +104,20 @@ def counitStrIso : straightenStr.comp unstraightenStr ≅ VertFunctor.id D2SFibS
 /-- **Straightening–unstraightening for D2SFibs over `SplitOpfibStr`**: the unstraightening of
 dependent profunctors is an equivalence `DProfStr ≃ D2SFibStr` over `SplitOpfibStr`, with inverse
 the straightening. -/
-def straighteningEquivStr : VertEquivalence DProfStr.{u} D2SFibStr.{u} where
+def straighteningEquivStr :
+    VertEquivalence DProfStr.{v₁, u₁, v₂, u₂, v₃, u₃} D2SFibStr.{v₁, u₁, v₂, u₂, v₃, u₃} where
   functor := unstraightenStr
   inverse := straightenStr
   unitIso := unitStrIso
   counitIso := counitStrIso
 
-section Fiber
-
-variable {A : Cat.{u, u}} {B : SplitOpfibOb A}
-
-/-- Over a single split opfibration `B`, `unstraightenStr` is the unstraightening `unstraighten`
-of `straighteningEquiv B`. -/
-theorem unstraightenStr_map_vert {P P' : B.toDisplayedᵒᵖ.Total ⥤ Cat.{u, u}} (κ : P ⟶ P') :
-    unstraightenStr.map (g := SplitOpfibStr.id B) κ = unstraighten.map κ := rfl
-
-/-- Over a single split opfibration `B`, `straightenStr` is the straightening `straighten` of
-`straighteningEquiv B`. -/
-theorem straightenStr_map_vert {E E' : D2SFibCat.{u, u, u, u, u, u} B.toDisplayed} (Φ : E ⟶ E') :
-    straightenStr.map (g := SplitOpfibStr.id B) Φ = straighten.map Φ := rfl
-
-end Fiber
-
 /-! ## The straightening and unstraightening are cartesian -/
 
 section Pull
 
-variable {A A' : Cat.{u, u}} {u : A ⟶ A'} {B : Displayed.{u, u, u, u} A}
-  {B' : Displayed.{u, u, u, u} A'} [SplitOpfib B] [SplitOpfib B']
-  (H : OpcartesianFunctor u.toFunctor B B') (P' : B'ᵒᵖ.Total ⥤ Cat.{u, u})
+variable {A A' : Cat.{v₁, u₁}} {u : A ⟶ A'} {B : Displayed.{v₁, u₁, v₂, u₂} A}
+  {B' : Displayed.{v₁, u₁, v₂, u₂} A'} [SplitOpfib B] [SplitOpfib B']
+  (H : OpcartesianFunctor u.toFunctor B B') (P' : B'ᵒᵖ.Total ⥤ Cat.{v₃, u₃})
 
 theorem unstraightening_dualOp_total_comp :
     Unstraightening (H.dualOp.total ⋙ P') = (Unstraightening P').reindex H.toDispFunctor :=
@@ -142,13 +134,15 @@ end Pull
 
 /-- **The unstraightening is a cartesian functor**: the unstraightening of `H.dualOp.total ⋙ P'`
 is the reindexing along `H` of that of `P'`. -/
-def unstraightenStrCartesian : DDCartesianFunctor DProfStr.{u} D2SFibStr.{u} where
+def unstraightenStrCartesian :
+    DDCartesianFunctor DProfStr.{v₁, u₁, v₂, u₂, v₃, u₃} D2SFibStr.{v₁, u₁, v₂, u₂, v₃, u₃} where
   toPre := { toVertFunctor := unstraightenStr, obj_pull := unstraightenObj_dualOp_total_comp }
   map_clift _ _ := rfl
 
 /-- **The straightening is a cartesian functor**: the straightening of the reindexing of `C'`
 along `H` is `H.dualOp.total ⋙ straightenObj C'`. -/
-def straightenStrCartesian : DDCartesianFunctor D2SFibStr.{u} DProfStr.{u} where
+def straightenStrCartesian :
+    DDCartesianFunctor D2SFibStr.{v₁, u₁, v₂, u₂, v₃, u₃} DProfStr.{v₁, u₁, v₂, u₂, v₃, u₃} where
   toPre := { toVertFunctor := straightenStr, obj_pull := fun _ _ => rfl }
   map_clift _ _ := rfl
 

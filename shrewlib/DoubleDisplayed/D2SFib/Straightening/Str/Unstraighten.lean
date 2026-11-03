@@ -23,7 +23,7 @@ unfolded. With these rules, and the preservation of the opcartesian factorizatio
 `unstraightenStrMap κ` is a functor and preserves the chosen lifts by `rfl`.
 -/
 
-universe u
+universe v₁ u₁ v₂ u₂ v₃ u₃
 
 namespace DoubleDisplayed.D2SFib.Straightening
 
@@ -31,10 +31,10 @@ open CategoryTheory Displayed DoubleDisplayed D2SFib Unstraightening
 
 open scoped Displayed DoubleDisplayed
 
-variable {A A' : Cat.{u, u}} {u : A ⟶ A'} {B : Displayed.{u, u, u, u} A}
-  {B' : Displayed.{u, u, u, u} A'} [SplitOpfib B] [SplitOpfib B']
-  {H : OpcartesianFunctor u.toFunctor B B'} {P : Bᵒᵖ.Total ⥤ Cat.{u, u}}
-  {P' : B'ᵒᵖ.Total ⥤ Cat.{u, u}}
+variable {A A' : Cat.{v₁, u₁}} {u : A ⟶ A'} {B : Displayed.{v₁, u₁, v₂, u₂} A}
+  {B' : Displayed.{v₁, u₁, v₂, u₂} A'} [SplitOpfib B] [SplitOpfib B']
+  {H : OpcartesianFunctor u.toFunctor B B'} {P : Bᵒᵖ.Total ⥤ Cat.{v₃, u₃}}
+  {P' : B'ᵒᵖ.Total ⥤ Cat.{v₃, u₃}}
 
 /-! ## The components of a morphism of dependent profunctors -/
 
@@ -101,8 +101,9 @@ theorem tmor_vmor {x y : B.Ob a} (β : x ⟶[𝟙 a] y) {c c' : P.obj (Bᵒᵖ.t
 /-! The components of composites of morphisms of dependent profunctors, as rules, so that the
 heads `tobj` and `tmor` are kept when a composite is unfolded. -/
 
-variable {A'' : Cat.{u, u}} {u' : A' ⟶ A''} {B'' : Displayed.{u, u, u, u} A''} [SplitOpfib B'']
-  {K : OpcartesianFunctor u'.toFunctor B' B''} {P'' : B''ᵒᵖ.Total ⥤ Cat.{u, u}}
+variable {A'' : Cat.{v₁, u₁}} {u' : A' ⟶ A''} {B'' : Displayed.{v₁, u₁, v₂, u₂} A''}
+  [SplitOpfib B'']
+  {K : OpcartesianFunctor u'.toFunctor B' B''} {P'' : B''ᵒᵖ.Total ⥤ Cat.{v₃, u₃}}
 
 @[rewrite_rule]
 theorem tobj_compNat (κ' : P' ⟶ K.dualOp.total ⋙ P'') {x : Bᵒᵖ.Total} (c : P.obj x) :
@@ -137,13 +138,15 @@ def unstraightenStrMap (κ : P ⟶ H.dualOp.total ⋙ P') :
 /-- The unstraightening of a dependent profunctor is a split D2SFib. The instance
 `Unstraightening.instSplitD2SFib` does not apply to it, since `DProfStr.Ob B` is not reducibly a
 type of functors. -/
-instance {A : Cat.{u, u}} {B : SplitOpfibStr.Ob A} (P : DProfStr.Ob B) :
+instance {A : Cat.{v₁, u₁}} {B : SplitOpfibStr.{v₁, u₁, v₂, u₂}.Ob A}
+    (P : DProfStr.{v₁, u₁, v₂, u₂, v₃, u₃}.Ob B) :
     SplitD2SFib (Unstraightening (B := SplitOpfibOb.toDisplayed B) P) :=
   Unstraightening.instSplitD2SFib P
 
 /-- **The unstraightening over `SplitOpfibStr`**: dependent profunctors go to their
 unstraightenings, and their morphisms over `H` to maps of D2SFibs over `H`. -/
-def unstraightenStr : VertFunctor DProfStr.{u} D2SFibStr.{u} where
+def unstraightenStr :
+    VertFunctor DProfStr.{v₁, u₁, v₂, u₂, v₃, u₃} D2SFibStr.{v₁, u₁, v₂, u₂, v₃, u₃} where
   obj P := unstraightenObj P
   map κ := unstraightenStrMap κ
   map_id _ := rfl

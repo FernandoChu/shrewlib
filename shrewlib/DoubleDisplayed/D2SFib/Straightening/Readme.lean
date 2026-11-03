@@ -1,33 +1,35 @@
-import DoubleDisplayed.D2SFib.Straightening.Equivalence
 import DoubleDisplayed.D2SFib.Straightening.Str.ICatStr
 
 /-!
 # Straightening for D2SFibs
 
-In this folder we compare two categories, for a split opfibration `B` over `A`:
+In this folder we compare two categories doubly displayed over `SplitOpfibStr`, the split
+opfibrations and opcartesian functors:
 
-* the functors `Bᵒᵖ.Total ⥤ Cat` from the total category of the dual opfibration of `B`;
-* `D2SFibCat B`, the split D2SFibs over `B`.
+* `DProfStr`, the dependent profunctors: over a split opfibration `B`, the functors
+  `Bᵒᵖ.Total ⥤ Cat` from the total category of its dual opfibration;
+* `D2SFibStr`, the split D2SFibs: over `B`, the category `D2SFibCat B`.
 
-There are two functors between them, `unstraighten : (Bᵒᵖ.Total ⥤ Cat) ⥤ D2SFibCat B` and
-`straighten` the other way, and they form an equivalence, `straighteningEquiv`.
+The unstraightening `unstraightenStr` and the straightening `straightenStr` form an equivalence
+`straighteningEquivStr : DProfStr ≃ D2SFibStr` over `SplitOpfibStr`, whose functors are cartesian,
+so an equivalence of fibred categories. Its universes are independent: the base in
+`Cat.{v₁, u₁}`, the split opfibrations in `Displayed.{v₁, u₁, v₂, u₂}`, and the fibers in
+`Cat.{v₃, u₃}`. Over a single `B`, it is an equivalence `(Bᵒᵖ.Total ⥤ Cat) ≌ D2SFibCat B`.
 
-The files give its ingredients:
+The files give its ingredients, first for a single `B`:
 
-* `Straighten`: the functor `straighten`, sending a D2SFib `C` to the functor
-  `⟨a, b⟩ ↦ C.Fiber b`, which sends a morphism `⟨α, β⟩` to `pushFunctor α ⋙ pullFunctor β`.
-* `Unstraighten`: the functor `unstraighten`, through `Unstraightening F`, the dependent 2-sided
-  Grothendieck construction.
-* `Counit`: the counit `straighten ⋙ unstraighten ≅ 𝟭`.
-* `Equivalence`: the unit `𝟭 ≅ unstraighten ⋙ straighten`, and the equivalence `straighteningEquiv`.
+* `Unstraighten`: the dependent 2-sided Grothendieck construction `Unstraightening F` of a functor
+  `F : Bᵒᵖ.Total ⥤ Cat`, and its D2SFib structure.
+* `Straighten`: the straightening of a D2SFib `C`, the functor `⟨a, b⟩ ↦ C.Fiber b`, which sends a
+  morphism `⟨α, β⟩` to `pushFunctor α ⋙ pullFunctor β`.
+* `Unit`: the isomorphism `F ≅ straightenObj (Unstraightening F)`, by identity functors.
+* `Counit`: the isomorphism `unstraightenObj (straightenObj C) ≅ C`, by `d2sHomEquiv`.
 
-The folder `Str/` extends the equivalence to the maps over arbitrary opcartesian functors, as an
-equivalence `straighteningEquivStr : DProfStr ≃ D2SFibStr` over `SplitOpfibStr` whose functors are
-cartesian, and whose functors over a single `B` are those of `straighteningEquiv B`:
+and then over `SplitOpfibStr`:
 
 * `Str/Unstraighten` and `Str/Straighten`: the actions of `unstraightenStr` and `straightenStr` on
   the maps over an opcartesian functor `H`, whose components are those of the maps.
-* `Str/Equivalence`: the unit and counit, with the components of `straighteningEquiv`, the
+* `Str/Equivalence`: the unit and counit, with the components of `Unit` and `Counit`, the
   equivalence `straighteningEquivStr`, and its cartesian functors.
 * `Str/ICatStr`: its reindexing along the unstraightening `ICatStr ⟶ SplitOpfibStr`, an equivalence
   `DProf ≃ D2SFibICatStr` of fibred categories over `ICatStr`, the indexed categories and strict
@@ -39,41 +41,40 @@ the unit and counit hold by `rfl`. This is a rewrite of a development on Lean an
 repository), at about half its size.
 -/
 
-universe v₁ u₁ v₂ u₂
+universe v₁ u₁ v₂ u₂ v₃ u₃ u
 
 open CategoryTheory Displayed
 
 /-! ## Main results -/
 
-/-- **Straightening–unstraightening for D2SFibs.** -/
-recall DoubleDisplayed.D2SFib.Straightening.straighteningEquiv {A : Type u₁} [Category.{v₁} A]
-    (B : Displayed.{v₁, u₁, v₂, u₂} A) [SplitOpfib B] :
-    Bᵒᵖ.Total ⥤ Cat ≌ DoubleDisplayed.D2SFibCat B
-
 /-- **Straightening–unstraightening for D2SFibs over `SplitOpfibStr`**, an equivalence of fibred
 categories. -/
 recall DoubleDisplayed.D2SFib.Straightening.straighteningEquivStr :
-    DoubleDisplayed.VertEquivalence DoubleDisplayed.DProfStr.{u₁} DoubleDisplayed.D2SFibStr.{u₁}
+    DoubleDisplayed.VertEquivalence DoubleDisplayed.DProfStr.{v₁, u₁, v₂, u₂, v₃, u₃}
+      DoubleDisplayed.D2SFibStr.{v₁, u₁, v₂, u₂, v₃, u₃}
 
 recall DoubleDisplayed.DProfStr.splitDDFib :
-    DoubleDisplayed.SplitDDFib DoubleDisplayed.DProfStr.{u₁}
+    DoubleDisplayed.SplitDDFib DoubleDisplayed.DProfStr.{v₁, u₁, v₂, u₂, v₃, u₃}
 
 recall DoubleDisplayed.D2SFibStr.splitDDFib :
-    DoubleDisplayed.SplitDDFib DoubleDisplayed.D2SFibStr.{u₁}
+    DoubleDisplayed.SplitDDFib DoubleDisplayed.D2SFibStr.{v₁, u₁, v₂, u₂, v₃, u₃}
 
 recall DoubleDisplayed.D2SFib.Straightening.unstraightenStrCartesian :
-    DoubleDisplayed.DDCartesianFunctor DoubleDisplayed.DProfStr.{u₁} DoubleDisplayed.D2SFibStr.{u₁}
+    DoubleDisplayed.DDCartesianFunctor DoubleDisplayed.DProfStr.{v₁, u₁, v₂, u₂, v₃, u₃}
+      DoubleDisplayed.D2SFibStr.{v₁, u₁, v₂, u₂, v₃, u₃}
 
 recall DoubleDisplayed.D2SFib.Straightening.straightenStrCartesian :
-    DoubleDisplayed.DDCartesianFunctor DoubleDisplayed.D2SFibStr.{u₁} DoubleDisplayed.DProfStr.{u₁}
+    DoubleDisplayed.DDCartesianFunctor DoubleDisplayed.D2SFibStr.{v₁, u₁, v₂, u₂, v₃, u₃}
+      DoubleDisplayed.DProfStr.{v₁, u₁, v₂, u₂, v₃, u₃}
 
 /-- **Straightening–unstraightening for D2SFibs over `ICatStr`**, an equivalence of fibred
 categories between dependent profunctors and D2SFibs over the unstraightenings of functors
 `A ⥤ Cat`. -/
 recall DoubleDisplayed.D2SFib.Straightening.straighteningEquivICatStr :
-    DoubleDisplayed.VertEquivalence DoubleDisplayed.DProf.{u₁} DoubleDisplayed.D2SFibICatStr.{u₁}
+    DoubleDisplayed.VertEquivalence DoubleDisplayed.DProf.{u, v₃, u₃}
+      DoubleDisplayed.D2SFibICatStr.{u, v₃, u₃}
 
 /-- `DProf` and `D2SFibICatStr` are split fibrations over `ICatStr`, as reindexings. -/
-example : DoubleDisplayed.SplitDDFib DoubleDisplayed.DProf.{u₁} := inferInstance
+example : DoubleDisplayed.SplitDDFib DoubleDisplayed.DProf.{u, v₃, u₃} := inferInstance
 
-example : DoubleDisplayed.SplitDDFib DoubleDisplayed.D2SFibICatStr.{u₁} := inferInstance
+example : DoubleDisplayed.SplitDDFib DoubleDisplayed.D2SFibICatStr.{u, v₃, u₃} := inferInstance

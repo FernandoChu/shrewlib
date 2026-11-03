@@ -23,7 +23,7 @@ fiber of `DProfStr` over `B` has the natural transformations `P ⟶ P'` as morph
 `H` is `H.dualOp.total ⋙ P'`, with the identity as chosen lift (`DProfStr.splitDDFib`).
 -/
 
-universe u
+universe v₁ u₁ v₂ u₂ v₃ u₃
 
 namespace DoubleDisplayed
 
@@ -31,11 +31,14 @@ open CategoryTheory Displayed
 
 open scoped Displayed
 
+-- The universes of the displayed categories and of the fibers only occur in the levels of
+-- `DProfStr` through the `max` of the levels of their objects and morphisms.
+set_option linter.checkUnivs false in
 /-- **The category of dependent profunctors**, doubly displayed over `SplitOpfibStr`: over `B`,
 the functors `Bᵒᵖ.Total ⥤ Cat`, and over an opcartesian functor `H`, the natural transformations
 `P ⟶ H.dualOp.total ⋙ P'`. -/
-def DProfStr : DoubleDisplayed.{u, u + 1, u, u + 1, u, u + 1} SplitOpfibStr.{u} where
-  Ob {_} (B : SplitOpfibOb _) := B.toDisplayedᵒᵖ.Total ⥤ Cat.{u, u}
+def DProfStr : DoubleDisplayed SplitOpfibStr.{v₁, u₁, v₂, u₂} where
+  Ob {_} (B : SplitOpfibOb.{v₁, u₁, v₂, u₂} _) := B.toDisplayedᵒᵖ.Total ⥤ Cat.{v₃, u₃}
   Hom {_ _ u B B'} (H : OpcartesianFunctor u.toFunctor (SplitOpfibOb.toDisplayed B)
       (SplitOpfibOb.toDisplayed B')) P P' :=
     P ⟶ H.dualOp.total ⋙ P'
@@ -49,26 +52,26 @@ def DProfStr : DoubleDisplayed.{u, u + 1, u, u + 1, u, u + 1} SplitOpfibStr.{u} 
 
 /-- The chosen pullback of a dependent profunctor along an opcartesian functor `H` is the
 precomposition with `H.dualOp.total`, with the identity as chosen lift. -/
-instance DProfStr.ddFib : DDFib DProfStr.{u} where
+instance DProfStr.ddFib : DDFib DProfStr.{v₁, u₁, v₂, u₂, v₃, u₃} where
   pull {_ _ u B B'} (H : OpcartesianFunctor u.toFunctor (SplitOpfibOb.toDisplayed B)
       (SplitOpfibOb.toDisplayed B'))
-      (P' : (SplitOpfibOb.toDisplayed B')ᵒᵖ.Total ⥤ Cat.{u, u}) :=
+      (P' : (SplitOpfibOb.toDisplayed B')ᵒᵖ.Total ⥤ Cat.{v₃, u₃}) :=
     H.dualOp.total ⋙ P'
   clift {_ _ u B B'} (H : OpcartesianFunctor u.toFunctor (SplitOpfibOb.toDisplayed B)
       (SplitOpfibOb.toDisplayed B'))
-      (P' : (SplitOpfibOb.toDisplayed B')ᵒᵖ.Total ⥤ Cat.{u, u}) :=
+      (P' : (SplitOpfibOb.toDisplayed B')ᵒᵖ.Total ⥤ Cat.{v₃, u₃}) :=
     𝟙 (H.dualOp.total ⋙ P')
   isCartesianClift _ _ :=
     { lift := fun {_ _ _} _ {_} χ => χ
       lift_fac := fun {_ _ _} _ {_} _ => NatTrans.ext (funext fun _ => rfl)
       lift_uniq := fun {_ _ _ _ _ _} _ h => (NatTrans.ext (funext fun _ => rfl)).trans h }
 
-instance DProfStr.preSplitDDFib : PreSplitDDFib DProfStr.{u} where
+instance DProfStr.preSplitDDFib : PreSplitDDFib DProfStr.{v₁, u₁, v₂, u₂, v₃, u₃} where
   pull_id _ := rfl
   pull_comp _ _ _ := rfl
 
 /-- **`DProfStr` is a split fibration over `SplitOpfibStr`**, by precomposition. -/
-instance DProfStr.splitDDFib : SplitDDFib DProfStr.{u} where
+instance DProfStr.splitDDFib : SplitDDFib DProfStr.{v₁, u₁, v₂, u₂, v₃, u₃} where
   clift_id _ := rfl
   clift_comp _ _ _ := NatTrans.ext (funext fun _ => rfl)
 

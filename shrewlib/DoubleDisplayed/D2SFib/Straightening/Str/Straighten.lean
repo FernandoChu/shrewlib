@@ -17,7 +17,7 @@ The naturality of `straightenStrMap Φ` holds by `rfl`: `Φ` commutes with `push
 by the rules of `D2SFibMap`.
 -/
 
-universe u
+universe v₁ u₁ v₂ u₂ v₃ u₃
 
 namespace DoubleDisplayed.D2SFib.Straightening
 
@@ -25,10 +25,10 @@ open CategoryTheory Displayed DoubleDisplayed D2SFib
 
 open scoped Displayed DoubleDisplayed
 
-variable {A A' : Cat.{u, u}} {u : A ⟶ A'} {B : Displayed.{u, u, u, u} A}
-  {B' : Displayed.{u, u, u, u} A'} [SplitOpfib B] [SplitOpfib B']
-  {H : OpcartesianFunctor u.toFunctor B B'} {C : DoubleDisplayed.{u, u, u, u, u, u} B}
-  {C' : DoubleDisplayed.{u, u, u, u, u, u} B'} [SplitD2SFib C] [SplitD2SFib C']
+variable {A A' : Cat.{v₁, u₁}} {u : A ⟶ A'} {B : Displayed.{v₁, u₁, v₂, u₂} A}
+  {B' : Displayed.{v₁, u₁, v₂, u₂} A'} [SplitOpfib B] [SplitOpfib B']
+  {H : OpcartesianFunctor u.toFunctor B B'} {C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B}
+  {C' : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B'} [SplitD2SFib C] [SplitD2SFib C']
 
 /-- **The straightening of a map of D2SFibs** `Φ` over `H`: the natural transformation
 `straightenObj C ⟶ H.dualOp.total ⋙ straightenObj C'` whose components are the fiber functors of
@@ -40,7 +40,8 @@ def straightenStrMap (Φ : D2SFibMap H C C') :
 
 /-- **The straightening over `SplitOpfibStr`**: D2SFibs go to their straightenings, and their maps
 over `H` to morphisms of dependent profunctors over `H`. -/
-def straightenStr : VertFunctor D2SFibStr.{u} DProfStr.{u} where
+def straightenStr :
+    VertFunctor D2SFibStr.{v₁, u₁, v₂, u₂, v₃, u₃} DProfStr.{v₁, u₁, v₂, u₂, v₃, u₃} where
   obj E := straightenObj E.C
   map Φ := straightenStrMap Φ
   map_id _ := rfl
