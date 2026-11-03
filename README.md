@@ -58,7 +58,6 @@ files, (op)cartesian morphisms (in `Displayed/{Opfibration,Fibration}/Basic` and
   the category model in the discrete model, and the maps between them.
 - `DoubleDisplayed/`: categories doubly displayed over a displayed category, and dependent 2-sided
   fibrations with their straightening.
-- `mathlib4/`: Mathlib, checked out at its `v4.36.0-rc2` tag, used as a path dependency.
 
 ## Building
 
@@ -70,6 +69,7 @@ elan toolchain link rewrite-v4.36.0-rc2 <path-to-fork>/build/release/stage1
 lake build   # only compiles the Mathlib modules these files import
 ```
 
-Use `MATHLIB_NO_CACHE_ON_UPDATE=1` for any `lake update`. Otherwise Mathlib's hook tries to
+Mathlib is a git dependency, pinned to its `v4.36.0-rc2` tag, which the fork is based on, and
+cloned by Lake into `.lake/packages/`. Use `MATHLIB_NO_CACHE_ON_UPDATE=1` for any `lake update`. Otherwise Mathlib's hook tries to
 fetch its cache, which doesn't apply to the patched compiler. After rebuilding the toolchain with
 a new commit, Lake will recompile the imported Mathlib modules.
