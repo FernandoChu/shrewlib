@@ -24,8 +24,8 @@ from `F` to `G` is a strict natural transformation `StrictTrans F (u ⋙ G)`. It
 A strict transformation `τ` over `u` unstraightens to an opcartesian functor
 `τ.unstraighten : ∫ F ⟶ ∫ G` over `u`, hence to the functor
 `τ.dualTotal : (∫ F)ᵒᵖ.Total ⥤ (∫ G)ᵒᵖ.Total` between the total categories of the dual
-opfibrations, the Grothendieck constructions of `a ↦ (F a)ᵒᵖ` and `a' ↦ (G a')ᵒᵖ`. Both preserve
-identities and composites of `ICatStr`, as rules.
+opfibrations, the Grothendieck constructions of `a ↦ (F a)ᵒᵖ` and `a' ↦ (G a')ᵒᵖ`. The
+unstraightening preserves identities and composites of `ICatStr`, as rules.
 -/
 
 universe v₁ u₁ v₂ u₂ v₃ u₃ v u
@@ -205,7 +205,8 @@ instance splitOpfib (F : ICatStr.Ob A) : SplitOpfib (∫ (F : A ⥤ Cat.{u, u}))
   unstraightenSplitOpfib F
 
 /-! The unstraightening of the identities and composites of `ICatStr` are the identities and
-composites of opcartesian functors, and so are their `dualTotal`, as rules. -/
+composites of opcartesian functors, as rules. With the rules of `OpcartesianFunctor.dualOp`, so
+are their `dualTotal`. -/
 
 @[rewrite_rule]
 theorem unstraighten_id (F : A ⥤ Cat.{u, u}) :
@@ -219,18 +220,6 @@ theorem unstraighten_comp {u : A ⟶ A'} {u' : A' ⟶ A''} (τ : StrictTrans F (
         (StrictTrans.vcomp τ (StrictTrans.whiskerLeft u.toFunctor σ)) =
       OpcartesianFunctor.comp (StrictTrans.unstraighten (u := u.toFunctor) τ)
         (StrictTrans.unstraighten (u := u'.toFunctor) σ) := rfl
-
-@[rewrite_rule]
-theorem dualTotal_id (F : A ⥤ Cat.{u, u}) :
-    StrictTrans.dualTotal (u := (𝟙 A : A ⟶ A).toFunctor) (StrictTrans.id F) = 𝟭 _ := rfl
-
-@[rewrite_rule]
-theorem dualTotal_comp {u : A ⟶ A'} {u' : A' ⟶ A''} (τ : StrictTrans F (u.toFunctor ⋙ G))
-    (σ : StrictTrans G (u'.toFunctor ⋙ H)) :
-    StrictTrans.dualTotal (u := (u ≫ u').toFunctor)
-        (StrictTrans.vcomp τ (StrictTrans.whiskerLeft u.toFunctor σ)) =
-      StrictTrans.dualTotal (u := u.toFunctor) τ ⋙ StrictTrans.dualTotal (u := u'.toFunctor) σ :=
-  rfl
 
 end ICatStr
 

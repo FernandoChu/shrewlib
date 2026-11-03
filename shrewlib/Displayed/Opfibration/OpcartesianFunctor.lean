@@ -13,12 +13,14 @@ the nose:
 Both are rewrite rules. As for `CartesianFunctor` (`Fibration/CartesianFunctor.lean`), of which
 this is the dual, the functor preserving the chosen pushforwards (`PreOpcartesianFunctor`) is a
 field of `OpcartesianFunctor` rather than a parent, so that the rule on objects makes the equation
-on lifts well typed. An opcartesian functor preserves the transport `pushMap` (`map_pushMap`), as a
-rule. Opcartesian functors have identities and compose, with laws by `rfl`.
+on lifts well typed. An opcartesian functor preserves the transport `pushMap` (`map_pushMap`) and
+the opcartesian factorizations (`map_opcartesianFactor`), as rules. Opcartesian functors have
+identities and compose, with laws by `rfl`.
 
 Between split opfibrations, an opcartesian functor `H` over `u` induces a displayed functor
 `H.dualOp : DispFunctor u Dᵒᵖ Eᵒᵖ` between the dual opfibrations (`Opfibration/DualOp.lean`),
-which is `H` on the vertical morphisms `y ⟶ push f x` of `Dᵒᵖ`.
+which is `H` on the vertical morphisms `y ⟶ push f x` of `Dᵒᵖ`. The functors it induces between
+the total categories preserve identities and composites, as rules.
 -/
 
 universe v₁ u₁ v₂ u₂ v₃ u₃ v₄ u₄ v₅ u₅ v₆ u₆
@@ -101,6 +103,16 @@ theorem map_pushMap [Opfib D] [Opfib E] (H : OpcartesianFunctor u D E) {a a' : A
   refine (H.toPre.map_comp (f := 𝟙 a) (g := f) β (D.olift f y)).trans ?_
   exact (E.olift_pushMap (u.map f) (H.toPre.map β : H.toPre.obj x ⟶ _)).symm
 
+/-- **An opcartesian functor preserves the opcartesian factorizations**:
+`H (opcartesianFactor φ) = opcartesianFactor (H φ)`. -/
+@[rewrite_rule]
+theorem map_opcartesianFactor [Opfib D] [Opfib E] (H : OpcartesianFunctor u D E) {a a' : A}
+    {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} (φ : x ⟶[f] y) :
+    H.toPre.map (D.opcartesianFactor φ) = E.opcartesianFactor (H.toPre.map φ) := by
+  refine E.opcartesianFactor_uniq _ _ ?_
+  refine (H.toPre.map_comp (f := f) (g := 𝟙 a') (D.olift f x) (D.opcartesianFactor φ)).symm.trans ?_
+  exact congrArg H.toPre.map (D.olift_comp_opcartesianFactor φ)
+
 variable [SplitOpfib D] [SplitOpfib E]
 
 /-- **The dual of an opcartesian functor** between split opfibrations: the displayed functor
@@ -110,6 +122,18 @@ def dualOp (H : OpcartesianFunctor u D E) : DispFunctor u Dᵒᵖ Eᵒᵖ where
   map {_ _ _ _ y} φ := (H.toPre.map φ : H.toPre.obj y ⟶ _)
   map_id _ := rfl
   map_comp _ _ := rfl
+
+/-! The functors that the identities and composites of opcartesian functors induce between the
+total categories of the dual opfibrations are the identities and composites, as rules. -/
+
+@[rewrite_rule]
+theorem dualOp_total_id : (OpcartesianFunctor.id D).dualOp.total = 𝟭 _ := rfl
+
+@[rewrite_rule]
+theorem dualOp_total_comp {C : Type u₅} [Category.{v₅} C] {v : B ⥤ C}
+    {E' : Displayed.{v₅, u₅, v₆, u₆} C} [SplitOpfib E'] (H : OpcartesianFunctor u D E)
+    (K : OpcartesianFunctor v E E') : (H.comp K).dualOp.total = H.dualOp.total ⋙ K.dualOp.total :=
+  rfl
 
 end OpcartesianFunctor
 
