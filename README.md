@@ -15,7 +15,7 @@ documents where they fire, which left-hand sides are allowed, and what is not ch
 
 ## Files
 
-The development is one library with sources in `src/`. Module names and namespaces follow the
+The development is one library with sources in `shrewlib/`. Module names and namespaces follow the
 folders. Each folder has a `Readme.lean`, which imports the whole folder,
 summarizes its files in its module docstring and restates its main results with `recall`, so that
 the build checks them.
