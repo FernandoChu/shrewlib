@@ -23,7 +23,7 @@ Fibrations and cartesian functors reindex along a displayed functor `H : B ⟶ B
 along `g` in `C'.reindex H` is the pullback along `H g` in `C'`.
 -/
 
-universe v₁ u₁ v₂ u₂ v₃ u₃ v₄ u₄ v₅ u₅
+universe v₁ u₁ v₂ u₂ v₃ u₃ v₄ u₄ v₅ u₅ v₆ u₆
 
 open CategoryTheory Displayed
 
@@ -120,7 +120,8 @@ attribute [rewrite_rule] SplitDDFib.clift_id SplitDDFib.clift_comp
 
 /-! ## Cartesian functors -/
 
-variable (C D : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B)
+variable (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B)
+  (D : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₆, u₆} B)
 
 /-- A vertical functor preserving the chosen pullbacks on objects. This axiom is a rewrite
 rule. -/
@@ -168,7 +169,7 @@ instance reindexSplitDDFib [SplitDDFib C'] : SplitDDFib (C'.reindex H) where
   clift_id _ := rfl
   clift_comp _ _ _ := rfl
 
-variable {C'} {D' : DoubleDisplayed.{v₄, u₄, v₅, u₅, v₃, u₃} B'}
+variable {C'} {D' : DoubleDisplayed.{v₄, u₄, v₅, u₅, v₆, u₆} B'}
 
 /-- A cartesian functor over `B'`, reindexed along `H`. -/
 def DDCartesianFunctor.reindex [DDFib C'] [DDFib D'] (F : DDCartesianFunctor C' D') :

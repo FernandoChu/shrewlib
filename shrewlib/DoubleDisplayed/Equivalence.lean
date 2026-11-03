@@ -22,7 +22,7 @@ All of these reindex along a displayed functor `H : B ⟶ B'` (`VertFunctor.rein
 `VertNatIso.reindex`, `VertEquivalence.reindex`), acting on the reindexings `C.reindex H` as on `C`.
 -/
 
-universe v₁ u₁ v₂ u₂ v₃ u₃ v₄ u₄ v₅ u₅
+universe v₁ u₁ v₂ u₂ v₃ u₃ v₄ u₄ v₅ u₅ v₆ u₆
 
 open CategoryTheory Displayed
 
@@ -33,7 +33,7 @@ namespace DoubleDisplayed
 open scoped DoubleDisplayed
 
 variable {A : Type u₁} [Category.{v₁} A] {B : Displayed.{v₁, u₁, v₂, u₂} A}
-  {C D : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B}
+  {C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B} {D : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₆, u₆} B}
 
 /-- A vertical natural transformation between vertical functors: its components lie over the
 identities of `B`, and it is natural with respect to morphisms over arbitrary morphisms of `B`. -/
@@ -120,7 +120,7 @@ end VertNatIso
 /-- **An equivalence over `B`** of doubly displayed categories: vertical functors both ways, with
 a unit and a counit that are vertical natural isomorphisms. -/
 structure VertEquivalence (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B)
-    (D : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) where
+    (D : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₆, u₆} B) where
   /-- The functor. -/
   functor : VertFunctor C D
   /-- The inverse functor. -/
@@ -135,7 +135,8 @@ structure VertEquivalence (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u�
 section Reindex
 
 variable {A' : Type u₄} [Category.{v₄} A'] {B' : Displayed.{v₄, u₄, v₅, u₅} A'} {u : A ⥤ A'}
-  (H : DispFunctor u B B') {C' D' : DoubleDisplayed.{v₄, u₄, v₅, u₅, v₃, u₃} B'}
+  (H : DispFunctor u B B') {C' : DoubleDisplayed.{v₄, u₄, v₅, u₅, v₃, u₃} B'}
+  {D' : DoubleDisplayed.{v₄, u₄, v₅, u₅, v₆, u₆} B'}
 
 /-- A vertical functor over `B'`, reindexed along `H`: the same actions on objects and
 morphisms. -/

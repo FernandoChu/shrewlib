@@ -22,7 +22,7 @@ The double-level `IsOpcartesian` and `IsCartesian` structures are in
 `DoubleDisplayed/Cartesian.lean` and the total displayed category in `DoubleDisplayed/Total.lean`.
 -/
 
-universe v₁ u₁ v₂ u₂ v₃ u₃
+universe v₁ u₁ v₂ u₂ v₃ u₃ v₄ u₄ v₅ u₅
 
 open CategoryTheory Displayed
 
@@ -123,7 +123,8 @@ section VertFunctor
 
 /-- A *vertical functor* between doubly displayed categories over `B`: it acts over `B` on the
 nose. -/
-structure VertFunctor (C D : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) where
+structure VertFunctor (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B)
+    (D : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₄, u₄} B) where
   /-- The action on objects, fiberwise over `B`. -/
   obj : {a : A} → {b : B.Ob a} → C.Ob b → D.Ob b
   /-- The action on morphisms, over the same `B`-morphism. -/
@@ -143,7 +144,8 @@ namespace VertFunctor
 
 /-- Extensionality: two vertical functors agreeing on objects (pointwise) and morphisms (up to
 `≍`, since their types involve the actions on objects) are equal. -/
-theorem ext {C D : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B} {F G : VertFunctor C D}
+theorem ext {C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B}
+    {D : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₄, u₄} B} {F G : VertFunctor C D}
     (hobj : ∀ {a : A} {b : B.Ob a} (c : C.Ob b), F.obj c = G.obj c)
     (hmap : ∀ {a a' : A} {f : a ⟶ a'} {b : B.Ob a} {b' : B.Ob a'} {g : b ⟶[f] b'}
       {c : C.Ob b} {c' : C.Ob b'} (θ : c ⟶[[g]] c'), F.map θ ≍ G.map θ) : F = G := by
@@ -163,7 +165,10 @@ def id (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) : VertFuncto
   map_comp _ _ := rfl
 
 /-- Composition of vertical functors. -/
-def comp {C D E : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B} (F : VertFunctor C D)
+def comp {C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B}
+    {D : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₄, u₄} B}
+    {E : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₅, u₅} B}
+    (F : VertFunctor C D)
     (G : VertFunctor D E) : VertFunctor C E where
   obj c := G.obj (F.obj c)
   map θ := G.map (F.map θ)
@@ -171,17 +176,20 @@ def comp {C D E : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B} (F : V
   map_comp _ _ := rfl
 
 /-- Vertical functors restrict to ordinary functors on fibers. -/
-def fiber {C D : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B} (F : VertFunctor C D) {a : A}
+def fiber {C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B}
+    {D : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₄, u₄} B} (F : VertFunctor C D) {a : A}
     (b : B.Ob a) : C.Fiber b ⥤ D.Fiber b where
   obj c := F.obj c
   map θ := F.map θ
   map_id _ := rfl
   map_comp _ _ := rfl
 
-@[simp] theorem fiber_obj {C D : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B} (F : VertFunctor C D)
+@[simp] theorem fiber_obj {C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B}
+    {D : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₄, u₄} B} (F : VertFunctor C D)
     {a : A} (b : B.Ob a) (c : C.Fiber b) : (F.fiber b).obj c = F.obj c := rfl
 
-@[simp] theorem fiber_map {C D : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B} (F : VertFunctor C D)
+@[simp] theorem fiber_map {C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B}
+    {D : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₄, u₄} B} (F : VertFunctor C D)
     {a : A} {b : B.Ob a} {c c' : C.Fiber b} (θ : c ⟶ c') : (F.fiber b).map θ = F.map θ := rfl
 
 end VertFunctor
