@@ -60,8 +60,8 @@ files, (op)cartesian morphisms (in `Displayed/{Opfibration,Fibration}/Basic` and
   of the displayed model, the twisted Hom-types and their term `refl`, and the maps between them.
 - `DoubleDisplayed/`: categories doubly displayed over a displayed category, their functors,
   equivalences and fibrations, and dependent 2-sided fibrations with their straightening: an
-  equivalence of fibred categories between dependent profunctors and D2SFibs over
-  `SplitOpfibStr`, and its reindexing over `ICatStr`.
+  equivalence between dependent profunctors over `ICatStr` and D2SFibs over `SplitOpfibStr`, over
+  the straightening–unstraightening equivalence `ICatStr ≃ SplitOpfibStr`.
 
 ## Building
 

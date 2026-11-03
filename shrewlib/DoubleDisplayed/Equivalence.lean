@@ -1,4 +1,5 @@
 import DoubleDisplayed.Functor
+import Displayed.Displayed.Equivalence
 import Mathlib.CategoryTheory.Iso
 
 /-!
@@ -20,6 +21,13 @@ unfold to the composites of their actions.
 
 All of these reindex along a displayed functor `H : B ⟶ B'` (`VertFunctor.reindex`,
 `VertNatIso.reindex`, `VertEquivalence.reindex`), acting on the reindexings `C.reindex H` as on `C`.
+
+More generally, for categories `C` over `B` and `D` over `B'`, with `B` and `B'` displayed over
+the same base, an equivalence over an equivalence `e : B ≃ B'` over that base
+(`EquivalenceOver e C D`) consists of doubly displayed functors over `e.functor` and `e.inverse`,
+and a unit and a counit whose components lie over those of `e`. The two sides of their naturality
+and inverse laws lie over morphisms of `B` and `B'` that are equal by the laws of `e`, which need
+not hold definitionally, so these laws are stated heterogeneously.
 -/
 
 universe v₁ u₁ v₂ u₂ v₃ u₃ v₄ u₄ v₅ u₅ v₆ u₆
@@ -173,5 +181,48 @@ def VertEquivalence.reindex (e : VertEquivalence C' D') :
   counitIso := VertNatIso.reindex H e.counitIso
 
 end Reindex
+
+/-! ## Equivalences over an equivalence of the bases -/
+
+section Over
+
+variable {B' : Displayed.{v₁, u₁, v₄, u₄} A} (e : Displayed.VertEquivalence B B')
+
+/-- **An equivalence over an equivalence `e : B ≃ B'`** between `C` over `B` and `D` over `B'`:
+doubly displayed functors over `e.functor` and `e.inverse`, a unit with components over those of
+the unit of `e`, and a counit with components over those of the counit of `e`, with inverses, both
+natural. -/
+structure EquivalenceOver (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B)
+    (D : DoubleDisplayed.{v₁, u₁, v₄, u₄, v₆, u₆} B') where
+  /-- The functor. -/
+  functor : DDFunctor e.functor C D
+  /-- The inverse functor. -/
+  inverse : DDFunctor e.inverse D C
+  /-- The components of the unit. -/
+  unitHom : ∀ {a : A} {b : B.Ob a} (c : C.Ob b),
+    c ⟶[[e.unitIso.hom.app b]] inverse.obj (functor.obj c)
+  /-- The components of the inverse of the unit. -/
+  unitInv : ∀ {a : A} {b : B.Ob a} (c : C.Ob b),
+    inverse.obj (functor.obj c) ⟶[[e.unitIso.inv.app b]] c
+  unitHom_unitInv : ∀ {a : A} {b : B.Ob a} (c : C.Ob b), unitHom c ≫ᵈᵈ unitInv c ≍ C.id c
+  unitInv_unitHom : ∀ {a : A} {b : B.Ob a} (c : C.Ob b),
+    unitInv c ≫ᵈᵈ unitHom c ≍ C.id (inverse.obj (functor.obj c))
+  unitHom_naturality : ∀ {a a' : A} {f : a ⟶ a'} {b : B.Ob a} {b' : B.Ob a'} {g : b ⟶[f] b'}
+    {c : C.Ob b} {c' : C.Ob b'} (θ : c ⟶[[g]] c'),
+    θ ≫ᵈᵈ unitHom c' ≍ unitHom c ≫ᵈᵈ inverse.map (functor.map θ)
+  /-- The components of the counit. -/
+  counitHom : ∀ {a : A} {b : B'.Ob a} (d : D.Ob b),
+    functor.obj (inverse.obj d) ⟶[[e.counitIso.hom.app b]] d
+  /-- The components of the inverse of the counit. -/
+  counitInv : ∀ {a : A} {b : B'.Ob a} (d : D.Ob b),
+    d ⟶[[e.counitIso.inv.app b]] functor.obj (inverse.obj d)
+  counitHom_counitInv : ∀ {a : A} {b : B'.Ob a} (d : D.Ob b),
+    counitHom d ≫ᵈᵈ counitInv d ≍ D.id (functor.obj (inverse.obj d))
+  counitInv_counitHom : ∀ {a : A} {b : B'.Ob a} (d : D.Ob b), counitInv d ≫ᵈᵈ counitHom d ≍ D.id d
+  counitHom_naturality : ∀ {a a' : A} {f : a ⟶ a'} {b : B'.Ob a} {b' : B'.Ob a'} {g : b ⟶[f] b'}
+    {d : D.Ob b} {d' : D.Ob b'} (θ : d ⟶[[g]] d'),
+    functor.map (inverse.map θ) ≫ᵈᵈ counitHom d' ≍ counitHom d ≫ᵈᵈ θ
+
+end Over
 
 end DoubleDisplayed

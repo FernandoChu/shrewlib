@@ -83,6 +83,16 @@ theorem ext {Φ Ψ : D2SFibMap H C C'} (h : Φ.toDDFunctor = Ψ.toDDFunctor) : �
   obtain rfl : Φ = Ψ := h
   rfl
 
+/-- Maps of D2SFibs over equal opcartesian functors are equal, heterogeneously, when their actions
+on objects and morphisms are. -/
+theorem hext {H' : OpcartesianFunctor u B B'} (hH : H = H') {Φ : D2SFibMap H C C'}
+    {Ψ : D2SFibMap H' C C'}
+    (hobj : ∀ {a : A} {b : B.Ob a} (c : C.Ob b), Φ.toObj.obj c ≍ Ψ.toObj.obj c)
+    (hmap : ∀ {a a' : A} {f : a ⟶ a'} {b : B.Ob a} {b' : B.Ob a'} {g : b ⟶[f] b'} {c : C.Ob b}
+      {c' : C.Ob b'} (θ : c ⟶[[g]] c'), Φ.toObj.map θ ≍ Ψ.toObj.map θ) : Φ ≍ Ψ := by
+  subst hH
+  exact heq_of_eq (ext (DDFunctor.ext (fun c => eq_of_heq (hobj c)) hmap))
+
 /-- The identity map of D2SFibs, over the identity opcartesian functor. -/
 protected def id (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) [SplitD2SFib C] :
     D2SFibMap (OpcartesianFunctor.id B) C C where

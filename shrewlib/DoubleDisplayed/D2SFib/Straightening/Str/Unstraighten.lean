@@ -1,16 +1,20 @@
-import DoubleDisplayed.D2SFib.DProfStr
+import DoubleDisplayed.D2SFib.DProf
+import Displayed.Opfibration.Straightening.Str
 import DoubleDisplayed.D2SFib.D2SFibStr
 import DoubleDisplayed.D2SFib.Straightening.Unstraighten
 
 /-!
-# Unstraightening of dependent profunctors, over `SplitOpfibStr`
+# Unstraightening of dependent profunctors, over `ICatStr`
 
 The unstraightening `Unstraightening P` of a dependent profunctor `P : Bᵒᵖ.Total ⥤ Cat` is a split
 D2SFib over `B` (`DoubleDisplayed/D2SFib/Straightening/Unstraighten.lean`). Here we extend it to
 the morphisms of dependent profunctors over arbitrary opcartesian functors, which makes it natural
 in `B`: a natural transformation `κ : P ⟶ H.dualOp.total ⋙ P'` gives the map of D2SFibs over `H`
-with the components of `κ` on objects and morphisms (`unstraightenStrMap`), and the unstraightening
-is a vertical functor `unstraightenStr : VertFunctor DProfStr D2SFibStr` over `SplitOpfibStr`.
+with the components of `κ` on objects and morphisms (`unstraightenStrMap`). For dependent
+profunctors over indexed categories, this makes the unstraightening a doubly displayed functor
+`unstraighten : DProf ⟶ D2SFibStr` over the unstraightening `unstraightenStr : ICatStr ⟶
+SplitOpfibStr` of indexed categories: a strict transformation `τ` goes to the opcartesian functor
+`τ.unstraighten`, and a morphism of dependent profunctors over `τ` to its unstraightening.
 
 As for the transformations between functors on the same category, the components of `κ` on
 objects and morphisms have their own heads, `Str.tobj` and `Str.tmor`, and their naturality along
@@ -23,13 +27,15 @@ unfolded. With these rules, and the preservation of the opcartesian factorizatio
 `unstraightenStrMap κ` is a functor and preserves the chosen lifts by `rfl`.
 -/
 
-universe v₁ u₁ v₂ u₂ v₃ u₃
+universe v₁ u₁ v₂ u₂ v₃ u₃ u
 
 namespace DoubleDisplayed.D2SFib.Straightening
 
 open CategoryTheory Displayed DoubleDisplayed D2SFib Unstraightening
 
-open scoped Displayed DoubleDisplayed
+open scoped Displayed DoubleDisplayed Displayed.Opfibration.Straightening
+
+open Displayed.Opfibration.Straightening (ICatStr StrictTrans)
 
 variable {A A' : Cat.{v₁, u₁}} {u : A ⟶ A'} {B : Displayed.{v₁, u₁, v₂, u₂} A}
   {B' : Displayed.{v₁, u₁, v₂, u₂} A'} [SplitOpfib B] [SplitOpfib B']
@@ -118,7 +124,7 @@ theorem tmor_compNat (κ' : P' ⟶ K.dualOp.total ⋙ P'') {x : Bᵒᵖ.Total} {
 
 end Str
 
-/-! ## `unstraightenStr` -/
+/-! ## `unstraighten` -/
 
 open Str in
 /-- **The unstraightening of a morphism of dependent profunctors** `κ : P ⟶ H.dualOp.total ⋙ P'`
@@ -136,19 +142,22 @@ def unstraightenStrMap (κ : P ⟶ H.dualOp.total ⋙ P') :
   map_pushLift := by intros; rfl
 
 /-- The unstraightening of a dependent profunctor is a split D2SFib. The instance
-`Unstraightening.instSplitD2SFib` does not apply to it, since `DProfStr.Ob B` is not reducibly a
-type of functors. -/
-instance {A : Cat.{v₁, u₁}} {B : SplitOpfibStr.{v₁, u₁, v₂, u₂}.Ob A}
-    (P : DProfStr.{v₁, u₁, v₂, u₂, v₃, u₃}.Ob B) :
-    SplitD2SFib (Unstraightening (B := SplitOpfibOb.toDisplayed B) P) :=
+`Unstraightening.instSplitD2SFib` does not apply to it, since `DProf.Ob F` is not reducibly a type
+of functors. -/
+instance {A : Cat.{u, u}} {F : ICatStr.{u}.Ob A} (P : DProf.{u, v₃, u₃}.Ob F) :
+    SplitD2SFib (Unstraightening (B := ∫ (F : A ⥤ Cat.{u, u})) P) :=
   Unstraightening.instSplitD2SFib P
 
-/-- **The unstraightening over `SplitOpfibStr`**: dependent profunctors go to their
-unstraightenings, and their morphisms over `H` to maps of D2SFibs over `H`. -/
-def unstraightenStr :
-    VertFunctor DProfStr.{v₁, u₁, v₂, u₂, v₃, u₃} D2SFibStr.{v₁, u₁, v₂, u₂, v₃, u₃} where
+/-- **The unstraightening of dependent profunctors**, a doubly displayed functor over the
+unstraightening `ICatStr ⟶ SplitOpfibStr` of indexed categories: a dependent profunctor `P` over
+`F` goes to its unstraightening, a split D2SFib over `∫ F`, and a morphism over `τ` to the map of
+D2SFibs over `τ.unstraighten` given by its components. -/
+def unstraighten :
+    DDFunctor Displayed.Opfibration.Straightening.unstraightenStr DProf.{u, v₃, u₃}
+      D2SFibStr.{u, u, u, u, v₃, u₃} where
   obj P := unstraightenObj P
-  map κ := unstraightenStrMap κ
+  map {_ _ u _ _ τ _ _} κ :=
+    unstraightenStrMap (H := StrictTrans.unstraighten (u := u.toFunctor) τ) κ
   map_id _ := rfl
   map_comp _ _ := D2SFibMap.ext (DDFunctor.ext (fun _ => rfl) fun _ => HEq.rfl)
 
