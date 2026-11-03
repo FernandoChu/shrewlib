@@ -1,0 +1,219 @@
+import Displayed.Opfibration.Straightening.Unstraighten
+import Displayed.Opfibration.OpcartesianFunctor
+
+/-!
+# Indexed categories and strict natural transformations
+
+For a category `A` and functors `F G : A ⥤ Cat`, a *strict natural transformation*
+`StrictTrans F G` has components `F a ⥤ G a`, natural on the nose. It is stated by its actions on
+objects (`StrictTransObj.obj`) and on morphisms (`StrictTrans.map`), which are dedicated heads for
+the rules below, rather than by functors `F a ⥤ G a`: a rule keyed on `Functor.obj` would be tried
+on every functor application. Its naturality is a pair of rules,
+`τ (F f x) ↦ G f (τ x)` (`StrictTransObj.obj_push`) and `τ (F f φ) ↦ G f (τ φ)`
+(`StrictTrans.map_push`), oriented so that the components are innermost, as for the opcartesian
+functors of `Opfibration/OpcartesianFunctor.lean`. The rule on objects makes the one on morphisms a
+plain equation, so the action on objects is a separate structure, a field of `StrictTrans`.
+
+The category `ICat_str` of indexed categories and strict natural transformations is displayed over
+`Cat` (`ICatStr`): an object over `A` is a functor `A ⥤ Cat`, and a morphism over `u : A ⟶ A'`
+from `F` to `G` is a strict natural transformation `StrictTrans F (u ⋙ G)`. Its laws hold by
+`rfl`.
+
+A strict transformation `τ` over `u` unstraightens to an opcartesian functor
+`τ.unstraighten : ∫ F ⟶ ∫ G` over `u`, hence to the functor
+`τ.dualTotal : (∫ F)ᵒᵖ.Total ⥤ (∫ G)ᵒᵖ.Total` between the total categories of the dual
+opfibrations, the Grothendieck constructions of `a ↦ (F a)ᵒᵖ` and `a' ↦ (G a')ᵒᵖ`. Both preserve
+identities and composites of `ICatStr`, as rules.
+-/
+
+universe v₁ u₁ v₂ u₂ v₃ u₃ v u
+
+namespace Displayed.Opfibration.Straightening
+
+open CategoryTheory Displayed
+
+open scoped Displayed
+
+section StrictTrans
+
+variable {A : Type u₁} [Category.{v₁} A]
+
+/-- The action on objects of a strict natural transformation between `F G : A ⥤ Cat`, natural on
+the nose. The naturality is a rewrite rule. -/
+structure StrictTransObj (F G : A ⥤ Cat.{v, u}) where
+  /-- The components on objects. -/
+  obj : ∀ {a : A}, F.obj a → G.obj a
+  /-- Naturality on objects. -/
+  obj_push : ∀ {a a' : A} (f : a ⟶ a') (x : F.obj a),
+    obj ((F.map f).toFunctor.obj x) = (G.map f).toFunctor.obj (obj x)
+
+attribute [rewrite_rule] StrictTransObj.obj_push
+
+/-- **A strict natural transformation** between `F G : A ⥤ Cat`: components `F a ⥤ G a`, given by
+their actions on objects (`toObj`) and morphisms (`map`), with `G f ∘ τ_a = τ_{a'} ∘ F f` on the
+nose. Its laws are rewrite rules. -/
+structure StrictTrans (F G : A ⥤ Cat.{v, u}) where
+  /-- The components on objects. -/
+  toObj : StrictTransObj F G
+  /-- The components on morphisms. -/
+  map : ∀ {a : A} {x y : F.obj a}, (x ⟶ y) → (toObj.obj x ⟶ toObj.obj y)
+  map_id : ∀ {a : A} (x : F.obj a), map (𝟙 x) = 𝟙 (toObj.obj x)
+  map_comp : ∀ {a : A} {x y z : F.obj a} (φ : x ⟶ y) (ψ : y ⟶ z),
+    map (φ ≫ ψ) = map φ ≫ map ψ
+  /-- Naturality on morphisms. -/
+  map_push : ∀ {a a' : A} (f : a ⟶ a') {x y : F.obj a} (φ : x ⟶ y),
+    map ((F.map f).toFunctor.map φ) = (G.map f).toFunctor.map (map φ)
+
+attribute [rewrite_rule] StrictTrans.map_id StrictTrans.map_comp StrictTrans.map_push
+
+namespace StrictTrans
+
+variable {F G H : A ⥤ Cat.{v, u}}
+
+/-- Strict natural transformations are determined by their actions on objects and morphisms. -/
+theorem ext {τ σ : StrictTrans F G} (hobj : ∀ {a : A} (x : F.obj a), τ.toObj.obj x = σ.toObj.obj x)
+    (hmap : ∀ {a : A} {x y : F.obj a} (φ : x ⟶ y), τ.map φ ≍ σ.map φ) : τ = σ := by
+  obtain ⟨⟨obj, _⟩, map, _, _, _⟩ := τ
+  obtain ⟨⟨obj', _⟩, map', _, _, _⟩ := σ
+  obtain rfl : @obj = @obj' := by
+    funext a x
+    exact hobj x
+  obtain rfl : @map = @map' := by
+    funext a x y φ
+    exact eq_of_heq (hmap φ)
+  rfl
+
+/-- The component of `τ` at `a`, as a functor. -/
+def app (τ : StrictTrans F G) (a : A) : F.obj a ⥤ G.obj a where
+  obj x := τ.toObj.obj x
+  map φ := τ.map φ
+  map_id x := τ.map_id x
+  map_comp φ ψ := τ.map_comp φ ψ
+
+/-- The identity strict transformation. -/
+protected def id (F : A ⥤ Cat.{v, u}) : StrictTrans F F where
+  toObj := { obj := fun x => x, obj_push := fun _ _ => rfl }
+  map φ := φ
+  map_id _ := rfl
+  map_comp _ _ := rfl
+  map_push _ _ _ _ := rfl
+
+/-- Vertical composition of strict transformations. -/
+def vcomp (τ : StrictTrans F G) (σ : StrictTrans G H) : StrictTrans F H where
+  toObj := { obj := fun x => σ.toObj.obj (τ.toObj.obj x), obj_push := fun _ _ => rfl }
+  map φ := σ.map (τ.map φ)
+  map_id _ := rfl
+  map_comp _ _ := rfl
+  map_push _ _ _ _ := rfl
+
+/-- Restriction of a strict transformation along a functor `u : B ⥤ A`. -/
+def whiskerLeft {B : Type u₂} [Category.{v₂} B] (u : B ⥤ A) (τ : StrictTrans F G) :
+    StrictTrans (u ⋙ F) (u ⋙ G) where
+  toObj := { obj := fun x => τ.toObj.obj x, obj_push := fun f x => τ.toObj.obj_push (u.map f) x }
+  map φ := τ.map φ
+  map_id _ := rfl
+  map_comp _ _ := rfl
+  map_push f _ _ φ := τ.map_push (u.map f) φ
+
+end StrictTrans
+
+end StrictTrans
+
+/-! ## The displayed category of indexed categories -/
+
+/-- **`ICat_str`**: the indexed categories and strict natural transformations, displayed over
+`Cat`. An object over `A` is a functor `A ⥤ Cat`, and a morphism over `u : A ⟶ A'` from `F` to `G`
+is a strict transformation `StrictTrans F (u ⋙ G)`. Composition restricts the second
+transformation along the first base functor. -/
+def ICatStr : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
+  Ob A := A ⥤ Cat.{u, u}
+  Hom u F G := StrictTrans F (u.toFunctor ⋙ G)
+  id F := StrictTrans.id F
+  comp {_ _ _ u _ _ _ _} τ σ := StrictTrans.vcomp τ (StrictTrans.whiskerLeft u.toFunctor σ)
+  id_comp _ := rfl
+  comp_id _ := rfl
+  assoc _ _ _ := rfl
+
+/-! ## Unstraightening strict transformations -/
+
+namespace StrictTrans
+
+variable {A B : Type u₁} [Category.{v₁} A] [Category.{v₁} B] {u : A ⥤ B} {F : A ⥤ Cat.{v, u}}
+  {G : B ⥤ Cat.{v, u}}
+
+/-- **The unstraightening of a strict transformation** `τ` over `u`: the opcartesian functor
+`∫ F ⟶ ∫ G` over `u` given by `τ` on objects and on the morphisms `F f x ⟶ y` of `∫ F`. -/
+def unstraighten (τ : StrictTrans F (u ⋙ G)) : OpcartesianFunctor u (∫ F) (∫ G) where
+  toPre :=
+    { obj := fun x => τ.toObj.obj x
+      map := fun φ => τ.map φ
+      map_id := fun _ => rfl
+      map_comp := fun _ _ => rfl
+      obj_push := fun _ _ => rfl }
+  map_olift _ _ := rfl
+
+/-- **The functor induced by a strict transformation `τ` over `u` between the total categories of
+the dual opfibrations**, `(∫ F)ᵒᵖ.Total ⥤ (∫ G)ᵒᵖ.Total`: `⟨a, x⟩ ↦ ⟨u a, τ x⟩`, and
+`⟨α, β⟩ ↦ ⟨u α, τ β⟩`. -/
+def dualTotal (τ : StrictTrans F (u ⋙ G)) : (∫ F)ᵒᵖ.Total ⥤ (∫ G)ᵒᵖ.Total :=
+  τ.unstraighten.dualOp.total
+
+theorem dualTotal_obj (τ : StrictTrans F (u ⋙ G)) (x : (∫ F)ᵒᵖ.Total) :
+    τ.dualTotal.obj x = (∫ G)ᵒᵖ.tot (τ.toObj.obj x.2) := rfl
+
+theorem dualTotal_map (τ : StrictTrans F (u ⋙ G)) {x y : (∫ F)ᵒᵖ.Total} (h : x ⟶ y) :
+    τ.dualTotal.map h =
+      ((∫ G)ᵒᵖ.totalMk (u.map h.base) (τ.map h.fiber) : (∫ G)ᵒᵖ.tot (τ.toObj.obj x.2) ⟶ _) :=
+  rfl
+
+theorem dualTotal_map_dualHoriz (τ : StrictTrans F (u ⋙ G)) {a a' : A} (α : a ⟶ a') (x : F.obj a) :
+    τ.dualTotal.map (dualHoriz (B := ∫ F) α x) =
+      dualHoriz (B := ∫ G) (u.map α) (τ.toObj.obj x) := rfl
+
+theorem dualTotal_map_dualVert (τ : StrictTrans F (u ⋙ G)) {a : A} {x y : F.obj a}
+    (β : x ⟶ y) :
+    τ.dualTotal.map (dualVert (B := ∫ F) (β : (∫ F).Hom (𝟙 a) x y)) =
+      dualVert (B := ∫ G) (τ.map β : (∫ G).Hom (𝟙 (u.obj a)) _ _) := rfl
+
+end StrictTrans
+
+namespace ICatStr
+
+variable {A A' A'' : Cat.{u, u}} {F : A ⥤ Cat.{u, u}} {G : A' ⥤ Cat.{u, u}} {H : A'' ⥤ Cat.{u, u}}
+
+/-- The unstraightening of an object of `ICatStr` is a split opfibration. The instance
+`unstraightenSplitOpfib` does not apply to it, since `ICatStr.Ob A` is not reducibly `A ⥤ Cat`. -/
+instance splitOpfib (F : ICatStr.Ob A) : SplitOpfib (∫ (F : A ⥤ Cat.{u, u})) :=
+  unstraightenSplitOpfib F
+
+/-! The unstraightening of the identities and composites of `ICatStr` are the identities and
+composites of opcartesian functors, and so are their `dualTotal`, as rules. -/
+
+@[rewrite_rule]
+theorem unstraighten_id (F : A ⥤ Cat.{u, u}) :
+    StrictTrans.unstraighten (u := (𝟙 A : A ⟶ A).toFunctor) (StrictTrans.id F) =
+      OpcartesianFunctor.id (∫ F) := rfl
+
+@[rewrite_rule]
+theorem unstraighten_comp {u : A ⟶ A'} {u' : A' ⟶ A''} (τ : StrictTrans F (u.toFunctor ⋙ G))
+    (σ : StrictTrans G (u'.toFunctor ⋙ H)) :
+    StrictTrans.unstraighten (u := (u ≫ u').toFunctor)
+        (StrictTrans.vcomp τ (StrictTrans.whiskerLeft u.toFunctor σ)) =
+      OpcartesianFunctor.comp (StrictTrans.unstraighten (u := u.toFunctor) τ)
+        (StrictTrans.unstraighten (u := u'.toFunctor) σ) := rfl
+
+@[rewrite_rule]
+theorem dualTotal_id (F : A ⥤ Cat.{u, u}) :
+    StrictTrans.dualTotal (u := (𝟙 A : A ⟶ A).toFunctor) (StrictTrans.id F) = 𝟭 _ := rfl
+
+@[rewrite_rule]
+theorem dualTotal_comp {u : A ⟶ A'} {u' : A' ⟶ A''} (τ : StrictTrans F (u.toFunctor ⋙ G))
+    (σ : StrictTrans G (u'.toFunctor ⋙ H)) :
+    StrictTrans.dualTotal (u := (u ≫ u').toFunctor)
+        (StrictTrans.vcomp τ (StrictTrans.whiskerLeft u.toFunctor σ)) =
+      StrictTrans.dualTotal (u := u.toFunctor) τ ⋙ StrictTrans.dualTotal (u := u'.toFunctor) σ :=
+  rfl
+
+end ICatStr
+
+end Displayed.Opfibration.Straightening

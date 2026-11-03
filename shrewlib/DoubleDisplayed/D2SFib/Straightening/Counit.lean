@@ -96,7 +96,7 @@ theorem invMap_id (c : C.Ob b) :
 
 /-- **The counit component**, forward direction: the identity on objects, `d2sHomEquiv⁻¹` on
 morphisms. -/
-def homD2S : D2SFibHom (Unstraightening (straightenObj C)) C where
+def homD2S : D2SFibMap (OpcartesianFunctor.id B) (Unstraightening (straightenObj C)) C where
   toObj :=
     { obj := fun c => c
       map := fun θ => map (C := C) θ
@@ -108,7 +108,7 @@ def homD2S : D2SFibHom (Unstraightening (straightenObj C)) C where
   map_pushLift := by intros; exact map_pushLift (C := C) _
 
 /-- **The counit component**, backward direction. -/
-def invD2S : D2SFibHom C (Unstraightening (straightenObj C)) where
+def invD2S : D2SFibMap (OpcartesianFunctor.id B) C (Unstraightening (straightenObj C)) where
   toObj :=
     { obj := fun c => c
       map := fun θ => invMap (C := C) θ
@@ -135,15 +135,15 @@ def counitApp (E : D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B) :
     unstraightenObj (straightenObj E.C) ≅ E where
   hom := Counit.homD2S (C := E.C)
   inv := Counit.invD2S (C := E.C)
-  hom_inv_id := D2SFibHom.ext (VertFunctor.ext (fun _ => rfl)
+  hom_inv_id := D2SFibMap.ext (DDFunctor.ext (fun _ => rfl)
     (fun θ => heq_of_eq (Counit.invMap_map (C := E.C) θ)))
-  inv_hom_id := D2SFibHom.ext (VertFunctor.ext (fun _ => rfl)
+  inv_hom_id := D2SFibMap.ext (DDFunctor.ext (fun _ => rfl)
     (fun θ => heq_of_eq (Counit.map_invMap (C := E.C) θ)))
 
 /-- **The counit** `straighten ⋙ unstraighten ≅ 𝟭` of the equivalence. -/
 def counitIso : straighten ⋙ unstraighten ≅ 𝟭 (D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B) :=
   NatIso.ofComponents (fun E => counitApp E) (fun Φ =>
-    D2SFibHom.ext (VertFunctor.ext (fun _ => rfl)
+    D2SFibMap.ext (DDFunctor.ext (fun _ => rfl)
       (fun θ => heq_of_eq (Counit.map_naturality Φ θ).symm)))
 
 end

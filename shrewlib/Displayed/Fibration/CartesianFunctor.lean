@@ -12,7 +12,7 @@ A *cartesian functor* `CartesianFunctor u D E` between cloven fibrations `D` ove
 
 Both are rewrite rules. The rule on objects makes the equation on lifts well typed as a plain
 equation, so the functor preserving the chosen pullbacks (`PreCartesianFunctor`) is a field of
-`CartesianFunctor` rather than a parent, as for `D2SFibHom`.
+`CartesianFunctor` rather than a parent, as for `D2SFibMap`.
 
 This is the strict notion, for cleavages, stronger than preserving cartesian morphisms
 (`DispFunctor.PreservesCartesian`), which is what is usually called a cartesian functor. A vertical

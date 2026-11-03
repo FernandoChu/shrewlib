@@ -71,6 +71,26 @@ scoped notation:80 θ:81 " ≫ᵈᵈ " θ':80 => DoubleDisplayed.comp _ θ θ'
 morphisms from `c` to `c'` lying over the `B`-morphism `g`. -/
 scoped notation:10 c " ⟶[[" g "]] " c' => DoubleDisplayed.Hom _ g c c'
 
+/-- Doubly displayed categories are determined by their objects, morphisms, identities and
+composition, compared heterogeneously since their types depend on the objects and morphisms. (The
+kernel can reject an `rfl` between two doubly displayed categories that it accepts on each
+component.) -/
+theorem ext_heq {C D : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B} (hOb : @C.Ob = @D.Ob)
+    (hHom : @C.Hom ≍ @D.Hom) (hid : @C.id ≍ @D.id) (hcomp : @C.comp ≍ @D.comp) : C = D := by
+  obtain ⟨Ob, Hom, id, comp, _, _, _⟩ := C
+  obtain ⟨Ob', Hom', id', comp', _, _, _⟩ := D
+  -- Restated on the fields, so that the substitutions do not go through projections of `mk`,
+  -- which the rules on `DoubleDisplayed.comp` and `DoubleDisplayed.id` would rewrite.
+  change @Ob = @Ob' at hOb
+  subst hOb
+  change @Hom ≍ @Hom' at hHom
+  obtain rfl := eq_of_heq hHom
+  change @id ≍ @id' at hid
+  obtain rfl := eq_of_heq hid
+  change @comp ≍ @comp' at hcomp
+  obtain rfl := eq_of_heq hcomp
+  rfl
+
 variable (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B)
 
 section Fiber

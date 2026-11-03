@@ -45,7 +45,7 @@ theorem straightenObj_map_toFunctor (C : DoubleDisplayed.{v₁, u₁, v₂, u₂
 into `Cat`, with component `Φ`'s fiber functor. -/
 def straightenMap {E E' : D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B} (Φ : E ⟶ E') :
     straightenObj E.C ⟶ straightenObj E'.C where
-  app x := (Φ.toVertFunctor.fiber x.2).toCatHom
+  app x := (Φ.toDDFunctor.fiber x.2).toCatHom
   naturality _ _ _ := rfl
 
 /-- **`straighten`**: the functor from D2SFibs over `B` to functors `Bᵒᵖ.Total ⥤ Cat`. -/
