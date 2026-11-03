@@ -125,5 +125,10 @@ orientation. Some lessons learned in `shrewlib/`:
   (one comparison unfolded `Functor.map` some 100000 times), and rules keyed on them make it worse.
   The kernel compares them quickly, so `ComprehensionCategory/Model/OverCat/Cat/TypeFormers/Sigma`
   checks these steps there.
+- The kernel too compares the arguments of two applications with the same head before unfolding
+  them. `F.map g = G.map g'`, for functors `F` and `G` on different categories that are equal on
+  `g`, can take seconds, while each side compared with its value is immediate: prove it as
+  `(rfl : _ = value).trans rfl`, as `homExchTy_map` in
+  `ComprehensionCategory/Model/OverCat/Shared/HomIntro`.
 - Rules on Mathlib's lemmas are declared only in `shrewlib/Rules/`, and each file imports only those
   it needs, so its imports show which foreign rules it sees.

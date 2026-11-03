@@ -18,9 +18,10 @@ their conclusion a type of another, in a context of the first.
   categories. Its terms are exactly the functors `Γ ⥤ Cat.{v, v}` into discrete categories, by
   inverse maps `ElDisc` and `codeDisc`, stable under substitution: a universe along the lift of
   the discrete types of level `v`, `HasUniverse liftDiscComprehensionMap`.
-* `Twist`: the twist of a type of the category model in context `Γ ▹ Bᵒᵖ`, as a dependent
-  profunctor over `B`, a type of the displayed model in context `Γ ▹ B`: the straightening of its
-  unstraightening, a D2SFib over the unstraightening of `B`, displayed over `Γ ▹ B`.
+* `Twist`: the twist of a type of the category model in context `Γ ▹ Bᵒᵖ`, a type of the
+  displayed model in context `Γ ▹ B`: seeing the type as a dependent profunctor over `B`, the
+  straightening of its unstraightening, a D2SFib over the unstraightening of `B`, displayed over
+  `Γ ▹ B`.
 * `HomIntro`: the twisted Hom-type `Γ ▹ a : A ⊢ Homₐ(ā, a)` of a type `A` of the category model, a
   type of the displayed model whose objects over `(γ, a)` are the endomorphisms of `a`, derived from
   `Hom[A]` by exchange, twist and substitution along the diagonal, and its term `refl A`, the
@@ -86,7 +87,7 @@ end Universe
 /-- **The twisted Hom-type is derivable**: the twist of the Hom-type, with its variables exchanged,
 substituted along the diagonal. -/
 recall ComprehensionCategory.OverCat.twistedHom_eq {Γ : Cat.{u, u}} (A : ICatLax.{u}.Ty Γ) :
-    twistedHom A = (twist (homProf A))⦃diag A⦄
+    twistedHom A = (twist (homExchTy A))⦃diag A⦄
 
 /-- **Hom-Intro**: the identities are a term of the twisted Hom-type. -/
 recall ComprehensionCategory.OverCat.refl {Γ : Cat.{u, u}} (A : ICatLax.{u}.Ty Γ) :
