@@ -1,4 +1,4 @@
-import DoubleDisplayed.Basic
+import DoubleDisplayed.Equivalence
 
 /-!
 # Fibrations of doubly displayed categories
@@ -18,9 +18,12 @@ morphisms over vertical morphisms.
 * `DDCartesianFunctor C D`: vertical functors between fibrations preserving the chosen cartesian
   lifts on the nose, with the preservation on objects in a separate structure, as for the cartesian
   functors of `Displayed/Fibration/CartesianFunctor.lean`.
+
+Fibrations and cartesian functors reindex along a displayed functor `H : B ⟶ B'`: the pullback
+along `g` in `C'.reindex H` is the pullback along `H g` in `C'`.
 -/
 
-universe v₁ u₁ v₂ u₂ v₃ u₃
+universe v₁ u₁ v₂ u₂ v₃ u₃ v₄ u₄ v₅ u₅
 
 open CategoryTheory Displayed
 
@@ -138,5 +141,43 @@ structure DDCartesianFunctor [DDFib C] [DDFib D] where
     (c' : C.Ob b'), toPre.map (DDFib.clift g c') = DDFib.clift g (toPre.obj c')
 
 attribute [rewrite_rule] DDCartesianFunctor.map_clift
+
+/-! ## Reindexing -/
+
+section Reindex
+
+variable {A' : Type u₄} [Category.{v₄} A'] {B' : Displayed.{v₄, u₄, v₅, u₅} A'} {u : A ⥤ A'}
+  (H : DispFunctor u B B') (C' : DoubleDisplayed.{v₄, u₄, v₅, u₅, v₃, u₃} B')
+
+/-- The chosen pullbacks of the reindexing of `C'` along `H`: those of `C'` along `H g`. -/
+instance reindexDDFib [DDFib C'] : DDFib (C'.reindex H) where
+  pull g c := DDFib.pull (C := C') (H.map g) c
+  clift g c := DDFib.clift (C := C') (H.map g) c
+  isCartesianClift g c :=
+    { lift := fun {_ _ _} g₀ {_} χ => (DDFib.isCartesianClift (H.map g) c).lift (H.map g₀) χ
+      lift_fac := fun {_ _ _} g₀ {_} χ =>
+        (DDFib.isCartesianClift (H.map g) c).lift_fac (H.map g₀) χ
+      lift_uniq := fun {_ _ _ _ _ _} ψ h => (DDFib.isCartesianClift (H.map g) c).lift_uniq ψ h }
+
+instance reindexPreSplitDDFib [PreSplitDDFib C'] : PreSplitDDFib (C'.reindex H) where
+  pull_id _ := rfl
+  pull_comp _ _ _ := rfl
+
+/-- **The reindexing of a split fibration** is a split fibration. -/
+instance reindexSplitDDFib [SplitDDFib C'] : SplitDDFib (C'.reindex H) where
+  clift_id _ := rfl
+  clift_comp _ _ _ := rfl
+
+variable {C'} {D' : DoubleDisplayed.{v₄, u₄, v₅, u₅, v₃, u₃} B'}
+
+/-- A cartesian functor over `B'`, reindexed along `H`. -/
+def DDCartesianFunctor.reindex [DDFib C'] [DDFib D'] (F : DDCartesianFunctor C' D') :
+    DDCartesianFunctor (C'.reindex H) (D'.reindex H) where
+  toPre :=
+    { toVertFunctor := F.toPre.toVertFunctor.reindex H
+      obj_pull := fun g c => F.toPre.obj_pull (H.map g) c }
+  map_clift g c := F.map_clift (H.map g) c
+
+end Reindex
 
 end DoubleDisplayed

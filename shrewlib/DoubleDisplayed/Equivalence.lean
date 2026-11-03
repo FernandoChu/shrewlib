@@ -1,4 +1,4 @@
-import DoubleDisplayed.Basic
+import DoubleDisplayed.Functor
 import Mathlib.CategoryTheory.Iso
 
 /-!
@@ -17,9 +17,12 @@ for categories doubly displayed over `B`:
 
 The laws of the category of vertical functors hold by `rfl`, since composites of vertical functors
 unfold to the composites of their actions.
+
+All of these reindex along a displayed functor `H : B ⟶ B'` (`VertFunctor.reindex`,
+`VertNatIso.reindex`, `VertEquivalence.reindex`), acting on the reindexings `C.reindex H` as on `C`.
 -/
 
-universe v₁ u₁ v₂ u₂ v₃ u₃
+universe v₁ u₁ v₂ u₂ v₃ u₃ v₄ u₄ v₅ u₅
 
 open CategoryTheory Displayed
 
@@ -126,5 +129,48 @@ structure VertEquivalence (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u�
   unitIso : VertFunctor.id C ≅ functor.comp inverse
   /-- The counit. -/
   counitIso : inverse.comp functor ≅ VertFunctor.id D
+
+/-! ## Reindexing -/
+
+section Reindex
+
+variable {A' : Type u₄} [Category.{v₄} A'] {B' : Displayed.{v₄, u₄, v₅, u₅} A'} {u : A ⥤ A'}
+  (H : DispFunctor u B B') {C' D' : DoubleDisplayed.{v₄, u₄, v₅, u₅, v₃, u₃} B'}
+
+/-- A vertical functor over `B'`, reindexed along `H`: the same actions on objects and
+morphisms. -/
+def VertFunctor.reindex (F : VertFunctor C' D') : VertFunctor (C'.reindex H) (D'.reindex H) where
+  obj c := F.obj c
+  map θ := F.map θ
+  map_id _ := rfl
+  map_comp _ _ := rfl
+
+theorem VertFunctor.reindex_comp {E' : DoubleDisplayed.{v₄, u₄, v₅, u₅, v₃, u₃} B'}
+    (F : VertFunctor C' D') (G : VertFunctor D' E') :
+    (F.comp G).reindex H = (F.reindex H).comp (G.reindex H) := rfl
+
+theorem VertFunctor.reindex_id : (VertFunctor.id C').reindex H = VertFunctor.id (C'.reindex H) :=
+  rfl
+
+/-- A vertical natural isomorphism over `B'`, reindexed along `H`: the same components. -/
+def VertNatIso.reindex {F G : VertFunctor C' D'} (η : F ≅ G) : F.reindex H ≅ G.reindex H :=
+  VertNatIso.ofComponents
+    (fun c =>
+      { hom := η.hom.app c
+        inv := η.inv.app c
+        hom_inv_id := (VertNatIso.app η c).hom_inv_id
+        inv_hom_id := (VertNatIso.app η c).inv_hom_id })
+    (fun θ => η.hom.naturality θ)
+
+/-- **An equivalence over `B'`, reindexed along `H`**, an equivalence over `B` of the
+reindexings. -/
+def VertEquivalence.reindex (e : VertEquivalence C' D') :
+    VertEquivalence (C'.reindex H) (D'.reindex H) where
+  functor := e.functor.reindex H
+  inverse := e.inverse.reindex H
+  unitIso := VertNatIso.reindex H e.unitIso
+  counitIso := VertNatIso.reindex H e.counitIso
+
+end Reindex
 
 end DoubleDisplayed
