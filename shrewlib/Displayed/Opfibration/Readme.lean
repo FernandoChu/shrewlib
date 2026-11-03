@@ -1,7 +1,9 @@
 import Displayed.Opfibration.Basic
+import Displayed.Opfibration.OpcartesianFunctor
 import Displayed.Opfibration.DualOp
 import Displayed.Opfibration.Sigma
 import Displayed.Opfibration.SplitOpfibLax
+import Displayed.Opfibration.SplitOpfibStr
 import Displayed.Opfibration.Straightening.Readme
 
 /-!
@@ -11,11 +13,13 @@ import Displayed.Opfibration.Straightening.Readme
   (`DispFunctor.PreservesOpcartesian`), cloven opfibrations (`Opfib`), and basic definitions
   involving these.
 * `DualOp`: the dual opfibration of a split opfibration.
+* `OpcartesianFunctor`: displayed functors sending the chosen lifts to the chosen lifts, and the
+  functors they induce between the dual opfibrations.
 * `Sigma`: opfibrations compose, and so do split opfibrations.
-* `SplitOpfibLax`: the split opfibrations and displayed functors between them, a category displayed
-  over `Cat`.
-* `Straightening/`: functors `A ⥤ Cat` and their unstraightenings, an equivalence with the split
-  opfibrations over `Cat` (see its `Readme.lean`).
+* `SplitOpfibLax` and `SplitOpfibStr`: the split opfibrations, with the displayed functors and with
+  the opcartesian functors between them, two categories displayed over `Cat`.
+* `Straightening/`: functors `A ⥤ Cat` and their unstraightenings, equivalences with the split
+  opfibrations over `Cat`, with lax and with strict morphisms (see its `Readme.lean`).
 
 `Fibration/` is the exact dual.
 -/

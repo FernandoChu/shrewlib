@@ -17,7 +17,9 @@ plain equation, so the action on objects is a separate structure, a field of `St
 The category `ICat_str` of indexed categories and strict natural transformations is displayed over
 `Cat` (`ICatStr`): an object over `A` is a functor `A ⥤ Cat`, and a morphism over `u : A ⟶ A'`
 from `F` to `G` is a strict natural transformation `StrictTrans F (u ⋙ G)`. Its laws hold by
-`rfl`.
+`rfl`. A strict transformation is a lax transformation whose 2-cells are identities
+(`StrictTrans.toLaxTrans`), and this inclusion is a vertical functor
+`ICatStr.forget : ICatStr ⟶ ICatLax`.
 
 A strict transformation `τ` over `u` unstraightens to an opcartesian functor
 `τ.unstraighten : ∫ F ⟶ ∫ G` over `u`, hence to the functor
@@ -133,6 +135,22 @@ def ICatStr : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
   id_comp _ := rfl
   comp_id _ := rfl
   assoc _ _ _ := rfl
+
+/-- A strict transformation, as a lax transformation whose 2-cells are identities. -/
+def StrictTrans.toLaxTrans {A : Type u₁} [Category.{v₁} A] {F G : A ⥤ Cat.{v, u}}
+    (τ : StrictTrans F G) : LaxTrans F G where
+  app a := τ.app a
+  naturality _ _ := 𝟙 _
+  naturality_naturality _ _ _ _ := rfl
+  naturality_id _ := rfl
+  naturality_comp _ _ _ := rfl
+
+/-- The vertical functor `ICatStr ⟶ ICatLax` seeing a strict transformation as a lax one. -/
+def ICatStr.forget : VertFunctor ICatStr.{u} ICatLax.{u} where
+  obj F := F
+  map τ := StrictTrans.toLaxTrans τ
+  map_id _ := rfl
+  map_comp _ _ := LaxTrans.ext' (fun _ _ => rfl) (fun _ _ _ _ => HEq.rfl) (fun _ _ => HEq.rfl)
 
 /-! ## Unstraightening strict transformations -/
 

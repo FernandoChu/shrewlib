@@ -261,6 +261,14 @@ theorem opcartesianFactor_olift (f : a ⟶ a') (x : D.Ob a) :
     D.opcartesianFactor (D.olift f x) = 𝟙ᵈ (D.push f x) :=
   (D.opcartesianFactor_uniq (D.olift f x) (𝟙ᵈ _) rfl).symm
 
+/-- `opcartesianFactor_olift` for the unfolding `Opfib.olift` of `D.olift`, which rules such as
+`OpcartesianFunctor.map_olift` produce: rules are matched by unfolding the term, not the
+pattern. -/
+@[rewrite_rule]
+theorem opcartesianFactor_opfibOlift (f : a ⟶ a') (x : D.Ob a) :
+    D.opcartesianFactor (Opfib.olift f x) = 𝟙ᵈ (D.push f x) :=
+  D.opcartesianFactor_olift f x
+
 /-- The factorizations of heterogeneously equal morphisms over equal base morphisms are
 heterogeneously equal. -/
 theorem opcartesianFactor_heq {f f' : a ⟶ a'} (h : f = f') {x : D.Ob a} {y : D.Ob a'}

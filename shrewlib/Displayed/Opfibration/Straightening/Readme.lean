@@ -1,4 +1,5 @@
 import Displayed.Opfibration.Straightening.Equivalence
+import Displayed.Opfibration.Straightening.Str
 
 /-!
 # Straightening for opfibrations
@@ -23,6 +24,16 @@ The files give its ingredients:
   in `∫ F` along `f` is `F f`, as a rule (`unstraightenPushMap`).
 * `Straighten`: the straightening of a split opfibration `D`, the functor `A ⥤ Cat` of its fibres.
 * `Equivalence`: the counit, and the equivalence `straighteningEquivLax`.
+
+The same holds with strict morphisms, between `ICatStr`, whose morphisms are the strict
+transformations, and `SplitOpfibStr` (`Opfibration/SplitOpfibStr.lean`), whose morphisms are the
+opcartesian functors:
+
+* `ICatStr`: strict transformations, `ICatStr`, and its inclusion into `ICatLax`. A strict
+  transformation `τ` unstraightens to an opcartesian functor `τ.unstraighten`, and to the functor
+  `τ.dualTotal` between the total categories of the dual opfibrations.
+* `Str`: the equivalence `straighteningEquivStr`, whose unit is the identity and whose counit is
+  that of `straighteningEquivLax`.
 -/
 
 universe v₁ u₁ v u
@@ -36,6 +47,14 @@ recall Displayed.Opfibration.Straightening.straighteningEquivLax :
     VertEquivalence ICatLax.{u} SplitOpfibLax.{u}
 
 recall Displayed.Opfibration.Straightening.ICatLax.splitFib : SplitFib ICatLax.{u}
+
+/-- **Straightening–unstraightening for split opfibrations, with strict morphisms**. -/
+recall Displayed.Opfibration.Straightening.straighteningEquivStr :
+    VertEquivalence ICatStr.{u} SplitOpfibStr.{u}
+
+/-- With strict morphisms, the unstraightening is that of the underlying lax transformations. -/
+recall Displayed.Opfibration.Straightening.unstraightenStr_comp_forget :
+    unstraightenStr.{u} ⋙ᵥ SplitOpfibStr.forget = ICatStr.forget ⋙ᵥ unstraighten
 
 /-- The unstraightening `∫ F` of `F : A ⥤ Cat` is a split opfibration. -/
 recall Displayed.Opfibration.Straightening.unstraightenSplitOpfib {A : Type u₁}
