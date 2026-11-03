@@ -35,6 +35,21 @@ Concretely, the objects of `twistDisp C` over `(γ, b)` are the objects of `C (�
 morphisms over `(f, β) : (γ, b) ⟶ (γ', b')`, with `β : B f b ⟶ b'`, from `c` to `c'` are the
 morphisms `C(f, 𝟙) c ⟶ C(𝟙, β) c'` of `C (γ', B f b)`. Its total category is the context extension
 `Γ ▹ b : B ▹ Tw(C)` of the displayed model, by `rfl`.
+
+The twist of a type that does not depend on `b` is that type, weakened:
+
+```
+       Γ ⊢ B type        Γ ⊢ C type
+  ----------------------------------- Twist-Weak
+    Γ ▹ b : B ⊢ Tw_b(C) ≡ C type_d
+```
+
+Here a type `C` of the category model is seen as a type of the displayed model (`catToDisp C`),
+the straightening of its unstraightening `∫ C`. The twist of the weakening `C⦃𝐩 Bᵒᵖ⦄` is the
+weakening of `catToDisp C` along `𝐩 B` (`twist_weak`): over `(f, β)`, the morphisms
+`C(f, 𝟙) c ⟶ C(𝟙, β) c'` of the twist are the morphisms `C f c ⟶ c'` of `∫ C` over `f`, since
+`C(𝟙, β)` is `C 𝟙`, the identity. The two displayed categories agree on their hom-types,
+identities and composites by `rfl`, checked in the kernel (`twistDisp_weak`).
 -/
 
 universe u
@@ -75,5 +90,21 @@ def twist {B : ICatLax.{u}.Ty Γ} (C : ICatLax.{u}.Ty (Γ ▹ Bᵒᵖ)) :
 theorem ext_twist {B : ICatLax.{u}.Ty Γ} (C : ICatLax.{u}.Ty (Γ ▹ Bᵒᵖ)) :
     (Γ ▹ B) ▹ twist C = Cat.of (twistDisp C).Total :=
   rfl
+
+/-- A type `C` of the category model as a type of the displayed model: the straightening of its
+unstraightening `∫ C`. -/
+def catToDisp (C : ICatLax.{u}.Ty Γ) : Straightening.LaxNormalCat.{u}.Ty Γ :=
+  Straightening.straightenObj (∫ (C : Γ ⥤ Cat.{u, u}))
+
+/-- The displayed category of the twist of a weakened type `C⦃𝐩 Bᵒᵖ⦄` is the reindexing of `∫ C`
+along `𝐩 B`. -/
+theorem twistDisp_weak (B C : ICatLax.{u}.Ty Γ) :
+    twistDisp (C⦃𝐩 (Bᵒᵖ)⦄) = DisplayedCat.pull (𝐩 B) (∫ (C : Γ ⥤ Cat.{u, u})) :=
+  Displayed.ext_heq rfl (by kernel_rfl') (by kernel_rfl') (by kernel_rfl')
+
+/-- **Twist-Weak**: the twist of a type `C` weakened to `Γ ▹ Bᵒᵖ` is `C`, as a type of the
+displayed model, weakened to `Γ ▹ B`. -/
+theorem twist_weak (B C : ICatLax.{u}.Ty Γ) : twist (C⦃𝐩 (Bᵒᵖ)⦄) = (catToDisp C)⦃𝐩 B⦄ :=
+  congrArg Straightening.straightenObj (twistDisp_weak B C)
 
 end ComprehensionCategory.OverCat

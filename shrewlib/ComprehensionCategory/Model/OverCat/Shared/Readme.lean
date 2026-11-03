@@ -22,7 +22,8 @@ their conclusion a type of another, in a context of the first.
 * `Twist`: the twist of a type of the category model in context `Γ ▹ Bᵒᵖ`, a type of the
   displayed model in context `Γ ▹ B`: seeing the type as a dependent profunctor over `B`, the
   straightening of its unstraightening, a D2SFib over the unstraightening of `B`, displayed over
-  `Γ ▹ B`.
+  `Γ ▹ B`. The twist of a type weakened from `Γ` is that type, seen in the displayed model,
+  weakened (Twist-Weak).
 * `HomIntro`: the twisted Hom-type `Γ ▹ a : A ⊢ Homₐ(ā, a)` of a type `A` of the category model, a
   type of the displayed model whose objects over `(γ, a)` are the endomorphisms of `a`, derived from
   `Hom[A]` by twist and substitution along the diagonal, and its term `refl A`, the
@@ -84,6 +85,10 @@ recall ComprehensionCategory.OverCat.pull_UDisc {Γ Δ : Cat.{v + 1, v + 1}} (σ
 recall ComprehensionCategory.OverCat.hasUniverseDisc : HasUniverse liftDiscComprehensionMap.{v}
 
 end Universe
+
+/-- **Twist-Weak**: the twist of a weakened type is the type, in the displayed model, weakened. -/
+recall ComprehensionCategory.OverCat.twist_weak {Γ : Cat.{u, u}} (B C : ICatLax.{u}.Ty Γ) :
+    twist (C⦃𝐩 (Bᵒᵖ)⦄) = (catToDisp C)⦃𝐩 B⦄
 
 /-- **The twisted Hom-type is derivable**: the twist of the Hom-type, substituted along the
 diagonal. -/
