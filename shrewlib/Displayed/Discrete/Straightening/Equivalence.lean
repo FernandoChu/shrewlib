@@ -71,4 +71,9 @@ def straighteningEquiv : VertEquivalence IDisc.{u} DiscOpfibCat.{u} where
       (fun _ _ => HEq.rfl)
   counitIso := counitNatIso
 
+/-- **The unstraightening is fully faithful**, as the functor of an equivalence: displayed
+functors between unstraightenings over `u` are lax transformations. -/
+def unstraightenFullyFaithful : unstraighten.{u}.FullyFaithful :=
+  straighteningEquiv.fullyFaithful
+
 end Displayed.Discrete.Straightening

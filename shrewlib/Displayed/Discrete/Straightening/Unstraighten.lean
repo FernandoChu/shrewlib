@@ -13,9 +13,8 @@ morphisms `x ⟶[f] y` are the morphisms `F f x ⟶ y` of `F a'`, which exist ex
 
 The unstraightening functor `unstraighten : IDisc ⟶ DiscOpfibCat` is that of the split
 opfibrations, restricted: followed by forgetting the discreteness, it is `IDisc.forget` followed by
-the unstraightening of the split opfibrations (`unstraighten_comp_forget`, by `rfl`). It is fully
-faithful, with the inverse on morphisms of the unstraightening of the split opfibrations, since
-the morphisms are the same.
+the unstraightening of the split opfibrations (`unstraighten_comp_forget`, by `rfl`). It is an
+equivalence over `Cat` (`Equivalence.lean`), hence fully faithful.
 -/
 
 universe u
@@ -55,12 +54,5 @@ theorem unstraighten_comp_forget :
     unstraighten.{u} ⋙ᵥ DiscOpfibCat.forget =
       IDisc.forget.toDispFunctor ⋙ᵥ Opfibration.Straightening.unstraighten :=
   rfl
-
-/-- **The unstraightening is fully faithful**: displayed functors between unstraightenings over `u`
-are lax transformations, as for the split opfibrations. -/
-def unstraightenFullyFaithful : unstraighten.{u}.FullyFaithful where
-  preimage H := unstraightenPreimage H
-  map_preimage H := unstraightenMap_preimage H
-  preimage_map α := unstraightenPreimage_map α
 
 end Displayed.Discrete.Straightening

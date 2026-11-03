@@ -1,6 +1,5 @@
 import Displayed.Opfibration.Straightening.ICatLax
 import Displayed.Opfibration.SplitOpfibLax
-import Displayed.Displayed.Equivalence
 import Tactic.KernelTactic
 
 /-!
@@ -18,9 +17,9 @@ are the morphisms `F f x ⟶ y` of `F a'`. Its identities are identities and the
 * A lax transformation `α : LaxTrans F (u ⋙ G)` over `u : A ⥤ B` gives the displayed functor
   over `u` sending `φ : F f x ⟶ y` to `α.naturality f x ≫ α φ` (`unstraightenMap`).
 * `unstraighten : VertFunctor ICatLax SplitOpfibLax`, whose functor laws hold by `rfl`.
-* It is fully faithful (`unstraightenFullyFaithful`), with an explicit inverse on morphisms
-  (`unstraightenPreimage`): a displayed functor `H` over `u` is the image of the lax
-  transformation with components `H` on the vertical morphisms and 2-cells `H` on the chosen lifts.
+
+It is an equivalence over `Cat`, with inverse the straightening (`Equivalence.lean`), hence fully
+faithful (`unstraightenFullyFaithful`).
 -/
 
 universe v₁ u₁ v₂ u₂ v u
@@ -106,96 +105,5 @@ def unstraighten : VertFunctor ICatLax.{u} SplitOpfibLax.{u} where
   map {_ _ u _ _} α := unstraightenMap (u := u.toFunctor) α
   map_id _ := rfl
   map_comp _ _ := DispFunctor.ext (fun _ => rfl) fun _ => HEq.rfl
-
-/-! ## The inverse on morphisms -/
-
-section Preimage
-
-variable {A B : Cat.{u, u}} {u : A ⟶ B} {F : A ⥤ Cat.{u, u}} {G : B ⥤ Cat.{u, u}}
-
-/-- A displayed functor `H` from `∫ F` to `∫ G` preserves the
-identities of the fibres. Stated in `G (u a)`, so that the kernel accepts it as the law of the
-component functor of `unstraightenPreimage H`. -/
-theorem unstraightenPreimage_app_map_id
-    (H : DispFunctor u.toFunctor (∫ F) (∫ G)) (a : A) (x : F.obj a) :
-    (H.map (f := 𝟙 a) (𝟙 x) : (H.obj x : G.obj (u.toFunctor.obj a)) ⟶ H.obj x) = 𝟙 (H.obj x) :=
-  H.map_id x
-
-/-- A displayed functor `H` from `∫ F` to `∫ G` preserves the
-composites of the fibres. -/
-theorem unstraightenPreimage_app_map_comp
-    (H : DispFunctor u.toFunctor (∫ F) (∫ G)) (a : A)
-    {x y z : F.obj a} (φ : x ⟶ y) (ψ : y ⟶ z) :
-    (H.map (f := 𝟙 a) (φ ≫ ψ) : (H.obj x : G.obj (u.toFunctor.obj a)) ⟶ H.obj z) =
-      (H.map (f := 𝟙 a) φ : (H.obj x : G.obj (u.toFunctor.obj a)) ⟶ H.obj y) ≫
-        H.map (f := 𝟙 a) ψ :=
-  H.map_comp (f := 𝟙 a) (g := 𝟙 a) φ ψ
-
-/-- The 2-cells of `unstraightenPreimage H` are natural. -/
-theorem unstraightenPreimage_naturality_naturality
-    (H : DispFunctor u.toFunctor (∫ F) (∫ G)) {a a' : A} (f : a ⟶ a')
-    {x y : F.obj a} (φ : x ⟶ y) :
-    (G.map (u.toFunctor.map f)).toFunctor.map
-        (H.map (f := 𝟙 a) φ : (H.obj x : G.obj (u.toFunctor.obj a)) ⟶ H.obj y) ≫
-      (H.map (f := f) (𝟙 ((F.map f).toFunctor.obj y)) :
-        (G.map (u.toFunctor.map f)).toFunctor.obj (H.obj y) ⟶ H.obj ((F.map f).toFunctor.obj y)) =
-    (H.map (f := f) (𝟙 ((F.map f).toFunctor.obj x)) :
-        (G.map (u.toFunctor.map f)).toFunctor.obj (H.obj x) ⟶ H.obj ((F.map f).toFunctor.obj x)) ≫
-      (H.map (f := 𝟙 a') ((F.map f).toFunctor.map φ) :
-        (H.obj ((F.map f).toFunctor.obj x) : G.obj (u.toFunctor.obj a')) ⟶
-          H.obj ((F.map f).toFunctor.obj y)) :=
-  (H.map_comp (f := 𝟙 a) (g := f) φ (𝟙 ((F.map f).toFunctor.obj y))).symm.trans
-    (H.map_comp (f := f) (g := 𝟙 a') (𝟙 ((F.map f).toFunctor.obj x)) ((F.map f).toFunctor.map φ))
-
-/-- The 2-cells of `unstraightenPreimage H` compose. -/
-theorem unstraightenPreimage_naturality_comp
-    (H : DispFunctor u.toFunctor (∫ F) (∫ G)) {a a' a'' : A}
-    (f : a ⟶ a') (g : a' ⟶ a'') (x : F.obj a) :
-    (H.map (f := f ≫ g) (𝟙 ((F.map (f ≫ g)).toFunctor.obj x)) :
-        (G.map (u.toFunctor.map (f ≫ g))).toFunctor.obj (H.obj x) ⟶
-          H.obj ((F.map (f ≫ g)).toFunctor.obj x)) =
-      (G.map (u.toFunctor.map g)).toFunctor.map
-        (H.map (f := f) (𝟙 ((F.map f).toFunctor.obj x)) :
-          (G.map (u.toFunctor.map f)).toFunctor.obj (H.obj x) ⟶
-            H.obj ((F.map f).toFunctor.obj x)) ≫
-      (H.map (f := g) (𝟙 ((F.map g).toFunctor.obj ((F.map f).toFunctor.obj x))) :
-        (G.map (u.toFunctor.map g)).toFunctor.obj (H.obj ((F.map f).toFunctor.obj x)) ⟶
-          H.obj ((F.map g).toFunctor.obj ((F.map f).toFunctor.obj x))) :=
-  H.map_comp (f := f) (g := g) (𝟙 ((F.map f).toFunctor.obj x))
-    (𝟙 ((F.map g).toFunctor.obj ((F.map f).toFunctor.obj x)))
-
-/-- The inverse of the unstraightening on morphisms: the lax transformation of a displayed
-functor `H` over `u`, with components `H` on the vertical morphisms and 2-cells `H` on the chosen
-lifts. -/
-def unstraightenPreimage (H : DispFunctor u.toFunctor (∫ F) (∫ G)) :
-    ICatLax.Hom u F G where
-  app a :=
-    { obj x := H.obj x
-      map {x y} φ := (H.map (f := 𝟙 a) (x := x) (y := y) φ : H.obj x ⟶ H.obj y)
-      map_id x := unstraightenPreimage_app_map_id H a x
-      map_comp φ ψ := unstraightenPreimage_app_map_comp H a φ ψ }
-  naturality f x := H.map (f := f) (x := x) (𝟙 ((F.map f).toFunctor.obj x))
-  naturality_naturality f _ _ φ := unstraightenPreimage_naturality_naturality H f φ
-  naturality_id {a} x := unstraightenPreimage_app_map_id H a x
-  naturality_comp f g x := unstraightenPreimage_naturality_comp H f g x
-
-theorem unstraightenMap_preimage
-    (H : DispFunctor u.toFunctor (∫ F) (∫ G)) :
-    unstraightenMap (unstraightenPreimage H) = H :=
-  DispFunctor.ext (fun _ => rfl) fun {_ a'} f x _ φ =>
-    heq_of_eq (H.map_comp (f := f) (g := 𝟙 a') (x := x) (𝟙 ((F.map f).toFunctor.obj x)) φ).symm
-
-theorem unstraightenPreimage_map (α : ICatLax.Hom u F G) :
-    unstraightenPreimage (unstraightenMap α) = α :=
-  LaxTrans.ext' (fun _ _ => rfl) (fun _ _ _ _ => HEq.rfl) (fun _ _ => HEq.rfl)
-
-/-- **The unstraightening is fully faithful**: displayed functors from `∫ F` to
-`∫ G` over `u` are the same as lax transformations `LaxTrans F (u ⋙ G)`. -/
-def unstraightenFullyFaithful : unstraighten.{u}.FullyFaithful where
-  preimage H := unstraightenPreimage H
-  map_preimage H := unstraightenMap_preimage H
-  preimage_map α := unstraightenPreimage_map α
-
-end Preimage
 
 end Displayed.Opfibration.Straightening

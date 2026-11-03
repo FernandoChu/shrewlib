@@ -1,6 +1,7 @@
 import Displayed.CodCatEquiv.Fibration
 import ComprehensionCategory.Model.OverCat.Cat.Extension
 import Displayed.Opfibration.SplitOpfibLax
+import Displayed.Opfibration.Straightening.Equivalence
 import ComprehensionCategory.Basic
 
 /-!

@@ -103,6 +103,11 @@ def straighteningEquivLax : VertEquivalence ICatLax.{u} SplitOpfibLax.{u} where
   unitIso := unitNatIso
   counitIso := counitNatIso
 
+/-- **The unstraightening is fully faithful**, as the functor of an equivalence: displayed
+functors between unstraightenings over `u` are lax transformations. -/
+def unstraightenFullyFaithful : unstraighten.{u}.FullyFaithful :=
+  straighteningEquivLax.fullyFaithful
+
 /-- The induced equivalence of total categories, over `Cat`. -/
 def straighteningEquivLaxTotal : ICatLax.{u}.Total ≌ SplitOpfibLax.{u}.Total :=
   straighteningEquivLax.total
