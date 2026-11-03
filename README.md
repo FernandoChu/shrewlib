@@ -7,10 +7,11 @@ POPL 2021, whence the name). Tagging a theorem or axiom `h : ∀ xs, lhs = rhs` 
 laws, among others, are rules, so that many coherence laws hold by `rfl`.
 
 The fork is [FernandoChu/lean4](https://github.com/FernandoChu/lean4), on the branch
-[`local-rewrite-rules-v4.36.0-rc2`](https://github.com/FernandoChu/lean4/tree/local-rewrite-rules-v4.36.0-rc2).
-Where rules fire, which left-hand sides are allowed, and what is not checked (confluence,
-termination) are documented there, in
-[`src/Lean/RewriteRules.lean`](https://github.com/FernandoChu/lean4/blob/local-rewrite-rules-v4.36.0-rc2/src/Lean/RewriteRules.lean).
+[`local-rewrite-rules`](https://github.com/FernandoChu/lean4/tree/local-rewrite-rules), based on
+Lean v4.36.0-rc2. Its README describes the rules, and
+[`src/Lean/RewriteRules.lean`](https://github.com/FernandoChu/lean4/blob/local-rewrite-rules/src/Lean/RewriteRules.lean)
+documents where they fire, which left-hand sides are allowed, and what is not checked
+(confluence, termination).
 
 ## Files
 
