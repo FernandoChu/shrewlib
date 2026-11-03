@@ -13,8 +13,6 @@ along the diagonal, and the identities are a term of it:
 ```
          Γ ⊢ A type
   ----------------------------------- Hom-Form
-    Γ ▹ a : Aᵒᵖ ▹ b : A ⊢ Homₐ(a, b) type
-  ----------------------------------- Exchange
     Γ ▹ b : A ▹ a : Aᵒᵖ ⊢ Homₐ(a, b) type
   ----------------------------------- Twist
     Γ ▹ b : A ▹ a : A ⊢ Homₐ(ā, b) type
@@ -26,16 +24,9 @@ along the diagonal, and the identities are a term of it:
     Γ ▹ a : A ⊢ refl a : Homₐ(ā, a)
 ```
 
-* Exchange: `Hom[A]` lives in context `Γ ▹ Aᵒᵖ ▹ A⦃𝐩 Aᵒᵖ⦄`, and the twist takes types whose
-  contravariant variable comes last. Along the exchange `homExch A`, `((γ, b), a) ↦ ((γ, a), b)`,
-  from `Γ ▹ A ▹ (A⦃𝐩 A⦄)ᵒᵖ`, it is the type `homExchTy A` of the category model in that context
-  (`homExchTy_obj`, `homExchTy_map`). This is stated pointwise: the composite of `homExch A` with
-  `Hom[A]` is slow to compare with anything, since the rules `Functor.id_comp` and
-  `Functor.comp_id` are tried on it and compare the two contexts. On morphisms, the two sides are
-  compared through their value: compared directly, as applications of `Functor.map`, the kernel
-  would first compare the two functors, on different contexts.
-* Twist: the twist of `homExchTy A` is a type of the displayed model in context
-  `Γ ▹ A ▹ A⦃𝐩 A⦄` (`Shared/Twist.lean`).
+* Twist: `Hom[A]` lives in context `Γ ▹ A ▹ (A⦃𝐩 A⦄)ᵒᵖ`, with its contravariant variable last, so
+  its underlying type `homFunctor A` of the category model has a twist, a type of the displayed
+  model in context `Γ ▹ A ▹ A⦃𝐩 A⦄` (`Shared/Twist.lean`).
 * Subst: its substitution along the diagonal `diag A : Γ ▹ A ⟶ Γ ▹ A ▹ A⦃𝐩 A⦄` is the displayed
   type `twistedHom A` in context `Γ ▹ A` (`twistedHom_eq`).
 
@@ -56,53 +47,20 @@ open scoped Displayed
 
 variable {Γ : Cat.{u, u}}
 
-/-- **The exchange** `Γ ▹ A ▹ (A⦃𝐩 A⦄)ᵒᵖ ⟶ Γ ▹ Aᵒᵖ ▹ A⦃𝐩 Aᵒᵖ⦄` of the two variables,
-`((γ, b), a) ↦ ((γ, a), b)`. -/
-def homExch (A : ICatLax.{u}.Ty Γ) : Γ ▹ A ▹ (A⦃𝐩 A⦄)ᵒᵖ ⟶ Γ ▹ Aᵒᵖ ▹ A⦃𝐩 (Aᵒᵖ)⦄ :=
-  (show ((Γ ▹ A ▹ (A⦃𝐩 A⦄)ᵒᵖ : Cat.{u, u}) : Type u) ⥤ ((Γ ▹ Aᵒᵖ ▹ A⦃𝐩 (Aᵒᵖ)⦄ : Cat.{u, u}) :
-      Type u) from
-    { obj X := ⟨⟨X.1.1, X.2⟩, X.1.2⟩
-      map F := ⟨⟨F.base.base, F.fiber⟩, F.base.fiber⟩
-      map_id _ := rfl
-      map_comp _ _ := rfl }).toCatHom
-
-/-- The Hom-type of `A` with its variables exchanged, a type of the category model in context
-`Γ ▹ A ▹ (A⦃𝐩 A⦄)ᵒᵖ`: at `((γ, b), a)`, the discrete category on the morphisms `a ⟶ b` of `A γ`,
-and at a morphism `((θ, β), φ)`, `h ↦ φ ≫ A θ h ≫ β`. It is `Hom[A]` along the exchange
-(`homExchTy_obj`, `homExchTy_map`). -/
-def homExchTy (A : ICatLax.{u}.Ty Γ) : ICatLax.{u}.Ty (Γ ▹ A ▹ (A⦃𝐩 A⦄)ᵒᵖ) where
-  obj X := discrete' (@Quiver.Hom (A.obj X.1.1) _ X.2 X.1.2)
-  map g := discreteMap' (homAct A g.base.base g.fiber g.base.fiber)
-  map_id _ := rfl
-  map_comp _ _ := rfl
-
-/-- **Exchange**, on objects: `homExchTy A` is `Hom[A]` along the exchange. -/
-theorem homExchTy_obj (A : ICatLax.{u}.Ty Γ) (X : ((Γ ▹ A ▹ (A⦃𝐩 A⦄)ᵒᵖ : Cat.{u, u}) : Type u)) :
-    (homExchTy A).obj X = (homFunctor A).obj ((homExch A).toFunctor.obj X) :=
-  rfl
-
-/-- **Exchange**, on morphisms: `homExchTy A` is `Hom[A]` along the exchange. Both sides are
-compared with their value: compared directly, as applications of `Functor.map`, the kernel would
-first compare the two functors, on different categories, which is slow. -/
-theorem homExchTy_map (A : ICatLax.{u}.Ty Γ) {X Y : ((Γ ▹ A ▹ (A⦃𝐩 A⦄)ᵒᵖ : Cat.{u, u}) : Type u)}
-    (g : X ⟶ Y) : (homExchTy A).map g = (homFunctor A).map ((homExch A).toFunctor.map g) :=
-  (rfl : _ = discreteMap' (homAct A g.base.base g.fiber g.base.fiber)).trans rfl
-
-/-- The displayed category of the twisted Hom-type of `A`, over `Γ ▹ A`: the twist of
-`homExchTy A`, reindexed along the diagonal. Its objects over `(γ, a)` are the endomorphisms of
-`a`. -/
+/-- The displayed category of the twisted Hom-type of `A`, over `Γ ▹ A`: the twist of its Hom-type,
+reindexed along the diagonal. Its objects over `(γ, a)` are the endomorphisms of `a`. -/
 def twistedHomDisp (A : ICatLax.{u}.Ty Γ) :
     Displayed.{u, u, u, u} ((Γ ▹ A : Cat.{u, u}) : Type u) :=
-  DisplayedCat.pull (diag A) (twistDisp (homExchTy A))
+  DisplayedCat.pull (diag A) (twistDisp (homFunctor A))
 
 /-- **The twisted Hom-type of `A`**, `Γ ▹ a : A ⊢ Homₐ(ā, a)`, a type of the displayed model. -/
 def twistedHom (A : ICatLax.{u}.Ty Γ) : Straightening.LaxNormalCat.{u}.Ty (Γ ▹ A) :=
   Straightening.straightenObj (twistedHomDisp A)
 
-/-- **The twisted Hom-type is derivable**: it is the twist of the Hom-type of `A`, with its
-variables exchanged, substituted along the diagonal. -/
-theorem twistedHom_eq (A : ICatLax.{u}.Ty Γ) : twistedHom A = (twist (homExchTy A))⦃diag A⦄ :=
-  (DisplayedModel.straightenObj_pull (diag A) (twistDisp (homExchTy A))).symm
+/-- **The twisted Hom-type is derivable**: it is the twist of the Hom-type of `A`, substituted along
+the diagonal. -/
+theorem twistedHom_eq (A : ICatLax.{u}.Ty Γ) : twistedHom A = (twist (homFunctor A))⦃diag A⦄ :=
+  (DisplayedModel.straightenObj_pull (diag A) (twistDisp (homFunctor A))).symm
 
 /-- **Hom-Intro**: the term `refl` of the twisted Hom-type, the section `(γ, a) ↦ 𝟙 a`. -/
 def refl (A : ICatLax.{u}.Ty Γ) : Tm(Γ ▹ A, twistedHom A) :=

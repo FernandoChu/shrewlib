@@ -4,24 +4,27 @@ import ComprehensionCategory.Model.OverCat.Discrete.TypeFormers.Op
 # Hom-types
 
 For `A` a type of the category model in context `Γ`, its Hom-type `Hom[A]` is a type of the
-discrete model, in the context `Γ ▹ Aᵒᵖ ▹ A⦃𝐩 Aᵒᵖ⦄` of the category model, of the morphisms from
+discrete model, in the context `Γ ▹ A ▹ (A⦃𝐩 A⦄)ᵒᵖ` of the category model, of the morphisms from
 `a : Aᵒᵖ` to `b : A`:
 
 ```
                  Γ ⊢ A type
   ------------------------------------------- Hom-Form
-    Γ ▹ a : Aᵒᵖ ▹ b : A ⊢ Homₐ(a, b) type
+    Γ ▹ b : A ▹ a : Aᵒᵖ ⊢ Homₐ(a, b) type
 
                  Γ ⊢ A type
   ------------------------------------------- Hom-op
-    Γ ▹ a : Aᵒᵖ ▹ b : A ⊢ Homₐ(a, b)ᵒᵖ ≡ Homₐ(a, b) type
+    Γ ▹ b : A ▹ a : Aᵒᵖ ⊢ Homₐ(a, b)ᵒᵖ ≡ Homₐ(a, b) type
 ```
 
-An object of the context `Γ ▹ Aᵒᵖ ▹ A⦃𝐩 Aᵒᵖ⦄` is a triple `((γ, a), b)` with `a b : A γ`, and a
-morphism `((γ, a), b) ⟶ ((γ', a'), b')` is a triple `((f, φ), ψ)` with `f : γ ⟶ γ'`,
-`φ : A f a ⟶ a'` in the opposite of `A γ'`, and `ψ : A f b ⟶ b'`. The Hom-type `Hom[A]` sends
-`((γ, a), b)` to the discrete category on the morphisms `a ⟶ b` of `A γ` (`discrete'`), and
-`((f, φ), ψ)` to `h ↦ φ ≫ A f h ≫ ψ` (`homAct`). Its functor laws and its stability under
+The contravariant variable comes last, so that `Hom[A]` is a dependent profunctor over `A⦃𝐩 A⦄`,
+which the twist takes (`Shared/Twist.lean`, `Shared/HomIntro.lean`).
+
+An object of the context `Γ ▹ A ▹ (A⦃𝐩 A⦄)ᵒᵖ` is a triple `((γ, b), a)` with `a b : A γ`, and a
+morphism `((γ, b), a) ⟶ ((γ', b'), a')` is a triple `((f, ψ), φ)` with `f : γ ⟶ γ'`,
+`ψ : A f b ⟶ b'`, and `φ : A f a ⟶ a'` in the opposite of `A γ'`. The Hom-type `Hom[A]` sends
+`((γ, b), a)` to the discrete category on the morphisms `a ⟶ b` of `A γ` (`discrete'`), and
+`((f, ψ), φ)` to `h ↦ φ ≫ A f h ≫ ψ` (`homAct`). Its functor laws and its stability under
 substitution hold by `rfl` (`pull_hom`).
 
 The composite with `φ` is taken in the opposite of `A γ'`, where `φ` lives, as
@@ -48,7 +51,7 @@ open scoped Displayed
 
 variable {Γ : Cat.{u, u}}
 
-/-- The action of a morphism `((f, φ), ψ)` of the context on the morphisms of `A`:
+/-- The action of a morphism `((f, ψ), φ)` of the context on the morphisms of `A`:
 `h ↦ φ ≫ A f h ≫ ψ`, composed with `φ` in the opposite of `A γ'`. -/
 def homAct (A : Γ ⥤ Cat.{u, u}) {γ γ' : Γ} (f : γ ⟶ γ') {a b : A.obj γ} {a' b' : A.obj γ'}
     (φ : @Quiver.Hom ((A ⋙ opFunctor').obj γ') _ ((A.map f).toFunctor.obj a) a')
@@ -56,17 +59,17 @@ def homAct (A : Γ ⥤ Cat.{u, u}) {γ γ' : Γ} (f : γ ⟶ γ') {a b : A.obj �
   @CategoryStruct.comp ((A ⋙ opFunctor').obj γ') _ b' ((A.map f).toFunctor.obj a) a'
     ((A.map f).toFunctor.map h ≫ ψ : (A.map f).toFunctor.obj a ⟶ b') φ
 
-/-- The functor of the Hom-type of `A`: at `((γ, a), b)`, the discrete category on the morphisms
+/-- The functor of the Hom-type of `A`: at `((γ, b), a)`, the discrete category on the morphisms
 `a ⟶ b` of `A γ`. -/
-def homFunctor (A : ICatLax.{u}.Ty Γ) : ICatLax.{u}.Ty (Γ ▹ Aᵒᵖ ▹ A⦃𝐩 (Aᵒᵖ)⦄) where
-  obj X := discrete' (@Quiver.Hom (A.obj X.1.1) _ X.1.2 X.2)
-  map g := discreteMap' (homAct A g.base.base g.base.fiber g.fiber)
+def homFunctor (A : ICatLax.{u}.Ty Γ) : ICatLax.{u}.Ty (Γ ▹ A ▹ (A⦃𝐩 A⦄)ᵒᵖ) where
+  obj X := discrete' (@Quiver.Hom (A.obj X.1.1) _ X.2 X.1.2)
+  map g := discreteMap' (homAct A g.base.base g.fiber g.base.fiber)
   map_id _ := rfl
   map_comp _ _ := rfl
 
 /-- **The Hom-type of `A`** (Hom-Form), a type of the discrete model: its values are discrete
 categories. -/
-def hom (A : ICatLax.{u}.Ty Γ) : IDisc.{u}.Ty (Γ ▹ Aᵒᵖ ▹ A⦃𝐩 (Aᵒᵖ)⦄) where
+def hom (A : ICatLax.{u}.Ty Γ) : IDisc.{u}.Ty (Γ ▹ A ▹ (A⦃𝐩 A⦄)ᵒᵖ) where
   toFunctor := homFunctor A
   isDiscrete _ := isDiscrete_discrete' _
 
@@ -90,7 +93,7 @@ theorem op_hom (A : ICatLax.{u}.Ty Γ) : Hom[A]ᵒᵖ = Hom[A] :=
 
 /-- **The Hom-types are stable under substitution**, by `rfl`. -/
 theorem pull_hom {Δ : Cat.{u, u}} (σ : Δ ⟶ Γ) (A : ICatLax.{u}.Ty Γ) :
-    Hom[A]⦃𝐪(𝐪(σ, Aᵒᵖ), A⦃𝐩 (Aᵒᵖ)⦄)⦄ = Hom[A⦃σ⦄] :=
+    Hom[A]⦃𝐪(𝐪(σ, A), (A⦃𝐩 A⦄)ᵒᵖ)⦄ = Hom[A⦃σ⦄] :=
   rfl
 
 end ComprehensionCategory.OverCat

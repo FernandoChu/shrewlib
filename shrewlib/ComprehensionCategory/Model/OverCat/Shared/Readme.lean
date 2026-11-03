@@ -10,8 +10,9 @@ Type formers relating several of the models over `Cat`: their premises are types
 their conclusion a type of another, in a context of the first.
 
 * `Hom`: the Hom-types of the category model, types of the discrete model. For a type `A` of the
-  category model, `Hom[A]` sends `((γ, a), b)` to the discrete category on the morphisms `a ⟶ b`
-  of `A γ`. It is stable under substitution by `rfl`, and its own opposite in the discrete model,
+  category model, `Hom[A]`, in context `Γ ▹ b : A ▹ a : Aᵒᵖ`, sends `((γ, b), a)` to the discrete
+  category on the morphisms `a ⟶ b` of `A γ`. It is stable under substitution by `rfl`, and its
+  own opposite in the discrete model,
   as a rewrite rule, since these discrete categories are, by `propext`.
 * `Universe`: the Coquand-style universe `UDisc Γ` of the discrete types of level `v`, a type of
   the category model at level `v + 1`, the constant functor at the category of small discrete
@@ -24,7 +25,7 @@ their conclusion a type of another, in a context of the first.
   `Γ ▹ B`.
 * `HomIntro`: the twisted Hom-type `Γ ▹ a : A ⊢ Homₐ(ā, a)` of a type `A` of the category model, a
   type of the displayed model whose objects over `(γ, a)` are the endomorphisms of `a`, derived from
-  `Hom[A]` by exchange, twist and substitution along the diagonal, and its term `refl A`, the
+  `Hom[A]` by twist and substitution along the diagonal, and its term `refl A`, the
   identities (Hom-Intro).
 -/
 
@@ -44,14 +45,14 @@ recall ComprehensionCategory.OverCat.op_hom {Γ : Cat.{u, u}} (A : ICatLax.{u}.T
 /-- The Hom-types are stable under substitution. -/
 recall ComprehensionCategory.OverCat.pull_hom {Γ Δ : Cat.{u, u}} (σ : Δ ⟶ Γ)
     (A : ICatLax.{u}.Ty Γ) :
-    Hom[A]⦃𝐪(𝐪(σ, Aᵒᵖ), A⦃𝐩 (Aᵒᵖ)⦄)⦄ = Hom[A⦃σ⦄]
+    Hom[A]⦃𝐪(𝐪(σ, A), (A⦃𝐩 A⦄)ᵒᵖ)⦄ = Hom[A⦃σ⦄]
 
 section
 
 variable {Γ : Cat.{u, u}} (A : ICatLax.{u}.Ty Γ)
 
 /-- The Hom-type of a type of the category model is a type of the discrete model. -/
-example : IDisc.{u}.Ty (Γ ▹ Aᵒᵖ ▹ A⦃𝐩 (Aᵒᵖ)⦄) := Hom[A]
+example : IDisc.{u}.Ty (Γ ▹ A ▹ (A⦃𝐩 A⦄)ᵒᵖ) := Hom[A]
 
 /-- Hom-op holds judgmentally, by the rule `op_hom`. -/
 example : Hom[A]ᵒᵖ = Hom[A] := rfl
@@ -84,10 +85,10 @@ recall ComprehensionCategory.OverCat.hasUniverseDisc : HasUniverse liftDiscCompr
 
 end Universe
 
-/-- **The twisted Hom-type is derivable**: the twist of the Hom-type, with its variables exchanged,
-substituted along the diagonal. -/
+/-- **The twisted Hom-type is derivable**: the twist of the Hom-type, substituted along the
+diagonal. -/
 recall ComprehensionCategory.OverCat.twistedHom_eq {Γ : Cat.{u, u}} (A : ICatLax.{u}.Ty Γ) :
-    twistedHom A = (twist (homExchTy A))⦃diag A⦄
+    twistedHom A = (twist (homFunctor A))⦃diag A⦄
 
 /-- **Hom-Intro**: the identities are a term of the twisted Hom-type. -/
 recall ComprehensionCategory.OverCat.refl {Γ : Cat.{u, u}} (A : ICatLax.{u}.Ty Γ) :
