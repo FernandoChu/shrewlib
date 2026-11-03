@@ -27,7 +27,7 @@ variable {A : Type u₁} [Category.{v₁} A] {B : Displayed.{v₁, u₁, v₂, u
 set_option maxHeartbeats 400000 in
 -- `map_comp` holds by `rfl`, through the rules for `push`, `pull`, `pushMap` and `pullMap`;
 -- checking it unfolds both composites of functors.
-/-- The functor `Bᵒᵖ.Total ⥤ Cat` underlying `straighten`'s value at `C`: `⟨a, b⟩ ↦ C.Fiber b`,
+/-- **The straightening of a D2SFib** `C`: the functor `Bᵒᵖ.Total ⥤ Cat`, `⟨a, b⟩ ↦ C.Fiber b`,
 with a morphism `⟨α, β⟩` sent to `pushFunctor α ⋙ pullFunctor β`. -/
 def straightenObj (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) [SplitD2SFib C] :
     Bᵒᵖ.Total ⥤ Cat.{v₃, u₃} where

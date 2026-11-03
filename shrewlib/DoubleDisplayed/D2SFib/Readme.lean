@@ -11,10 +11,10 @@ import DoubleDisplayed.D2SFib.Straightening.Readme
 In this folder we define dependent 2-sided fibrations (D2SFibs) over a split opfibration `B` over
 `A`: categories doubly displayed over `B` with chosen cartesian lifts of the vertical morphisms of
 `B`, chosen opcartesian lifts over those of `B`, and a strict interchange between the two. The
-split ones form a category, which straightening shows equivalent to the functors from the total
-category of the dual opfibration of `B` to `Cat`, the dependent profunctors over `B`. Over all
-split opfibrations, with the opcartesian functors between them, both form split fibrations over
-`SplitOpfibStr`, and straightening is an equivalence of fibred categories.
+split ones form a category `D2SFibCat B`. Over all split opfibrations, with the opcartesian
+functors between them, the split D2SFibs and the dependent profunctors, the functors from the
+total category of the dual opfibration of `B` to `Cat`, form split fibrations over
+`SplitOpfibStr`, and straightening is an equivalence of fibred categories between them.
 
 The files are:
 
@@ -29,6 +29,5 @@ The files are:
 * `D2SFibStr`: the split D2SFibs over all split opfibrations, doubly displayed over
   `SplitOpfibStr`, a split fibration by reindexing.
 * `Straightening/`: the equivalence `DProfStr ≃ D2SFibStr` of fibred categories over
-  `SplitOpfibStr`, which over a single `B` is an equivalence `(Bᵒᵖ.Total ⥤ Cat) ≌ D2SFibCat B`, and
-  its reindexing over `ICatStr`.
+  `SplitOpfibStr`, and its reindexing over `ICatStr`.
 -/

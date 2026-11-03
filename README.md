@@ -59,9 +59,8 @@ files, (op)cartesian morphisms (in `Displayed/{Opfibration,Fibration}/Basic` and
   the category model in the discrete model, and the maps between them.
 - `DoubleDisplayed/`: categories doubly displayed over a displayed category, their functors,
   equivalences and fibrations, and dependent 2-sided fibrations with their straightening: an
-  equivalence of fibred categories between dependent profunctors and D2SFibs over `SplitOpfibStr`,
-  which over a single split opfibration `B` is `(Bᵒᵖ.Total ⥤ Cat) ≌ D2SFibCat B`, and its
-  reindexing over `ICatStr`.
+  equivalence of fibred categories between dependent profunctors and D2SFibs over
+  `SplitOpfibStr`, and its reindexing over `ICatStr`.
 
 ## Building
 

@@ -13,8 +13,9 @@ The unstraightening of dependent profunctors extends to an equivalence `DProfStr
 `straightenStr`: dependent profunctors are the same as split D2SFibs, naturally in the split
 opfibration they lie over. The base is in `Cat.{v₁, u₁}`, the split opfibrations are in
 `Displayed.{v₁, u₁, v₂, u₂}`, and the dependent profunctors and the fibers of the D2SFibs are in
-`Cat.{v₃, u₃}`, all independent. Over a single split opfibration `B`, its fiber is an equivalence
-between the functors `Bᵒᵖ.Total ⥤ Cat` and the category `D2SFibCat B`.
+`Cat.{v₃, u₃}`, all independent. Over a single split opfibration `B`, the fiber of `DProfStr` has
+the functors `Bᵒᵖ.Total ⥤ Cat` as objects and the natural transformations between them as
+morphisms, and the fiber of `D2SFibStr` is the category `D2SFibCat B`.
 
 The unit and counit are given explicitly, by components defined for a single `B`
 (`D2SFib/Straightening/Unit.lean` and `Counit.lean`):

@@ -14,7 +14,8 @@ The unstraightening `unstraightenStr` and the straightening `straightenStr` form
 `straighteningEquivStr : DProfStr ≃ D2SFibStr` over `SplitOpfibStr`, whose functors are cartesian,
 so an equivalence of fibred categories. Its universes are independent: the base in
 `Cat.{v₁, u₁}`, the split opfibrations in `Displayed.{v₁, u₁, v₂, u₂}`, and the fibers in
-`Cat.{v₃, u₃}`. Over a single `B`, it is an equivalence `(Bᵒᵖ.Total ⥤ Cat) ≌ D2SFibCat B`.
+`Cat.{v₃, u₃}`. Over a single `B`, the fibers of `DProfStr` and `D2SFibStr` are the functors
+`Bᵒᵖ.Total ⥤ Cat` and the category `D2SFibCat B`.
 
 The files give its ingredients, first for a single `B`:
 
