@@ -1,0 +1,57 @@
+import Displayed.Discrete.Straightening.Equivalence
+
+/-!
+# Straightening for discrete opfibrations
+
+In this folder we compare two categories displayed over `Cat`:
+
+* `IDisc`: which has as objects over a category `A` the functors `A ⥤ Cat` into discrete
+  categories; a morphism over `u : A ⟶ B` is a lax transformation `LaxTrans F (u ⋙ G)`, as in
+  `ICat`, of which it is the full subcategory;
+* `DiscOpfibCat` (`Discrete/Basic.lean`): an object over `A` is a discrete opfibration over `A`, a
+  split opfibration whose fibres are discrete categories, and a morphism over `u` is any displayed
+  functor over `u`.
+
+The vertical functor `unstraighten : IDisc ⟶ DiscOpfibCat` sends `F` to the displayed category
+`∫ F`, whose fibre over `a` is `F a`, with morphisms `x ⟶[f] y` the morphisms `F f x ⟶ y`. It is
+an equivalence over `Cat`, `straighteningEquiv`. All of it is straightening–unstraightening for
+split opfibrations (`Opfibration/Straightening`), restricted to the full subcategories of the
+discrete ones on both sides.
+
+The files give its ingredients:
+
+* `IDisc`: the split fibration `IDisc`, with the reindexing and the lifts of `ICat`, and the fully
+  faithful cartesian functor `IDisc.forget : IDisc ⟶ ICat`.
+* `Unstraighten`: the unstraightening of a functor into discrete categories has discrete fibres;
+  the functor `unstraighten`, which is `IDisc.forget` followed by the unstraightening of the split
+  opfibrations, and is fully faithful.
+* `Straighten`: the straightening of a discrete opfibration `X`, the functor of its fibres.
+* `Equivalence`: the counit, and the equivalence `straighteningEquiv`.
+-/
+
+universe u
+
+open CategoryTheory Displayed Displayed.Discrete.Straightening
+
+/-! ## Main results -/
+
+/-- **Straightening–unstraightening for discrete opfibrations** is an equivalence over `Cat`. -/
+recall Displayed.Discrete.Straightening.straighteningEquiv :
+    VertEquivalence IDisc.{u} DiscOpfibCat.{u}
+
+/-- Straightening undoes unstraightening on the nose. -/
+recall Displayed.Discrete.Straightening.straightenObj_unstraightenObj {A : Cat.{u, u}}
+    (X : IDiscOb A) : straightenObj (unstraightenObj X) = X
+
+/-- The unstraightening is fully faithful. -/
+recall Displayed.Discrete.Straightening.unstraightenFullyFaithful : unstraighten.{u}.FullyFaithful
+
+recall Displayed.Discrete.Straightening.IDisc.splitFib : SplitFib IDisc.{u}
+
+/-- Forgetting the discreteness of the functors into discrete categories is a fully faithful
+cartesian functor. -/
+recall Displayed.Discrete.Straightening.IDisc.forget :
+    CartesianFunctor (𝟭 Cat.{u, u}) IDisc.{u} Opfibration.Straightening.ICat.{u}
+
+recall Displayed.Discrete.Straightening.IDisc.forgetFullyFaithful :
+    VertFunctor.FullyFaithful IDisc.forget.{u}.toDispFunctor

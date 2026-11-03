@@ -3,6 +3,7 @@ import Displayed.Fibration.Readme
 import Displayed.Opfibration.Readme
 import Displayed.Straightening.Readme
 import Displayed.CodCatEquiv.Readme
+import Displayed.Discrete.Readme
 
 /-!
 # Displayed categories
@@ -23,4 +24,7 @@ folder has a `Readme.lean`.
   `LaxNormalCat ≅ DisplayedCat` over `Cat`, and the fibrations over `Cat` it gives.
 * `CodCatEquiv/`: the equivalence `DisplayedCat ≃ cod Cat` over `Cat` taking total categories:
   displayed categories over `A` are the functors into `A`.
+* `Discrete/`: discrete opfibrations; `Straightening/` is the equivalence over `Cat` between
+  functors into discrete categories and discrete opfibrations, the restriction of that for split
+  opfibrations.
 -/

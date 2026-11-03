@@ -1,4 +1,4 @@
-import ComprehensionCategory.Basic
+import ComprehensionCategory.Map
 
 /-!
 # Σ-types in a comprehension category
@@ -27,11 +27,16 @@ As for `PreSplitFib` and `SplitFib`, it comes in two classes:
   is an instance field, so that the rule applies to the stability of `pair`, whose two sides lie
   over `(Σ[A] B)⦃σ⦄` and `Σ[A⦃σ⦄] B⦃𝐪(σ, A)⦄`.
 
+A strict map of comprehension categories *preserves Σ-types strictly*
+(`StrictComprehensionMap.PreservesSigma`) if it sends Σ-types to Σ-types and pairings to pairings,
+on the nose. The second is stated heterogeneously: the codomains of the two pairings are identified
+by the first, which is a propositional equation.
+
 The notation `Σ[A] B` for `D.sigma A B` is scoped in `Displayed`, with that of
 `ComprehensionCategory/Basic`.
 -/
 
-universe v u v₂ u₂
+universe v u v₂ u₂ v₃ u₃ v₄ u₄
 
 open CategoryTheory
 
@@ -119,5 +124,25 @@ theorem sigmaIso_hom_q {Δ : C} (σ : Δ ⟶ Γ) :
   HasSigma.pair_q σ A B
 
 end
+
+section Preservation
+
+variable {C' : Type u₃} [Category.{v₃} C'] {F : C ⥤ C'} {D : Displayed.{v, u, v₂, u₂} C}
+  {E : Displayed.{v₃, u₃, v₄, u₄} C'} [Fib D] [Comprehension D] [HasSigma D] [Fib E]
+  [Comprehension E] [HasSigma E]
+
+/-- A strict map of comprehension categories *preserves Σ-types strictly* if it sends Σ-types to
+Σ-types, `M (Σ[A] B) = Σ[M A] (M B)`, and the pairing of `A` and `B` to that of `M A` and `M B`.
+The latter is a heterogeneous equality, since the codomains `F.obj (Γ ▹ Σ[A] B)` and
+`F.obj Γ ▹ Σ[M A] (M B)` are identified only by the former. -/
+structure StrictComprehensionMap.PreservesSigma (M : StrictComprehensionMap F D E) : Prop where
+  /-- Σ-types go to Σ-types. -/
+  obj_sigma : ∀ {Γ : C} (A : D.Ty Γ) (B : D.Ty (Γ ▹ A)),
+    M.toPre.obj (Σ[A] B) = Σ[M.toPre.obj A] (M.toPre.obj B)
+  /-- Pairings go to pairings. -/
+  map_pair : ∀ {Γ : C} (A : D.Ty Γ) (B : D.Ty (Γ ▹ A)),
+    F.map (D.sigmaIso A B).hom ≍ (E.sigmaIso (M.toPre.obj A) (M.toPre.obj B)).hom
+
+end Preservation
 
 end Displayed

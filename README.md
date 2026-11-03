@@ -128,16 +128,17 @@ files, (op)cartesian morphisms (in `Displayed/{Opfibration,Fibration}/Basic` and
   `Factorization/` (AWFSs; in `Comma/`, the comma factorization `f = Lf ≫ Rf` is an AWFS whose
   2-monad `R` is lax idempotent, and `R`-algebras are split reflections).
 - `DoubleCategory/`: pseudo double categories, and the horizontal bicategory of globular squares.
-- `Displayed/`: categories displayed over a category, in five folders: `Displayed/` (displayed
+- `Displayed/`: categories displayed over a category, in six folders: `Displayed/` (displayed
   categories in general), `Opfibration/` (including the unstraightening of functors `A ⥤ Cat`),
   `Fibration/` (including the codomain fibration), `Straightening/`
   (straightening–unstraightening for displayed categories, an isomorphism
-  `LaxNormalCat ≅ DisplayedCat` over `Cat`), and `CodCatEquiv/` (the equivalence
-  `DisplayedCat ≃ cod Cat` over `Cat`, taking total categories).
+  `LaxNormalCat ≅ DisplayedCat` over `Cat`), `CodCatEquiv/` (the equivalence
+  `DisplayedCat ≃ cod Cat` over `Cat`, taking total categories), and `Discrete/` (discrete
+  opfibrations, equivalent over `Cat` to the functors into discrete categories).
 - `ComprehensionCategory/`: comprehension categories, their type formers, and models: the
   category model, with Σ-types, opposite types and Hom-types, its discrete submodel of functors
-  into `Type`, the displayed category model of lax normal functors into profunctors, with Σ-types,
-  and the codomain model.
+  into discrete categories, with Σ-types preserved strictly by the inclusion, the displayed
+  category model of lax normal functors into profunctors, with Σ-types, and the codomain model.
 - `DoubleDisplayed/`: categories doubly displayed over a displayed category, and dependent 2-sided
   fibrations with their straightening.
 - `mathlib4/`: Mathlib, checked out at its `v4.36.0-rc2` tag, used as a path dependency.

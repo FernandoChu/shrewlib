@@ -26,7 +26,7 @@ universe u
 
 namespace ComprehensionCategory.CatModel
 
-open CategoryTheory Displayed Displayed.Opfibration.Straightening
+open CategoryTheory Displayed Displayed.Opfibration.Straightening Displayed.Discrete
 
 open scoped Displayed
 

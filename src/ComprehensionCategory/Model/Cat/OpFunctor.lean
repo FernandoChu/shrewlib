@@ -1,4 +1,4 @@
-import ComprehensionCategory.Model.Cat.Discrete
+import Displayed.Discrete.DiscreteCat
 import Mathlib.CategoryTheory.Category.Cat.Op
 
 /-!
@@ -24,7 +24,7 @@ universe u
 
 namespace ComprehensionCategory.CatModel
 
-open CategoryTheory
+open CategoryTheory Displayed.Discrete
 
 /-- The opposite category structure on the type `C` itself: a morphism from `x` to `y` is a
 morphism `y ⟶ x` of `c`. Unlike the category `Cᵒᵖ`, its double opposite is `c` definitionally. -/
@@ -75,7 +75,7 @@ def opFunctor'Iso : opFunctor'.{u} ≅ Cat.opFunctor :=
 
 /-! ## Discrete categories are self-opposite
 
-The discrete categories `discrete' S` of `ComprehensionCategory/Model/Cat/Discrete` are their own
+The discrete categories `discrete' S` of `Displayed/Discrete/DiscreteCat` are their own
 opposites, by `propext`: `t = s` and `s = t` are different types. -/
 
 /-- Two category structures with the same morphisms are equal if the morphisms are subsingletons:

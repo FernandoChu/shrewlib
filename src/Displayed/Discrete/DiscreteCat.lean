@@ -1,13 +1,13 @@
 import Mathlib.CategoryTheory.Category.Cat
+import Mathlib.CategoryTheory.Discrete.Basic
 import Mathlib.CategoryTheory.Types.Basic
 
 /-!
 # Discrete categories
 
 The discrete category `discrete' S` on a type `S` has the elements of `S` as objects, and the proofs
-of `s = t` as morphisms `s ⟶ t` (`discreteCategory'`). Functions give functors between them
-(`discreteMap'`), and these form the embedding `discreteFunctor : Type u ⥤ Cat` of sets into
-categories, whose functor laws hold by `rfl`.
+of `s = t` as morphisms `s ⟶ t` (`discreteCategory'`), and it is discrete in the sense of
+Mathlib's `IsDiscrete`. Functions give functors between them (`discreteMap'`).
 
 Unlike Mathlib's `Discrete S`, the objects are the elements of `S` themselves, and the morphisms are
 not the structure `Discrete.Hom s t`: `(t = s) = (s = t)` holds by `propext`, so that `discrete' S`
@@ -21,7 +21,7 @@ This file imports no rewrite rules, and must not, for the reason given in
 
 universe u
 
-namespace ComprehensionCategory.CatModel
+namespace Displayed.Discrete
 
 open CategoryTheory
 
@@ -48,17 +48,15 @@ instance (S : Type u) (s t : S) : Subsingleton (@Quiver.Hom S (discreteCategory'
 theorem discrete'_hom_ext {S : Type u} {s t : discrete' S} (f g : s ⟶ t) : f = g :=
   Subsingleton.elim (α := ULift.{u} (PLift (@Eq S s t))) f g
 
+/-- `discrete' S` is discrete, in the sense of Mathlib's `IsDiscrete`. -/
+instance isDiscrete_discrete' (S : Type u) : IsDiscrete (discrete' S) where
+  subsingleton _ _ := ⟨discrete'_hom_ext⟩
+  eq_of_hom f := f.down.down
+
 /-- The functor between discrete categories of a function. -/
 def discreteMap' {S T : Type u} (k : S → T) : discrete' S ⟶ discrete' T :=
   Cat.Hom.ofFunctor
     { obj s := k s
       map e := ⟨⟨congrArg k e.down.down⟩⟩ }
 
-/-- **The embedding of sets into categories**, as discrete categories. -/
-def discreteFunctor : Type u ⥤ Cat.{u, u} where
-  obj S := discrete' S
-  map k := discreteMap' k
-  map_id _ := rfl
-  map_comp _ _ := rfl
-
-end ComprehensionCategory.CatModel
+end Displayed.Discrete

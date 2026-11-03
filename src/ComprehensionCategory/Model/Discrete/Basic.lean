@@ -1,143 +1,89 @@
 import ComprehensionCategory.Map
 import ComprehensionCategory.Model.Cat.Basic
-import ComprehensionCategory.Model.Cat.Discrete
-import Displayed.Fibration.CartesianFunctor
-import Mathlib.CategoryTheory.Whiskering
+import Displayed.Discrete.Straightening.IDisc
 
 /-!
 # The discrete model
 
-The *discrete model* is the comprehension category `ISet` over `Cat` whose types in context `Γ`
-are the functors `Γ ⥤ Type u`: a morphism over `u : A ⟶ B` from `F` to `G` is a natural
-transformation `F ⟶ u ⋙ G`. Reindexing `ISet.pull u G = u ⋙ G` and the identity transformations
-make it a split fibration over `Cat`, whose laws hold by `rfl`.
+The *discrete model* is the comprehension category `IDisc` over `Cat`
+(`Displayed/Discrete/Straightening/IDisc`) whose types in context `Γ` are the functors `Γ ⥤ Cat`
+into discrete categories, and whose morphisms are those of the category model `ICat`: it is the
+full sub-comprehension category of the category model on these types.
 
-Its comprehension is that of the category model `ICat`, along the embedding of sets into
-categories as discrete categories (`discreteFunctor`): `embed : ISet ⟶ ICat` sends `F` to
-`F ⋙ discreteFunctor`, and a natural transformation to the lax transformation with the same
-components, whose 2-cells are the naturality equations. It preserves the chosen lifts on the nose,
-a cartesian functor, so the comprehension functor `embed ⋙ᵥ compr` preserves cartesian morphisms
-(`Comprehension.comap`). The extended context `Γ ▹ F` is the category of elements of `F`: its
-objects are pairs `(γ, x)` with `x : F γ`, and its morphisms `(γ, x) ⟶ (γ', x')` are the
-`f : γ ⟶ γ'` with `F f x = x'`.
+Its comprehension is that of the category model, along the functor `IDisc.forget : IDisc ⟶ ICat`
+forgetting the discreteness, which preserves the chosen lifts on the nose, so the comprehension
+functor `IDisc.forget ⋙ᵥ compr` preserves cartesian morphisms (`Comprehension.comap`). The extended
+context `Γ ▹ A` is that of the category model, `Γ ⋉ A`: its objects are pairs `(γ, x)` with
+`x : A γ`, and its morphisms `(γ, x) ⟶ (γ', x')` are the `f : γ ⟶ γ'` with `A f x = x'`, since
+`A γ'` is discrete.
 
-The embedding is fully faithful, since a lax transformation between functors into discrete
-categories is a natural transformation, so the discrete model is a full split comprehension
+Forgetting the discreteness is fully faithful, so the discrete model is a full split comprehension
 category. It is a strict map of comprehension categories from the discrete model to the category
-model (`embedComprehensionMap`), since the comprehension functor of the discrete model is
-`embed ⋙ᵥ compr` by definition: both axioms hold by `rfl`.
+model (`forgetComprehensionMap`), since the comprehension functor of the discrete model is
+`IDisc.forget ⋙ᵥ compr` by definition: both axioms hold by `rfl`.
+
+## Why not functors into sets
+
+The evident choice of types is the functors `Γ ⥤ Type u`, with the natural transformations as
+morphisms, and the comprehension of the category model along the embedding `E` into it that sends
+`F` to the functor `γ ↦ discrete' (F γ)` into discrete categories. This is a full split
+comprehension category, and `E` is a strict map of comprehension categories, both by `rfl`. It
+has Σ-types: the unstraightenings of `E F` and `E G` are discrete opfibrations, and so is their
+composite `X` (`DiscOpfibOb.sigma`), and `Σ[F] G` sends `γ` to the set `X.Ob γ` of objects of the
+fibre of `X` over `γ`, with the pushforwards of `X`.
+
+But `E` does not preserve these Σ-types strictly, as a submodel should. The Σ-type of `E F` and
+`E G` in the category model is the straightening of the same `X`, which sends `γ` to the fibre
+`X.Fiber γ` itself. So `E (Σ[F] G)` and `Σ[E F] (E G)` send `γ` to two categories with the same
+objects, the pairs `p = ⟨x, y⟩` of `x : F γ` and `y : G (γ, x)`, but different morphisms `p ⟶ q`:
+
+* in `discrete' (X.Ob γ)`, the proofs of `p = q`, in `ULift (PLift (p = q))`;
+* in `X.Fiber γ`, the pairs of a proof `φ` of `x = x'` and a proof of `G (𝟙 γ, φ) y = y'`.
+
+Both are subsingletons inhabited exactly when `p = q`, so the two categories are isomorphic, and
+`E` preserves Σ-types up to a canonical isomorphism. But they are different types, and Lean
+cannot prove them equal: `propext` identifies equivalent propositions, not equivalent types, which
+would be univalence, inconsistent with Lean. The Σ-type of the category model keeps the category
+structure that the composite builds, while a functor into sets forgets it, and `E` can only
+rebuild the discrete category on the set of objects.
+
+The same happens for every type former: each has to be built anew for the functors into sets, and
+is related to that of the category model only up to isomorphism. The functors into discrete
+categories keep their category structure, and discreteness is a proposition, so it is never
+compared: a type former of the category model that preserves discreteness is one of the discrete
+model, which `IDisc.forget` preserves by `rfl`. This is the case for Σ-types (`TypeFormers/Sigma`).
 -/
 
 universe u
 
 namespace ComprehensionCategory.DiscreteModel
 
-open CategoryTheory Displayed Displayed.Opfibration.Straightening CatModel
+open CategoryTheory Displayed Displayed.Opfibration.Straightening Displayed.Discrete.Straightening
+  CatModel
 
 open scoped Displayed
-
-/-! ## Indexed sets -/
-
-/-- The indexed sets and natural transformations, displayed over `Cat`: an object over `A` is a
-functor `A ⥤ Type u`, and a morphism over `u : A ⟶ B` from `F` to `G` is a natural transformation
-`F ⟶ u ⋙ G`. Composition whiskers the second transformation along the first base functor. -/
-def ISet : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
-  Ob A := A ⥤ Type u
-  Hom u F G := F ⟶ u.toFunctor ⋙ G
-  id F := 𝟙 F
-  comp {_ _ _ u _ _ _ _} α β := α ≫ Functor.whiskerLeft u.toFunctor β
-  id_comp _ := rfl
-  comp_id _ := rfl
-  assoc _ _ _ := rfl
-
-namespace ISet
-
-/-- Reindexing `pull u G = u ⋙ G` of `G : B ⥤ Type u` along `u : A ⟶ B`. -/
-def pull {A B : Cat.{u, u}} (u : A ⟶ B) (G : B ⥤ Type u) : A ⥤ Type u :=
-  u.toFunctor ⋙ G
-
-/-- The cartesian lift `pull u G ⟶[u] G`: the identity transformation. -/
-def clift {A B : Cat.{u, u}} (u : A ⟶ B) (G : B ⥤ Type u) : ISet.Hom u (pull u G) G :=
-  𝟙 (u.toFunctor ⋙ G)
-
-/-- The chosen lift is cartesian: a transformation over `g ≫ u` is its own factorization. -/
-def isCartesianClift {A B : Cat.{u, u}} (u : A ⟶ B) (G : B ⥤ Type u) :
-    IsCartesian (clift u G) where
-  lift _ _ χ := χ
-  lift_fac _ _ _ := rfl
-  lift_uniq _ hψ := hψ
-
-end ISet
-
-/-- **`ISet` is a split fibration over `Cat`**, cloven by reindexing `ISet.pull u G = u ⋙ G`, with
-the identity transformations as chosen lifts. -/
-instance ISet.preSplitFib : PreSplitFib ISet.{u} where
-  pull u G := ISet.pull u G
-  clift u G := ISet.clift u G
-  isCartesianClift u G := ISet.isCartesianClift u G
-  pull_id _ := rfl
-  pull_comp _ _ _ := rfl
-
-instance ISet.splitFib : SplitFib ISet.{u} where
-  clift_id _ := rfl
-  clift_comp _ _ _ := rfl
-
-/-! ## The embedding into indexed categories -/
-
-/-- The lax transformation of a natural transformation `α : F ⟶ u ⋙ G` between functors into
-discrete categories: its components are those of `α`, and its 2-cells the naturality equations. -/
-def embedMap {A B : Cat.{u, u}} {u : A ⟶ B} {F : A ⥤ Type u} {G : B ⥤ Type u}
-    (α : F ⟶ u.toFunctor ⋙ G) :
-    LaxTrans (F ⋙ discreteFunctor) (u.toFunctor ⋙ G ⋙ discreteFunctor) where
-  app a := (discreteMap' (α.app a)).toFunctor
-  naturality f x := ⟨⟨(NatTrans.naturality_apply α f x).symm⟩⟩
-  naturality_naturality {_ _} _ {_ _} _ := discrete'_hom_ext _ _
-  naturality_id _ := discrete'_hom_ext _ _
-  naturality_comp _ _ _ := discrete'_hom_ext _ _
-
-/-- **The embedding of indexed sets into indexed categories**, by discrete categories: a vertical
-cartesian functor `ISet ⟶ ICat`. -/
-def embed : CartesianFunctor (𝟭 Cat.{u, u}) ISet.{u} ICat.{u} where
-  toPre :=
-    { obj F := F ⋙ discreteFunctor
-      map α := embedMap α
-      map_id _ := rfl
-      map_comp _ _ := rfl
-      obj_pull _ _ := rfl }
-  map_clift _ _ := LaxTrans.ext' (fun _ _ => rfl) (fun _ _ _ _ => HEq.rfl) fun _ _ =>
-    heq_of_eq (discrete'_hom_ext _ _)
-
-/-- **The embedding is fully faithful**: a lax transformation between functors into discrete
-categories is a natural transformation. -/
-def embedFullyFaithful : VertFunctor.FullyFaithful embed.toDispFunctor where
-  preimage β :=
-    { app a := TypeCat.ofHom (β.app a).obj
-      naturality _ _ f := ConcreteCategory.hom_ext (C := Type u) _ _ fun x =>
-        (β.naturality f x).down.down.symm }
-  map_preimage _ := rfl
-  preimage_map _ := rfl
 
 /-! ## The comprehension structure -/
 
 /-- The comprehension structure of the discrete model: that of the category model, along the
-embedding. -/
+functor forgetting the discreteness. -/
 @[instance_reducible]
-instance comprehension : Comprehension ISet.{u} :=
-  Comprehension.comap embed.toDispFunctor embed.isCartesianMap
+instance comprehension : Comprehension IDisc.{u} :=
+  Comprehension.comap IDisc.forget.toDispFunctor IDisc.forget.isCartesianMap
 
 /-- **The discrete model** is a full split comprehension category over `Cat`. -/
-instance splitComprehension : SplitComprehension ISet.{u} where
+instance splitComprehension : SplitComprehension IDisc.{u} where
 
 @[instance_reducible]
-instance fullComprehension : FullComprehension ISet.{u} where
-  comprFullyFaithful := embedFullyFaithful.comp comprFullyFaithful
+instance fullComprehension : FullComprehension IDisc.{u} where
+  comprFullyFaithful := IDisc.forgetFullyFaithful.comp comprFullyFaithful
 
-/-- **The embedding is a strict map of comprehension categories** from the discrete model to the
-category model, over the identity of `Cat`: the comprehension functor of the discrete model is
-`embed ⋙ᵥ compr`, so the comprehension functors commute on the nose. -/
-def embedComprehensionMap : StrictComprehensionMap (𝟭 Cat.{u, u}) ISet.{u} ICat.{u} where
-  toPre.toDispFunctor := embed.toDispFunctor
-  toPre.isCartesianMap := embed.isCartesianMap
+/-- **Forgetting the discreteness is a strict map of comprehension categories** from the discrete
+model to the category model, over the identity of `Cat`: the comprehension functor of the discrete
+model is `IDisc.forget ⋙ᵥ compr`, so the comprehension functors commute on the nose. -/
+def forgetComprehensionMap : StrictComprehensionMap (𝟭 Cat.{u, u}) IDisc.{u} ICat.{u} where
+  toPre.toDispFunctor := IDisc.forget.toDispFunctor
+  toPre.isCartesianMap := IDisc.forget.isCartesianMap
   toPre.compr_obj _ := rfl
   compr_map _ := rfl
 

@@ -19,16 +19,17 @@ Comprehension categories as displayed categories, their type formers, and models
 * `Map`: maps of comprehension categories over a functor of the bases, with a comparison
   `F.obj (Γ ▹ A) ⟶ F.obj Γ ▹ M.obj A`, and their pseudo and strict versions.
 * `TypeFormers/`: what it means to have a (strict) type former.
-  * `Sigma`: Σ-types `Σ[A] B`, with `Γ ▹ A ▹ B ≅ Γ ▹ Σ[A] B`.
+  * `Sigma`: Σ-types `Σ[A] B`, with `Γ ▹ A ▹ B ≅ Γ ▹ Σ[A] B`, and their strict preservation by
+    strict maps (`StrictComprehensionMap.PreservesSigma`).
   * `Op`: opposite types `Aᵒᵖ`, with `(Aᵒᵖ)ᵒᵖ = A`.
   * `Hom`: Hom-types `Hom[A]` in context `Γ ▹ Aᵒᵖ ▹ A⦃𝐩 Aᵒᵖ⦄`, with `Hom[A]ᵒᵖ = Hom[A]`.
 * `Model/`: comprehension categories, one folder each, with a `Readme.lean`. Their
   `TypeFormers/` folders mirror the one above.
   * `Cat/`: the category model `ICat` over `Cat`, with Σ-types, opposite types and Hom-types.
   * `Codomain/`: `cod C`, for a category with chosen pullbacks.
-  * `Discrete/`: the discrete model `ISet` over `Cat`, whose types are functors into `Type u`,
-    with the comprehension of the category model along the embedding of sets as discrete
-    categories, which is a strict map of comprehension categories.
+  * `Discrete/`: the discrete model `IDisc` over `Cat`, whose types are functors into discrete
+    categories: the full sub-comprehension category of the category model on them, with its
+    Σ-types, which the inclusion preserves strictly.
   * `Displayed/`: the displayed category model `LaxNormalCat` over `Cat`, whose types are the
     lax normal functors into profunctors, with the equivalence `LaxNormalCat ≃ cod Cat` as
     comprehension functor: a split replacement of `cod Cat`, with Σ-types.
