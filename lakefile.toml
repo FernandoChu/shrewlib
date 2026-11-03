@@ -1,12 +1,13 @@
-name = "Rewrite"
-defaultTargets = ["Rewrite"]
+name = "ShrewLib"
+defaultTargets = ["ShrewLib"]
 
 [[require]]
 name = "mathlib"
-path = "mathlib4"
+scope = "leanprover-community"
+rev = "v4.36.0-rc2"
 
 [[lean_lib]]
-name = "Rewrite"
+name = "ShrewLib"
 srcDir = "src"
 globs = ["Rules.+", "Examples.+", "Profunctor", "TwoCategory.+", "DoubleCategory.+", "Displayed.+", "ComprehensionCategory.+", "DoubleDisplayed.+", "Tactic.+"]
 leanOptions = { pp.unicode.fun = true, relaxedAutoImplicit = false, weak.linter.mathlibStandardSet = true, maxSynthPendingDepth = 3 }
