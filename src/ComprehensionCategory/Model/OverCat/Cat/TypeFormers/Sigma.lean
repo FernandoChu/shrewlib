@@ -1,4 +1,4 @@
-import ComprehensionCategory.Model.Cat.Basic
+import ComprehensionCategory.Model.OverCat.Cat.Basic
 import ComprehensionCategory.TypeFormers.Sigma
 import Displayed.Opfibration.Sigma
 import Displayed.Opfibration.Straightening.Equivalence

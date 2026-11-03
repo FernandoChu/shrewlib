@@ -22,7 +22,7 @@ variable {A : Cat.{u, u}} (X : DiscOpfibOb A)
 
 /-- **The straightening of a discrete opfibration** `X`: its fibres, with the pushforward
 functors. -/
-def straightenObj : IDiscOb A where
+def straightenObj : IDiscOb.{u} A where
   toFunctor := Opfibration.Straightening.straightenObj (DiscOpfibCat.forget.obj X)
   isDiscrete := X.isDiscrete
 

@@ -36,7 +36,7 @@ theorem isDiscrete_unstraighten {A : Cat.{u, u}} (F : A ⥤ Cat.{u, u}) [∀ a, 
 
 /-- **The unstraightening of a functor into discrete categories**, a discrete opfibration: its
 unstraightening as a functor into `Cat`. -/
-def unstraightenObj {A : Cat.{u, u}} (X : IDiscOb A) : DiscOpfibOb A where
+def unstraightenObj {A : Cat.{u, u}} (X : IDiscOb.{u} A) : DiscOpfibOb A where
   toDisplayed := ∫ X.toFunctor
   splitOpfib := unstraightenSplitOpfib X.toFunctor
   isDiscrete := @isDiscrete_unstraighten _ X.toFunctor X.isDiscrete

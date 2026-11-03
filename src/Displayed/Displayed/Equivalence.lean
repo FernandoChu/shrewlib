@@ -22,7 +22,7 @@ The induced equivalence of total categories is `VertEquivalence.total` in
 `Displayed/Fibration/` and `Displayed/Opfibration/`.
 -/
 
-universe v₁ u₁ v₂ u₂ v₃ u₃
+universe v₁ u₁ v₂ u₂ v₃ u₃ v₄ u₄
 
 open CategoryTheory
 
@@ -69,7 +69,7 @@ theorem map_injective (hF : F.FullyFaithful) {a a' : A} {f : a ⟶ a'} {x : D.Ob
   (hF.preimage_map φ).symm.trans ((congrArg hF.preimage h).trans (hF.preimage_map φ'))
 
 /-- The composite of fully faithful vertical functors is fully faithful. -/
-def comp {E' : Displayed.{v₁, u₁, v₂, u₂} A} {G : VertFunctor E E'} (hF : F.FullyFaithful)
+def comp {E' : Displayed.{v₁, u₁, v₄, u₄} A} {G : VertFunctor E E'} (hF : F.FullyFaithful)
     (hG : G.FullyFaithful) : (F ⋙ᵥ G).FullyFaithful where
   preimage ψ := hF.preimage (hG.preimage ψ)
   map_preimage ψ := (congrArg G.map (hF.map_preimage _)).trans (hG.map_preimage ψ)

@@ -11,12 +11,14 @@ Mathlib's `IsDiscrete`. Functions give functors between them (`discreteMap'`).
 
 Unlike Mathlib's `Discrete S`, the objects are the elements of `S` themselves, and the morphisms are
 not the structure `Discrete.Hom s t`: `(t = s) = (s = t)` holds by `propext`, so that `discrete' S`
-is its own opposite (`opFunctor'_obj_discrete'`, in `ComprehensionCategory/Model/Cat/OpFunctor`).
-Its morphisms are subsingletons, and any two of them with the same type are definitionally equal,
-by eta for `ULift` and `PLift` and proof irrelevance.
+is its own opposite (`opFunctor'_obj_discrete'`, in
+`ComprehensionCategory/Model/OverCat/Discrete/OpFunctor`). Its morphisms are subsingletons, and any
+two of them with the same type are definitionally equal, by eta for `ULift` and `PLift` and proof
+irrelevance.
 
 This file imports no rewrite rules, and must not, for the reason given in
-`ComprehensionCategory/Model/Cat/OpFunctor`: the laws of `discreteCategory'` could not be checked.
+`ComprehensionCategory/Model/OverCat/Cat/OpFunctor`: the laws of `discreteCategory'` could not be
+checked.
 -/
 
 universe u

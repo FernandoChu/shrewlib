@@ -40,7 +40,9 @@ Scoped in `Displayed`, so as to read as on paper:
 
 * `D.Ty Γ`, the types in context `Γ` (an abbreviation of `D.Ob Γ`);
 * `Γ ▹ A` for the extended context `D.ext A`, which is left associative: `Γ ▹ A ▹ B`;
-* `A⦃σ⦄` for the substitution `D.pull σ A` of `A` along `σ : Δ ⟶ Γ`;
+* `A⦃σ⦄` for the substitution `D.pull σ A` of `A` along `σ : Δ ⟶ Γ`, which is also the
+  substitution `t.pull σ` of a term `t` (`ComprehensionCategory/Term`), told apart by the type of
+  the substituted expression, which is elaborated first;
 * `𝐩 A` for the projection `D.proj A : Γ ▹ A ⟶ Γ`;
 * `𝐪(σ, A)` for `D.q σ A : Δ ▹ A⦃σ⦄ ⟶ Γ ▹ A`.
 
@@ -158,10 +160,29 @@ end Comprehension
 /-- `Γ ▹ A` is the extension `D.ext A` of the context `Γ` by the type `A`. -/
 scoped notation:65 Γ:65 " ▹ " A:66 => Displayed.ext _ (a := Γ) A
 
-/-- `A⦃σ⦄` is the substitution `D.pull σ A` of the type `A` along `σ`. -/
-scoped syntax:max term:max noWs "⦃" term "⦄" : term
+/-- `A⦃σ⦄` is the substitution `D.pull σ A` of the type `A` along `σ`, and `t⦃σ⦄` the
+substitution `t.pull σ` of the term `t : Tm(Γ, A)` (`ComprehensionCategory/Term`). -/
+scoped syntax:max (name := substStx) term:max noWs "⦃" term "⦄" : term
 
-scoped macro_rules | `($A⦃$σ⦄) => `(Displayed.pull _ $σ $A)
+open Lean Elab Term Meta in
+/-- Elaborates `x⦃σ⦄`: `x` is elaborated first, without expected type, and `x⦃σ⦄` is the
+substitution of a term, `Displayed.Tm.pull σ x`, if the type of `x` is `Tm(Γ, A)`, and that of a
+type, `Displayed.pull _ σ x`, otherwise. -/
+@[scoped term_elab substStx]
+def elabSubst : TermElab := fun stx expectedType? => do
+  match stx with
+  | `($x⦃$σ⦄) =>
+    let e ← elabTerm x none
+    let ty ← whnfR (← instantiateMVars (← inferType e))
+    if ty.getAppFn.isMVar then
+      tryPostpone
+    let x' ← exprToSyntax e
+    if ty.isAppOf `Displayed.Tm then
+      -- `Displayed.Tm.pull` is declared in `ComprehensionCategory/Term`, after this file.
+      elabTerm (← `($(mkCIdent `Displayed.Tm.pull) $σ $x')) expectedType?
+    else
+      elabTerm (← `(Displayed.pull _ $σ $x')) expectedType?
+  | _ => throwUnsupportedSyntax
 
 /-- `𝐩 A` is the projection `D.proj A : Γ ▹ A ⟶ Γ`. -/
 scoped notation:max "𝐩 " A:max => Displayed.proj _ A

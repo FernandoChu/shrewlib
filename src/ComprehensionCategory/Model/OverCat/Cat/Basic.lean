@@ -1,5 +1,5 @@
 import Displayed.CodCatEquiv.Fibration
-import ComprehensionCategory.Model.Cat.Extension
+import ComprehensionCategory.Model.OverCat.Cat.Extension
 import Displayed.Opfibration.SplitOpfibCat
 import ComprehensionCategory.Basic
 

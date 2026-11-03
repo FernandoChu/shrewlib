@@ -51,7 +51,7 @@ end Counit
 
 /-- Straightening undoes unstraightening on the nose: the fibres of `∫ X` are the values of `X`,
 and its pushforwards are those of `X`. -/
-theorem straightenObj_unstraightenObj {A : Cat.{u, u}} (X : IDiscOb A) :
+theorem straightenObj_unstraightenObj {A : Cat.{u, u}} (X : IDiscOb.{u} A) :
     straightenObj (unstraightenObj X) = X :=
   rfl
 

@@ -1,4 +1,4 @@
-import ComprehensionCategory.Model.Displayed.Basic
+import ComprehensionCategory.Model.OverCat.Displayed.Basic
 import ComprehensionCategory.TypeFormers.Sigma
 import Displayed.Displayed.Sigma
 import Tactic.KernelTactic

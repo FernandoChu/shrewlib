@@ -1,5 +1,5 @@
-import ComprehensionCategory.Model.Displayed.Basic
-import ComprehensionCategory.Model.Displayed.TypeFormers.Sigma
+import ComprehensionCategory.Model.OverCat.Displayed.Basic
+import ComprehensionCategory.Model.OverCat.Displayed.TypeFormers.Sigma
 
 /-!
 # The displayed category model

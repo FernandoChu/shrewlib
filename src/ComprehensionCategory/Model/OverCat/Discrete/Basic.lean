@@ -1,5 +1,4 @@
-import ComprehensionCategory.Map
-import ComprehensionCategory.Model.Cat.Basic
+import ComprehensionCategory.Model.OverCat.Cat.Basic
 import Displayed.Discrete.Straightening.IDisc
 
 /-!
@@ -19,8 +18,8 @@ context `Γ ▹ A` is that of the category model, `Γ ⋉ A`: its objects are pa
 
 Forgetting the discreteness is fully faithful, so the discrete model is a full split comprehension
 category. It is a strict map of comprehension categories from the discrete model to the category
-model (`forgetComprehensionMap`), since the comprehension functor of the discrete model is
-`IDisc.forget ⋙ᵥ compr` by definition: both axioms hold by `rfl`.
+model, since the comprehension functor of the discrete model is `IDisc.forget ⋙ᵥ compr` by
+definition (`OverCat/Maps/DiscreteToCat`).
 
 ## Why not functors into sets
 
@@ -51,7 +50,8 @@ The same happens for every type former: each has to be built anew for the functo
 is related to that of the category model only up to isomorphism. The functors into discrete
 categories keep their category structure, and discreteness is a proposition, so it is never
 compared: a type former of the category model that preserves discreteness is one of the discrete
-model, which `IDisc.forget` preserves by `rfl`. This is the case for Σ-types (`TypeFormers/Sigma`).
+model, which `IDisc.forget` preserves by `rfl`. This is the case for Σ-types (`TypeFormers/Sigma`)
+and opposite types (`TypeFormers/Op`).
 -/
 
 universe u
@@ -77,14 +77,5 @@ instance splitComprehension : SplitComprehension IDisc.{u} where
 @[instance_reducible]
 instance fullComprehension : FullComprehension IDisc.{u} where
   comprFullyFaithful := IDisc.forgetFullyFaithful.comp comprFullyFaithful
-
-/-- **Forgetting the discreteness is a strict map of comprehension categories** from the discrete
-model to the category model, over the identity of `Cat`: the comprehension functor of the discrete
-model is `IDisc.forget ⋙ᵥ compr`, so the comprehension functors commute on the nose. -/
-def forgetComprehensionMap : StrictComprehensionMap (𝟭 Cat.{u, u}) IDisc.{u} ICat.{u} where
-  toPre.toDispFunctor := IDisc.forget.toDispFunctor
-  toPre.isCartesianMap := IDisc.forget.isCartesianMap
-  toPre.compr_obj _ := rfl
-  compr_map _ := rfl
 
 end ComprehensionCategory.DiscreteModel

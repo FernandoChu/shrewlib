@@ -1,5 +1,5 @@
-import ComprehensionCategory.Model.Discrete.Basic
-import ComprehensionCategory.Model.Cat.TypeFormers.Sigma
+import ComprehensionCategory.Model.OverCat.Discrete.Basic
+import ComprehensionCategory.Model.OverCat.Cat.TypeFormers.Sigma
 import Displayed.Discrete.Sigma
 import Displayed.Discrete.Straightening.Unstraighten
 
@@ -13,10 +13,9 @@ discrete (`isDiscrete_unstraighten`), so its fibres are discrete too (`isDiscret
 takes values in discrete categories (`isDiscrete_sigma`). The pairing is that of the category
 model, and so are all the laws.
 
-So **forgetting the discreteness preserves Σ-types strictly**
-(`forgetComprehensionMap_preservesSigma`), with both clauses by `rfl`: the Σ-type of the discrete
-model is that of the category model with a proof of discreteness, and the pairing is the same
-morphism.
+So forgetting the discreteness preserves Σ-types strictly, by `rfl` (`OverCat/Maps/DiscreteToCat`):
+the Σ-type of the discrete model is that of the category model with a proof of discreteness, and
+the pairing is the same morphism.
 
 With the functors into sets as types, this fails (`Basic`): their Σ-type is the set of objects of
 the same fibre, and the embedding into the category model sends it to the discrete category on
@@ -63,11 +62,5 @@ instance hasSigma : HasSigma IDisc.{u} where
   unpair_pair A B := HasSigma.unpair_pair (D := ICat.{u}) A.toFunctor B.toFunctor
   pair_proj A B := HasSigma.pair_proj (D := ICat.{u}) A.toFunctor B.toFunctor
   pair_q σ A B := HasSigma.pair_q (D := ICat.{u}) σ A.toFunctor B.toFunctor
-
-/-- **Forgetting the discreteness preserves Σ-types strictly**: the Σ-types and the pairings of the
-discrete model are those of the category model. -/
-theorem forgetComprehensionMap_preservesSigma : forgetComprehensionMap.{u}.PreservesSigma where
-  obj_sigma _ _ := rfl
-  map_pair _ _ := HEq.rfl
 
 end ComprehensionCategory.DiscreteModel
