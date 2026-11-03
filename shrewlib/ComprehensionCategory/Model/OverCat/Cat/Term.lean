@@ -8,7 +8,8 @@ A term `t : Tm(Γ, A)` of a type `A : Γ ⥤ Cat` is a section of the projection
 term `tmMk obj map _ _` is the section `γ ↦ (γ, obj γ)`, from values `obj γ : A γ` and transports
 `map f : A f (obj γ) ⟶ obj γ'`, compatible with identities and composites; its equation
 `sec ≫ 𝐩 A = 𝟙 Γ` holds by `rfl`. Every term is of this form, but only propositionally: the
-first component of `t.sec γ` is `γ` by `t.sec_proj`.
+first component of `t.sec γ` is `γ` by `t.sec_proj`. The variable `var A : Tm(Γ ▹ A, A⦃𝐩 A⦄)` is
+`(γ, a) ↦ a`, and its section is the diagonal `diag A : Γ ▹ A ⟶ Γ ▹ A ▹ A⦃𝐩 A⦄`.
 
 For the constant type `constTy Γ K` at a category `K`, whose transports are identities, the values
 do not depend on these first components: the terms are the functors `Γ ⥤ K` (`Tm.constEquiv`). A
@@ -42,6 +43,15 @@ def tmMk {A : ICatLax.{u}.Ty Γ} (obj : ∀ γ : Γ, A.obj γ)
       map_id γ := congrArg ((∫ A).totalMk (𝟙 γ)) (map_id γ)
       map_comp f g := congrArg ((∫ A).totalMk (f ≫ g)) (map_comp f g) }).toCatHom
   sec_proj := rfl
+
+/-- **The variable of `A`**: the term of `A⦃𝐩 A⦄` in context `Γ ▹ A`, `(γ, a) ↦ a`. -/
+def var (A : ICatLax.{u}.Ty Γ) : Tm(Γ ▹ A, A⦃𝐩 A⦄) :=
+  tmMk (A := A⦃𝐩 A⦄) (fun x => x.2) (fun f => f.fiber) (fun _ => rfl) fun _ _ => rfl
+
+/-- **The diagonal** `Γ ▹ A ⟶ Γ ▹ A ▹ A⦃𝐩 A⦄`, `(γ, a) ↦ ((γ, a), a)`: the section of the
+variable of `A`. -/
+def diag (A : ICatLax.{u}.Ty Γ) : Γ ▹ A ⟶ Γ ▹ A ▹ A⦃𝐩 A⦄ :=
+  (var A).sec
 
 /-! ## Terms of constant types -/
 

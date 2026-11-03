@@ -1,4 +1,5 @@
 import DoubleDisplayed.Basic
+import Displayed.Displayed.Total
 
 /-!
 # The total construction
@@ -9,6 +10,10 @@ over `a` are dependent pairs `⟨b, c⟩` with `b : B.Ob a` and `c : C.Ob b`, an
 dependent pairs of a `B`-morphism and a `C`-morphism over it. Its laws are componentwise those of
 `B` and `C`, which hold definitionally. Its total category is the "associated category" of the
 chain.
+
+Conversely, `C.uncurry : Displayed B.Total` is `C` as a category displayed over the total category
+of `B`, the uncurried form of the chain: its objects over `⟨a, b⟩` are those of `C` over `b`, and
+its morphisms over `⟨f, g⟩` those of `C` over `g`. Its laws are those of `C`.
 -/
 
 universe v₁ u₁ v₂ u₂ v₃ u₃
@@ -55,5 +60,16 @@ theorem total_Ob (a : A) : C.total.Ob a = Σ b : B.Ob a, C.Ob b := rfl
 @[simp] theorem total_comp_fiber {a a' a'' : A} {f : a ⟶ a'} {g : a' ⟶ a''}
     {x : C.total.Ob a} {y : C.total.Ob a'} {z : C.total.Ob a''} (F : x ⟶[f] y) (G : y ⟶[g] z) :
     (F ≫ᵈ G).fiber = F.fiber ≫ᵈᵈ G.fiber := rfl
+
+/-- **`C` as a category displayed over the total category of `B`**: objects over `⟨a, b⟩` are the
+objects of `C` over `b`, and morphisms over `⟨f, g⟩` the morphisms of `C` over `g`. -/
+def uncurry : Displayed.{max v₁ v₂, max u₁ u₂, v₃, u₃} B.Total where
+  Ob x := C.Ob x.2
+  Hom F c c' := C.Hom F.fiber c c'
+  id c := C.id c
+  comp θ θ' := C.comp θ θ'
+  id_comp _ := rfl
+  comp_id _ := rfl
+  assoc _ _ _ := rfl
 
 end DoubleDisplayed

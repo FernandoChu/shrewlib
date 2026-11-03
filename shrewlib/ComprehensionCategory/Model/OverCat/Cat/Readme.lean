@@ -24,8 +24,9 @@ The files give its ingredients:
 * `Basic`: the comprehension functor `compr : ICatLax ⟶ cod Cat`, the unstraightening followed by
   forgetting the opcleavage and taking total categories, which sends the chosen lifts to pullbacks
   and is fully faithful, so that `ICatLax` is a full split comprehension category.
-* `Term`: terms `Tm(Γ, A)` from values `γ ↦ A γ` and transports (`tmMk`); the constant types
-  `constTy Γ K`, whose terms are the functors `Γ ⥤ K` (`Tm.constEquiv`), naturally in `Γ`.
+* `Term`: terms `Tm(Γ, A)` from values `γ ↦ A γ` and transports (`tmMk`); the variable
+  `var A : Tm(Γ ▹ A, A⦃𝐩 A⦄)` and the diagonal `diag A`; the constant types `constTy Γ K`, whose
+  terms are the functors `Γ ⥤ K` (`Tm.constEquiv`), naturally in `Γ`.
 * `TypeFormers/Sigma`: Σ-types, whose pairing is the inverse of the counit of
   straightening–unstraightening at the composite.
 * `OpFunctor`: the opposite functor `opFunctor' : Cat ⥤ Cat`, involutive on the nose, by taking

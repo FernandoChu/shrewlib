@@ -23,7 +23,9 @@ Three full split comprehension categories over `Cat`, one folder each, with a `R
 Two more folders relate them:
 
 * `Shared/`: type formers relating the models: the Hom-types of the category model are types of
-  the discrete model, and the category model has a Coquand-style universe of the discrete types.
+  the discrete model, the category model has a Coquand-style universe of the discrete types, and
+  the twist of a type of the category model, contravariant in its last variable, is a type of the
+  displayed model, covariant in it, which gives the twisted Hom-types and their term `refl`.
 * `Maps/`: maps of comprehension categories between the models, and their preservation of type
   formers: forgetting the discreteness is a strict map from the discrete model to the category
   model, preserving Σ-types and opposite types, and the lifts of the types of a lower level into the

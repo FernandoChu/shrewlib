@@ -1,4 +1,5 @@
 import ComprehensionCategory.Model.OverCat.Displayed.Basic
+import ComprehensionCategory.Model.OverCat.Displayed.Term
 import ComprehensionCategory.Model.OverCat.Displayed.TypeFormers.Sigma
 
 /-!
@@ -14,6 +15,9 @@ composite of the unstraightenings of `F` and `G`.
 
 * `Basic`: the comprehension functor `unstraighten ⋙ᵥ DisplayedCat.total`, which preserves cartesian
   morphisms and is fully faithful, as a composite of equivalences.
+* `Term`: terms of the type `straightenObj D` of a displayed category `D`, from objects of `D` and
+  morphisms of `D` between them (`tmMk`); the substitution of `straightenObj D` is the straightening
+  of the reindexing of `D`, by `rfl`.
 * `TypeFormers/Sigma`: Σ-types, whose pairing reassociates the pairs, since unstraightening undoes
   straightening on the nose.
 -/

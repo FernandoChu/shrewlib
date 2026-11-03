@@ -71,6 +71,12 @@ instance unstraightenSplitOpfib (F : A ⥤ Cat.{v, u}) : SplitOpfib (∫ F) wher
   olift_id _ := rfl
   olift_comp _ _ _ := rfl
 
+/-- The unstraightening of an object of `ICatLax` is a split opfibration. The instance
+`unstraightenSplitOpfib` does not apply to it, since `ICatLax.Ob A` is not reducibly `A ⥤ Cat`. -/
+instance ICatLax.splitOpfib {A : Cat.{u, u}} (F : ICatLax.Ob A) :
+    SplitOpfib (∫ (F : A ⥤ Cat.{u, u})) :=
+  unstraightenSplitOpfib F
+
 /-- Transport in `∫ F` along `f` is `F f`, as a rule, so that the straightening of
 `∫ F` is `F` on the nose. -/
 @[rewrite_rule]
