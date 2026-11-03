@@ -15,10 +15,10 @@ With the functor laws as rules, `G (𝟙 a) y` is `y` and `G (f ≫ g) y` is `G 
 and composition laws of the 2-cells, which are rules too, are plain equations.
 
 The category of indexed categories and lax transformations is
-displayed over `Cat` (`ICat`): an object over `A` is a functor `A ⥤ Cat`, and a morphism over
+displayed over `Cat` (`ICatLax`): an object over `A` is a functor `A ⥤ Cat`, and a morphism over
 `u : A ⟶ B` from `F` to `G` is a lax transformation `LaxTrans F (u ⋙ G)`. Its laws hold by
-`rfl`. Reindexing `ICat.pull u G = u ⋙ G` and the identity transformations make it a split fibration
-over `Cat`, whose splitting laws hold by `rfl`.
+`rfl`. Reindexing `ICatLax.pull u G = u ⋙ G` and the identity transformations make it a split
+fibration over `Cat`, whose splitting laws hold by `rfl`.
 -/
 
 universe v₁ u₁ v₂ u₂ v u
@@ -113,7 +113,7 @@ end LaxTrans
 functor `A ⥤ Cat`, and a morphism over `u : A ⟶ B` from `F` to `G` is a lax transformation
 `LaxTrans F (u ⋙ G)`. Composition restricts the second transformation along the first base
 functor. -/
-def ICat : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
+def ICatLax : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
   Ob A := A ⥤ Cat.{u, u}
   Hom u F G := LaxTrans F (u.toFunctor ⋙ G)
   id F := LaxTrans.id F
@@ -124,14 +124,14 @@ def ICat : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
   -- structure, so we go through `ext'`.
   assoc _ _ _ := LaxTrans.ext' (fun _ _ => rfl) (fun _ _ _ _ => HEq.rfl) (fun _ _ => HEq.rfl)
 
-namespace ICat
+namespace ICatLax
 
 /-- Reindexing `pull u G = u ⋙ G` of `G : B ⥤ Cat` along `u : A ⟶ B`. -/
 def pull {A B : Cat.{u, u}} (u : A ⟶ B) (G : B ⥤ Cat.{u, u}) : A ⥤ Cat.{u, u} :=
   u.toFunctor ⋙ G
 
 /-- The cartesian lift `pull u G ⟶[u] G`: the identity transformation. -/
-def clift {A B : Cat.{u, u}} (u : A ⟶ B) (G : B ⥤ Cat.{u, u}) : ICat.Hom u (pull u G) G :=
+def clift {A B : Cat.{u, u}} (u : A ⟶ B) (G : B ⥤ Cat.{u, u}) : ICatLax.Hom u (pull u G) G :=
   LaxTrans.id (u.toFunctor ⋙ G)
 
 /-- The chosen lift is cartesian: a transformation over `g ≫ u` is its own factorization. -/
@@ -141,18 +141,18 @@ def isCartesianClift {A B : Cat.{u, u}} (u : A ⟶ B) (G : B ⥤ Cat.{u, u}) :
   lift_fac _ _ _ := rfl
   lift_uniq _ hψ := hψ
 
-end ICat
+end ICatLax
 
-/-- **`ICat` is a split fibration over `Cat`**, cloven by reindexing `ICat.pull u G = u ⋙ G`, with
-the identity transformations as chosen lifts. -/
-instance ICat.preSplitFib : PreSplitFib ICat.{u} where
-  pull u G := ICat.pull u G
-  clift u G := ICat.clift u G
-  isCartesianClift u G := ICat.isCartesianClift u G
+/-- **`ICatLax` is a split fibration over `Cat`**, cloven by reindexing `ICatLax.pull u G = u ⋙ G`,
+with the identity transformations as chosen lifts. -/
+instance ICatLax.preSplitFib : PreSplitFib ICatLax.{u} where
+  pull u G := ICatLax.pull u G
+  clift u G := ICatLax.clift u G
+  isCartesianClift u G := ICatLax.isCartesianClift u G
   pull_id _ := rfl
   pull_comp _ _ _ := rfl
 
-instance ICat.splitFib : SplitFib ICat.{u} where
+instance ICatLax.splitFib : SplitFib ICatLax.{u} where
   clift_id _ := rfl
   clift_comp _ _ _ := rfl
 

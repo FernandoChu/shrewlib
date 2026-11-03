@@ -38,14 +38,14 @@ variable {Γ : Cat.{u, u}} (A : IDisc.{u}.Ty Γ) (B : IDisc.{u}.Ty (Γ ▹ A))
 discrete categories**: `(Σ[A] B) γ` is the fibre over `γ` of the composite of the unstraightenings
 of `A` and `B`, whose fibres are discrete. -/
 theorem isDiscrete_sigma (γ : Γ) :
-    IsDiscrete ((ICat.{u}.sigma A.toFunctor B.toFunctor).obj γ) :=
+    IsDiscrete ((ICatLax.{u}.sigma A.toFunctor B.toFunctor).obj γ) :=
   @isDiscrete_sigmaDisp _ _ (∫ A.toFunctor) (∫ B.toFunctor)
     (@isDiscrete_unstraighten _ A.toFunctor A.isDiscrete)
     (@isDiscrete_unstraighten _ B.toFunctor B.isDiscrete) γ
 
 /-- The Σ-type of the discrete model: that of the category model. -/
 def sigma : IDisc.{u}.Ty Γ where
-  toFunctor := ICat.{u}.sigma A.toFunctor B.toFunctor
+  toFunctor := ICatLax.{u}.sigma A.toFunctor B.toFunctor
   isDiscrete := isDiscrete_sigma A B
 
 /-- The Σ-types of the discrete model, stable under substitution since those of the category model
@@ -56,11 +56,11 @@ instance preSigma : PreSigma IDisc.{u} where
 
 /-- **The discrete model has Σ-types**, with the pairings of the category model. -/
 instance hasSigma : HasSigma IDisc.{u} where
-  pair A B := HasSigma.pair (D := ICat.{u}) A.toFunctor B.toFunctor
-  unpair A B := HasSigma.unpair (D := ICat.{u}) A.toFunctor B.toFunctor
-  pair_unpair A B := HasSigma.pair_unpair (D := ICat.{u}) A.toFunctor B.toFunctor
-  unpair_pair A B := HasSigma.unpair_pair (D := ICat.{u}) A.toFunctor B.toFunctor
-  pair_proj A B := HasSigma.pair_proj (D := ICat.{u}) A.toFunctor B.toFunctor
-  pair_q σ A B := HasSigma.pair_q (D := ICat.{u}) σ A.toFunctor B.toFunctor
+  pair A B := HasSigma.pair (D := ICatLax.{u}) A.toFunctor B.toFunctor
+  unpair A B := HasSigma.unpair (D := ICatLax.{u}) A.toFunctor B.toFunctor
+  pair_unpair A B := HasSigma.pair_unpair (D := ICatLax.{u}) A.toFunctor B.toFunctor
+  unpair_pair A B := HasSigma.unpair_pair (D := ICatLax.{u}) A.toFunctor B.toFunctor
+  pair_proj A B := HasSigma.pair_proj (D := ICatLax.{u}) A.toFunctor B.toFunctor
+  pair_q σ A B := HasSigma.pair_q (D := ICatLax.{u}) σ A.toFunctor B.toFunctor
 
 end ComprehensionCategory.DiscreteModel

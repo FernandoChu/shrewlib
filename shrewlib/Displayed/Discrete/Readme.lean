@@ -10,7 +10,7 @@ import Displayed.Discrete.Straightening.Readme
   and functions between them as functors. It imports no rewrite rules.
 * `Basic`: discrete opfibrations (`DiscOpfibOb`), split opfibrations whose fibres are discrete
   categories, and the category `DiscOpfibCat` of them displayed over `Cat`, with a fully faithful
-  functor forgetting the discreteness into `SplitOpfibCat`.
+  functor forgetting the discreteness into `SplitOpfibLax`.
 * `Sigma`: discrete opfibrations compose, as split opfibrations with discrete fibres.
 * `Straightening/`: functors `A ⥤ Cat` into discrete categories and their unstraightenings, an
   equivalence with the discrete opfibrations over `Cat` (see its `Readme.lean`).

@@ -6,10 +6,10 @@ import Displayed.Discrete.Straightening.IDisc
 
 The *discrete model* is the comprehension category `IDisc` over `Cat`
 (`Displayed/Discrete/Straightening/IDisc`) whose types in context `Γ` are the functors `Γ ⥤ Cat`
-into discrete categories, and whose morphisms are those of the category model `ICat`: it is the
+into discrete categories, and whose morphisms are those of the category model `ICatLax`: it is the
 full sub-comprehension category of the category model on these types.
 
-Its comprehension is that of the category model, along the functor `IDisc.forget : IDisc ⟶ ICat`
+Its comprehension is that of the category model, along the functor `IDisc.forget : IDisc ⟶ ICatLax`
 forgetting the discreteness, which preserves the chosen lifts on the nose, so the comprehension
 functor `IDisc.forget ⋙ᵥ compr` preserves cartesian morphisms (`Comprehension.comap`). The extended
 context `Γ ▹ A` is that of the category model, `Γ ⋉ A`: its objects are pairs `(γ, x)` with

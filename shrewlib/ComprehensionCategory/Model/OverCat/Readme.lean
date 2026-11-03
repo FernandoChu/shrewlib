@@ -9,7 +9,7 @@ import ComprehensionCategory.Model.OverCat.Shared.Readme
 
 Three full split comprehension categories over `Cat`, one folder each, with a `Readme.lean`:
 
-* `Cat/`: the category model `ICat`, whose types in context `Γ` are the functors `Γ ⥤ Cat`, and
+* `Cat/`: the category model `ICatLax`, whose types in context `Γ` are the functors `Γ ⥤ Cat`, and
   whose context extension `Γ ▹ A` is the total category of the unstraightening of `A`. It has
   Σ-types, opposite types, and a Coquand-style universe of the types of a lower level, the
   functors into smaller categories, which form a comprehension category `SmallICat`.

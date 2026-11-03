@@ -4,13 +4,13 @@ import Displayed.Displayed.DisplayedCat
 /-!
 # The category of split fibrations
 
-The split fibrations form a category displayed over `Cat` (`SplitFibCat`): an object over `A` is a
+The split fibrations form a category displayed over `Cat` (`SplitFibLax`): an object over `A` is a
 displayed category over `A` with a `SplitFib` structure (`SplitFibOb`), and a morphism over
 `u : A ⟶ B` is any displayed functor over `u` (`DispFunctor`), which need not preserve the chosen
 lifts. Its laws hold by `rfl`. Forgetting the cleavage is a fully faithful vertical functor into
-the displayed categories, `SplitFibCat.forget : SplitFibCat ⟶ DisplayedCat`.
+the displayed categories, `SplitFibLax.forget : SplitFibLax ⟶ DisplayedCat`.
 
-This is the dual of `Opfibration/SplitFibCat.lean`, and is not in `Basic.lean` for the same
+This is the dual of `Opfibration/SplitFibLax.lean`, and is not in `Basic.lean` for the same
 reason: displayed functors over a functor need the functor laws as rules (`Rules.Functor`), which
 should not reach every file using fibrations.
 -/
@@ -35,7 +35,7 @@ attribute [instance] SplitFibOb.splitFib
 /-- The split fibrations, displayed over `Cat`: an object over `A` is a split fibration over
 `A`, and a morphism over `u` is a displayed functor over `u`, with no condition on the
 cleavages. -/
-def SplitFibCat : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
+def SplitFibLax : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
   Ob A := SplitFibOb A
   Hom u X Y := DispFunctor u.toFunctor X.toDisplayed Y.toDisplayed
   id X := DispFunctor.id X.toDisplayed
@@ -45,14 +45,14 @@ def SplitFibCat : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
   assoc _ _ _ := rfl
 
 /-- The vertical functor forgetting the split cleavage. -/
-def SplitFibCat.forget : VertFunctor SplitFibCat.{u} DisplayedCat.{u} where
+def SplitFibLax.forget : VertFunctor SplitFibLax.{u} DisplayedCat.{u} where
   obj X := X.toDisplayed
   map H := H
   map_id _ := rfl
   map_comp _ _ := rfl
 
 /-- Forgetting the split cleavage is fully faithful, since the morphisms are the same. -/
-def SplitFibCat.forgetFullyFaithful : SplitFibCat.forget.{u}.FullyFaithful where
+def SplitFibLax.forgetFullyFaithful : SplitFibLax.forget.{u}.FullyFaithful where
   preimage H := H
   map_preimage _ := rfl
   preimage_map _ := rfl

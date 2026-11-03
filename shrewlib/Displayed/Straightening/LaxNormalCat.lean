@@ -11,7 +11,7 @@ import Displayed.Fibration.Basic
 (`Displayed/Displayed/DisplayedCat.lean`): by Bénabou's correspondence, a category displayed over
 `A` is a lax normal functor from `A` to the bicategory of profunctors, and the straightening
 equivalence `LaxNormalCat ≃ DisplayedCat` of this folder makes this precise. It plays the role that
-`ICat`, the functors into `Cat`, plays for (op)fibrations.
+`ICatLax`, the functors into `Cat`, plays for (op)fibrations.
 
 A lax normal functor `F : StrictlyUnitaryLaxFunctor (LocallyDiscrete C) ProfCat` gives, for each
 `f : c ⟶ c'`, a profunctor `prof F f : F.obj ⟨c⟩ ⇸ F.obj ⟨c'⟩`, and its composition

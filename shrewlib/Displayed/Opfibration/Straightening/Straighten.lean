@@ -1,4 +1,4 @@
-import Displayed.Opfibration.SplitOpfibCat
+import Displayed.Opfibration.SplitOpfibLax
 
 /-!
 # Straightening split opfibrations

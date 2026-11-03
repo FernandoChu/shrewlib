@@ -24,7 +24,7 @@ open CategoryTheory Displayed Displayed.Opfibration.Straightening
 open scoped Displayed
 
 /-- The opposite type of `A : Γ ⥤ Cat`, pointwise: `A ⋙ opFunctor'`. -/
-def op {Γ : Cat.{u, u}} (A : ICat.{u}.Ty Γ) : ICat.{u}.Ty Γ :=
+def op {Γ : Cat.{u, u}} (A : ICatLax.{u}.Ty Γ) : ICatLax.{u}.Ty Γ :=
   A ⋙ opFunctor'
 
 /-- `Aᵒᵖ` is the opposite type `CatModel.op A`. -/
@@ -37,11 +37,11 @@ def unexpandOp : Lean.PrettyPrinter.Unexpander
   | _ => throw ()
 
 /-- **The opposite is involutive**, by `rfl`. -/
-theorem op_op {Γ : Cat.{u, u}} (A : ICat.{u}.Ty Γ) : (Aᵒᵖ)ᵒᵖ = A :=
+theorem op_op {Γ : Cat.{u, u}} (A : ICatLax.{u}.Ty Γ) : (Aᵒᵖ)ᵒᵖ = A :=
   rfl
 
 /-- **The opposite is stable under substitution**, by `rfl`. -/
-theorem pull_op {Δ Γ : Cat.{u, u}} (σ : Δ ⟶ Γ) (A : ICat.{u}.Ty Γ) : (Aᵒᵖ)⦃σ⦄ = A⦃σ⦄ᵒᵖ :=
+theorem pull_op {Δ Γ : Cat.{u, u}} (σ : Δ ⟶ Γ) (A : ICatLax.{u}.Ty Γ) : (Aᵒᵖ)⦃σ⦄ = A⦃σ⦄ᵒᵖ :=
   rfl
 
 end ComprehensionCategory.CatModel

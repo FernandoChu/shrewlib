@@ -28,16 +28,17 @@ open scoped Displayed
 /-! ## Main results -/
 
 /-- **Hom-op**: the Hom-type is its own opposite, as a rewrite rule. -/
-recall ComprehensionCategory.OverCat.op_hom {Γ : Cat.{u, u}} (A : ICat.{u}.Ty Γ) :
+recall ComprehensionCategory.OverCat.op_hom {Γ : Cat.{u, u}} (A : ICatLax.{u}.Ty Γ) :
     Hom[A]ᵒᵖ = Hom[A]
 
 /-- The Hom-types are stable under substitution. -/
-recall ComprehensionCategory.OverCat.pull_hom {Γ Δ : Cat.{u, u}} (σ : Δ ⟶ Γ) (A : ICat.{u}.Ty Γ) :
+recall ComprehensionCategory.OverCat.pull_hom {Γ Δ : Cat.{u, u}} (σ : Δ ⟶ Γ)
+    (A : ICatLax.{u}.Ty Γ) :
     Hom[A]⦃𝐪(𝐪(σ, Aᵒᵖ), A⦃𝐩 (Aᵒᵖ)⦄)⦄ = Hom[A⦃σ⦄]
 
 section
 
-variable {Γ : Cat.{u, u}} (A : ICat.{u}.Ty Γ)
+variable {Γ : Cat.{u, u}} (A : ICatLax.{u}.Ty Γ)
 
 /-- The Hom-type of a type of the category model is a type of the discrete model. -/
 example : IDisc.{u}.Ty (Γ ▹ Aᵒᵖ ▹ A⦃𝐩 (Aᵒᵖ)⦄) := Hom[A]

@@ -49,6 +49,23 @@ it up to date when a folder's content changes.
 - Commit messages name the mathematical content ("Opposite types: HasOp with (Aᵒᵖ)ᵒᵖ = A and
   stability as rules; the category model has them"), with a wrapped body if more is needed.
 
+## Categories of (op)fibrations
+
+The categories displayed over `Cat` of indexed categories and of (op)fibrations are named
+`⟨objects⟩⟨morphisms⟩`:
+
+- Objects: `ICat` (functors `A ⥤ Cat`), `ICatOp` (functors `Aᵒᵖ ⥤ Cat`), and `SplitOpfib`,
+  `SplitFib`, `Opfib`, `Fib` after the class of the displayed categories (split or only cloven).
+- Morphisms: `Lax` (any displayed functor; lax transformations), `Ps` (displayed functors
+  preserving (op)cartesian morphisms; pseudonatural transformations) or `Str` (displayed functors
+  sending chosen lifts to chosen lifts, `OpcartesianFunctor` and `CartesianFunctor`; strict
+  transformations). The two sides of a straightening theorem have the same suffix, as in
+  `straighteningEquivLax : VertEquivalence ICatLax SplitOpfibLax`.
+
+`DisplayedCat`/`LaxNormalCat` and `DiscOpfibCat`/`IDisc` have no suffix: their objects have no
+chosen lifts, or all functors between them preserve them. Prove a straightening theorem once, for
+the most general morphisms, and obtain the others by restriction.
+
 ## Kernel tactics
 
 `Tactic/` provides `kernel_rfl'`, `kernel_exact e` and `kernel_rfl`, which check a definitional
@@ -91,7 +108,7 @@ orientation. Some lessons learned in `shrewlib/`:
   this reason: as rules, they made the D2SFib development time out.
 - The kernel can reject an `rfl` between two structures that the elaborator accepts, though it
   accepts each component by `rfl`; extensionality then does it, as for the associativity of
-  `ICat` and the functor laws of the comprehension of the category model.
+  `ICatLax` and the functor laws of the comprehension of the category model.
 - For a functor `B` out of a Grothendieck construction, `B(f, 𝟙) ∘ B(𝟙, φ)` and
   `B(𝟙, F f φ) ∘ B(f, 𝟙)` are definitionally equal, both being `B(f, F f φ)`, but the functor
   rules unfold them into different terms, which the checker does not identify. Comparing such

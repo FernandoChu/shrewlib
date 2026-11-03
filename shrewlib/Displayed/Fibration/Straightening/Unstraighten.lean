@@ -1,5 +1,5 @@
-import Displayed.Fibration.Straightening.ICat
-import Displayed.Fibration.SplitFibCat
+import Displayed.Fibration.Straightening.ICatOpLax
+import Displayed.Fibration.SplitFibLax
 import Displayed.Displayed.Equivalence
 import Tactic.KernelTactic
 
@@ -18,7 +18,7 @@ the functor laws as rules, including those on opposites, `F (𝟙 a) y` is `y` a
   The laws hold by `rfl`.
 * A lax transformation `α : LaxTrans F (reindex u G)` over `u : A ⥤ B` gives the displayed functor
   over `u` sending `φ : x ⟶ F f y` to `α φ ≫ α.naturality f y` (`unstraightenMap`).
-* `unstraighten : VertFunctor ICat SplitFibCat`, whose functor laws hold by `rfl`.
+* `unstraighten : VertFunctor ICatOpLax SplitFibLax`, whose functor laws hold by `rfl`.
 * It is fully faithful (`unstraightenFullyFaithful`), with an explicit inverse on morphisms
   (`unstraightenPreimage`): a displayed functor `H` over `u` is the image of the lax
   transformation with components `H` on the vertical morphisms and 2-cells `H` on the chosen lifts.
@@ -106,7 +106,7 @@ def unstraightenMap {A : Type u₁} [Category.{v₁} A] {B : Type u₂} [Categor
 
 /-- **The unstraightening**, into the split fibrations: `F` goes to `∫⁻ F`, and a lax
 transformation over `u` to the induced displayed functor. -/
-def unstraighten : VertFunctor ICat.{u} SplitFibCat.{u} where
+def unstraighten : VertFunctor ICatOpLax.{u} SplitFibLax.{u} where
   obj F := { toDisplayed := ∫⁻ F, splitFib := unstraightenSplitFib F }
   map {_ _ u _ _} α := unstraightenMap (u := u.toFunctor) α
   map_id _ := rfl
@@ -177,7 +177,7 @@ theorem unstraightenPreimage_naturality_comp
 functor `H` over `u`, with components `H` on the vertical morphisms and 2-cells `H` on the chosen
 lifts. -/
 def unstraightenPreimage (H : DispFunctor u.toFunctor (∫⁻ F) (∫⁻ G)) :
-    ICat.Hom u F G where
+    ICatOpLax.Hom u F G where
   app a :=
     { obj x := H.obj x
       map {x y} φ := (H.map (f := 𝟙 a) (x := x) (y := y) φ : H.obj x ⟶ H.obj y)
@@ -194,7 +194,7 @@ theorem unstraightenMap_preimage
   DispFunctor.ext (fun _ => rfl) fun {a _} f _ y φ =>
     heq_of_eq (H.map_comp (f := 𝟙 a) (g := f) (z := y) φ (𝟙 ((F.map f.op).toFunctor.obj y))).symm
 
-theorem unstraightenPreimage_map (α : ICat.Hom u F G) :
+theorem unstraightenPreimage_map (α : ICatOpLax.Hom u F G) :
     unstraightenPreimage (unstraightenMap α) = α :=
   LaxTrans.ext' (fun _ _ => rfl) (fun _ _ _ _ => HEq.rfl) (fun _ _ => HEq.rfl)
 

@@ -1,7 +1,7 @@
 import Displayed.Opfibration.Basic
 import Displayed.Opfibration.DualOp
 import Displayed.Opfibration.Sigma
-import Displayed.Opfibration.SplitOpfibCat
+import Displayed.Opfibration.SplitOpfibLax
 import Displayed.Opfibration.Straightening.Readme
 
 /-!
@@ -12,7 +12,7 @@ import Displayed.Opfibration.Straightening.Readme
   involving these.
 * `DualOp`: the dual opfibration of a split opfibration.
 * `Sigma`: opfibrations compose, and so do split opfibrations.
-* `SplitOpfibCat`: the split opfibrations and displayed functors between them, a category displayed
+* `SplitOpfibLax`: the split opfibrations and displayed functors between them, a category displayed
   over `Cat`.
 * `Straightening/`: functors `A ⥤ Cat` and their unstraightenings, an equivalence with the split
   opfibrations over `Cat` (see its `Readme.lean`).

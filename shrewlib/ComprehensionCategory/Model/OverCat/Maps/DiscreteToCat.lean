@@ -5,7 +5,7 @@ import ComprehensionCategory.Model.OverCat.Discrete.TypeFormers.Sigma
 /-!
 # From the discrete model to the category model
 
-Forgetting the discreteness, `IDisc.forget : IDisc ⟶ ICat`, is a strict map of comprehension
+Forgetting the discreteness, `IDisc.forget : IDisc ⟶ ICatLax`, is a strict map of comprehension
 categories over the identity of `Cat` (`forgetComprehensionMap`): the comprehension functor of the
 discrete model is `IDisc.forget ⋙ᵥ compr` by definition, so both axioms hold by `rfl`.
 
@@ -28,7 +28,7 @@ open scoped Displayed
 /-- **Forgetting the discreteness is a strict map of comprehension categories** from the discrete
 model to the category model, over the identity of `Cat`: the comprehension functor of the discrete
 model is `IDisc.forget ⋙ᵥ compr`, so the comprehension functors commute on the nose. -/
-def forgetComprehensionMap : StrictComprehensionMap (𝟭 Cat.{u, u}) IDisc.{u} ICat.{u} where
+def forgetComprehensionMap : StrictComprehensionMap (𝟭 Cat.{u, u}) IDisc.{u} ICatLax.{u} where
   toPre.toDispFunctor := IDisc.forget.toDispFunctor
   toPre.isCartesianMap := IDisc.forget.isCartesianMap
   toPre.compr_obj _ := rfl

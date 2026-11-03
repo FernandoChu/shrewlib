@@ -11,7 +11,7 @@ In this folder we define the discrete model: the comprehension category `IDisc` 
 (`Displayed/Discrete/Straightening/IDisc`), whose types in context `Γ` are the functors `Γ ⥤ Cat`
 into discrete categories, and whose morphisms are those of the category model. It is the full
 sub-comprehension category of the category model on these types: its comprehension is that of the
-category model, along the functor `IDisc.forget : IDisc ⟶ ICat` forgetting the discreteness, a
+category model, along the functor `IDisc.forget : IDisc ⟶ ICatLax` forgetting the discreteness, a
 fully faithful cartesian functor. It is full and split.
 
 It has Σ-types and opposite types, those of the category model, which take values in discrete
@@ -52,7 +52,7 @@ recall ComprehensionCategory.DiscreteModel.hasSigma : HasSigma IDisc.{u}
 
 /-- The Σ-types of the discrete model are those of the category model, on the nose. -/
 example {Γ : Cat.{u, u}} (A : IDisc.{u}.Ty Γ) (B : IDisc.{u}.Ty (Γ ▹ A)) :
-    IDisc.forget.toDispFunctor.obj (Σ[A] B) = ICat.sigma A.toFunctor B.toFunctor :=
+    IDisc.forget.toDispFunctor.obj (Σ[A] B) = ICatLax.sigma A.toFunctor B.toFunctor :=
   rfl
 
 /-- **The discrete model has opposite types**, involutive by `rfl`. -/

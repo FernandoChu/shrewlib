@@ -5,8 +5,8 @@ import Displayed.Displayed.Equivalence
 /-!
 # Straightening–unstraightening for split opfibrations
 
-The unstraightening `ICat ⟶ SplitOpfibCat` is an equivalence over `Cat`
-(`straighteningEquiv`). It is fully faithful (`unstraightenFullyFaithful`), and every split
+The unstraightening `ICatLax ⟶ SplitOpfibLax` is an equivalence over `Cat`
+(`straighteningEquivLax`). It is fully faithful (`unstraightenFullyFaithful`), and every split
 opfibration `D` over `A` is isomorphic over `A` to the unstraightening of its straightening
 (`counitIso`), so `VertEquivalence.ofFullyFaithful` assembles the equivalence. Its inverse is the
 straightening on objects, and on morphisms the preimage under the unstraightening of the
@@ -50,7 +50,7 @@ def counitInv : X ⟶[𝟙 A] unstraighten.obj (straightenObj X) where
   map_comp _ _ := rfl
 
 /-- **The counit** `unstraighten.obj (straightenObj X) ≅ X`, an isomorphism over `A`. -/
-def counitIso : (unstraighten.obj (straightenObj X) : SplitOpfibCat.Fiber A) ≅ X where
+def counitIso : (unstraighten.obj (straightenObj X) : SplitOpfibLax.Fiber A) ≅ X where
   hom := counitHom X
   inv := counitInv X
   hom_inv_id := DispFunctor.ext (fun _ => rfl) fun _ => HEq.rfl
@@ -61,18 +61,18 @@ end Counit
 /-! ## Straightening–unstraightening -/
 
 /-- **Straightening–unstraightening for split opfibrations**: the unstraightening is an
-equivalence over `Cat` between `ICat` and the split opfibrations, with all displayed functors as
+equivalence over `Cat` between `ICatLax` and the split opfibrations, with all displayed functors as
 morphisms. -/
-def straighteningEquiv : VertEquivalence ICat.{u} SplitOpfibCat.{u} :=
+def straighteningEquivLax : VertEquivalence ICatLax.{u} SplitOpfibLax.{u} :=
   VertEquivalence.ofFullyFaithful unstraightenFullyFaithful (fun X => straightenObj X)
     (fun X => counitIso X)
 
 /-- The induced equivalence of total categories, over `Cat`. -/
-def straighteningEquivTotal : ICat.{u}.Total ≌ SplitOpfibCat.{u}.Total :=
-  straighteningEquiv.total
+def straighteningEquivLaxTotal : ICatLax.{u}.Total ≌ SplitOpfibLax.{u}.Total :=
+  straighteningEquivLax.total
 
 theorem straighteningEquivTotal_functor_comp_π :
-    straighteningEquivTotal.{u}.functor ⋙ SplitOpfibCat.π = ICat.π :=
+    straighteningEquivLaxTotal.{u}.functor ⋙ SplitOpfibLax.π = ICatLax.π :=
   rfl
 
 end Displayed.Opfibration.Straightening

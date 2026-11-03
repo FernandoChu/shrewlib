@@ -58,7 +58,7 @@ def homAct (A : Γ ⥤ Cat.{u, u}) {γ γ' : Γ} (f : γ ⟶ γ') {a b : A.obj �
 
 /-- The functor of the Hom-type of `A`: at `((γ, a), b)`, the discrete category on the morphisms
 `a ⟶ b` of `A γ`. -/
-def homFunctor (A : ICat.{u}.Ty Γ) : ICat.{u}.Ty (Γ ▹ Aᵒᵖ ▹ A⦃𝐩 (Aᵒᵖ)⦄) where
+def homFunctor (A : ICatLax.{u}.Ty Γ) : ICatLax.{u}.Ty (Γ ▹ Aᵒᵖ ▹ A⦃𝐩 (Aᵒᵖ)⦄) where
   obj X := discrete' (@Quiver.Hom (A.obj X.1.1) _ X.1.2 X.2)
   map g := discreteMap' (homAct A g.base.base g.base.fiber g.fiber)
   map_id _ := rfl
@@ -66,7 +66,7 @@ def homFunctor (A : ICat.{u}.Ty Γ) : ICat.{u}.Ty (Γ ▹ Aᵒᵖ ▹ A⦃𝐩 (
 
 /-- **The Hom-type of `A`** (Hom-Form), a type of the discrete model: its values are discrete
 categories. -/
-def hom (A : ICat.{u}.Ty Γ) : IDisc.{u}.Ty (Γ ▹ Aᵒᵖ ▹ A⦃𝐩 (Aᵒᵖ)⦄) where
+def hom (A : ICatLax.{u}.Ty Γ) : IDisc.{u}.Ty (Γ ▹ Aᵒᵖ ▹ A⦃𝐩 (Aᵒᵖ)⦄) where
   toFunctor := homFunctor A
   isDiscrete _ := isDiscrete_discrete' _
 
@@ -80,16 +80,16 @@ def unexpandHom : Lean.PrettyPrinter.Unexpander
   | _ => throw ()
 
 /-- The functor of the Hom-type is its own opposite, since discrete categories are. -/
-theorem op_homFunctor (A : ICat.{u}.Ty Γ) : (homFunctor A)ᵒᵖ = homFunctor A :=
+theorem op_homFunctor (A : ICatLax.{u}.Ty Γ) : (homFunctor A)ᵒᵖ = homFunctor A :=
   Functor.hext (fun _ => opFunctor'_obj_discrete' _) fun _ _ _ => opFunctor'_map_discreteMap' _
 
 /-- **Hom-op**: the Hom-type is its own opposite, as a rewrite rule. -/
 @[rewrite_rule]
-theorem op_hom (A : ICat.{u}.Ty Γ) : Hom[A]ᵒᵖ = Hom[A] :=
+theorem op_hom (A : ICatLax.{u}.Ty Γ) : Hom[A]ᵒᵖ = Hom[A] :=
   IDiscOb.ext (op_homFunctor A)
 
 /-- **The Hom-types are stable under substitution**, by `rfl`. -/
-theorem pull_hom {Δ : Cat.{u, u}} (σ : Δ ⟶ Γ) (A : ICat.{u}.Ty Γ) :
+theorem pull_hom {Δ : Cat.{u, u}} (σ : Δ ⟶ Γ) (A : ICatLax.{u}.Ty Γ) :
     Hom[A]⦃𝐪(𝐪(σ, Aᵒᵖ), A⦃𝐩 (Aᵒᵖ)⦄)⦄ = Hom[A⦃σ⦄] :=
   rfl
 

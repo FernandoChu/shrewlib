@@ -7,7 +7,7 @@ In this folder we compare two categories displayed over `Cat`:
 
 * `IDisc`: which has as objects over a category `A` the functors `A ⥤ Cat` into discrete
   categories; a morphism over `u : A ⟶ B` is a lax transformation `LaxTrans F (u ⋙ G)`, as in
-  `ICat`, of which it is the full subcategory;
+  `ICatLax`, of which it is the full subcategory;
 * `DiscOpfibCat` (`Discrete/Basic.lean`): an object over `A` is a discrete opfibration over `A`, a
   split opfibration whose fibres are discrete categories, and a morphism over `u` is any displayed
   functor over `u`.
@@ -20,8 +20,8 @@ discrete ones on both sides.
 
 The files give its ingredients:
 
-* `IDisc`: the split fibration `IDisc`, with the reindexing and the lifts of `ICat`, and the fully
-  faithful cartesian functor `IDisc.forget : IDisc ⟶ ICat`.
+* `IDisc`: the split fibration `IDisc`, with the reindexing and the lifts of `ICatLax`, and the
+  fully faithful cartesian functor `IDisc.forget : IDisc ⟶ ICatLax`.
 * `Unstraighten`: the unstraightening of a functor into discrete categories has discrete fibres;
   the functor `unstraighten`, which is `IDisc.forget` followed by the unstraightening of the split
   opfibrations, and is fully faithful.
@@ -51,7 +51,7 @@ recall Displayed.Discrete.Straightening.IDisc.splitFib : SplitFib IDisc.{u}
 /-- Forgetting the discreteness of the functors into discrete categories is a fully faithful
 cartesian functor. -/
 recall Displayed.Discrete.Straightening.IDisc.forget :
-    CartesianFunctor (𝟭 Cat.{u, u}) IDisc.{u} Opfibration.Straightening.ICat.{u}
+    CartesianFunctor (𝟭 Cat.{u, u}) IDisc.{u} Opfibration.Straightening.ICatLax.{u}
 
 recall Displayed.Discrete.Straightening.IDisc.forgetFullyFaithful :
     VertFunctor.FullyFaithful IDisc.forget.{u}.toDispFunctor

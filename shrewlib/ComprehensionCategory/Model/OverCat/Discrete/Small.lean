@@ -14,7 +14,7 @@ As the types of level `v` (`SmallICat`), they form a comprehension category `Sma
 `Cat.{v + 1, v + 1}`: a morphism over `u` from `A` to `B` is a morphism of the category model from
 `lift A` to `lift B`, reindexing is precomposition, and the chosen lifts are those of the category
 model, so that `SmallIDisc` is a split fibration whose laws hold by `rfl`. Its comprehension is that
-of the category model along `SmallIDisc.lift : SmallIDisc ⟶ ICat`, a fully faithful cartesian
+of the category model along `SmallIDisc.lift : SmallIDisc ⟶ ICatLax`, a fully faithful cartesian
 functor, so that `SmallIDisc` is a full split comprehension category, and its lift is a strict map
 of comprehension categories (`OverCat/Maps/SmallToCat`).
 -/
@@ -55,9 +55,9 @@ theorem liftDisc_pull (σ : Δ ⟶ Γ) (A : IDiscOb.{v} Γ) :
 the category model between their lifts. -/
 def SmallIDisc : Displayed.{v + 1, v + 2, v + 1, v + 1} Cat.{v + 1, v + 1} where
   Ob Γ := IDiscOb.{v} Γ
-  Hom u A B := ICat.Hom u (CatModel.lift A.toFunctor) (CatModel.lift B.toFunctor)
-  id A := ICat.id (CatModel.lift A.toFunctor)
-  comp φ ψ := ICat.comp φ ψ
+  Hom u A B := ICatLax.Hom u (CatModel.lift A.toFunctor) (CatModel.lift B.toFunctor)
+  id A := ICatLax.id (CatModel.lift A.toFunctor)
+  comp φ ψ := ICatLax.comp φ ψ
   id_comp _ := rfl
   comp_id _ := rfl
   assoc _ _ _ := rfl
@@ -72,13 +72,13 @@ def pull {A B : Cat.{v + 1, v + 1}} (u : A ⟶ B) (X : IDiscOb.{v} B) : IDiscOb.
 /-- The chosen lift of `u` at `X`: that of the category model at its lift. -/
 def clift {A B : Cat.{v + 1, v + 1}} (u : A ⟶ B) (X : IDiscOb.{v} B) :
     SmallIDisc.Hom u (pull u X) X :=
-  Fib.clift (D := ICat) u (CatModel.lift X.toFunctor)
+  Fib.clift (D := ICatLax) u (CatModel.lift X.toFunctor)
 
 /-- The chosen lift is cartesian, since it is in the category model and the morphisms are the
 same. -/
 def isCartesianClift {A B : Cat.{v + 1, v + 1}} (u : A ⟶ B) (X : IDiscOb.{v} B) :
     IsCartesian (D := SmallIDisc) (clift u X) :=
-  let H := Fib.isCartesianClift (D := ICat) u (CatModel.lift X.toFunctor)
+  let H := Fib.isCartesianClift (D := ICatLax) u (CatModel.lift X.toFunctor)
   { lift := fun g _ χ => H.lift g χ
     lift_fac := fun g _ χ => H.lift_fac g χ
     lift_uniq := fun ψ hψ => H.lift_uniq ψ hψ }
@@ -99,7 +99,7 @@ instance SmallIDisc.splitFib : SplitFib SmallIDisc.{v} where
   clift_comp _ _ _ := rfl
 
 /-- **The lift into the category model**, a vertical cartesian functor. -/
-def SmallIDisc.lift : CartesianFunctor (𝟭 Cat.{v + 1, v + 1}) SmallIDisc.{v} ICat.{v + 1} where
+def SmallIDisc.lift : CartesianFunctor (𝟭 Cat.{v + 1, v + 1}) SmallIDisc.{v} ICatLax.{v + 1} where
   toPre :=
     { obj A := CatModel.lift A.toFunctor
       map φ := φ

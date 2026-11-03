@@ -1,4 +1,4 @@
-import Displayed.Opfibration.SplitOpfibCat
+import Displayed.Opfibration.SplitOpfibLax
 import Mathlib.CategoryTheory.Discrete.Basic
 
 /-!
@@ -10,8 +10,8 @@ equality of its endpoints, and there is at most one. Every morphism over `f` out
 chosen lift `olift f x`, followed by a vertical morphism, that is, an equality `push f x = y`.
 
 The discrete opfibrations form a category displayed over `Cat` (`DiscOpfibCat`), with all displayed
-functors as morphisms, like the split opfibrations (`SplitOpfibCat`): forgetting the discreteness is
-a fully faithful vertical functor `DiscOpfibCat.forget : DiscOpfibCat ⟶ SplitOpfibCat`.
+functors as morphisms, like the split opfibrations (`SplitOpfibLax`): forgetting the discreteness is
+a fully faithful vertical functor `DiscOpfibCat.forget : DiscOpfibCat ⟶ SplitOpfibLax`.
 -/
 
 universe u
@@ -46,7 +46,7 @@ def DiscOpfibCat : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
   assoc _ _ _ := rfl
 
 /-- The vertical functor forgetting the discreteness. -/
-def DiscOpfibCat.forget : VertFunctor DiscOpfibCat.{u} SplitOpfibCat.{u} where
+def DiscOpfibCat.forget : VertFunctor DiscOpfibCat.{u} SplitOpfibLax.{u} where
   obj X := { toDisplayed := X.toDisplayed, splitOpfib := X.splitOpfib }
   map H := H
   map_id _ := rfl

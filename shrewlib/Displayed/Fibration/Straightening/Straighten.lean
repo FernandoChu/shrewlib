@@ -1,4 +1,4 @@
-import Displayed.Fibration.SplitFibCat
+import Displayed.Fibration.SplitFibLax
 import Rules.Opposite
 
 /-!

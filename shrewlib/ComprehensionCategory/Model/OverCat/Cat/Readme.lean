@@ -8,7 +8,7 @@ import ComprehensionCategory.Model.OverCat.Cat.TypeFormers.Universe
 /-!
 # The category model
 
-In this folder we define the category model: the comprehension category `ICat` over `Cat`, whose
+In this folder we define the category model: the comprehension category `ICatLax` over `Cat`, whose
 types in context `Γ` are the functors `Γ ⥤ Cat`, and whose context extension `Γ ▹ A` is the
 total category `Γ ⋉ A` of the unstraightening of `A`. It is full and split, and it has Σ-types:
 `Σ[A] B` is the straightening of the composite of the split opfibrations `∫ A` over
@@ -21,9 +21,9 @@ model, and it has a universe of the discrete types too (`OverCat/Shared`).
 The files give its ingredients:
 
 * `Extension`: the context extension `Γ ⋉ A`.
-* `Basic`: the comprehension functor `compr : ICat ⟶ cod Cat`, the unstraightening followed by
+* `Basic`: the comprehension functor `compr : ICatLax ⟶ cod Cat`, the unstraightening followed by
   forgetting the opcleavage and taking total categories, which sends the chosen lifts to pullbacks
-  and is fully faithful, so that `ICat` is a full split comprehension category.
+  and is fully faithful, so that `ICatLax` is a full split comprehension category.
 * `Term`: terms `Tm(Γ, A)` from values `γ ↦ A γ` and transports (`tmMk`); the constant types
   `constTy Γ K`, whose terms are the functors `Γ ⥤ K` (`Tm.constEquiv`), naturally in `Γ`.
 * `TypeFormers/Sigma`: Σ-types, whose pairing is the inverse of the counit of
@@ -47,20 +47,21 @@ open scoped Displayed
 /-! ## Main results -/
 
 /-- **The category model** is a full split comprehension category over `Cat`. -/
-recall ComprehensionCategory.CatModel.splitComprehension : SplitComprehension ICat.{u}
+recall ComprehensionCategory.CatModel.splitComprehension : SplitComprehension ICatLax.{u}
 
-recall ComprehensionCategory.CatModel.fullComprehension : FullComprehension ICat.{u}
+recall ComprehensionCategory.CatModel.fullComprehension : FullComprehension ICatLax.{u}
 
-/-- The chosen lifts go to pullbacks: `A ⋉ ICat.pull u G` is the pullback of `B ⋉ G` along `u`. -/
+/-- The chosen lifts go to pullbacks: `A ⋉ ICatLax.pull u G` is the pullback of `B ⋉ G` along `u`.
+-/
 recall ComprehensionCategory.CatModel.isCartesianComprClift {A B : Cat.{u, u}}
-    (u : A ⟶ B) (G : B ⥤ Cat.{u, u}) : IsCartesian (CatModel.compr.map (ICat.clift u G))
+    (u : A ⟶ B) (G : B ⥤ Cat.{u, u}) : IsCartesian (CatModel.compr.map (ICatLax.clift u G))
 
 /-- The comprehension functor is fully faithful: functors `A ⋉ F ⥤ B ⋉ G` over `u` are lax
 transformations `LaxTrans F (u ⋙ G)`. -/
 recall ComprehensionCategory.CatModel.comprFullyFaithful : CatModel.compr.{u}.FullyFaithful
 
 /-- **The category model has Σ-types.** -/
-recall ComprehensionCategory.CatModel.hasSigma : HasSigma ICat.{u}
+recall ComprehensionCategory.CatModel.hasSigma : HasSigma ICatLax.{u}
 
 /-- The opposite functor is involutive on the nose, and is Mathlib's `Cat.opFunctor` up to
 isomorphism. -/
@@ -70,7 +71,7 @@ recall ComprehensionCategory.CatModel.opFunctor'_comp_opFunctor' :
 recall ComprehensionCategory.CatModel.opFunctor'Iso : CatModel.opFunctor'.{u} ≅ Cat.opFunctor
 
 /-- **The category model has opposite types**, involutive by `rfl`. -/
-recall ComprehensionCategory.CatModel.op_op {Γ : Cat.{u, u}} (A : ICat.{u}.Ty Γ) :
+recall ComprehensionCategory.CatModel.op_op {Γ : Cat.{u, u}} (A : ICatLax.{u}.Ty Γ) :
     CatModel.op (CatModel.op A) = A
 
 /-- The terms of the constant type at `K` are the functors `Γ ⥤ K`. -/

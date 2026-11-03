@@ -31,7 +31,7 @@ variable {Γ Δ : Cat.{u, u}}
 
 /-- **The term of `A` with values `obj γ : A γ`** and transports `map f : A f (obj γ) ⟶ obj γ'`:
 the section `γ ↦ (γ, obj γ)` of the projection, which is a section by `rfl`. -/
-def tmMk {A : ICat.{u}.Ty Γ} (obj : ∀ γ : Γ, A.obj γ)
+def tmMk {A : ICatLax.{u}.Ty Γ} (obj : ∀ γ : Γ, A.obj γ)
     (map : ∀ {γ γ' : Γ} (f : γ ⟶ γ'), (A.map f).toFunctor.obj (obj γ) ⟶ obj γ')
     (map_id : ∀ γ : Γ, map (𝟙 γ) = 𝟙 (obj γ))
     (map_comp : ∀ {γ γ' γ'' : Γ} (f : γ ⟶ γ') (g : γ' ⟶ γ''),
@@ -46,7 +46,7 @@ def tmMk {A : ICat.{u}.Ty Γ} (obj : ∀ γ : Γ, A.obj γ)
 /-! ## Terms of constant types -/
 
 /-- The constant type at a category `K`: `γ ↦ K`, with identity transports. -/
-def constTy (Γ : Cat.{u, u}) (K : Cat.{u, u}) : ICat.{u}.Ty Γ where
+def constTy (Γ : Cat.{u, u}) (K : Cat.{u, u}) : ICatLax.{u}.Ty Γ where
   obj _ := K
   map _ := 𝟙 K
   map_id _ := rfl

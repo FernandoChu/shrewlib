@@ -49,7 +49,7 @@ def smallDiscCat : Cat.{v + 1, v + 1} :=
 
 /-- **The universe of discrete types** in context `Γ`: the constant type at the category of small
 discrete categories. -/
-def UDisc (Γ : Cat.{v + 1, v + 1}) : ICat.{v + 1}.Ty Γ :=
+def UDisc (Γ : Cat.{v + 1, v + 1}) : ICatLax.{v + 1}.Ty Γ :=
   constTy Γ smallDiscCat
 
 variable {Γ Δ : Cat.{v + 1, v + 1}}

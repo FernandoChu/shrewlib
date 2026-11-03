@@ -11,16 +11,16 @@ them (`LaxTrans F G`): functors `app a : F (op a) ⥤ G (op a)` and 2-cells
 `F f ⋙ app a ⟶ app a' ⋙ G f` for `f : a ⟶ a'`, where `F f` stands for `F.map f.op`, given by
 their components `naturality f y : app a (F f y) ⟶ G f (app a' y)`, natural in `y` and
 compatible with identities and composites. This is the dual of
-`Opfibration/Straightening/ICat.lean`.
+`Opfibration/Straightening/ICatLax.lean`.
 
 With the functor laws as rules, including those on opposites (`Rules.Opposite`), `G (𝟙 a) y` is
 `y` and `G (f ≫ g) y` is `G f (G g y)`, so the unit and composition laws of the 2-cells, which are
 rules too, are plain equations.
 
 The category of contravariant indexed categories and lax transformations is displayed over `Cat`
-(`ICat`): an object over `A` is a functor `Aᵒᵖ ⥤ Cat`, and a morphism over `u : A ⟶ B` from `F` to
-`G` is a lax transformation `LaxTrans F (reindex u G)`, where `reindex u G` is `u.op ⋙ G` written
-out. Its laws hold by `rfl`. Reindexing `ICat.pull u G = reindex u G` and the identity
+(`ICatOpLax`): an object over `A` is a functor `Aᵒᵖ ⥤ Cat`, and a morphism over `u : A ⟶ B` from `F`
+to `G` is a lax transformation `LaxTrans F (reindex u G)`, where `reindex u G` is `u.op ⋙ G` written
+out. Its laws hold by `rfl`. Reindexing `ICatOpLax.pull u G = reindex u G` and the identity
 transformations make it a split fibration over `Cat`, whose splitting laws hold by `rfl`.
 
 Some of these definitional equalities are checked in the kernel (`kernel_exact`, `kernel_rfl'`):
@@ -129,7 +129,7 @@ end LaxTrans
 over `A` is a functor `Aᵒᵖ ⥤ Cat`, and a morphism over `u : A ⟶ B` from `F` to `G` is a lax
 transformation `LaxTrans F (reindex u G)`. Composition restricts the second transformation along the
 first base functor. -/
-def ICat : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
+def ICatOpLax : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
   Ob A := Aᵒᵖ ⥤ Cat.{u, u}
   Hom u F G := LaxTrans F (reindex u.toFunctor G)
   id F := LaxTrans.id F
@@ -141,14 +141,14 @@ def ICat : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
   assoc _ _ _ := LaxTrans.ext' (fun _ _ => rfl) (fun _ _ _ _ => HEq.rfl)
     (fun _ _ => by kernel_rfl')
 
-namespace ICat
+namespace ICatOpLax
 
 /-- Reindexing `pull u G = reindex u G` of `G : Bᵒᵖ ⥤ Cat` along `u : A ⟶ B`. -/
 def pull {A B : Cat.{u, u}} (u : A ⟶ B) (G : Bᵒᵖ ⥤ Cat.{u, u}) : Aᵒᵖ ⥤ Cat.{u, u} :=
   reindex u.toFunctor G
 
 /-- The cartesian lift `pull u G ⟶[u] G`: the identity transformation. -/
-def clift {A B : Cat.{u, u}} (u : A ⟶ B) (G : Bᵒᵖ ⥤ Cat.{u, u}) : ICat.Hom u (pull u G) G :=
+def clift {A B : Cat.{u, u}} (u : A ⟶ B) (G : Bᵒᵖ ⥤ Cat.{u, u}) : ICatOpLax.Hom u (pull u G) G :=
   LaxTrans.id (reindex u.toFunctor G)
 
 /-- The chosen lift is cartesian: a transformation over `g ≫ u` is its own factorization. -/
@@ -158,18 +158,18 @@ def isCartesianClift {A B : Cat.{u, u}} (u : A ⟶ B) (G : Bᵒᵖ ⥤ Cat.{u, u
   lift_fac _ _ _ := rfl
   lift_uniq _ hψ := hψ
 
-end ICat
+end ICatOpLax
 
-/-- **`ICat` is a split fibration over `Cat`**, cloven by reindexing `ICat.pull u G = reindex u G`,
-with the identity transformations as chosen lifts. -/
-instance ICat.preSplitFib : PreSplitFib ICat.{u} where
-  pull u G := ICat.pull u G
-  clift u G := ICat.clift u G
-  isCartesianClift u G := ICat.isCartesianClift u G
+/-- **`ICatOpLax` is a split fibration over `Cat`**, cloven by reindexing
+`ICatOpLax.pull u G = reindex u G`, with the identity transformations as chosen lifts. -/
+instance ICatOpLax.preSplitFib : PreSplitFib ICatOpLax.{u} where
+  pull u G := ICatOpLax.pull u G
+  clift u G := ICatOpLax.clift u G
+  isCartesianClift u G := ICatOpLax.isCartesianClift u G
   pull_id _ := rfl
   pull_comp _ _ _ := rfl
 
-instance ICat.splitFib : SplitFib ICat.{u} where
+instance ICatOpLax.splitFib : SplitFib ICatOpLax.{u} where
   clift_id _ := rfl
   clift_comp _ _ _ := rfl
 

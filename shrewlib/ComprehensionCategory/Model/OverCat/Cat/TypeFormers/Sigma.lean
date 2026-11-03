@@ -54,7 +54,7 @@ def unpairHom : Cat.of (Γ ⋉ CatModel.sigma A B) ⟶ Cat.of (Γ ⋉ A ⋉ B) :
 
 section Pull
 
-variable {Δ Γ : Cat.{u, u}} (σ : Δ ⟶ Γ) (A : ICat.{u}.Ty Γ) (B : ICat.{u}.Ty (Γ ▹ A))
+variable {Δ Γ : Cat.{u, u}} (σ : Δ ⟶ Γ) (A : ICatLax.{u}.Ty Γ) (B : ICatLax.{u}.Ty (Γ ▹ A))
 
 /-- Transport in `sigmaOb A B` along `σ f` is transport in `sigmaOb A⦃σ⦄ B⦃𝐪(σ, A)⦄` along `f`:
 both unfold to the same factorization. -/
@@ -83,13 +83,13 @@ theorem pushFunctor_sigmaOb_pull {δ δ' : Δ} (f : δ ⟶ δ') :
 end Pull
 
 /-- The Σ-types of the category model, stable under substitution. -/
-instance preSigma : PreSigma ICat.{u} where
+instance preSigma : PreSigma ICatLax.{u} where
   sigma A B := CatModel.sigma A B
   pull_sigma σ A B := Functor.hext (fun _ => by kernel_rfl') fun _ _ f => by
     kernel_exact heq_of_eq (congrArg Functor.toCatHom (pushFunctor_sigmaOb_pull σ A B f))
 
 /-- **The category model has Σ-types.** -/
-instance hasSigma : HasSigma ICat.{u} where
+instance hasSigma : HasSigma ICatLax.{u} where
   pair A B := pairHom A B
   unpair A B := unpairHom A B
   pair_unpair _ _ := rfl

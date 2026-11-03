@@ -29,7 +29,7 @@ Comprehension categories as displayed categories, their type formers, and models
   * `Codomain/`: `cod C`, for a category with chosen pullbacks.
   * `OverCat/`: the models over `Cat`, one folder each, whose `TypeFormers/` folders mirror the one
     above, with type formers specific to them:
-    * `Cat/`: the category model `ICat`, with Σ-types, opposite types and a Coquand-style
+    * `Cat/`: the category model `ICatLax`, with Σ-types, opposite types and a Coquand-style
       universe of the types of a lower level (`SmallICat`).
     * `Discrete/`: the discrete model `IDisc`, the full sub-comprehension category of the category
       model on the functors into discrete categories, with Σ-types and opposite types, and its
