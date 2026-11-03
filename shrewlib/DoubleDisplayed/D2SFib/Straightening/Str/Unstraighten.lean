@@ -141,13 +141,6 @@ def unstraightenStrMap (κ : P ⟶ H.dualOp.total ⋙ P') :
   map_pullLift := by intros; rfl
   map_pushLift := by intros; rfl
 
-/-- The unstraightening of a dependent profunctor is a split D2SFib. The instance
-`Unstraightening.instSplitD2SFib` does not apply to it, since `DProf.Ob F` is not reducibly a type
-of functors. -/
-instance {A : Cat.{u, u}} {F : ICatStr.{u}.Ob A} (P : DProf.{u, v₃, u₃}.Ob F) :
-    SplitD2SFib (Unstraightening (B := ∫ (F : A ⥤ Cat.{u, u})) P) :=
-  Unstraightening.instSplitD2SFib P
-
 /-- **The unstraightening of dependent profunctors**, a doubly displayed functor over the
 unstraightening `ICatStr ⟶ SplitOpfibStr` of indexed categories: a dependent profunctor `P` over
 `F` goes to its unstraightening, a split D2SFib over `∫ F`, and a morphism over `τ` to the map of

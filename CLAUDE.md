@@ -102,6 +102,13 @@ orientation. Some lessons learned in `shrewlib/`:
 - Nested subpatterns should use the most unfolded form of a term, since targets are unfolded
   towards the pattern and not the other way; heads need a rule for each form.
 - Index-like arguments should be implicit, so that they are checked by definitional equality.
+- A displayed category over `Cat` whose objects are an existing type (`ICatStr`, `SplitOpfibStr`,
+  …) is an irreducible `def`, so `X.Ob A` is not that type for instance search, and its
+  structure needs explicit instances (`ICatStr.splitOpfib`). Making it an `abbrev`, as Mathlib does
+  for `Profunctor`, is right only when the category that the type then gets is the fiber category
+  of `X`, as for `DProf` and `D2SFibStr`. Otherwise it picks the wrong category (the functor
+  category on `ICatLax.Fiber A`, whose morphisms should be lax) or loses the fiber category, whose
+  instance is indexed by the head `X`.
 - A rule on `Functor.obj` or `Functor.map` is tried on every functor application. Rules keyed on
   dedicated constants are cheaper.
 - A failed match costs a full unfolding search for the subpattern head. A rule keyed on a common

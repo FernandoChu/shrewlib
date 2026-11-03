@@ -15,6 +15,10 @@ category `D2SFibCat B`.
 along `H` is its reindexing along `H`, with `D2SFibMap.reindexLift` as chosen lift
 (`D2SFibStr.splitDDFib`). Reindexing is strictly functorial, so this fibration is split, while the
 fibration of D2SFibs presented as functors into a total category, by pullback, is not.
+
+`D2SFibStr` is reducible, so that `D2SFibStr.Ob B` is `D2SFibCat B` for instance search, and the
+D2SFib structure of its objects is `D2SFibCat.str`. This is safe because the category that
+instance search then finds on `D2SFibStr.Fiber B`, that of `D2SFibCat B`, is the fiber category.
 -/
 
 universe v₁ u₁ v₂ u₂ v₃ u₃
@@ -30,7 +34,7 @@ open scoped Displayed
 set_option linter.checkUnivs false in
 /-- **The fibred category of D2SFibs**, doubly displayed over `SplitOpfibStr`: over `B`, the split
 D2SFibs over `B`, and over an opcartesian functor `H`, the maps of D2SFibs over `H`. -/
-def D2SFibStr : DoubleDisplayed SplitOpfibStr.{v₁, u₁, v₂, u₂} where
+abbrev D2SFibStr : DoubleDisplayed SplitOpfibStr.{v₁, u₁, v₂, u₂} where
   Ob {_} (B : SplitOpfibOb.{v₁, u₁, v₂, u₂} _) := D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B.toDisplayed
   Hom {_ _ u B B'} (H : OpcartesianFunctor u.toFunctor (SplitOpfibOb.toDisplayed B)
       (SplitOpfibOb.toDisplayed B')) E E' :=
@@ -40,13 +44,6 @@ def D2SFibStr : DoubleDisplayed SplitOpfibStr.{v₁, u₁, v₂, u₂} where
   id_comp _ := rfl
   comp_id _ := rfl
   assoc _ _ _ := rfl
-
-/-- The D2SFib structure of an object of `D2SFibStr`. The instance `D2SFibCat.str` does not apply
-to it, since `D2SFibStr.Ob B` is not reducibly `D2SFibCat B`. -/
-instance {A : Cat.{v₁, u₁}} {B : SplitOpfibStr.{v₁, u₁, v₂, u₂}.Ob A}
-    (E : D2SFibStr.{v₁, u₁, v₂, u₂, v₃, u₃}.Ob B) :
-    SplitD2SFib (D2SFibCat.C (B := SplitOpfibOb.toDisplayed B) E) :=
-  D2SFibCat.str E
 
 /-- The chosen pullback of a D2SFib along an opcartesian functor `H` is its reindexing along `H`,
 with `D2SFibMap.reindexLift` as chosen lift. -/

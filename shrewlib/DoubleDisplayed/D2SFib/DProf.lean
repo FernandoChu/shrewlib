@@ -22,6 +22,11 @@ Over the identities of `ICatStr`, `dualTotal` is the identity functor by a rule,
 
 `DProf` is a split fibration over `ICatStr` by precomposition: the pullback of `P'` along `τ` is
 `τ.dualTotal ⋙ P'`, with the identity as chosen lift (`DProf.splitDDFib`).
+
+`DProf` is reducible, like Mathlib's `Profunctor`, so that `DProf.Ob F` is a type of functors for
+instance search: the morphisms, whiskerings and the D2SFib structure of the unstraightening of a
+dependent profunctor are found without further instances. This is safe because the category that
+instance search then finds on `DProf.Fiber F`, the functor category, is the fiber category.
 -/
 
 universe u v₃ u₃
@@ -38,7 +43,7 @@ set_option linter.checkUnivs false in
 /-- **The category of dependent profunctors**, doubly displayed over `ICatStr`: over `F : A ⥤ Cat`,
 the functors `(∫ F)ᵒᵖ.Total ⥤ Cat`, and over a strict transformation `τ`, the natural
 transformations `P ⟶ τ.dualTotal ⋙ P'`. -/
-def DProf : DoubleDisplayed ICatStr.{u} where
+abbrev DProf : DoubleDisplayed ICatStr.{u} where
   Ob {A} (F : A ⥤ Cat.{u, u}) := (∫ F)ᵒᵖ.Total ⥤ Cat.{v₃, u₃}
   Hom {_ _ u F G} (τ : StrictTrans F (u.toFunctor ⋙ G)) P P' :=
     P ⟶ StrictTrans.dualTotal (u := u.toFunctor) τ ⋙ P'

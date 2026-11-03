@@ -58,7 +58,7 @@ variable {A A' : Cat.{u, u}} {u : A ⟶ A'} {B : SplitOpfibOb.{u, u, u, u} A}
 `straightenObj B` of the fibres of `B`: the values of `straightenObj C`, `⟨a, x⟩ ↦ C.Fiber x`, and
 a morphism `⟨α, β⟩` goes to `pushFunctor α ⋙ pullFunctor β`. -/
 def straightenDProf (E : D2SFibCat.{u, u, u, u, v₃, u₃} B.toDisplayed) :
-    (∫ (Opfibration.Straightening.straightenObj B))ᵒᵖ.Total ⥤ Cat.{v₃, u₃} where
+    DProf.{u, v₃, u₃}.Ob (Opfibration.Straightening.straightenObj B) where
   obj x := (straightenObj E.C).obj x
   map F := (straightenObj E.C).map ⟨F.base, F.fiber⟩
   map_id x := (straightenObj E.C).map_id x
