@@ -21,19 +21,19 @@ The unit and counit are given explicitly, by components defined for a single spl
 * The unit at `P` lies over the unit of `straighteningEquivStr`, whose components are identities.
   It is the identity on each `P ⟨a, x⟩`, which is the fiber of `Unstraightening P` over `x` on the
   nose (`unitHom`, `unitInv`). Its laws and its naturality hold by `rfl`, checked in the kernel.
-* The counit at `E`, over `B`, lies over the counit `∫ (straightenObj B) ⟶ B` of
-  `straighteningEquivStr` (`baseCounitHom`), which sends a morphism `φ` over `α` to `olift α ≫ φ`.
-  It is the composite of the unstraightening of the identity transformation
-  `straightenDProf E ⟶ baseCounitHom.dualOp.total ⋙ straightenObj E.C` (`counitNat`) with the counit
-  `Unstraightening (straightenObj E.C) ⟶ E.C` over `B` (`Counit.homD2S`), and similarly for its
-  inverse. Its laws are `Counit.invMap_map` and `Counit.map_invMap`, and its naturality is
+* The counit at `E`, over `B`, lies over the counit `counitStrHom B : ∫ (straightenObj B) ⟶ B` of
+  `straighteningEquivStr`, which sends a morphism `φ` over `α` to `olift α ≫ φ`. It is the
+  composite of the unstraightening of the identity transformation
+  `straightenDProf E ⟶ (counitStrHom B).dualOp.total ⋙ straightenObj E.C` (`counitNat`) with the
+  counit `Unstraightening (straightenObj E.C) ⟶ E.C` over `B` (`Counit.homD2S`), and similarly for
+  its inverse. Its laws are `Counit.invMap_map` and `Counit.map_invMap`, and its naturality is
   `Counit.map_naturality_str`: a map of D2SFibs preserves the chosen lifts.
 
 The base objects of the equivalence, such as `(straightenStr ⋙ᵥ unstraightenStr).obj B`, are not
 reducibly split opfibrations of the expected form, so instance search fails on the D2SFibs over
-them. The components are therefore stated over `∫ (straightenObj B)` and `B` (`baseCounitHom`,
-`baseStraightenMap`), and the kernel checks that they have the types that `EquivalenceOver` asks
-for.
+them. The components are therefore stated over `∫ (straightenObj B)` and `B`, along
+`counitStrHom B` and the unstraightening of `straightenStrMap H`, whose types have this form, and
+the kernel checks that they have the types that `EquivalenceOver` asks for.
 -/
 
 universe v₃ u₃ u
@@ -44,7 +44,7 @@ open CategoryTheory Displayed DoubleDisplayed D2SFib
 
 open scoped Displayed DoubleDisplayed Displayed.Opfibration.Straightening
 
-open Displayed.Opfibration.Straightening (ICatStr StrictTrans)
+open Displayed.Opfibration.Straightening (ICatStr StrictTrans counitStrHom counitStrInv)
 
 /-! ## The unit -/
 
@@ -92,41 +92,28 @@ section Counit
 variable {A : Cat.{u, u}} {B : SplitOpfibOb.{u, u, u, u} A}
   (E : D2SFibCat.{u, u, u, u, v₃, u₃} B.toDisplayed)
 
-/-- The counit of `straighteningEquivStr` at `B`, `φ ↦ olift α ≫ φ`, with its source and target in
-their simplest form. -/
-def baseCounitHom :
-    OpcartesianFunctor (𝟙 A : A ⟶ A).toFunctor (∫ (Opfibration.Straightening.straightenObj B))
-      B.toDisplayed :=
-  (Opfibration.Straightening.counitStrApp B).hom
-
-/-- The inverse of the counit of `straighteningEquivStr` at `B`. -/
-def baseCounitInv :
-    OpcartesianFunctor (𝟙 A : A ⟶ A).toFunctor B.toDisplayed
-      (∫ (Opfibration.Straightening.straightenObj B)) :=
-  (Opfibration.Straightening.counitStrApp B).inv
-
-/-- The straightening of `E` is `straightenObj E.C` along `baseCounitHom`, by identities. -/
+/-- The straightening of `E` is `straightenObj E.C` along `counitStrHom B`, by identities. -/
 def counitNat :
-    straightenDProf E ⟶ (baseCounitHom (B := B)).dualOp.total ⋙
+    straightenDProf E ⟶ (counitStrHom B).dualOp.total ⋙
       (straightenObj E.C : B.toDisplayedᵒᵖ.Total ⥤ Cat.{v₃, u₃}) where
   app _ := 𝟙 _
   naturality _ _ _ := rfl
 
-/-- `straightenObj E.C` is the straightening of `E` along `baseCounitInv`, by identities. -/
+/-- `straightenObj E.C` is the straightening of `E` along `counitStrInv B`, by identities. -/
 def counitNatInv :
-    straightenObj E.C ⟶ (baseCounitInv (B := B)).dualOp.total ⋙ straightenDProf E where
+    straightenObj E.C ⟶ (counitStrInv B).dualOp.total ⋙ straightenDProf E where
   app _ := 𝟙 _
   naturality _ _ _ := rfl
 
-/-- The counit at `E`, over `baseCounitHom`: the identity on objects, and `d2sHomEquiv⁻¹` on
+/-- The counit at `E`, over `counitStrHom B`: the identity on objects, and `d2sHomEquiv⁻¹` on
 morphisms. -/
 def counitHom :
-    D2SFibMap (baseCounitHom (B := B)) (Unstraightening (straightenDProf E)) E.C :=
+    D2SFibMap (counitStrHom B) (Unstraightening (straightenDProf E)) E.C :=
   (unstraightenStrMap (counitNat E)).comp (Counit.homD2S (C := E.C))
 
-/-- The inverse of the counit at `E`, over `baseCounitInv`. -/
+/-- The inverse of the counit at `E`, over `counitStrInv B`. -/
 def counitInv :
-    D2SFibMap (baseCounitInv (B := B)) E.C (Unstraightening (straightenDProf E)) :=
+    D2SFibMap (counitStrInv B) E.C (Unstraightening (straightenDProf E)) :=
   (Counit.invD2S (C := E.C)).comp (unstraightenStrMap (counitNatInv E))
 
 /-- The counit at `E` followed by its inverse is the identity. -/
@@ -148,18 +135,12 @@ section Naturality
 variable {A A' : Cat.{u, u}} {u : A ⟶ A'} {B : SplitOpfibOb.{u, u, u, u} A}
   {B' : SplitOpfibOb.{u, u, u, u} A'}
 
-/-- The image of `H` under `straightenStr ⋙ unstraightenStr`, with its source and target in their
-simplest form. -/
-def baseStraightenMap (H : OpcartesianFunctor u.toFunctor B.toDisplayed B'.toDisplayed) :
-    OpcartesianFunctor u.toFunctor (∫ (Opfibration.Straightening.straightenObj B))
-      (∫ (Opfibration.Straightening.straightenObj B')) :=
-  StrictTrans.unstraighten (u := u.toFunctor) (Opfibration.Straightening.straightenStr.map H)
-
 /-- The counit is natural with respect to maps of D2SFibs over arbitrary opcartesian functors. -/
 theorem counitHom_naturality {H : OpcartesianFunctor u.toFunctor B.toDisplayed B'.toDisplayed}
     {E : D2SFibCat.{u, u, u, u, v₃, u₃} B.toDisplayed}
     {E' : D2SFibCat.{u, u, u, u, v₃, u₃} B'.toDisplayed} (Φ : D2SFibMap H E.C E'.C) :
-    (unstraightenStrMap (H := baseStraightenMap H) (straightenMap Φ)).comp (counitHom E') ≍
+    (unstraightenStrMap (H := (Opfibration.Straightening.straightenStrMap H).unstraighten)
+      (straightenMap Φ)).comp (counitHom E') ≍
       (counitHom E).comp Φ :=
   D2SFibMap.hext (by kernel_exact Opfibration.Straightening.counitStrIso.hom.naturality H)
     (fun _ => HEq.rfl) fun {_ _ f b _ g c c'} θ => by

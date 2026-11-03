@@ -18,9 +18,11 @@ functors (`straighteningEquivStr`).
   is `straighten` on the underlying displayed functors (`straightenStr_comp_forget`).
 * The unit `F ≅ straightenObj (∫ F)` is the identity, since the fibres of `∫ F` are those of `F`
   and its transport is `F`, by `unstraightenPushMap`.
-* The counit `∫ (straightenObj X) ≅ X` is that of the lax equivalence (`counitHom`, `counitInv`):
-  the identity on objects, and `φ ↦ olift f x ≫ φ` on morphisms, with inverse the opcartesian
-  factorization. Both preserve the chosen lifts.
+* The counit `∫ (straightenObj X) ≅ X` is that of the lax equivalence (`counitStrHom`,
+  `counitStrInv`): the identity on objects, and `φ ↦ olift f x ≫ φ` on morphisms, with inverse the
+  opcartesian factorization. Both preserve the chosen lifts. They are stated with source and target
+  `∫ (straightenObj X)` and `X`, so that instance search finds the split opfibrations, and used
+  in this form by the straightening of D2SFibs.
 -/
 
 universe u
@@ -100,27 +102,40 @@ def unitStrIso : VertFunctor.id ICatStr.{u} ≅ unstraightenStr ⋙ᵥ straighte
   VertNatIso.ofComponents (fun F => unitStrApp F) fun _ =>
     StrictTrans.ext (fun _ => rfl) fun _ => HEq.rfl
 
-/-- The counit at `X`, as opcartesian functors: `counitHom` and `counitInv`. -/
+/-- The counit at `X`, `∫ (straightenObj X) ⟶ X`: the identity on objects, and
+`φ ↦ olift f x ≫ φ` on morphisms. Its source and target are stated as `∫ (straightenObj X)` and
+`X`, rather than as the images of `X` under `straightenStr ⋙ unstraightenStr` and the identity, so
+that instance search finds their split opfibration structures. -/
+def counitStrHom {A : Cat.{u, u}} (X : SplitOpfibOb.{u, u, u, u} A) :
+    OpcartesianFunctor (𝟙 A : A ⟶ A).toFunctor (∫ (straightenObj X)) X.toDisplayed where
+  toPre :=
+    { obj := fun x => x
+      map := fun {_ _ f x _} φ => (X.toDisplayed.olift f x ≫ᵈ φ : X.toDisplayed.Hom f x _)
+      map_id := fun _ => rfl
+      map_comp := fun _ _ => rfl
+      obj_push := fun _ _ => rfl }
+  map_olift _ _ := rfl
+
+/-- The inverse of the counit at `X`, `X ⟶ ∫ (straightenObj X)`: the identity on objects, and the
+opcartesian factorization on morphisms. -/
+def counitStrInv {A : Cat.{u, u}} (X : SplitOpfibOb.{u, u, u, u} A) :
+    OpcartesianFunctor (𝟙 A : A ⟶ A).toFunctor X.toDisplayed (∫ (straightenObj X)) where
+  toPre :=
+    { obj := fun x => x
+      map := fun {_ _ f x _} χ =>
+        (X.toDisplayed.opcartesianFactor χ : X.toDisplayed.push f x ⟶[𝟙 _] _)
+      map_id := fun _ => rfl
+      map_comp := fun _ _ => rfl
+      obj_push := fun _ _ => rfl }
+  map_olift _ _ := rfl
+
+/-- The counit at `X`, as an isomorphism of `SplitOpfibStr.Fiber A`: `counitStrHom` and
+`counitStrInv`. -/
 def counitStrApp {A : Cat.{u, u}} (X : SplitOpfibStr.Ob A) :
     ((straightenStr ⋙ᵥ unstraightenStr).obj X : SplitOpfibStr.Fiber A) ≅
       (VertFunctor.id SplitOpfibStr).obj X where
-  hom :=
-    { toPre :=
-        { obj := fun x => x
-          map := fun {_ _ f x _} φ => (X.toDisplayed.olift f x ≫ᵈ φ : X.toDisplayed.Hom f x _)
-          map_id := fun _ => rfl
-          map_comp := fun _ _ => rfl
-          obj_push := fun _ _ => rfl }
-      map_olift _ _ := rfl }
-  inv :=
-    { toPre :=
-        { obj := fun x => x
-          map := fun {_ _ f x _} χ =>
-            (X.toDisplayed.opcartesianFactor χ : X.toDisplayed.push f x ⟶[𝟙 _] _)
-          map_id := fun _ => rfl
-          map_comp := fun _ _ => rfl
-          obj_push := fun _ _ => rfl }
-      map_olift _ _ := rfl }
+  hom := counitStrHom X
+  inv := counitStrInv X
   hom_inv_id := OpcartesianFunctor.ext (DispFunctor.ext (fun _ => rfl) fun _ => HEq.rfl)
   inv_hom_id := OpcartesianFunctor.ext (DispFunctor.ext (fun _ => rfl) fun _ => HEq.rfl)
 
