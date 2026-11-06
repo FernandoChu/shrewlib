@@ -62,11 +62,11 @@ def unitInv : ReprHom (𝟙 A) (straightenObj (unstraightenObj F)) F where
   map s := s
 
 theorem unitHom_unitInv :
-    (LaxNormalCat.comp (unitHom F) (unitInv F) : LaxNormalCat.Hom (𝟙 A) F F) = LaxNormalCat.id F :=
+    LaxNormalCat.comp (unitHom F) (unitInv F) = LaxNormalCat.id F :=
   rfl
 
 theorem unitInv_unitHom :
-    (LaxNormalCat.comp (unitInv F) (unitHom F) : LaxNormalCat.Hom (𝟙 A) _ _) =
+    LaxNormalCat.comp (unitInv F) (unitHom F) =
       LaxNormalCat.id (straightenObj (unstraightenObj F)) :=
   rfl
 

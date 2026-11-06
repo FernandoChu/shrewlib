@@ -32,8 +32,7 @@ def sigmaDisp : Displayed.{max v₂ v₃, max u₂ u₃} A where
   Ob a := Σ x : D.Ob a, E.Ob (D.tot x)
   Hom f X Y := Σ φ : X.1 ⟶[f] Y.1, E.Hom (D.totalMk f φ) X.2 Y.2
   id X := ⟨𝟙ᵈ X.1, 𝟙ᵈ X.2⟩
-  comp {_ _ _ f g X _ Z} φ ψ := ⟨φ.1 ≫ᵈ ψ.1,
-    (φ.2 ≫ᵈ ψ.2 : E.Hom (D.totalMk (f ≫ g) (φ.1 ≫ᵈ ψ.1)) X.2 Z.2)⟩
+  comp φ ψ := ⟨φ.1 ≫ᵈ ψ.1, φ.2 ≫ᵈ ψ.2⟩
 
 /-- `(a, (x, b)) ↦ ((a, x), b)`. -/
 def sigmaAssoc : (D.sigmaDisp E).Total ⥤ E.Total where

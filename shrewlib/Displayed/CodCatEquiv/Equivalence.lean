@@ -64,13 +64,11 @@ def unitInv : DisplayedCat.Hom (𝟙 A) (fibres (totalObj D)) D where
     rfl
 
 theorem unitHom_unitInv :
-    (DisplayedCat.comp (unitHom D) (unitInv D) : DisplayedCat.Hom (𝟙 A) D D) =
-      DisplayedCat.id D :=
+    DisplayedCat.comp (unitHom D) (unitInv D) = DisplayedCat.id D :=
   rfl
 
 theorem unitInv_unitHom :
-    (DisplayedCat.comp (unitInv D) (unitHom D) : DisplayedCat.Hom (𝟙 A) _ _) =
-      DisplayedCat.id (fibres (totalObj D)) := by
+    DisplayedCat.comp (unitInv D) (unitHom D) = DisplayedCat.id (fibres (totalObj D)) := by
   refine DispFunctor.ext (fun {a} x => ?_) (fun {a a' f x y} s => ?_)
   · obtain ⟨⟨b, _⟩, h⟩ := x
     obtain rfl : b = a := h
@@ -116,7 +114,7 @@ def counitInv : (cod Cat.{v, u}).Hom (𝟙 A) X (totalObj (fibres X)) :=
   ⟨(counitInvFunctor X).toCatHom, rfl⟩
 
 theorem counitHom_counitInv :
-    ((cod Cat.{v, u}).comp (counitHom X) (counitInv X) : (cod Cat.{v, u}).Hom (𝟙 A) _ _) =
+    (cod Cat.{v, u}).comp (counitHom X) (counitInv X) =
       (cod Cat.{v, u}).id (totalObj (fibres X)) := by
   refine CodHom.ext (Cat.Hom.ext (Functor.hext (fun Y => ?_) ?_))
   · obtain ⟨a, _, h⟩ := Y
@@ -130,8 +128,7 @@ theorem counitHom_counitInv :
   rfl
 
 theorem counitInv_counitHom :
-    ((cod Cat.{v, u}).comp (counitInv X) (counitHom X) : (cod Cat.{v, u}).Hom (𝟙 A) X X) =
-      (cod Cat.{v, u}).id X :=
+    (cod Cat.{v, u}).comp (counitInv X) (counitHom X) = (cod Cat.{v, u}).id X :=
   rfl
 
 end Counit

@@ -62,8 +62,8 @@ variable {Γ : Cat.{u, u}}
 /-- The displayed category of the twist of `C`: the unstraightening of `C`, a dependent profunctor
 over `B`, displayed over the total category `Γ ▹ B` of `∫ B`. -/
 def twistDisp {B : ICatLax.{u, u}.Ty Γ} (C : ICatLax.{u, u}.Ty (Γ ▹ Bᵒᵖ)) :
-    Displayed.{u, u} ((Γ ▹ B : Cat.{u, u}) : Type u) :=
-  (DoubleDisplayed.D2SFib.Straightening.Unstraightening (F := (B : Γ ⥤ Cat.{u, u})) C).uncurry
+    Displayed.{u, u} (Γ ▹ B : Cat.{u, u}) :=
+  (DoubleDisplayed.D2SFib.Straightening.Unstraightening (F := B) C).uncurry
 
 /-- **The twist of a type `C` in context `Γ ▹ Bᵒᵖ`** (Twist): the type of the displayed model of
 `twistDisp C`, in context `Γ ▹ B`. -/
@@ -80,12 +80,12 @@ theorem ext_twist {B : ICatLax.{u, u}.Ty Γ} (C : ICatLax.{u, u}.Ty (Γ ▹ Bᵒ
 /-- A type `C` of the category model as a type of the displayed model: the straightening of its
 unstraightening `∫ C`. -/
 def catToDisp (C : ICatLax.{u, u}.Ty Γ) : Straightening.LaxNormalCat.{u, u, u}.Ty Γ :=
-  Straightening.straightenObj (∫ (C : Γ ⥤ Cat.{u, u}))
+  Straightening.straightenObj (∫ C)
 
 /-- The displayed category of the twist of a weakened type `C⦃𝐩 Bᵒᵖ⦄` is the reindexing of `∫ C`
 along `𝐩 B`. -/
 theorem twistDisp_weak (B C : ICatLax.{u, u}.Ty Γ) :
-    twistDisp (C⦃𝐩 (Bᵒᵖ)⦄) = DisplayedCat.pull (𝐩 B) (∫ (C : Γ ⥤ Cat.{u, u})) :=
+    twistDisp (C⦃𝐩 (Bᵒᵖ)⦄) = DisplayedCat.pull (𝐩 B) (∫ C) :=
   Displayed.ext_heq rfl (by kernel_rfl') (by kernel_rfl') (by kernel_rfl')
 
 /-- **Twist-Weak**: the twist of a type `C` weakened to `Γ ▹ Bᵒᵖ` is `C`, as a type of the

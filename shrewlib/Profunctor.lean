@@ -195,14 +195,14 @@ def whiskerRight {P P' : A ⇸ B} (η : P ⟶ P') (Q : B ⇸ C) :
 
 /-- The left unitor `comp (hom A) P ≅ P`, sending `CompObj.mk _ h p` to `P.lmap h p`. -/
 def leftUnitor (P : A ⇸ B) : comp (hom A) P ≅ P where
-  hom := ({
+  hom := {
     app _ _ := CompObj.lift (fun _ h p => P.lmap h p) (fun _ _ _ => rfl)
     app_lmap := by intros; rename_i x; induction x using CompObj.ind; rfl
-    app_rmap := by intros; rename_i x; induction x using CompObj.ind; rfl } : Hom _ _)
-  inv := ({
+    app_rmap := by intros; rename_i x; induction x using CompObj.ind; rfl }
+  inv := {
     app a _ p := CompObj.mk a (𝟙 a) p
     app_lmap := fun f _ => (CompObj.sound (P := hom A) (Q := P) f (𝟙 _) _).symm
-    app_rmap := by intros; rfl } : Hom _ _)
+    app_rmap := by intros; rfl }
   hom_inv_id := by
     hom_ext x
     induction x using CompObj.ind
@@ -211,14 +211,14 @@ def leftUnitor (P : A ⇸ B) : comp (hom A) P ≅ P where
 
 /-- The right unitor `comp P (hom B) ≅ P`, sending `CompObj.mk _ p h` to `P.rmap h p`. -/
 def rightUnitor (P : A ⇸ B) : comp P (hom B) ≅ P where
-  hom := ({
+  hom := {
     app _ _ := CompObj.lift (fun _ p h => P.rmap h p) (fun _ _ _ => rfl)
     app_lmap := by intros; rename_i x; induction x using CompObj.ind; rfl
-    app_rmap := by intros; rename_i x; induction x using CompObj.ind; rfl } : Hom _ _)
-  inv := ({
+    app_rmap := by intros; rename_i x; induction x using CompObj.ind; rfl }
+  inv := {
     app _ b p := CompObj.mk b p (𝟙 b)
     app_lmap := by intros; rfl
-    app_rmap := fun g _ => CompObj.sound (P := P) (Q := hom B) g _ (𝟙 _) } : Hom _ _)
+    app_rmap := fun g _ => CompObj.sound (P := P) (Q := hom B) g _ (𝟙 _) }
   hom_inv_id := by
     hom_ext x
     induction x using CompObj.ind
@@ -250,7 +250,7 @@ def assocInv (P : A ⇸ B) (Q : B ⇸ C) (R : C ⇸ D) (a : A) (d : D) :
 /-- The associator `comp (comp P Q) R ≅ comp P (comp Q R)`. -/
 def associator (P : A ⇸ B) (Q : B ⇸ C) (R : C ⇸ D) :
     comp (comp P Q) R ≅ comp P (comp Q R) where
-  hom := ({
+  hom := {
     app := assocHom P Q R
     app_lmap := by
       intros; rename_i x
@@ -258,8 +258,8 @@ def associator (P : A ⇸ B) (Q : B ⇸ C) (R : C ⇸ D) :
     app_rmap := by
       intros; rename_i x
       induction x using CompObj.ind with
-      | h _ x _ => induction x using CompObj.ind; rfl } : Hom _ _)
-  inv := ({
+      | h _ x _ => induction x using CompObj.ind; rfl }
+  inv := {
     app := assocInv P Q R
     app_lmap := by
       intros; rename_i x
@@ -267,7 +267,7 @@ def associator (P : A ⇸ B) (Q : B ⇸ C) (R : C ⇸ D) :
     app_rmap := by
       intros; rename_i x
       induction x using CompObj.ind with
-      | h _ _ y => induction y using CompObj.ind; rfl } : Hom _ _)
+      | h _ _ y => induction y using CompObj.ind; rfl }
   hom_inv_id := by
     hom_ext x
     induction x using CompObj.ind with | h _ x _ => induction x using CompObj.ind; rfl

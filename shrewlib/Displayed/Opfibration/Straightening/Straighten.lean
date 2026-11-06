@@ -43,7 +43,7 @@ def straightenMap {B : Cat.{v₁, u₁}} {u : A ⟶ B} {Y : SplitOpfibOb.{v₂, 
     LaxTrans (straightenObj X) (u.toFunctor ⋙ straightenObj Y) where
   app a :=
     { obj x := H.obj x
-      map β := (H.map β : H.obj _ ⟶ _)
+      map β := H.map β
       map_id _ := rfl
       map_comp _ _ := rfl }
   naturality f x := Y.toDisplayed.opcartesianFactor (H.map (X.toDisplayed.olift f x))

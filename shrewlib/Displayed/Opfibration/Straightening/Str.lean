@@ -38,7 +38,7 @@ open scoped Displayed
 /-- **The unstraightening with strict morphisms**: `F` goes to `∫ F`, and a strict
 transformation `τ` to the opcartesian functor `τ.unstraighten`. -/
 def unstraightenStr : VertFunctor ICatStr.{v₂, u₂, v₁, u₁} SplitOpfibStr.{v₂, u₂, v₁, u₁} where
-  obj F := { toDisplayed := ∫ (F : _ ⥤ Cat.{v₂, u₂}), splitOpfib := unstraightenSplitOpfib F }
+  obj F := { toDisplayed := ∫ F, splitOpfib := unstraightenSplitOpfib F }
   map {_ _ u _ _} τ := StrictTrans.unstraighten (u := u.toFunctor) τ
 
 /-- The unstraightening with strict morphisms is the unstraightening of their underlying lax
@@ -54,7 +54,7 @@ def straightenStrMap {A B : Cat.{v₁, u₁}} {u : A ⟶ B} {X : SplitOpfibOb.{v
     (H : OpcartesianFunctor u.toFunctor X.toDisplayed Y.toDisplayed) :
     StrictTrans (straightenObj X) (u.toFunctor ⋙ straightenObj Y) where
   toObj := { obj := fun x => H.toPre.obj x }
-  map β := (H.toPre.map β : H.toPre.obj _ ⟶ _)
+  map β := H.toPre.map β
 
 /-- **The straightening with strict morphisms**: a split opfibration goes to the functor of its
 fibres, and an opcartesian functor to the strict transformation of its actions on the fibres. -/

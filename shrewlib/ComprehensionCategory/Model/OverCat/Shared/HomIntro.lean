@@ -50,7 +50,7 @@ variable {Γ : Cat.{u, u}}
 /-- The displayed category of the twisted Hom-type of `A`, over `Γ ▹ A`: the twist of its Hom-type,
 reindexed along the diagonal. Its objects over `(γ, a)` are the endomorphisms of `a`. -/
 def twistedHomDisp (A : ICatLax.{u, u}.Ty Γ) :
-    Displayed.{u, u} ((Γ ▹ A : Cat.{u, u}) : Type u) :=
+    Displayed.{u, u} (Γ ▹ A : Cat.{u, u}) :=
   DisplayedCat.pull (diag A) (twistDisp (homFunctor A))
 
 /-- **The twisted Hom-type of `A`**, `Γ ▹ a : A ⊢ Homₐ(ā, a)`, a type of the displayed model. -/

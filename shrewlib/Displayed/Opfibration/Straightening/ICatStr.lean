@@ -161,7 +161,7 @@ variable {A A' A'' : Cat.{v₁, u₁}} {F : A ⥤ Cat.{v, u}} {G : A' ⥤ Cat.{v
 
 /-- The unstraightening of an object of `ICatStr` is a split opfibration. The instance
 `unstraightenSplitOpfib` does not apply to it, since `ICatStr.Ob A` is not reducibly `A ⥤ Cat`. -/
-instance splitOpfib (F : ICatStr.{v, u}.Ob A) : SplitOpfib (∫ (F : A ⥤ Cat.{v, u})) :=
+instance splitOpfib (F : ICatStr.{v, u}.Ob A) : SplitOpfib (∫ F) :=
   unstraightenSplitOpfib F
 
 /-! The unstraightening of the identities and composites of `ICatStr` are the identities and

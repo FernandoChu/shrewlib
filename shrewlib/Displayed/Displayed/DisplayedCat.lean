@@ -50,7 +50,7 @@ def pull : Displayed.{v₂, u₂} A where
   Ob a := E.Ob (u.toFunctor.obj a)
   Hom f x y := x ⟶[u.toFunctor.map f] y
   id x := 𝟙ᵈ x
-  comp {_ _ _ f g x _ z} φ ψ := (φ ≫ᵈ ψ : x ⟶[u.toFunctor.map f ≫ u.toFunctor.map g] z)
+  comp φ ψ := φ ≫ᵈ ψ
 
 /-- The morphism `pull u E ⟶[u] E`, given by identities. -/
 def clift : DispFunctor u.toFunctor (pull u E) E where

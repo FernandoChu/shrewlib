@@ -58,7 +58,7 @@ variable {D : Displayed.{v₂, u₂} C} [Fib D] [Comprehension D] {Δ Γ : C} (�
 `A`: what the substitution of `t` along `σ` factors. -/
 def pullCone (t : Tm(Γ, A)) :
     (⟨Δ, 𝟙 Δ⟩ : (cod C).Ob Δ) ⟶[𝟙 Δ ≫ σ] (D.compr).obj A :=
-  ⟨σ ≫ t.sec, (congrArg (σ ≫ ·) t.sec_proj : _)⟩
+  ⟨σ ≫ t.sec, congrArg (σ ≫ ·) t.sec_proj⟩
 
 /-- **The substitution of a term** along `σ : Δ ⟶ Γ`: the factorization of `σ ≫ t.sec` through
 the pullback square of `𝐪(σ, A)`. -/
@@ -82,7 +82,7 @@ theorem pull_unique (t : Tm(Γ, A)) (s : Tm(Δ, A⦃σ⦄)) (h : s.sec ≫ 𝐪(
     s = t⦃σ⦄ :=
   Tm.ext (congrArg Subtype.val ((D.isCartesianComprMap (D.isCartesianClift σ A)).lift_uniq
     (χ := pullCone σ t)
-    (⟨s.sec, s.sec_proj⟩ : CodHom (𝟙 Δ) (⟨Δ, 𝟙 Δ⟩ : CodOb C Δ) ((D.compr).obj (D.pull σ A)))
+    (⟨s.sec, s.sec_proj⟩ : CodHom (𝟙 Δ) ⟨Δ, 𝟙 Δ⟩ ((D.compr).obj (D.pull σ A)))
     (CodHom.ext h)))
 
 end Tm

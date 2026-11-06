@@ -41,7 +41,7 @@ variable {A : Cat.{v₁, u₁}} (X : SplitFibOb.{v₂, u₂} A)
 /-- The counit at `D`: the identity on objects, and `φ : x ⟶ pull f y` goes to
 `φ ≫ clift f y`. -/
 def counitHom : unstraighten.obj (straightenObj X) ⟶[𝟙 A] X where
-  obj x := (x : X.toDisplayed.Ob _)
+  obj x := x
   map {_ _ f x y} φ :=
     (X.toDisplayed.comp (f := 𝟙 _) φ (X.toDisplayed.clift f y) : X.toDisplayed.Hom f x y)
 

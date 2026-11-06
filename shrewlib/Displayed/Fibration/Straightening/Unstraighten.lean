@@ -87,7 +87,7 @@ functor over `u` sending `φ : x ⟶ F f y` to `α φ ≫ α.naturality f y`. -/
 def unstraightenMap {A : Type u₁} [Category.{v₁} A] {B : Type u₂} [Category.{v₂} B] {u : A ⥤ B}
     {F : Aᵒᵖ ⥤ Cat.{v, u}} {G : Bᵒᵖ ⥤ Cat.{v, u}} (α : LaxTrans F (reindex u G)) :
     DispFunctor u (∫⁻ F) (∫⁻ G) where
-  obj {a} x := ((α.app a).obj x : G.obj (op (u.obj a)))
+  obj {a} x := (α.app a).obj x
   map {a a' f x y} φ := ((α.app a).map φ ≫ α.naturality f y :
     (α.app a).obj x ⟶ (G.map (u.map f).op).toFunctor.obj ((α.app a').obj y))
   map_comp {a _ _ f g x _ _} φ ψ := by

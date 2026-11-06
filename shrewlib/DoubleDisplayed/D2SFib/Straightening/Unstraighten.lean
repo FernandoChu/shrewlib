@@ -267,7 +267,7 @@ The instance `instSplitD2SFib` does not apply to it, since `ICatStr.Ob A` is not
 `A ⥤ Cat`. -/
 instance instSplitD2SFibICatStr {A : Cat.{v₁, u₁}} {F : ICatStr.{v₂, u₂, v₁, u₁}.Ob A}
     (P : DProf.{v₃, u₃}.Ob F) :
-    SplitD2SFib (Unstraightening (F := (F : A ⥤ Cat.{v₂, u₂})) P) :=
+    SplitD2SFib (Unstraightening (F := F) P) :=
   instSplitD2SFib P
 
 section Maps

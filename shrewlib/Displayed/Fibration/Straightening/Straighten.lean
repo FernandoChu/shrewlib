@@ -44,7 +44,7 @@ def straightenMap {B : Cat.{v₁, u₁}} {u : A ⟶ B} {Y : SplitFibOb.{v₂, u�
     LaxTrans (straightenObj X) (reindex u.toFunctor (straightenObj Y)) where
   app a :=
     { obj x := H.obj x
-      map β := (H.map β : H.obj _ ⟶ _)
+      map β := H.map β
       map_id _ := rfl
       map_comp _ _ := rfl }
   naturality f y := Y.toDisplayed.cartesianFactor (H.map (X.toDisplayed.clift f y))

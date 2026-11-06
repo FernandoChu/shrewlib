@@ -128,8 +128,7 @@ on which the rule `StrictTrans.map_id` does not fire, so `map_id` is that rule. 
 def totalMap (τ : StrictTrans F (u ⋙ G)) :
     (∫ (F ⋙ opFunctor')).Total ⥤ (∫ (G ⋙ opFunctor')).Total where
   obj x := (∫ (G ⋙ opFunctor')).tot (τ.toObj.obj x.2)
-  map {x y} h := (∫ (G ⋙ opFunctor')).totalMk (u.map h.base)
-    (τ.map (h.fiber : @Quiver.Hom (F.obj y.1) _ y.2 ((F.map h.base).toFunctor.obj x.2)))
+  map h := (∫ (G ⋙ opFunctor')).totalMk (u.map h.base) (τ.map h.fiber)
   map_id x := congrArg ((∫ (G ⋙ opFunctor')).totalMk (𝟙 (u.obj x.1))) (τ.map_id x.2)
   map_comp _ _ := rfl
 

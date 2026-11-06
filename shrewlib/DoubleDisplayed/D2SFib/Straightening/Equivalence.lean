@@ -84,7 +84,7 @@ end Unstraightening
 /-- **The unit at `P`**: `P ≅ straightenObj (Unstraightening P)`, by identity functors. -/
 def unitApp {A : Type u₁} [Category.{v₁} A] {F : A ⥤ Cat.{v₂, u₂}}
     (P : (∫ (F ⋙ opFunctor')).Total ⥤ Cat.{v₃, u₃}) :
-    P ≅ (straightenObj (Unstraightening P) : (∫ (F ⋙ opFunctor')).Total ⥤ Cat.{v₃, u₃}) :=
+    P ≅ straightenObj (Unstraightening P) :=
   NatIso.ofComponents (fun x => Unstraightening.unitFiberIso P x.2) (fun {x y} h => by
     apply Cat.ext
     -- `_root_.id` gives the objects of `(∫ (F ⋙ opFunctor')).Total` their type in `∫ F`, so
@@ -131,31 +131,29 @@ variable {a a' a'' : A} {α : a ⟶ a'} {α' : a' ⟶ a''}
 
 /-- The hom-types of `Unstraightening (straightenDProf E)` over `g` are the targets of
 `d2sHomEquiv` at `olift α ≫ g`. -/
-theorem hom_eq (g : b ⟶[α] b') (c : E.C.Ob (b : B.toDisplayed.Ob a))
-    (c' : E.C.Ob (b' : B.toDisplayed.Ob a')) :
+theorem hom_eq (g : b ⟶[α] b') (c : E.C.Ob b) (c' : E.C.Ob b') :
     (Unstraightening (straightenDProf E)).Hom g c c' =
       (push α c ⟶ pull (B.toDisplayed.opcartesianFactor ((counitStrHom B).toPre.map g)) c') :=
   rfl
 
 /-- The counit on morphisms. It is irreducible: its value composes with the chosen lifts, and rules
 such as `VertFunctor.map_comp` would otherwise see through it. -/
-irreducible_def map {g : b ⟶[α] b'} {c : E.C.Ob (b : B.toDisplayed.Ob a)}
-    {c' : E.C.Ob (b' : B.toDisplayed.Ob a')}
+irreducible_def map {g : b ⟶[α] b'} {c : E.C.Ob b} {c' : E.C.Ob b'}
     (θ : (Unstraightening (straightenDProf E)).Hom g c c') :
     c ⟶[[(counitStrHom B).toPre.map g]] c' :=
   (d2sHomEquiv α ((counitStrHom B).toPre.map g) c c').symm θ
 
-theorem map_id' (c : E.C.Ob (b : B.toDisplayed.Ob a)) :
+theorem map_id' (c : E.C.Ob b) :
     map (DoubleDisplayed.id (Unstraightening (straightenDProf E)) c) = E.C.id c := by
   rw [map_def]; rfl
 
 theorem map_pullLift {b₀ b₁ : (∫ (Opfibration.Straightening.straightenObj B)).Ob a}
-    (β : b₀ ⟶[𝟙 a] b₁) (c : E.C.Ob (b₁ : B.toDisplayed.Ob a)) :
+    (β : b₀ ⟶[𝟙 a] b₁) (c : E.C.Ob b₁) :
     map (pullLift (C := Unstraightening (straightenDProf E)) β c) =
       pullLift ((counitStrHom B).toPre.map β) c :=
   (map_def _).trans rfl
 
-theorem map_pushLift (c : E.C.Ob (b : B.toDisplayed.Ob a)) :
+theorem map_pushLift (c : E.C.Ob b) :
     map (pushLift (C := Unstraightening (straightenDProf E)) α c) =
       pushLift ((𝟙 A : A ⟶ A).toFunctor.map α) c :=
   (map_def _).trans rfl
@@ -199,7 +197,7 @@ theorem invMap_pushLift (c : E.C.Ob b) :
 /-- The counit, then its inverse, on morphisms. -/
 theorem invMap_map {b : (∫ (Opfibration.Straightening.straightenObj B)).Ob a}
     {b' : (∫ (Opfibration.Straightening.straightenObj B)).Ob a'} {g : b ⟶[α] b'}
-    {c : E.C.Ob (b : B.toDisplayed.Ob a)} {c' : E.C.Ob (b' : B.toDisplayed.Ob a')}
+    {c : E.C.Ob b} {c' : E.C.Ob b'}
     (θ : (Unstraightening (straightenDProf E)).Hom g c c') : invMap (map θ) = θ :=
   (invMap_def (map θ)).trans ((congrArg (d2sHomEquiv α _ c c') (map_def θ)).trans
     ((d2sHomEquiv α ((counitStrHom B).toPre.map g) c c').apply_symm_apply θ))
@@ -216,8 +214,7 @@ theorem map_comp {a a' a'' : A} {α : a ⟶ a'} {α' : a' ⟶ a''}
     {b : (∫ (Opfibration.Straightening.straightenObj B)).Ob a}
     {b' : (∫ (Opfibration.Straightening.straightenObj B)).Ob a'}
     {b'' : (∫ (Opfibration.Straightening.straightenObj B)).Ob a''} {g : b ⟶[α] b'}
-    {g' : b' ⟶[α'] b''} {c : E.C.Ob (b : B.toDisplayed.Ob a)}
-    {c' : E.C.Ob (b' : B.toDisplayed.Ob a')} {c'' : E.C.Ob (b'' : B.toDisplayed.Ob a'')}
+    {g' : b' ⟶[α'] b''} {c : E.C.Ob b} {c' : E.C.Ob b'} {c'' : E.C.Ob b''}
     (θ : (Unstraightening (straightenDProf E)).Hom g c c')
     (θ' : (Unstraightening (straightenDProf E)).Hom g' c' c'') :
     map (θ ≫ᵈᵈ θ') = map θ ≫ᵈᵈ map θ' :=
@@ -279,7 +276,7 @@ theorem Counit.map_naturality {H : OpcartesianFunctor u.toFunctor B.toDisplayed 
     {E' : D2SFibCat.{v₃, u₃} B'.toDisplayed} (Φ : D2SFibMap H E.C E'.C) {a a' : A}
     {α : a ⟶ a'} {b : (∫ (Opfibration.Straightening.straightenObj B)).Ob a}
     {b' : (∫ (Opfibration.Straightening.straightenObj B)).Ob a'} {g : b ⟶[α] b'}
-    {c : E.C.Ob (b : B.toDisplayed.Ob a)} {c' : E.C.Ob (b' : B.toDisplayed.Ob a')}
+    {c : E.C.Ob b} {c' : E.C.Ob b'}
     (θ : (Unstraightening (straightenDProf E)).Hom g c c') :
     Φ.toObj.map (Counit.map θ) =
       Counit.map (E := E')

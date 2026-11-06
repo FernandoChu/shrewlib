@@ -39,7 +39,7 @@ variable {A : Cat.{v₁, u₁}} (X : SplitOpfibOb.{v₂, u₂} A)
 /-- The counit at `D`: the identity on objects, and `φ : push f x ⟶ y` goes to
 `olift f x ≫ φ`. -/
 def counitHom : unstraighten.obj (straightenObj X) ⟶[𝟙 A] X where
-  obj x := (x : X.toDisplayed.Ob _)
+  obj x := x
   map {_ _ f x y} φ := (X.toDisplayed.olift f x ≫ᵈ φ : X.toDisplayed.Hom f x y)
 
 /-- The inverse of the counit at `D`: the identity on objects, and a morphism goes to its

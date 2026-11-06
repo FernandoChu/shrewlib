@@ -59,7 +59,7 @@ variable {C}
 
 namespace cod
 
-@[simp] theorem id_val {a : C} (x : (cod C).Ob a) : (𝟙ᵈ x : x ⟶[𝟙 a] x).1 = 𝟙 x.dom := rfl
+@[simp] theorem id_val {a : C} (x : (cod C).Ob a) : (𝟙ᵈ x).1 = 𝟙 x.dom := rfl
 
 @[simp] theorem comp_val {a a' a'' : C} {f : a ⟶ a'} {g : a' ⟶ a''} {x : (cod C).Ob a}
     {y : (cod C).Ob a'} {z : (cod C).Ob a''} (φ : x ⟶[f] y) (ψ : y ⟶[g] z) :

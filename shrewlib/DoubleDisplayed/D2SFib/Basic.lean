@@ -313,7 +313,7 @@ variable {a a' : A}
 /-- A morphism of `C`, viewed as a morphism of the total category of `C.total`. -/
 def totC {α : a ⟶ a'} {b : B.Ob a} {b' : B.Ob a'} (g : b ⟶[α] b') {c : C.Ob b} {c' : C.Ob b'}
     (θ : c ⟶[[g]] c') :
-    C.total.tot (⟨b, c⟩ : C.total.Ob a) ⟶ C.total.tot (⟨b', c'⟩ : C.total.Ob a') :=
+    C.total.tot ⟨b, c⟩ ⟶ C.total.tot ⟨b', c'⟩ :=
   C.total.totalMk α ⟨g, θ⟩
 
 omit [SplitOpfib B] [SplitD2SFib C] in
@@ -400,7 +400,7 @@ theorem totC_pushLift_pushMap (α : a ⟶ a') {b : B.Ob a} {c c' : C.Fiber b} (f
   exact congrArg (totC _) (pushLift_pushMap α f)
 
 theorem totC_pushLift_pushMap_assoc (α : a ⟶ a') {b : B.Ob a} {c c' : C.Fiber b} (f : c ⟶ c')
-    {z : C.total.Total} (h : C.total.tot (⟨_, push α c'⟩ : C.total.Ob a') ⟶ z) :
+    {z : C.total.Total} (h : C.total.tot ⟨_, push α c'⟩ ⟶ z) :
     totC (B.olift α b) (pushLift α c) ≫ (totC (B.id _) (pushMap α f) ≫ h)
       = totC (B.id b) f ≫ (totC (B.olift α b) (pushLift α c') ≫ h) := by
   rw [← Category.assoc, totC_pushLift_pushMap, Category.assoc]
@@ -413,7 +413,7 @@ theorem totC_pullMap_pullLift {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') {c c' : C.
   exact congrArg (totC _) (pullMap_pullLift β f)
 
 theorem totC_pullMap_pullLift_assoc {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') {c c' : C.Fiber b'}
-    (f : c ⟶ c') {z : C.total.Total} (h : C.total.tot (⟨b', c'⟩ : C.total.Ob a) ⟶ z) :
+    (f : c ⟶ c') {z : C.total.Total} (h : C.total.tot ⟨b', c'⟩ ⟶ z) :
     totC (B.id _) (pullMap β f) ≫ (totC β (pullLift β c') ≫ h)
       = totC β (pullLift β c) ≫ (totC (B.id b') f ≫ h) := by
   rw [← Category.assoc, totC_pullMap_pullLift, Category.assoc]
@@ -426,7 +426,7 @@ theorem totC_pushLift_pullLift (α : a ⟶ a') {b b' : B.Ob a} (β : b ⟶[𝟙 
   exact congrArg (totC _) (pushLift_pullLift α β c).symm
 
 theorem totC_pushLift_pullLift_assoc (α : a ⟶ a') {b b' : B.Ob a} (β : b ⟶[𝟙 a] b')
-    (c : C.Ob b') {z : C.total.Total} (h : C.total.tot (⟨_, push α c⟩ : C.total.Ob a') ⟶ z) :
+    (c : C.Ob b') {z : C.total.Total} (h : C.total.tot ⟨_, push α c⟩ ⟶ z) :
     totC (B.olift α b) (pushLift α (pull β c))
         ≫ (totC (B.pushMap α β) (pullLift (B.pushMap α β) (push α c)) ≫ h)
       = totC β (pullLift β c) ≫ (totC (B.olift α b') (pushLift α c) ≫ h) := by

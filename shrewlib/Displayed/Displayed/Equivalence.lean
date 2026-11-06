@@ -159,11 +159,11 @@ def inverseOfFullyFaithful : VertFunctor E D where
 
 /-- The unit at `x`: the preimage of `F x ≅ F (G (F x))`. -/
 def unitApp {a : A} (x : D.Ob a) : x ⟶[𝟙 a] G (F.obj x) :=
-  hF.preimage (show F.obj x ⟶[𝟙 a] F.obj (G (F.obj x)) from (ε (F.obj x)).inv)
+  hF.preimage (ε (F.obj x)).inv
 
 /-- The inverse of the unit at `x`. -/
 def unitInvApp {a : A} (x : D.Ob a) : G (F.obj x) ⟶[𝟙 a] x :=
-  hF.preimage (show F.obj (G (F.obj x)) ⟶[𝟙 a] F.obj x from (ε (F.obj x)).hom)
+  hF.preimage (ε (F.obj x)).hom
 
 /-- **A fully faithful vertical functor with chosen preimages `F (G y) ≅ y` is an equivalence
 over the base.** -/

@@ -92,14 +92,14 @@ end
 @[rewrite_rule]
 theorem map_pushMap [Opfib D] [Opfib E] (H : OpcartesianFunctor u D E) {a a' : A} (f : a ⟶ a')
     {x y : D.Fiber a} (β : x ⟶ y) :
-    H.toPre.map (D.pushMap f β) = E.pushMap (u.map f) (H.toPre.map β : H.toPre.obj x ⟶ _) := by
+    H.toPre.map (D.pushMap f β) = E.pushMap (u.map f) (H.toPre.map β) := by
   refine IsOpcartesian.hom_ext (φ := E.olift (u.map f) (H.toPre.obj x))
     (E.isOpcartesianOlift _ _) ?_
   refine (congrArg H.toPre.map (D.olift_pushMap f β)).trans ?_
   -- The rule `DispFunctor.map_comp` matches the base morphism of `H.toPre.map` structurally, and
   -- here it is `f` rather than `𝟙 a ≫ f`.
   refine (H.toPre.map_comp (f := 𝟙 a) (g := f) β (D.olift f y)).trans ?_
-  exact (E.olift_pushMap (u.map f) (H.toPre.map β : H.toPre.obj x ⟶ _)).symm
+  exact (E.olift_pushMap (u.map f) (H.toPre.map β)).symm
 
 /-- **An opcartesian functor preserves the opcartesian factorizations**:
 `H (opcartesianFactor φ) = opcartesianFactor (H φ)`. -/
@@ -117,7 +117,7 @@ variable [SplitOpfib D] [SplitOpfib E]
 `Dᵒᵖ ⟶ Eᵒᵖ` over `u` given by `H` on the vertical morphisms `y ⟶ push f x`. -/
 def dualOp (H : OpcartesianFunctor u D E) : DispFunctor u Dᵒᵖ Eᵒᵖ where
   obj x := H.toPre.obj x
-  map {_ _ _ _ y} φ := (H.toPre.map φ : H.toPre.obj y ⟶ _)
+  map φ := H.toPre.map φ
 
 /-! The functors that the identities and composites of opcartesian functors induce between the
 total categories of the dual opfibrations are the identities and composites, as rules. -/

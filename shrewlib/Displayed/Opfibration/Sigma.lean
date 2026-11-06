@@ -34,7 +34,7 @@ variable [Opfib D] [Opfib E] {a a' : A}
 /-- The pair of chosen lifts `⟨olift f x, olift (f, olift f x) b⟩` is opcartesian. -/
 def isOpcartesianSigmaOlift (f : a ⟶ a') (X : (D.sigmaDisp E).Ob a) :
     IsOpcartesian (D := D.sigmaDisp E)
-      (y := (⟨D.push f X.1, E.push (D.totalOlift f X.1) X.2⟩ : (D.sigmaDisp E).Ob a'))
+      (y := ⟨D.push f X.1, E.push (D.totalOlift f X.1) X.2⟩)
       ⟨D.olift f X.1, E.olift (D.totalOlift f X.1) X.2⟩ where
   desc g _ χ :=
     ⟨(D.isOpcartesianOlift f X.1).desc g χ.1,

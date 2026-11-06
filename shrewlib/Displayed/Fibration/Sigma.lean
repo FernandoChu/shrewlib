@@ -36,7 +36,7 @@ variable [Fib D] [Fib E] {a a' : A}
 /-- The pair of chosen lifts `⟨clift f y, clift (f, clift f y) c⟩` is cartesian. -/
 def isCartesianSigmaClift (f : a ⟶ a') (Y : (D.sigmaDisp E).Ob a') :
     IsCartesian (D := D.sigmaDisp E)
-      (x := (⟨D.pull f Y.1, E.pull (D.totalClift f Y.1) Y.2⟩ : (D.sigmaDisp E).Ob a))
+      (x := ⟨D.pull f Y.1, E.pull (D.totalClift f Y.1) Y.2⟩)
       ⟨D.clift f Y.1, E.clift (D.totalClift f Y.1) Y.2⟩ where
   lift g Z χ :=
     ⟨(D.isCartesianClift f Y.1).lift g χ.1,

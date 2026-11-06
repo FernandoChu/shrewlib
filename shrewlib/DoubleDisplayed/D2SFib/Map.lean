@@ -109,19 +109,19 @@ variable (Φ : D2SFibMap H C C')
 
 /-- A map of D2SFibs preserves the pushforward action on morphisms. -/
 theorem map_pushMap {a a' : A} (α : a ⟶ a') {b : B.Ob a} {c c' : C.Fiber b} (f : c ⟶ c') :
-    Φ.toObj.map (pushMap α f) = pushMap (u.map α) (Φ.toObj.map f : Φ.toObj.obj c ⟶ _) := by
+    Φ.toObj.map (pushMap α f) = pushMap (u.map α) (Φ.toObj.map f) := by
   refine DoubleDisplayed.IsOpcartesian.hom_ext (θ := pushLift (u.map α) (Φ.toObj.obj c))
     (isOpcartesianPushLift _ _) ?_
   refine (congrArg Φ.toObj.map (pushLift_pushMap α f)).trans ?_
-  exact (pushLift_pushMap (u.map α) (Φ.toObj.map f : Φ.toObj.obj c ⟶ _)).symm
+  exact (pushLift_pushMap (u.map α) (Φ.toObj.map f)).symm
 
 /-- A map of D2SFibs preserves the pullback action on morphisms. -/
 theorem map_pullMap {a : A} {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') {c c' : C.Fiber b'}
     (f : c ⟶ c') :
-    Φ.toObj.map (pullMap β f) = pullMap (H.toPre.map β) (Φ.toObj.map f : Φ.toObj.obj c ⟶ _) := by
+    Φ.toObj.map (pullMap β f) = pullMap (H.toPre.map β) (Φ.toObj.map f) := by
   refine pull_hom_ext (β := H.toPre.map β) (c := Φ.toObj.obj c') ?_
   refine (congrArg Φ.toObj.map (pullMap_pullLift β f)).trans ?_
-  exact (pullMap_pullLift (H.toPre.map β) (Φ.toObj.map f : Φ.toObj.obj c ⟶ _)).symm
+  exact (pullMap_pullLift (H.toPre.map β) (Φ.toObj.map f)).symm
 
 attribute [rewrite_rule] map_pushMap map_pullMap
 
