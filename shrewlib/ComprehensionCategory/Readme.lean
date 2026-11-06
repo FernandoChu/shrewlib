@@ -38,7 +38,9 @@ Comprehension categories as displayed categories, their type formers, and models
       functors into profunctors, with the equivalence `LaxNormalCat ≃ cod Cat` as comprehension
       functor: a split replacement of `cod Cat`, with Σ-types.
     * `Shared/`: type formers relating the models: the Hom-types of the category model, types of
-      the discrete model, and the universe of discrete types in the category model.
+      the discrete model, the universe of discrete types in the category model, the twist of a
+      type of the category model, a type of the displayed model, and the twisted Hom-types with
+      their introduction rule (Hom-Intro).
     * `Maps/`: maps between the models: forgetting the discreteness, a strict map preserving
       Σ-types and opposite types, and the lifts of the types of a lower level.
 

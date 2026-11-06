@@ -39,7 +39,7 @@ structure PreOpcartesianFunctor (u : A ⥤ B) (D : Displayed.{v₁, u₁, v₃, 
     (E : Displayed.{v₂, u₂, v₄, u₄} B) [Opfib D] [Opfib E] extends DispFunctor u D E where
   /-- Preserves the chosen pushforwards on objects. -/
   obj_push : ∀ {a a' : A} (f : a ⟶ a') (x : D.Ob a),
-    obj (Opfib.push f x) = Opfib.push (u.map f) (obj x)
+    obj (Opfib.push f x) = Opfib.push (u.map f) (obj x) := by intros; rfl
 
 attribute [rewrite_rule] PreOpcartesianFunctor.obj_push
 
@@ -53,7 +53,7 @@ structure OpcartesianFunctor (u : A ⥤ B) (D : Displayed.{v₁, u₁, v₃, u�
   than `Opfib.olift`, its unfolding, so that rules keyed on `E.olift`, such as `vert_olift`, apply
   to it. -/
   map_olift : ∀ {a a' : A} (f : a ⟶ a') (x : D.Ob a),
-    toPre.map (Opfib.olift f x) = E.olift (u.map f) (toPre.obj x)
+    toPre.map (Opfib.olift f x) = E.olift (u.map f) (toPre.obj x) := by intros; rfl
 
 attribute [rewrite_rule] OpcartesianFunctor.map_olift
 
@@ -78,15 +78,13 @@ theorem ext {H K : OpcartesianFunctor u D E} (h : H.toDispFunctor = K.toDispFunc
 
 /-- The identity opcartesian functor. -/
 protected def id (D : Displayed.{v₁, u₁, v₃, u₃} A) [Opfib D] : OpcartesianFunctor (𝟭 A) D D where
-  toPre := { toDispFunctor := DispFunctor.id D, obj_push := fun _ _ => rfl }
-  map_olift _ _ := rfl
+  toPre := { toDispFunctor := DispFunctor.id D }
 
 /-- Composition of opcartesian functors, over the composite functor. -/
 def comp {C : Type u₅} [Category.{v₅} C] {v : B ⥤ C} {E' : Displayed.{v₅, u₅, v₆, u₆} C}
     [Opfib E'] (H : OpcartesianFunctor u D E) (K : OpcartesianFunctor v E E') :
     OpcartesianFunctor (u ⋙ v) D E' where
-  toPre := { toDispFunctor := H.toDispFunctor.comp K.toDispFunctor, obj_push := fun _ _ => rfl }
-  map_olift _ _ := rfl
+  toPre := { toDispFunctor := H.toDispFunctor.comp K.toDispFunctor }
 
 end
 
@@ -120,8 +118,6 @@ variable [SplitOpfib D] [SplitOpfib E]
 def dualOp (H : OpcartesianFunctor u D E) : DispFunctor u Dᵒᵖ Eᵒᵖ where
   obj x := H.toPre.obj x
   map {_ _ _ _ y} φ := (H.toPre.map φ : H.toPre.obj y ⟶ _)
-  map_id _ := rfl
-  map_comp _ _ := rfl
 
 /-! The functors that the identities and composites of opcartesian functors induce between the
 total categories of the dual opfibrations are the identities and composites, as rules. -/

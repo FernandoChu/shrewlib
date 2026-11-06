@@ -62,9 +62,11 @@ structure LaxTrans (F G : Aᵒᵖ ⥤ Cat.{v, u}) where
     (app a).map ((F.map f.op).toFunctor.map φ) ≫ naturality f y =
       naturality f x ≫ (G.map f.op).toFunctor.map ((app a').map φ)
   naturality_id : ∀ {a : A} (y : F.obj (op a)), naturality (𝟙 a) y = 𝟙 ((app a).obj y)
+    := by intros; rfl
   naturality_comp : ∀ {a a' a'' : A} (f : a ⟶ a') (g : a' ⟶ a'') (y : F.obj (op a'')),
     naturality (f ≫ g) y =
       naturality f ((F.map g.op).toFunctor.obj y) ≫ (G.map f.op).toFunctor.map (naturality g y)
+    := by intros; rfl
 
 attribute [rewrite_rule] LaxTrans.naturality_id LaxTrans.naturality_comp
 
@@ -92,8 +94,6 @@ protected def id (F : Aᵒᵖ ⥤ Cat.{v, u}) : LaxTrans F F where
   app _ := 𝟭 _
   naturality _ _ := 𝟙 _
   naturality_naturality {_ _} _ {_ _} _ := rfl
-  naturality_id _ := rfl
-  naturality_comp _ _ _ := rfl
 
 /-- Vertical composition of lax transformations. -/
 def vcomp (α : LaxTrans F G) (β : LaxTrans G H) : LaxTrans F H where
@@ -104,7 +104,6 @@ def vcomp (α : LaxTrans F G) (β : LaxTrans G H) : LaxTrans F H where
       (α.naturality_naturality f φ)).trans
       (congrArg ((β.app a).map (α.naturality f x) ≫ ·)
         (β.naturality_naturality f ((α.app a').map φ)))
-  naturality_id _ := rfl
   naturality_comp {a _ _} f g y := by
     kernel_exact congrArg (fun t => (β.app a).map (α.naturality f ((F.map g.op).toFunctor.obj y)) ≫
         t ≫ (H.map f.op).toFunctor.map (β.naturality g ((α.app _).obj y)))
@@ -116,8 +115,6 @@ def whiskerLeft {B : Type u₂} [Category.{v₂} B] (u : B ⥤ A) (α : LaxTrans
   app b := α.app (u.obj b)
   naturality f y := α.naturality (u.map f) y
   naturality_naturality {_ _} f {_ _} φ := α.naturality_naturality (u.map f) φ
-  naturality_id _ := rfl
-  naturality_comp _ _ _ := rfl
 
 end LaxTrans
 
@@ -134,8 +131,6 @@ def ICatOpLax : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
   Hom u F G := LaxTrans F (reindex u.toFunctor G)
   id F := LaxTrans.id F
   comp {_ _ _ u _ _ _ _} α β := LaxTrans.vcomp α (LaxTrans.whiskerLeft u.toFunctor β)
-  id_comp _ := rfl
-  comp_id _ := rfl
   -- The two sides agree componentwise by `rfl`, but the kernel does not see it on the whole
   -- structure, so we go through `ext'`, with the components compared in the kernel.
   assoc _ _ _ := LaxTrans.ext' (fun _ _ => rfl) (fun _ _ _ _ => HEq.rfl)
@@ -166,11 +161,7 @@ instance ICatOpLax.preSplitFib : PreSplitFib ICatOpLax.{u} where
   pull u G := ICatOpLax.pull u G
   clift u G := ICatOpLax.clift u G
   isCartesianClift u G := ICatOpLax.isCartesianClift u G
-  pull_id _ := rfl
-  pull_comp _ _ _ := rfl
 
-instance ICatOpLax.splitFib : SplitFib ICatOpLax.{u} where
-  clift_id _ := rfl
-  clift_comp _ _ _ := rfl
+instance ICatOpLax.splitFib : SplitFib ICatOpLax.{u} := {}
 
 end Displayed.Fibration.Straightening

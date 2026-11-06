@@ -61,4 +61,4 @@ recall ComprehensionCategory.DiscreteModel.op_op {Γ : Cat.{u, u}} (A : IDisc.{u
 
 /-- A discrete category is its own opposite. -/
 recall ComprehensionCategory.DiscreteModel.opFunctor'_obj_discrete' (S : Type u) :
-    CatModel.opFunctor'.obj (Discrete.discrete' S) = Discrete.discrete' S
+    opFunctor'.obj (Discrete.discrete' S) = Discrete.discrete' S

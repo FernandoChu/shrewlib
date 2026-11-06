@@ -58,9 +58,6 @@ def SmallIDisc : Displayed.{v + 1, v + 2, v + 1, v + 1} Cat.{v + 1, v + 1} where
   Hom u A B := ICatLax.Hom u (CatModel.lift A.toFunctor) (CatModel.lift B.toFunctor)
   id A := ICatLax.id (CatModel.lift A.toFunctor)
   comp φ ψ := ICatLax.comp φ ψ
-  id_comp _ := rfl
-  comp_id _ := rfl
-  assoc _ _ _ := rfl
 
 namespace SmallIDisc
 
@@ -91,28 +88,18 @@ instance SmallIDisc.preSplitFib : PreSplitFib SmallIDisc.{v} where
   pull u X := SmallIDisc.pull u X
   clift u X := SmallIDisc.clift u X
   isCartesianClift u X := SmallIDisc.isCartesianClift u X
-  pull_id _ := rfl
-  pull_comp _ _ _ := rfl
 
-instance SmallIDisc.splitFib : SplitFib SmallIDisc.{v} where
-  clift_id _ := rfl
-  clift_comp _ _ _ := rfl
+instance SmallIDisc.splitFib : SplitFib SmallIDisc.{v} := {}
 
 /-- **The lift into the category model**, a vertical cartesian functor. -/
 def SmallIDisc.lift : CartesianFunctor (𝟭 Cat.{v + 1, v + 1}) SmallIDisc.{v} ICatLax.{v + 1} where
   toPre :=
     { obj A := CatModel.lift A.toFunctor
-      map φ := φ
-      map_id _ := rfl
-      map_comp _ _ := rfl
-      obj_pull _ _ := rfl }
-  map_clift _ _ := rfl
+      map φ := φ }
 
 /-- **The lift is fully faithful**, since the morphisms are those of the category model. -/
 def SmallIDisc.liftFullyFaithful : VertFunctor.FullyFaithful SmallIDisc.lift.{v}.toDispFunctor where
   preimage φ := φ
-  map_preimage _ := rfl
-  preimage_map _ := rfl
 
 /-- The comprehension structure of the discrete types of level `v`: that of the category model,
 along the lift. -/
@@ -121,7 +108,7 @@ instance SmallIDisc.comprehension : Comprehension SmallIDisc.{v} :=
   Comprehension.comap SmallIDisc.lift.toDispFunctor SmallIDisc.lift.isCartesianMap
 
 /-- **The discrete types of level `v`** form a full split comprehension category. -/
-instance SmallIDisc.splitComprehension : SplitComprehension SmallIDisc.{v} where
+instance SmallIDisc.splitComprehension : SplitComprehension SmallIDisc.{v} := {}
 
 @[instance_reducible]
 instance SmallIDisc.fullComprehension : FullComprehension SmallIDisc.{v} where

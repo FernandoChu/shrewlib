@@ -21,9 +21,7 @@ kernel. Once defined, composites in `opCategory' c` are composites in
 
 universe u
 
-namespace ComprehensionCategory.CatModel
-
-open CategoryTheory
+namespace CategoryTheory
 
 /-- The opposite category structure on the type `C` itself: a morphism from `x` to `y` is a
 morphism `y ⟶ x` of `c`. Unlike the category `Cᵒᵖ`, its double opposite is `c` definitionally. -/
@@ -72,4 +70,4 @@ def opFunctor'ObjIso (C : Cat.{u, u}) : opFunctor'.obj C ≅ Cat.opFunctor.obj C
 def opFunctor'Iso : opFunctor'.{u} ≅ Cat.opFunctor :=
   NatIso.ofComponents opFunctor'ObjIso fun _ => rfl
 
-end ComprehensionCategory.CatModel
+end CategoryTheory

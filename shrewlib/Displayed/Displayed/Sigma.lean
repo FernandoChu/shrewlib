@@ -34,9 +34,6 @@ def sigmaDisp : Displayed.{v₁, u₁, max v₂ v₃, max u₂ u₃} A where
   id X := ⟨𝟙ᵈ X.1, 𝟙ᵈ X.2⟩
   comp {_ _ _ f g X _ Z} φ ψ := ⟨φ.1 ≫ᵈ ψ.1,
     (φ.2 ≫ᵈ ψ.2 : E.Hom (D.totalMk (f ≫ g) (φ.1 ≫ᵈ ψ.1)) X.2 Z.2)⟩
-  id_comp _ := rfl
-  comp_id _ := rfl
-  assoc _ _ _ := rfl
 
 /-- `(a, (x, b)) ↦ ((a, x), b)`. -/
 def sigmaAssoc : (D.sigmaDisp E).Total ⥤ E.Total where

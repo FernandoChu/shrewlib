@@ -168,8 +168,6 @@ def VertNatTrans.total {F G : VertFunctor D E} (η : F ⟶ G) : F.total ⟶ G.to
 def VertFunctor.totalFunctor : VertFunctor D E ⥤ (D.Total ⥤ E.Total) where
   obj F := F.total
   map η := VertNatTrans.total η
-  map_id _ := rfl
-  map_comp _ _ := rfl
 
 /-- The natural isomorphism between total functors induced by a vertical natural isomorphism. -/
 def VertNatIso.total {F G : VertFunctor D E} (η : F ≅ G) : F.total ≅ G.total :=

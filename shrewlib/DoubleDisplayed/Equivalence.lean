@@ -151,8 +151,6 @@ morphisms. -/
 def VertFunctor.reindex (F : VertFunctor C' D') : VertFunctor (C'.reindex H) (D'.reindex H) where
   obj c := F.obj c
   map θ := F.map θ
-  map_id _ := rfl
-  map_comp _ _ := rfl
 
 theorem VertFunctor.reindex_comp {E' : DoubleDisplayed.{v₄, u₄, v₅, u₅, v₃, u₃} B'}
     (F : VertFunctor C' D') (G : VertFunctor D' E') :

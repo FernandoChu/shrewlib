@@ -35,9 +35,6 @@ from `x` to `y` is a vertical morphism `y ⟶ B.push f x`. -/
   Hom {_ a'} f x y := @Quiver.Hom (B.Fiber a') _ y (B.push f x)
   id {a} x := 𝟙 (show B.Fiber a from x)
   comp {_ _ _} {_ g} {_ _ _} φ ψ := ψ ≫ B.pushMap g φ
-  id_comp _ := rfl
-  comp_id _ := rfl
-  assoc _ _ _ := rfl
 
 /-- `Bᵒᵖ` is the dual opfibration `B.dualOp` of a split opfibration `B`. -/
 scoped notation:max B:max "ᵒᵖ" => Displayed.dualOp B

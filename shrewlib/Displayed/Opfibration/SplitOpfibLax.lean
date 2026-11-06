@@ -39,9 +39,6 @@ def SplitOpfibLax : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
   Hom u X Y := DispFunctor u.toFunctor X.toDisplayed Y.toDisplayed
   id X := DispFunctor.id X.toDisplayed
   comp H K := H.comp K
-  id_comp _ := rfl
-  comp_id _ := rfl
-  assoc _ _ _ := rfl
 
 /-- The split opcleavage of an object of `SplitOpfibLax`. The instance `SplitOpfibOb.splitOpfib`
 does not apply to it, since `SplitOpfibLax.Ob A` is not reducibly `SplitOpfibOb A`. -/
@@ -53,13 +50,9 @@ instance SplitOpfibLax.splitOpfib {A : Cat.{u, u}} (X : SplitOpfibLax.Ob A) :
 def SplitOpfibLax.forget : VertFunctor SplitOpfibLax.{u} DisplayedCat.{u} where
   obj X := X.toDisplayed
   map H := H
-  map_id _ := rfl
-  map_comp _ _ := rfl
 
 /-- Forgetting the split opcleavage is fully faithful, since the morphisms are the same. -/
 def SplitOpfibLax.forgetFullyFaithful : SplitOpfibLax.forget.{u}.FullyFaithful where
   preimage H := H
-  map_preimage _ := rfl
-  preimage_map _ := rfl
 
 end Displayed

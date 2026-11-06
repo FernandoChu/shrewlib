@@ -29,9 +29,8 @@ The files give its ingredients:
   terms are the functors `Γ ⥤ K` (`Tm.constEquiv`), naturally in `Γ`.
 * `TypeFormers/Sigma`: Σ-types, whose pairing is the inverse of the counit of
   straightening–unstraightening at the composite.
-* `OpFunctor`: the opposite functor `opFunctor' : Cat ⥤ Cat`, involutive on the nose, by taking
-  the opposite category structure on the same objects. It imports no rewrite rules.
-* `TypeFormers/Op`: opposite types, `A ⋙ opFunctor'`, whose rules hold by `rfl`.
+* `TypeFormers/Op`: opposite types, `A ⋙ opFunctor'`, whose rules hold by `rfl`, with the
+  opposite functor `opFunctor' : Cat ⥤ Cat` of `CategoryTheory/Opposite`, involutive on the nose.
 * `Small`: at level `v + 1`, the types of level `v`, the functors `Γ ⥤ Cat.{v, v}`, as a full
   split comprehension category `SmallICat`, along their lift into the category model.
 * `TypeFormers/Universe`: the universe `U Γ` of the types of level `v`, with inverse maps `El` and
@@ -63,13 +62,6 @@ recall ComprehensionCategory.CatModel.comprFullyFaithful : CatModel.compr.{u}.Fu
 
 /-- **The category model has Σ-types.** -/
 recall ComprehensionCategory.CatModel.hasSigma : HasSigma ICatLax.{u}
-
-/-- The opposite functor is involutive on the nose, and is Mathlib's `Cat.opFunctor` up to
-isomorphism. -/
-recall ComprehensionCategory.CatModel.opFunctor'_comp_opFunctor' :
-    CatModel.opFunctor'.{u} ⋙ CatModel.opFunctor' = 𝟭 _
-
-recall ComprehensionCategory.CatModel.opFunctor'Iso : CatModel.opFunctor'.{u} ≅ Cat.opFunctor
 
 /-- **The category model has opposite types**, involutive by `rfl`. -/
 recall ComprehensionCategory.CatModel.op_op {Γ : Cat.{u, u}} (A : ICatLax.{u}.Ty Γ) :

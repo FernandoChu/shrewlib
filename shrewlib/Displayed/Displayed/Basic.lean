@@ -62,10 +62,12 @@ structure Displayed (A : Type u₁) [Category.{v₁} A] where
   comp : {a a' a'' : A} → {f : a ⟶ a'} → {g : a' ⟶ a''} → {x : Ob a} → {y : Ob a'} →
     {z : Ob a''} → Hom f x y → Hom g y z → Hom (f ≫ g) x z
   id_comp : ∀ {a a' : A} {f : a ⟶ a'} {x : Ob a} {y : Ob a'} (φ : Hom f x y), comp (id x) φ = φ
+    := by intros; rfl
   comp_id : ∀ {a a' : A} {f : a ⟶ a'} {x : Ob a} {y : Ob a'} (φ : Hom f x y), comp φ (id y) = φ
+    := by intros; rfl
   assoc : ∀ {a a' a'' a''' : A} {f : a ⟶ a'} {g : a' ⟶ a''} {h : a'' ⟶ a'''}
     {x : Ob a} {y : Ob a'} {z : Ob a''} {w : Ob a'''} (φ : Hom f x y) (ψ : Hom g y z)
-    (χ : Hom h z w), comp (comp φ ψ) χ = comp φ (comp ψ χ)
+    (χ : Hom h z w), comp (comp φ ψ) χ = comp φ (comp ψ χ) := by intros; rfl
 
 attribute [rewrite_rule] Displayed.id_comp Displayed.comp_id Displayed.assoc
 
@@ -149,9 +151,9 @@ structure DispFunctor (u : A ⥤ B) (D : Displayed.{v₁, u₁, v₂, u₂} A)
   /-- The action on morphisms, over the image of the base morphism. -/
   map : {a a' : A} → {f : a ⟶ a'} → {x : D.Ob a} → {y : D.Ob a'} → (x ⟶[f] y) →
     (obj x ⟶[u.map f] obj y)
-  map_id : ∀ {a : A} (x : D.Ob a), map (𝟙ᵈ x) = 𝟙ᵈ (obj x)
+  map_id : ∀ {a : A} (x : D.Ob a), map (𝟙ᵈ x) = 𝟙ᵈ (obj x) := by intros; rfl
   map_comp : ∀ {a a' a'' : A} {f : a ⟶ a'} {g : a' ⟶ a''} {x : D.Ob a} {y : D.Ob a'}
-    {z : D.Ob a''} (φ : x ⟶[f] y) (ψ : y ⟶[g] z), map (φ ≫ᵈ ψ) = map φ ≫ᵈ map ψ
+    {z : D.Ob a''} (φ : x ⟶[f] y) (ψ : y ⟶[g] z), map (φ ≫ᵈ ψ) = map φ ≫ᵈ map ψ := by intros; rfl
 
 attribute [rewrite_rule] DispFunctor.map_id DispFunctor.map_comp
 
@@ -177,16 +179,12 @@ theorem ext {H K : DispFunctor u D E} (hobj : ∀ {a : A} (x : D.Ob a), H.obj x 
 protected def id (D : Displayed.{v₁, u₁, v₂, u₂} A) : DispFunctor (𝟭 A) D D where
   obj x := x
   map φ := φ
-  map_id _ := rfl
-  map_comp _ _ := rfl
 
 /-- Composition of displayed functors, over the composite functor. -/
 def comp {C : Type u₆} [Category.{v₆} C] {v : B ⥤ C} {E' : Displayed.{v₆, u₆, v₇, u₇} C}
     (H : DispFunctor u D E) (K : DispFunctor v E E') : DispFunctor (u ⋙ v) D E' where
   obj x := K.obj (H.obj x)
   map φ := K.map (H.map φ)
-  map_id _ := rfl
-  map_comp _ _ := rfl
 
 end DispFunctor
 

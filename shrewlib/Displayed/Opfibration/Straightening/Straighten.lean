@@ -68,8 +68,6 @@ def straightenMap {B : Cat.{u, u}} {u : A ⟶ B} {Y : SplitOpfibOb B}
             (H.map (X.toDisplayed.olift f x) ≫ᵈ H.map (f := 𝟙 a') (X.toDisplayed.pushMap f φ)) :=
           congrArg _ (H.map_comp (f := f) (g := 𝟙 a') _ _)
       _ = _ := Y.toDisplayed.opcartesianFactor_comp _ _
-  naturality_id _ := rfl
-  naturality_comp _ _ _ := rfl
 
 /-- The 2-cells of the straightening of a composite: the factorization of `K (H (olift f x))` is
 that of `K (olift (u f) (H x))` followed by `K` of that of `H (olift f x)`. -/

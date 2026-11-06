@@ -43,9 +43,6 @@ def unstraightenObj (F : A ⥤ Cat.{v, u}) : Displayed.{v₁, u₁, v, u} A wher
   -- The ascription is needed for the rules to identify the codomain with `F (f ≫ g) x ⟶ z`.
   comp {_ _ _ f g x _ z} φ ψ :=
     ((F.map g).toFunctor.map φ ≫ ψ : (F.map g).toFunctor.obj ((F.map f).toFunctor.obj x) ⟶ z)
-  id_comp _ := rfl
-  comp_id _ := rfl
-  assoc _ _ _ := rfl
 
 /-- `∫ F` is the unstraightening `unstraightenObj F` of `F : A ⥤ Cat`. -/
 scoped notation:max "∫ " F:max => unstraightenObj F
@@ -63,13 +60,9 @@ instance unstraightenPreSplitOpfib (F : A ⥤ Cat.{v, u}) : PreSplitOpfib (∫ F
   push f x := (F.map f).toFunctor.obj x
   olift f x := 𝟙 ((F.map f).toFunctor.obj x)
   isOpcartesianOlift f x := isOpcartesianUnstraightenOlift F f x
-  push_id _ := rfl
-  push_comp _ _ _ := rfl
 
 /-- **The unstraightening of `F` is a split opfibration**, pushing forward along `F`. -/
-instance unstraightenSplitOpfib (F : A ⥤ Cat.{v, u}) : SplitOpfib (∫ F) where
-  olift_id _ := rfl
-  olift_comp _ _ _ := rfl
+instance unstraightenSplitOpfib (F : A ⥤ Cat.{v, u}) : SplitOpfib (∫ F) := {}
 
 /-- The unstraightening of an object of `ICatLax` is a split opfibration. The instance
 `unstraightenSplitOpfib` does not apply to it, since `ICatLax.Ob A` is not reducibly `A ⥤ Cat`. -/
@@ -98,7 +91,6 @@ def unstraightenMap {A : Type u₁} [Category.{v₁} A] {B : Type u₂} [Categor
   obj {a} x := ((α.app a).obj x : G.obj (u.obj a))
   map {a a' f x y} φ := (α.naturality f x ≫ (α.app a').map φ :
     (G.map (u.map f)).toFunctor.obj ((α.app a).obj x) ⟶ (α.app a').obj y)
-  map_id _ := rfl
   map_comp {_ _ a'' f g x _ _} φ ψ :=
     congrArg (fun t => (G.map (u.map g)).toFunctor.map (α.naturality f x) ≫ t ≫
         (α.app a'').map ψ)
@@ -109,7 +101,6 @@ transformation over `u` to the induced displayed functor. -/
 def unstraighten : VertFunctor ICatLax.{u} SplitOpfibLax.{u} where
   obj F := { toDisplayed := ∫ F, splitOpfib := unstraightenSplitOpfib F }
   map {_ _ u _ _} α := unstraightenMap (u := u.toFunctor) α
-  map_id _ := rfl
   map_comp _ _ := DispFunctor.ext (fun _ => rfl) fun _ => HEq.rfl
 
 end Displayed.Opfibration.Straightening

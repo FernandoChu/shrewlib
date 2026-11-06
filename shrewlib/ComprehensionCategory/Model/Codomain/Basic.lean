@@ -31,9 +31,7 @@ instance comprehension [ChosenPullbacks C] : Comprehension (cod C) where
 @[instance_reducible]
 instance fullComprehension [ChosenPullbacks C] : FullComprehension (cod C) where
   comprFullyFaithful :=
-    { preimage := fun ψ => ψ
-      map_preimage := fun _ => rfl
-      preimage_map := fun _ => rfl }
+    { preimage := fun ψ => ψ }
 
 /-- **The comprehension functor is a strict map** from `D` to the codomain comprehension category,
 over the identity: the comprehension functor of `cod C` is the identity. -/
@@ -41,10 +39,7 @@ def comprMap [ChosenPullbacks C] (D : Displayed.{v, u, v₂, u₂} C) [Fib D] [C
     StrictComprehensionMap (𝟭 C) D (cod C) where
   toPre.obj A := D.compr.obj A
   toPre.map φ := D.compr.map φ
-  toPre.map_id _ := rfl
-  toPre.map_comp _ _ := rfl
   toPre.isCartesianMap H := D.isCartesianComprMap H
   toPre.compr_obj _ := rfl
-  compr_map _ := rfl
 
 end ComprehensionCategory.CodomainModel

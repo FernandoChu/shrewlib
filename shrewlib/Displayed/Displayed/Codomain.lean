@@ -54,9 +54,6 @@ def cod : Displayed.{v, u, v, max u v} C where
     obtain ⟨ψ, hψ⟩ := ψ
     change φ ≫ ψ ≫ z.hom = x.hom ≫ f ≫ g
     rw [hψ, ← Category.assoc, hφ, Category.assoc]⟩
-  id_comp _ := rfl
-  comp_id _ := rfl
-  assoc _ _ _ := rfl
 
 variable {C}
 
@@ -84,7 +81,5 @@ to `F.map p`, and a square to its image. -/
 def codMap (F : C ⥤ C') : DispFunctor F (cod C) (cod C') where
   obj x := ⟨F.obj x.dom, F.map x.hom⟩
   map φ := ⟨F.map φ.1, (congrArg F.map (cod.w φ) :)⟩
-  map_id _ := rfl
-  map_comp _ _ := rfl
 
 end Displayed

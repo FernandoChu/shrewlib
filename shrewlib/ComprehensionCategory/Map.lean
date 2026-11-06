@@ -62,8 +62,8 @@ structure ComprehensionMap extends DispFunctor F D E where
 structure PseudoComprehensionMap extends ComprehensionMap F D E where
   /-- The inverse of the comparison. -/
   cmpInv : ∀ {Γ : C} (A : D.Ty Γ), F.obj Γ ▹ obj A ⟶ F.obj (Γ ▹ A)
-  cmp_cmpInv : ∀ {Γ : C} (A : D.Ty Γ), cmp A ≫ cmpInv A = 𝟙 _
-  cmpInv_cmp : ∀ {Γ : C} (A : D.Ty Γ), cmpInv A ≫ cmp A = 𝟙 _
+  cmp_cmpInv : ∀ {Γ : C} (A : D.Ty Γ), cmp A ≫ cmpInv A = 𝟙 _ := by intros; rfl
+  cmpInv_cmp : ∀ {Γ : C} (A : D.Ty Γ), cmpInv A ≫ cmp A = 𝟙 _ := by intros; rfl
 
 /-- A pre-strict map of comprehension categories: a displayed functor preserving cartesian
 morphisms, with which the comprehension functors commute on objects. This axiom is a rewrite
@@ -85,7 +85,7 @@ structure StrictComprehensionMap where
   toPre : PreStrictComprehensionMap F D E
   /-- The comprehension functors commute on morphisms. -/
   compr_map : ∀ {Γ Γ' : C} {f : Γ ⟶ Γ'} {A : D.Ty Γ} {B : D.Ty Γ'} (φ : A ⟶[f] B),
-    E.compr.map (toPre.map φ) = (codMap F).map (D.compr.map φ)
+    E.compr.map (toPre.map φ) = (codMap F).map (D.compr.map φ) := by intros; rfl
 
 attribute [rewrite_rule] StrictComprehensionMap.compr_map
 
@@ -110,8 +110,6 @@ def StrictComprehensionMap.toPseudo (M : StrictComprehensionMap F D E) :
   cmp_proj _ := rfl
   cmp_natural _ := rfl
   cmpInv _ := 𝟙 _
-  cmp_cmpInv _ := rfl
-  cmpInv_cmp _ := rfl
 
 /-! ## Identities and composites -/
 
@@ -146,8 +144,6 @@ variable (D) in
 def PseudoComprehensionMap.id : PseudoComprehensionMap (𝟭 C) D D where
   toComprehensionMap := ComprehensionMap.id D
   cmpInv _ := 𝟙 _
-  cmp_cmpInv _ := rfl
-  cmpInv_cmp _ := rfl
 
 /-- The composite of pseudo maps, whose inverse comparisons compose in the opposite order. -/
 def PseudoComprehensionMap.comp (M : PseudoComprehensionMap F D E)
@@ -167,7 +163,6 @@ def StrictComprehensionMap.id : StrictComprehensionMap (𝟭 C) D D where
   toPre.toDispFunctor := DispFunctor.id D
   toPre.isCartesianMap H := H
   toPre.compr_obj _ := rfl
-  compr_map _ := rfl
 
 /-- The composite of strict maps, whose axioms hold by `rfl` through the rules for `M` and `N`. -/
 def StrictComprehensionMap.comp (M : StrictComprehensionMap F D E)
@@ -175,7 +170,6 @@ def StrictComprehensionMap.comp (M : StrictComprehensionMap F D E)
   toPre.toDispFunctor := M.toPre.toDispFunctor.comp N.toPre.toDispFunctor
   toPre.isCartesianMap H := N.toPre.isCartesianMap (M.toPre.isCartesianMap H)
   toPre.compr_obj _ := rfl
-  compr_map _ := rfl
 
 end Comp
 

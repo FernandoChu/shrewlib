@@ -1,5 +1,5 @@
 import ComprehensionCategory.Model.OverCat.Cat.Basic
-import ComprehensionCategory.Model.OverCat.Cat.OpFunctor
+import CategoryTheory.Opposite.OpFunctor
 
 /-!
 # Opposite types in the category model

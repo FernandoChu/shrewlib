@@ -26,7 +26,6 @@ def liftComprehensionMap :
   toPre.toDispFunctor := SmallICat.lift.toDispFunctor
   toPre.isCartesianMap := SmallICat.lift.isCartesianMap
   toPre.compr_obj _ := rfl
-  compr_map _ := rfl
 
 /-- **The lift of the discrete types of level `v` is a strict map of comprehension categories**
 into the category model. -/
@@ -35,6 +34,5 @@ def liftDiscComprehensionMap :
   toPre.toDispFunctor := SmallIDisc.lift.toDispFunctor
   toPre.isCartesianMap := SmallIDisc.lift.isCartesianMap
   toPre.compr_obj _ := rfl
-  compr_map _ := rfl
 
 end ComprehensionCategory.OverCat

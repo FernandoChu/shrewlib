@@ -41,12 +41,8 @@ instance preSplitFib : PreSplitFib DisplayedCat.{u} where
   pull u E := pull u E
   clift u E := clift u E
   isCartesianClift u E := isCartesianClift u E
-  pull_id _ := rfl
-  pull_comp _ _ _ := rfl
 
-instance splitFib : SplitFib DisplayedCat.{u} where
-  clift_id _ := rfl
-  clift_comp _ _ _ := rfl
+instance splitFib : SplitFib DisplayedCat.{u} := {}
 
 end Split
 

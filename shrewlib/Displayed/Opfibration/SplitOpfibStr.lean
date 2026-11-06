@@ -32,9 +32,6 @@ def SplitOpfibStr : Displayed Cat.{v₁, u₁} where
   Hom u X Y := OpcartesianFunctor u.toFunctor X.toDisplayed Y.toDisplayed
   id X := OpcartesianFunctor.id X.toDisplayed
   comp H K := H.comp K
-  id_comp _ := rfl
-  comp_id _ := rfl
-  assoc _ _ _ := rfl
 
 /-- The split opcleavage of an object of `SplitOpfibStr`. The instance `SplitOpfibOb.splitOpfib`
 does not apply to it, since `SplitOpfibStr.Ob A` is not reducibly `SplitOpfibOb A`. -/
@@ -46,8 +43,6 @@ instance SplitOpfibStr.splitOpfib {A : Cat.{v₁, u₁}} (X : SplitOpfibStr.{v�
 def SplitOpfibStr.forget : VertFunctor SplitOpfibStr.{u, u, u, u} SplitOpfibLax.{u} where
   obj X := X
   map H := H.toDispFunctor
-  map_id _ := rfl
-  map_comp _ _ := rfl
 
 /-- Forgetting that the chosen lifts are preserved is faithful. -/
 theorem SplitOpfibStr.forget_map_injective {A B : Cat.{u, u}} {u : A ⟶ B}

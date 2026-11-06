@@ -41,9 +41,6 @@ abbrev D2SFibStr : DoubleDisplayed SplitOpfibStr.{v₁, u₁, v₂, u₂} where
     D2SFibMap H (D2SFibCat.C E) (D2SFibCat.C E')
   id E := D2SFibMap.id (D2SFibCat.C E)
   comp Φ Ψ := Φ.comp Ψ
-  id_comp _ := rfl
-  comp_id _ := rfl
-  assoc _ _ _ := rfl
 
 /-- The chosen pullback of a D2SFib along an opcartesian functor `H` is its reindexing along `H`,
 with `D2SFibMap.reindexLift` as chosen lift. -/
@@ -59,13 +56,9 @@ instance D2SFibStr.ddFib : DDFib D2SFibStr.{v₁, u₁, v₂, u₂, v₃, u₃} 
       lift_fac := fun {_ _ _} _ {_} _ => rfl
       lift_uniq := fun {_ _ _ _ _ _} _ h => by subst h; rfl }
 
-instance D2SFibStr.preSplitDDFib : PreSplitDDFib D2SFibStr.{v₁, u₁, v₂, u₂, v₃, u₃} where
-  pull_id _ := rfl
-  pull_comp _ _ _ := rfl
+instance D2SFibStr.preSplitDDFib : PreSplitDDFib D2SFibStr.{v₁, u₁, v₂, u₂, v₃, u₃} := {}
 
 /-- **`D2SFibStr` is a split fibration over `SplitOpfibStr`**, by reindexing. -/
-instance D2SFibStr.splitDDFib : SplitDDFib D2SFibStr.{v₁, u₁, v₂, u₂, v₃, u₃} where
-  clift_id _ := rfl
-  clift_comp _ _ _ := rfl
+instance D2SFibStr.splitDDFib : SplitDDFib D2SFibStr.{v₁, u₁, v₂, u₂, v₃, u₃} := {}
 
 end DoubleDisplayed

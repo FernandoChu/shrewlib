@@ -32,9 +32,6 @@ def DisplayedCat : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
   Hom u D E := DispFunctor u.toFunctor D E
   id D := DispFunctor.id D
   comp H K := H.comp K
-  id_comp _ := rfl
-  comp_id _ := rfl
-  assoc _ _ _ := rfl
 
 namespace DisplayedCat
 
@@ -51,16 +48,11 @@ def pull : Displayed.{u, u, u, u} A where
   Hom f x y := x ⟶[u.toFunctor.map f] y
   id x := 𝟙ᵈ x
   comp {_ _ _ f g x _ z} φ ψ := (φ ≫ᵈ ψ : x ⟶[u.toFunctor.map f ≫ u.toFunctor.map g] z)
-  id_comp _ := rfl
-  comp_id _ := rfl
-  assoc _ _ _ := rfl
 
 /-- The morphism `pull u E ⟶[u] E`, given by identities. -/
 def clift : DispFunctor u.toFunctor (pull u E) E where
   obj x := x
   map φ := φ
-  map_id _ := rfl
-  map_comp _ _ := rfl
 
 end Pull
 

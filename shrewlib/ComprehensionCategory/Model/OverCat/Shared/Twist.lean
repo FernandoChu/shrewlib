@@ -17,15 +17,12 @@ depends on it covariantly:
              Γ ▹ b : B ⊢ Tw(C) type
 ```
 
-The context `Γ ▹ Bᵒᵖ` has the same objects and morphisms as the total category `(∫ B)ᵒᵖ.Total` of
-the dual of the unstraightening of `B`: pairs `(γ, b)`, and pairs of `f : γ ⟶ γ'` and a morphism
-`b' ⟶ B f b` of `B γ'`. So `C` is a dependent profunctor over `B`, a functor
-`(∫ B)ᵒᵖ.Total ⥤ Cat` with the values of `C` (`asDProf`). The two categories have different
-identities and composites as terms, those of `opCategory'` for `Γ ▹ Bᵒᵖ`, and the kernel does not
-identify the two structures, though it does identify their components: the functor laws of
-`asDProf C` are those of `C`, through extensionality of the morphisms of `Γ ▹ Bᵒᵖ`.
+The context `Γ ▹ Bᵒᵖ` is the total category `(∫ (B ⋙ opFunctor')).Total`, with objects `(γ, b)`,
+and morphisms `(γ, b) ⟶ (γ', b')` the pairs of `f : γ ⟶ γ'` and a morphism `b' ⟶ B f b` of `B γ'`.
+So `C` is, as it is, a dependent profunctor over `B`: a functor
+`(∫ (B ⋙ opFunctor')).Total ⥤ Cat`, an object of `DProf` over `B`.
 
-The unstraightening `Unstraightening (asDProf C)` is a split D2SFib over `∫ B`
+The unstraightening `Unstraightening C` is a split D2SFib over `∫ B`
 (`DoubleDisplayed/D2SFib/Straightening/Unstraighten.lean`), a category doubly displayed over
 `∫ B`, which is a category displayed over the total category of `∫ B`, the context `Γ ▹ B`
 (`DoubleDisplayed.uncurry`). The twist is the type of the displayed model of this displayed category
@@ -62,22 +59,11 @@ open scoped Displayed
 
 variable {Γ : Cat.{u, u}}
 
-/-- **A type `C` in context `Γ ▹ Bᵒᵖ` as a dependent profunctor over `B`**: the functor
-`(∫ B)ᵒᵖ.Total ⥤ Cat` with the values of `C`. Its laws are those of `C`, as the identities and
-composites of the two categories agree componentwise. -/
-def asDProf {B : ICatLax.{u}.Ty Γ} (C : ICatLax.{u}.Ty (Γ ▹ Bᵒᵖ)) :
-    (∫ (B : Γ ⥤ Cat.{u, u}))ᵒᵖ.Total ⥤ Cat.{u, u} where
-  obj x := C.obj x
-  map F := C.map ⟨F.base, F.fiber⟩
-  map_id x := (congrArg C.map (Total.Hom.ext' rfl (by kernel_rfl'))).trans (C.map_id x)
-  map_comp F G := (congrArg C.map (Total.Hom.ext' rfl (by kernel_rfl'))).trans
-    (C.map_comp (X := _) (Y := _) (Z := _) ⟨F.base, F.fiber⟩ ⟨G.base, G.fiber⟩)
-
-/-- The displayed category of the twist of `C`: the unstraightening of `C`, as a dependent
-profunctor over `B`, displayed over the total category `Γ ▹ B` of `∫ B`. -/
+/-- The displayed category of the twist of `C`: the unstraightening of `C`, a dependent profunctor
+over `B`, displayed over the total category `Γ ▹ B` of `∫ B`. -/
 def twistDisp {B : ICatLax.{u}.Ty Γ} (C : ICatLax.{u}.Ty (Γ ▹ Bᵒᵖ)) :
     Displayed.{u, u, u, u} ((Γ ▹ B : Cat.{u, u}) : Type u) :=
-  (DoubleDisplayed.D2SFib.Straightening.Unstraightening (asDProf C)).uncurry
+  (DoubleDisplayed.D2SFib.Straightening.Unstraightening (F := (B : Γ ⥤ Cat.{u, u})) C).uncurry
 
 /-- **The twist of a type `C` in context `Γ ▹ Bᵒᵖ`** (Twist): the type of the displayed model of
 `twistDisp C`, in context `Γ ▹ B`. -/

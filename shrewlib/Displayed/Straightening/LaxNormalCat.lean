@@ -195,10 +195,10 @@ structure ReprHom {A B : Cat.{u, u}} (u : A ⟶ B) (F : LaxNormal A) (G : LaxNor
   /-- The 2-cells, on elements. -/
   map : {a a' : A} → {f : a ⟶ a'} → {x : F.obj ⟨a⟩} → {y : F.obj ⟨a'⟩} →
     (prof F f).obj x y → (prof G (u.toFunctor.map f)).obj (obj x) (obj y)
-  map_id : ∀ {a : A} (x : F.obj ⟨a⟩), map (f := 𝟙 a) (𝟙 x) = 𝟙 (obj x)
+  map_id : ∀ {a : A} (x : F.obj ⟨a⟩), map (f := 𝟙 a) (𝟙 x) = 𝟙 (obj x) := by intros; rfl
   map_mul : ∀ {a a' a'' : A} {f : a ⟶ a'} {g : a' ⟶ a''} {x : F.obj ⟨a⟩} {y : F.obj ⟨a'⟩}
     {z : F.obj ⟨a''⟩} (s : (prof F f).obj x y) (t : (prof F g).obj y z),
-    map (mul s t) = mul (map s) (map t)
+    map (mul s t) = mul (map s) (map t) := by intros; rfl
 
 attribute [rewrite_rule] ReprHom.map_id ReprHom.map_mul
 
@@ -238,17 +238,10 @@ def LaxNormalCat : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
   Hom := ReprHom
   id _ :=
     { obj := fun x => x
-      map := fun s => s
-      map_id := fun _ => rfl
-      map_mul := fun _ _ => rfl }
+      map := fun s => s }
   comp φ ψ :=
     { obj := fun x => ψ.obj (φ.obj x)
-      map := fun s => ψ.map (φ.map s)
-      map_id := fun _ => rfl
-      map_mul := fun _ _ => rfl }
-  id_comp _ := rfl
-  comp_id _ := rfl
-  assoc _ _ _ := rfl
+      map := fun s => ψ.map (φ.map s) }
 
 /-! ## Pullbacks and the fibration property -/
 
@@ -283,8 +276,6 @@ def pullbackLift {A B : Cat.{u, u}} (u : A ⟶ B) (G : LaxNormal B) :
     LaxNormalCat.Hom u (pullback u G) G where
   obj x := x
   map s := s
-  map_id _ := rfl
-  map_mul _ _ := rfl
 
 /-- The chosen lift is cartesian: a transformation over `v ≫ u` is its own factorization. -/
 def isCartesianPullbackLift {A B : Cat.{u, u}} (u : A ⟶ B) (G : LaxNormal B) :
@@ -301,11 +292,7 @@ instance preSplitFibLaxNormalCat : PreSplitFib LaxNormalCat.{u} where
   pull u G := pullback u G
   clift u G := pullbackLift u G
   isCartesianClift u G := isCartesianPullbackLift u G
-  pull_id _ := rfl
-  pull_comp _ _ _ := rfl
 
-instance splitFibLaxNormalCat : SplitFib LaxNormalCat.{u} where
-  clift_id _ := rfl
-  clift_comp _ _ _ := rfl
+instance splitFibLaxNormalCat : SplitFib LaxNormalCat.{u} := {}
 
 end Displayed.Straightening

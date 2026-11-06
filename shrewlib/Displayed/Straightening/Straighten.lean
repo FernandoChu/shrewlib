@@ -89,8 +89,6 @@ def straightenMap {B : Cat.{u, u}} {u : A ⟶ B} {E : Displayed.{u, u, u, u} B}
     (H : DisplayedCat.Hom u D E) : ReprHom u (straightenObj D) (straightenObj E) where
   obj x := H.obj x
   map s := H.map s
-  map_id _ := rfl
-  map_mul _ _ := rfl
 
 end Straighten
 
@@ -98,7 +96,5 @@ end Straighten
 def straighten : VertFunctor DisplayedCat.{u} LaxNormalCat.{u} where
   obj D := straightenObj D
   map H := straightenMap H
-  map_id _ := rfl
-  map_comp _ _ := rfl
 
 end Displayed.Straightening

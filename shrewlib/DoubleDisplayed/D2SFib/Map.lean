@@ -45,10 +45,10 @@ structure D2SFibMapObj (H : OpcartesianFunctor u B B')
     DDFunctor H.toDispFunctor C C' where
   /-- Preserves chosen pullbacks on objects. -/
   obj_pull : ∀ {a : A} {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') (c : C.Ob b'),
-    obj (D2SFib.pull β c) = D2SFib.pull (H.toPre.map β) (obj c)
+    obj (D2SFib.pull β c) = D2SFib.pull (H.toPre.map β) (obj c) := by intros; rfl
   /-- Preserves chosen pushforwards on objects. -/
   obj_push : ∀ {a a' : A} (α : a ⟶ a') {b : B.Ob a} (c : C.Ob b),
-    obj (D2SFib.push α c) = D2SFib.push (u.map α) (obj c)
+    obj (D2SFib.push α c) = D2SFib.push (u.map α) (obj c) := by intros; rfl
 
 attribute [rewrite_rule] D2SFibMapObj.obj_pull D2SFibMapObj.obj_push
 
@@ -61,10 +61,10 @@ structure D2SFibMap (H : OpcartesianFunctor u B B')
   toObj : D2SFibMapObj H C C'
   /-- Preserves chosen cartesian lifts. -/
   map_pullLift : ∀ {a : A} {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') (c : C.Ob b'),
-    toObj.map (pullLift β c) = pullLift (H.toPre.map β) (toObj.obj c)
+    toObj.map (pullLift β c) = pullLift (H.toPre.map β) (toObj.obj c) := by intros; rfl
   /-- Preserves chosen opcartesian lifts. -/
   map_pushLift : ∀ {a a' : A} (α : a ⟶ a') {b : B.Ob a} (c : C.Ob b),
-    toObj.map (pushLift α c) = pushLift (u.map α) (toObj.obj c)
+    toObj.map (pushLift α c) = pushLift (u.map α) (toObj.obj c) := by intros; rfl
 
 attribute [rewrite_rule] D2SFibMap.map_pullLift D2SFibMap.map_pushLift
 
@@ -96,20 +96,14 @@ theorem hext {H' : OpcartesianFunctor u B B'} (hH : H = H') {Φ : D2SFibMap H C 
 /-- The identity map of D2SFibs, over the identity opcartesian functor. -/
 protected def id (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) [SplitD2SFib C] :
     D2SFibMap (OpcartesianFunctor.id B) C C where
-  toObj := { toDDFunctor := DDFunctor.id C, obj_pull := fun _ _ => rfl,
-             obj_push := by intros; rfl }
-  map_pullLift _ _ := rfl
-  map_pushLift := by intros; rfl
+  toObj := { toDDFunctor := DDFunctor.id C }
 
 /-- Composition of maps of D2SFibs, over the composite opcartesian functor. -/
 def comp {A'' : Type u₇} [Category.{v₇} A''] {B'' : Displayed.{v₇, u₇, v₈, u₈} A''}
     [SplitOpfib B''] {u' : A' ⥤ A''} {H' : OpcartesianFunctor u' B' B''}
     {C'' : DoubleDisplayed.{v₇, u₇, v₈, u₈, v₉, u₉} B''} [SplitD2SFib C'']
     (Φ : D2SFibMap H C C') (Ψ : D2SFibMap H' C' C'') : D2SFibMap (H.comp H') C C'' where
-  toObj := { toDDFunctor := Φ.toDDFunctor.comp Ψ.toDDFunctor, obj_pull := fun _ _ => rfl,
-             obj_push := by intros; rfl }
-  map_pullLift _ _ := rfl
-  map_pushLift := by intros; rfl
+  toObj := { toDDFunctor := Φ.toDDFunctor.comp Ψ.toDDFunctor }
 
 variable (Φ : D2SFibMap H C C')
 
@@ -157,29 +151,17 @@ instance reindexD2SFib : D2SFib (C'.reindex H.toDispFunctor) where
         (isOpcartesianPushLift (u.map α) c).desc_fac (H.toPre.map g') χ
       desc_uniq := fun {_ _ _ _ _ _} ψ h => (isOpcartesianPushLift (u.map α) c).desc_uniq ψ h }
 
-instance reindexPreSplitD2SFib : PreSplitD2SFib (C'.reindex H.toDispFunctor) where
-  pull_id _ := rfl
-  pull_comp _ _ _ := rfl
-  push_id _ := rfl
-  push_comp := by intros; rfl
-  push_pull := by intros; rfl
+instance reindexPreSplitD2SFib : PreSplitD2SFib (C'.reindex H.toDispFunctor) := {}
 
 /-- **The reindexing of a split D2SFib** along an opcartesian functor is a split D2SFib. -/
 instance reindexSplitD2SFib : SplitD2SFib (C'.reindex H.toDispFunctor) where
-  pullLift_id _ := rfl
-  pullLift_comp _ _ _ := rfl
-  pushLift_id _ := rfl
-  pushLift_comp := by intros; rfl
   pushLift_pullLift α _ _ β c := SplitD2SFib.pushLift_pullLift (u.map α) (H.toPre.map β) c
 
 
 /-- The map of D2SFibs over `H` from the reindexing of `C'` along `H` to `C'`, the identity on
 objects and morphisms. -/
 def D2SFibMap.reindexLift : D2SFibMap H (C'.reindex H.toDispFunctor) C' where
-  toObj := { toDDFunctor := C'.reindexLift H.toDispFunctor, obj_pull := fun _ _ => rfl,
-             obj_push := by intros; rfl }
-  map_pullLift _ _ := rfl
-  map_pushLift := by intros; rfl
+  toObj := { toDDFunctor := C'.reindexLift H.toDispFunctor }
 
 /-- The factorization through `D2SFibMap.reindexLift` of a map of D2SFibs over a composite
 `H₀ ⋙ H`: the same doubly displayed functor, over `H₀`, into the reindexing of `C'` along `H`. -/

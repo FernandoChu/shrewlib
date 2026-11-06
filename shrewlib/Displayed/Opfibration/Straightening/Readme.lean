@@ -33,8 +33,7 @@ transformations, and `SplitOpfibStr` (`Opfibration/SplitOpfibStr.lean`), whose m
 opcartesian functors:
 
 * `ICatStr`: strict transformations, `ICatStr`, and its inclusion into `ICatLax`. A strict
-  transformation `τ` unstraightens to an opcartesian functor `τ.unstraighten`, and to the functor
-  `τ.dualTotal` between the total categories of the dual opfibrations.
+  transformation `τ` unstraightens to an opcartesian functor `τ.unstraighten`.
 * `Str`: the equivalence `straighteningEquivStr`, whose functors are those of
   `straighteningEquivLax` on the underlying lax morphisms, whose unit is the identity and whose
   counit is that of `straighteningEquivLax`.

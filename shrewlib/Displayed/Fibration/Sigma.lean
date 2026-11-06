@@ -68,12 +68,8 @@ end Fib
 @[instance_reducible]
 instance sigmaPreSplitFib [SplitFib D] [PreSplitFib E] : PreSplitFib (D.sigmaDisp E) where
   toFib := sigmaFib
-  pull_id _ := rfl
-  pull_comp _ _ _ := rfl
 
 /-- **Split fibrations compose.** -/
-instance sigmaSplitFib [SplitFib D] [SplitFib E] : SplitFib (D.sigmaDisp E) where
-  clift_id _ := rfl
-  clift_comp _ _ _ := rfl
+instance sigmaSplitFib [SplitFib D] [SplitFib E] : SplitFib (D.sigmaDisp E) := {}
 
 end Displayed

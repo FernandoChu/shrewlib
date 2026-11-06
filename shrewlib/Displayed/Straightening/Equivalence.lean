@@ -55,15 +55,11 @@ variable {A : Cat.{u, u}} (F : LaxNormal A)
 def unitHom : ReprHom (𝟙 A) F (straightenObj (unstraightenObj F)) where
   obj x := x
   map s := s
-  map_id _ := rfl
-  map_mul _ _ := rfl
 
 /-- The inverse of the unit at `F`, with identity components. -/
 def unitInv : ReprHom (𝟙 A) (straightenObj (unstraightenObj F)) F where
   obj x := x
   map s := s
-  map_id _ := rfl
-  map_mul _ _ := rfl
 
 theorem unitHom_unitInv :
     (LaxNormalCat.comp (unitHom F) (unitInv F) : LaxNormalCat.Hom (𝟙 A) F F) = LaxNormalCat.id F :=
@@ -241,8 +237,7 @@ def unstraightenCartesian :
 `DisplayedCat` to those of `LaxNormalCat`, on the nose. -/
 def straightenCartesian :
     CartesianFunctor (𝟭 Cat.{u, u}) DisplayedCat.{u} LaxNormalCat.{u} where
-  toPre := { toDispFunctor := straighten, obj_pull := fun _ _ => rfl }
-  map_clift _ _ := rfl
+  toPre := { toDispFunctor := straighten }
 
 /-- **`unstraighten` preserves cartesian morphisms.** -/
 def isCartesianUnstraightenMap : unstraighten.{u}.PreservesCartesian :=

@@ -41,9 +41,6 @@ structure Total.Hom (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B)
   Hom f x y := Total.Hom C f x y
   id x := ⟨B.id x.1, C.id x.2⟩
   comp F G := ⟨F.base ≫ᵈ G.base, F.fiber ≫ᵈᵈ G.fiber⟩
-  id_comp _ := rfl
-  comp_id _ := rfl
-  assoc _ _ _ := rfl
 
 variable (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B)
 
@@ -68,8 +65,5 @@ def uncurry : Displayed.{max v₁ v₂, max u₁ u₂, v₃, u₃} B.Total where
   Hom F c c' := C.Hom F.fiber c c'
   id c := C.id c
   comp θ θ' := C.comp θ θ'
-  id_comp _ := rfl
-  comp_id _ := rfl
-  assoc _ _ _ := rfl
 
 end DoubleDisplayed

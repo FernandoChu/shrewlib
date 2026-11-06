@@ -38,8 +38,6 @@ def totalMap {u : A ⟶ B} {D : Displayed.{u, u, u, u} A} {E : Displayed.{u, u, 
 def total : VertFunctor DisplayedCat.{u} (cod Cat.{u, u}) where
   obj D := totalObj D
   map H := totalMap H
-  map_id _ := rfl
-  map_comp _ _ := rfl
 
 end Total
 

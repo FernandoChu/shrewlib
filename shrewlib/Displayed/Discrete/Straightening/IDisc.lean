@@ -56,9 +56,6 @@ def IDisc : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
   Hom u X Y := ICatLax.Hom u X.toFunctor Y.toFunctor
   id X := ICatLax.id X.toFunctor
   comp φ ψ := ICatLax.comp φ ψ
-  id_comp _ := rfl
-  comp_id _ := rfl
-  assoc _ _ _ := rfl
 
 namespace IDisc
 
@@ -88,28 +85,18 @@ instance IDisc.preSplitFib : PreSplitFib IDisc.{u} where
   pull u X := IDisc.pull u X
   clift u X := IDisc.clift u X
   isCartesianClift u X := IDisc.isCartesianClift u X
-  pull_id _ := rfl
-  pull_comp _ _ _ := rfl
 
-instance IDisc.splitFib : SplitFib IDisc.{u} where
-  clift_id _ := rfl
-  clift_comp _ _ _ := rfl
+instance IDisc.splitFib : SplitFib IDisc.{u} := {}
 
 /-- **Forgetting the discreteness**, a vertical cartesian functor `IDisc ⟶ ICatLax`: the inclusion
 of the full subcategory. -/
 def IDisc.forget : CartesianFunctor (𝟭 Cat.{u, u}) IDisc.{u} ICatLax.{u} where
   toPre :=
     { obj X := X.toFunctor
-      map φ := φ
-      map_id _ := rfl
-      map_comp _ _ := rfl
-      obj_pull _ _ := rfl }
-  map_clift _ _ := rfl
+      map φ := φ }
 
 /-- **Forgetting the discreteness is fully faithful**, since the morphisms are the same. -/
 def IDisc.forgetFullyFaithful : VertFunctor.FullyFaithful IDisc.forget.{u}.toDispFunctor where
   preimage φ := φ
-  map_preimage _ := rfl
-  preimage_map _ := rfl
 
 end Displayed.Discrete.Straightening

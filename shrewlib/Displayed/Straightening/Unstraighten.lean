@@ -67,7 +67,5 @@ def unstraightenMap {A B : Cat.{u, u}} {u : A ⟶ B} {F : LaxNormal A} {G : LaxN
 def unstraighten : VertFunctor LaxNormalCat.{u} DisplayedCat.{u} where
   obj F := unstraightenObj F
   map φ := unstraightenMap φ
-  map_id _ := rfl
-  map_comp _ _ := rfl
 
 end Displayed.Straightening

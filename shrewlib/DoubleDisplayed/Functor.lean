@@ -41,11 +41,11 @@ structure DDFunctor {u : A ⥤ A'} (H : DispFunctor u B B')
   /-- The action on morphisms, over the image of the `B`-morphism. -/
   map : {a a' : A} → {f : a ⟶ a'} → {b : B.Ob a} → {b' : B.Ob a'} → {g : b ⟶[f] b'} →
     {c : C.Ob b} → {c' : C.Ob b'} → (c ⟶[[g]] c') → (obj c ⟶[[H.map g]] obj c')
-  map_id : ∀ {a : A} {b : B.Ob a} (c : C.Ob b), map (C.id c) = C'.id (obj c)
+  map_id : ∀ {a : A} {b : B.Ob a} (c : C.Ob b), map (C.id c) = C'.id (obj c) := by intros; rfl
   map_comp : ∀ {a a' a'' : A} {f : a ⟶ a'} {f' : a' ⟶ a''} {b : B.Ob a} {b' : B.Ob a'}
     {b'' : B.Ob a''} {g : b ⟶[f] b'} {g' : b' ⟶[f'] b''} {c : C.Ob b} {c' : C.Ob b'}
     {c'' : C.Ob b''} (θ : c ⟶[[g]] c') (θ' : c' ⟶[[g']] c''),
-    map (θ ≫ᵈᵈ θ') = map θ ≫ᵈᵈ map θ'
+    map (θ ≫ᵈᵈ θ') = map θ ≫ᵈᵈ map θ' := by intros; rfl
 
 attribute [rewrite_rule] DDFunctor.map_id DDFunctor.map_comp
 
@@ -70,8 +70,6 @@ protected def id (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) :
     DDFunctor (DispFunctor.id B) C C where
   obj c := c
   map θ := θ
-  map_id _ := rfl
-  map_comp _ _ := rfl
 
 /-- Composition of doubly displayed functors, over the composite displayed functor. -/
 def comp {A'' : Type u₇} [Category.{v₇} A''] {B'' : Displayed.{v₇, u₇, v₈, u₈} A''} {u' : A' ⥤ A''}
@@ -79,8 +77,6 @@ def comp {A'' : Type u₇} [Category.{v₇} A''] {B'' : Displayed.{v₇, u₇, v
     (F : DDFunctor H C C') (G : DDFunctor H' C' C'') : DDFunctor (H.comp H') C C'' where
   obj c := G.obj (F.obj c)
   map θ := G.map (F.map θ)
-  map_id _ := rfl
-  map_comp _ _ := rfl
 
 /-- A doubly displayed functor restricts to functors between the fibers. -/
 def fiber (F : DDFunctor H C C') {a : A} (b : B.Ob a) : C.Fiber b ⥤ C'.Fiber (H.obj b) where
@@ -111,9 +107,6 @@ def reindex (C' : DoubleDisplayed.{v₄, u₄, v₅, u₅, v₆, u₆} B') (H : 
   Hom g c c' := C'.Hom (H.map g) c c'
   id c := C'.id c
   comp θ θ' := C'.comp θ θ'
-  id_comp _ := rfl
-  comp_id _ := rfl
-  assoc _ _ _ := rfl
 
 /-- The doubly displayed functor over `H` from the reindexing of `C'` along `H` to `C'`: the
 identity on objects and morphisms. -/
@@ -121,8 +114,6 @@ def reindexLift (C' : DoubleDisplayed.{v₄, u₄, v₅, u₅, v₆, u₆} B') (
     DDFunctor H (C'.reindex H) C' where
   obj c := c
   map θ := θ
-  map_id _ := rfl
-  map_comp _ _ := rfl
 
 end Reindex
 

@@ -35,8 +35,6 @@ variable {A : Cat.{u, u}} (D : Displayed.{u, u, u, u} A)
 def unitHom : DisplayedCat.Hom (𝟙 A) D (fibres (totalObj D)) where
   obj {a} x := ⟨⟨a, x⟩, rfl⟩
   map {_ _ f _ _} φ := ⟨⟨f, φ⟩, rfl⟩
-  map_id _ := rfl
-  map_comp _ _ := rfl
 
 /-- The inverse of the unit on objects: transport along `e.1 = a`. -/
 def unitInvObj : ∀ {a : A}, Fibre (totalObj D) a → D.Ob a

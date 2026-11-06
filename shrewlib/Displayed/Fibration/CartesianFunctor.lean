@@ -37,7 +37,7 @@ structure PreCartesianFunctor (u : A ⥤ B) (D : Displayed.{v₁, u₁, v₃, u�
     (E : Displayed.{v₂, u₂, v₄, u₄} B) [Fib D] [Fib E] extends DispFunctor u D E where
   /-- Preserves the chosen pullbacks on objects. -/
   obj_pull : ∀ {a a' : A} (f : a ⟶ a') (y : D.Ob a'),
-    obj (Fib.pull f y) = Fib.pull (u.map f) (obj y)
+    obj (Fib.pull f y) = Fib.pull (u.map f) (obj y) := by intros; rfl
 
 attribute [rewrite_rule] PreCartesianFunctor.obj_pull
 
@@ -49,7 +49,7 @@ structure CartesianFunctor (u : A ⥤ B) (D : Displayed.{v₁, u₁, v₃, u₃}
   toPre : PreCartesianFunctor u D E
   /-- Preserves the chosen cartesian lifts. -/
   map_clift : ∀ {a a' : A} (f : a ⟶ a') (y : D.Ob a'),
-    toPre.map (Fib.clift f y) = Fib.clift (u.map f) (toPre.obj y)
+    toPre.map (Fib.clift f y) = Fib.clift (u.map f) (toPre.obj y) := by intros; rfl
 
 attribute [rewrite_rule] CartesianFunctor.map_clift
 
@@ -64,14 +64,12 @@ abbrev toDispFunctor (H : CartesianFunctor u D E) : DispFunctor u D E :=
 
 /-- The identity cartesian functor. -/
 protected def id (D : Displayed.{v₁, u₁, v₃, u₃} A) [Fib D] : CartesianFunctor (𝟭 A) D D where
-  toPre := { toDispFunctor := DispFunctor.id D, obj_pull := fun _ _ => rfl }
-  map_clift _ _ := rfl
+  toPre := { toDispFunctor := DispFunctor.id D }
 
 /-- Composition of cartesian functors, over the composite functor. -/
 def comp {C : Type u₅} [Category.{v₅} C] {v : B ⥤ C} {E' : Displayed.{v₅, u₅, v₆, u₆} C} [Fib E']
     (H : CartesianFunctor u D E) (K : CartesianFunctor v E E') : CartesianFunctor (u ⋙ v) D E' where
-  toPre := { toDispFunctor := H.toDispFunctor.comp K.toDispFunctor, obj_pull := fun _ _ => rfl }
-  map_clift _ _ := rfl
+  toPre := { toDispFunctor := H.toDispFunctor.comp K.toDispFunctor }
 
 end CartesianFunctor
 

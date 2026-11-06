@@ -31,6 +31,9 @@ files, (op)cartesian morphisms (in `Displayed/{Opfibration,Fibration}/Basic` and
   the kernel. `kernel_rfl` first makes the implicit arguments of whiskerings canonical and, if
   needed, goes through weak head normal forms.
 - `Examples/`: small examples of the rules.
+- `CategoryTheory/`: constructions on plain categories. `Opposite/` has the opposite functor
+  `opFunctor' : Cat ⥤ Cat`, which takes the opposite structure on the same objects, so that
+  `opFunctor' ⋙ opFunctor' = 𝟭 Cat` by `rfl`.
 - `Profunctor.lean`: profunctors as a structure with actions `lmap`/`rmap`; composition as a
   coend quotient; the bicategory `ProfCat`. The action laws and the naturality of 2-cells are
   rules, so most coherence laws hold by `rfl`.

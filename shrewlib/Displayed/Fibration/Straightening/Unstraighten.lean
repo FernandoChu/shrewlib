@@ -47,9 +47,6 @@ def unstraightenObj (F : Aᵒᵖ ⥤ Cat.{v, u}) : Displayed.{v₁, u₁, v, u} 
   comp {_ _ _ f g x _ z} φ ψ :=
     (φ ≫ (F.map f.op).toFunctor.map ψ :
       x ⟶ (F.map f.op).toFunctor.obj ((F.map g.op).toFunctor.obj z))
-  id_comp _ := rfl
-  comp_id _ := rfl
-  assoc _ _ _ := rfl
 
 /-- `∫⁻ F` is the unstraightening `unstraightenObj F` of `F : Aᵒᵖ ⥤ Cat`. -/
 scoped notation:max "∫⁻ " F:max => unstraightenObj F
@@ -68,13 +65,9 @@ instance unstraightenPreSplitFib (F : Aᵒᵖ ⥤ Cat.{v, u}) : PreSplitFib (∫
   pull f y := (F.map f.op).toFunctor.obj y
   clift f y := 𝟙 ((F.map f.op).toFunctor.obj y)
   isCartesianClift f y := isCartesianUnstraightenClift F f y
-  pull_id _ := rfl
-  pull_comp _ _ _ := rfl
 
 /-- **The unstraightening of `F` is a split fibration**, pulling back along `F`. -/
-instance unstraightenSplitFib (F : Aᵒᵖ ⥤ Cat.{v, u}) : SplitFib (∫⁻ F) where
-  clift_id _ := rfl
-  clift_comp _ _ _ := rfl
+instance unstraightenSplitFib (F : Aᵒᵖ ⥤ Cat.{v, u}) : SplitFib (∫⁻ F) := {}
 
 /-- Transport in `∫⁻ F` along `f` is `F f`, as a rule, so that the straightening of `∫⁻ F` is `F`
 on the nose. -/
@@ -97,7 +90,6 @@ def unstraightenMap {A : Type u₁} [Category.{v₁} A] {B : Type u₂} [Categor
   obj {a} x := ((α.app a).obj x : G.obj (op (u.obj a)))
   map {a a' f x y} φ := ((α.app a).map φ ≫ α.naturality f y :
     (α.app a).obj x ⟶ (G.map (u.map f).op).toFunctor.obj ((α.app a').obj y))
-  map_id _ := rfl
   map_comp {a _ _ f g x _ _} φ ψ := by
     kernel_exact congrArg (fun t => (α.app a).map φ ≫ t ≫
         (G.map (u.map f).op).toFunctor.map (α.naturality g _))
@@ -108,7 +100,6 @@ transformation over `u` to the induced displayed functor. -/
 def unstraighten : VertFunctor ICatOpLax.{u} SplitFibLax.{u} where
   obj F := { toDisplayed := ∫⁻ F, splitFib := unstraightenSplitFib F }
   map {_ _ u _ _} α := unstraightenMap (u := u.toFunctor) α
-  map_id _ := rfl
   map_comp _ _ := DispFunctor.ext (fun _ => rfl) fun _ => HEq.rfl
 
 end Displayed.Fibration.Straightening

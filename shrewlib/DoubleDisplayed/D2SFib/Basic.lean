@@ -54,33 +54,39 @@ class D2SFib (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) where
     DoubleDisplayed.IsOpcartesian (pushLift α c)
 
 /-- A pre-split D2SFib: the chosen pullbacks and pushforwards are strictly functorial on objects
-and interchange. These axioms are rewrite rules. -/
+and interchange. These axioms are rewrite rules. Its axioms default to `by intros; rfl`, as they
+hold definitionally in most instances. -/
 class PreSplitD2SFib (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) extends D2SFib C where
-  pull_id : ∀ {a : A} {b : B.Ob a} (c : C.Ob b), pull (B.id b) c = c
+  pull_id : ∀ {a : A} {b : B.Ob a} (c : C.Ob b), pull (B.id b) c = c := by intros; rfl
   pull_comp : ∀ {a : A} {b b' b'' : B.Ob a} (β : b ⟶[𝟙 a] b') (γ : b' ⟶[𝟙 a] b'')
-    (c : C.Ob b''), pull (β ≫ᵈ γ) c = pull β (pull γ c)
-  push_id : ∀ {a : A} {b : B.Ob a} (c : C.Ob b), push (𝟙 a) c = c
+    (c : C.Ob b''), pull (β ≫ᵈ γ) c = pull β (pull γ c) := by intros; rfl
+  push_id : ∀ {a : A} {b : B.Ob a} (c : C.Ob b), push (𝟙 a) c = c := by intros; rfl
   push_comp : ∀ {a a' a'' : A} (α : a ⟶ a') (α' : a' ⟶ a'') {b : B.Ob a} (c : C.Ob b),
-    push (α ≫ α') c = push α' (push α c)
+    push (α ≫ α') c = push α' (push α c) := by intros; rfl
   push_pull : ∀ {a a' : A} (α : a ⟶ a') {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') (c : C.Ob b'),
-    push α (pull β c) = pull (B.pushMap α β) (push α c)
+    push α (pull β c) = pull (B.pushMap α β) (push α c) := by intros; rfl
 
 attribute [rewrite_rule] PreSplitD2SFib.pull_id PreSplitD2SFib.pull_comp PreSplitD2SFib.push_id
   PreSplitD2SFib.push_comp PreSplitD2SFib.push_pull
 
 /-- A dependent 2-sided split fibration: a pre-split D2SFib whose chosen lifts are strictly
 functorial and interchange. As for `SplitOpfib`, the pre-split structure is an instance field rather
-than a parent, so that its rules apply to the axioms on lifts. -/
+than a parent, so that its rules apply to the axioms on lifts. Its axioms default to
+`by intros; rfl`, as they hold definitionally in most instances. -/
 class SplitD2SFib (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) where
   /-- The underlying pre-split D2SFib. -/
   [toPreSplitD2SFib : PreSplitD2SFib C]
   pullLift_id : ∀ {a : A} {b : B.Ob a} (c : C.Ob b), D2SFib.pullLift (B.id b) c = C.id c
+    := by intros; rfl
   pullLift_comp : ∀ {a : A} {b b' b'' : B.Ob a} (β : b ⟶[𝟙 a] b') (γ : b' ⟶[𝟙 a] b'')
     (c : C.Ob b''),
     D2SFib.pullLift (β ≫ᵈ γ) c = D2SFib.pullLift β (D2SFib.pull γ c) ≫ᵈᵈ D2SFib.pullLift γ c
+    := by intros; rfl
   pushLift_id : ∀ {a : A} {b : B.Ob a} (c : C.Ob b), D2SFib.pushLift (𝟙 a) c = C.id c
+    := by intros; rfl
   pushLift_comp : ∀ {a a' a'' : A} (α : a ⟶ a') (α' : a' ⟶ a'') {b : B.Ob a} (c : C.Ob b),
     D2SFib.pushLift (α ≫ α') c = D2SFib.pushLift α c ≫ᵈᵈ D2SFib.pushLift α' (D2SFib.push α c)
+    := by intros; rfl
   /-- Strict push/pull interchange on lifts: the two ways around the pull/push square agree. Its
   two sides lie over `β ≫ᵈ B.olift α b'` and `B.olift α b ≫ᵈ B.pushMap α β`, which the
   interchange rule of `B` identifies, so this is a plain equation, but not a rule. -/
@@ -88,7 +94,7 @@ class SplitD2SFib (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) w
     (c : C.Ob b'),
     D2SFib.pullLift β c ≫ᵈᵈ D2SFib.pushLift α c
       = D2SFib.pushLift α (D2SFib.pull β c) ≫ᵈᵈ
-          D2SFib.pullLift (B.pushMap α β) (D2SFib.push α c)
+          D2SFib.pullLift (B.pushMap α β) (D2SFib.push α c) := by intros; rfl
 
 attribute [instance_reducible, instance] SplitD2SFib.toPreSplitD2SFib
 

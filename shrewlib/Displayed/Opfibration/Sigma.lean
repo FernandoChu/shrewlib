@@ -67,12 +67,8 @@ end Opfib
 instance sigmaPreSplitOpfib [SplitOpfib D] [PreSplitOpfib E] :
     PreSplitOpfib (D.sigmaDisp E) where
   toOpfib := sigmaOpfib
-  push_id _ := rfl
-  push_comp _ _ _ := rfl
 
 /-- **Split opfibrations compose.** -/
-instance sigmaSplitOpfib [SplitOpfib D] [SplitOpfib E] : SplitOpfib (D.sigmaDisp E) where
-  olift_id _ := rfl
-  olift_comp _ _ _ := rfl
+instance sigmaSplitOpfib [SplitOpfib D] [SplitOpfib E] : SplitOpfib (D.sigmaDisp E) := {}
 
 end Displayed

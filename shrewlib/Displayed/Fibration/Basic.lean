@@ -156,25 +156,27 @@ class Fib (D : Displayed.{v₁, u₁, v₂, u₂} A) where
   isCartesianClift : ∀ {a a' : A} (f : a ⟶ a') (y : D.Ob a'), IsCartesian (clift f y)
 
 /-- A pre-split fibration: a fibration whose chosen pullbacks are strictly functorial on objects.
-These axioms are rewrite rules. -/
+These axioms are rewrite rules. Its axioms default to `by intros; rfl`, as they hold definitionally
+in most instances. -/
 class PreSplitFib (D : Displayed.{v₁, u₁, v₂, u₂} A) extends Fib D where
-  pull_id : ∀ {a : A} (y : D.Ob a), pull (𝟙 a) y = y
+  pull_id : ∀ {a : A} (y : D.Ob a), pull (𝟙 a) y = y := by intros; rfl
   pull_comp : ∀ {a a' a'' : A} (f : a ⟶ a') (g : a' ⟶ a'') (y : D.Ob a''),
-    pull (f ≫ g) y = pull f (pull g y)
+    pull (f ≫ g) y = pull f (pull g y) := by intros; rfl
 
 attribute [rewrite_rule] PreSplitFib.pull_id PreSplitFib.pull_comp
 
 /-- A split fibration: a pre-split fibration whose chosen lifts are strictly functorial. As for
 `SplitOpfib`, the pre-split structure is an instance field rather than a parent, so that the rules
-`pull_id` and `pull_comp` apply to the axioms on lifts. -/
+`pull_id` and `pull_comp` apply to the axioms on lifts. Its axioms default to `by intros; rfl`, as
+they hold definitionally in most instances. -/
 class SplitFib (D : Displayed.{v₁, u₁, v₂, u₂} A) where
   /-- The underlying pre-split fibration. -/
   [toPreSplitFib : PreSplitFib D]
   /-- The lift of the identity is the displayed identity. -/
-  clift_id : ∀ {a : A} (y : D.Ob a), Fib.clift (𝟙 a) y = 𝟙ᵈ y
+  clift_id : ∀ {a : A} (y : D.Ob a), Fib.clift (𝟙 a) y = 𝟙ᵈ y := by intros; rfl
   /-- The lift of a composite is the composite of lifts. -/
   clift_comp : ∀ {a a' a'' : A} (f : a ⟶ a') (g : a' ⟶ a'') (y : D.Ob a''),
-    Fib.clift (f ≫ g) y = Fib.clift f (Fib.pull g y) ≫ᵈ Fib.clift g y
+    Fib.clift (f ≫ g) y = Fib.clift f (Fib.pull g y) ≫ᵈ Fib.clift g y := by intros; rfl
 
 attribute [instance_reducible, instance] SplitFib.toPreSplitFib
 

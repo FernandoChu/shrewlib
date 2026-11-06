@@ -44,6 +44,11 @@ it up to date when a folder's content changes.
   `open scoped Displayed` (or `DoubleDisplayed`).
 - No `sorry`, no new axioms, no `noncomputable`. Factorizations are data (as in `IsOpcartesian`)
   rather than `∃!` so that constructions from them compute and reduce.
+- Law fields that usually hold definitionally (the laws of displayed categories and functors, of
+  split (op)fibrations and D2SFibs, of (op)cartesian functors and maps of D2SFibs, …) default to
+  `by intros; rfl`: omit them in instances. In a literal nested in another structure the default
+  can be much slower than the term `rfl` (the `LaxTrans` literals of `unitIso` in
+  `Opfibration/Straightening/Equivalence.lean` time out), and there the proof is given.
 - `set_option maxHeartbeats` is a last resort. The two uses in `D2SFib/Straightening` have a
   comment on why the computation is long. Prefer the kernel tactics below.
 - Commit messages name the mathematical content ("Opposite types: HasOp with (Aᵒᵖ)ᵒᵖ = A and
@@ -95,7 +100,7 @@ orientation. Some lessons learned in `shrewlib/`:
   `Displayed/Opfibration/Basic.lean`, must be an `irreducible_def`, or unfolding it loops. Give it
   an unfolding lemma stated with constants that no rule is keyed on (`pushMap_eq_desc`) to compute
   it later. `irreducible_def` also keeps rules from seeing through a definition, as for the
-  counit in `D2SFib/Straightening/Counit.lean`.
+  counit in `D2SFib/Straightening/Equivalence.lean`.
 - When a structure has rules among its fields and a later field's statement needs an earlier
   rule to typecheck, make the earlier structure a field rather than a parent (`toPre` in
   `StrictComprehensionMap`, as for `SplitFib`), so that the rule applies to the later field.

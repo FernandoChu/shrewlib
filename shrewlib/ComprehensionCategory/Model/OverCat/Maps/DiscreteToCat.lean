@@ -32,7 +32,6 @@ def forgetComprehensionMap : StrictComprehensionMap (𝟭 Cat.{u, u}) IDisc.{u} 
   toPre.toDispFunctor := IDisc.forget.toDispFunctor
   toPre.isCartesianMap := IDisc.forget.isCartesianMap
   toPre.compr_obj _ := rfl
-  compr_map _ := rfl
 
 /-- **Forgetting the discreteness preserves Σ-types strictly**: the Σ-types and the pairings of the
 discrete model are those of the category model. -/

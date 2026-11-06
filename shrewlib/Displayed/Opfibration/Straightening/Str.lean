@@ -40,8 +40,6 @@ transformation `τ` to the opcartesian functor `τ.unstraighten`. -/
 def unstraightenStr : VertFunctor ICatStr.{u} SplitOpfibStr.{u} where
   obj F := { toDisplayed := ∫ (F : _ ⥤ Cat.{u, u}), splitOpfib := unstraightenSplitOpfib F }
   map {_ _ u _ _} τ := StrictTrans.unstraighten (u := u.toFunctor) τ
-  map_id _ := rfl
-  map_comp _ _ := rfl
 
 /-- The unstraightening with strict morphisms is the unstraightening of their underlying lax
 data. -/
@@ -54,19 +52,14 @@ theorem unstraightenStr_comp_forget :
 def straightenStrMap {A B : Cat.{u, u}} {u : A ⟶ B} {X : SplitOpfibOb A} {Y : SplitOpfibOb B}
     (H : OpcartesianFunctor u.toFunctor X.toDisplayed Y.toDisplayed) :
     StrictTrans (straightenObj X) (u.toFunctor ⋙ straightenObj Y) where
-  toObj := { obj := fun x => H.toPre.obj x, obj_push := fun _ _ => rfl }
+  toObj := { obj := fun x => H.toPre.obj x }
   map β := (H.toPre.map β : H.toPre.obj _ ⟶ _)
-  map_id _ := rfl
-  map_comp _ _ := rfl
-  map_push _ _ _ _ := rfl
 
 /-- **The straightening with strict morphisms**: a split opfibration goes to the functor of its
 fibres, and an opcartesian functor to the strict transformation of its actions on the fibres. -/
 def straightenStr : VertFunctor SplitOpfibStr.{u} ICatStr.{u} where
   obj X := straightenObj X
   map H := straightenStrMap H
-  map_id _ := rfl
-  map_comp _ _ := rfl
 
 /-- The straightening with strict morphisms is the straightening of their underlying displayed
 functors: the 2-cells of the latter are the factorizations of the chosen lifts, which are
@@ -81,19 +74,13 @@ theorem straightenStr_comp_forget :
 /-- The unit at `F`: `F ≅ straightenObj (∫ F)`, by identities. -/
 def unitStrApp {A : Cat.{u, u}} (F : ICatStr.Ob A) :
     ((VertFunctor.id ICatStr).obj F : ICatStr.Fiber A) ≅ (unstraightenStr ⋙ᵥ straightenStr).obj F
-    where
+ where
   hom :=
-    { toObj := { obj := fun x => x, obj_push := fun _ _ => rfl }
-      map := fun φ => φ
-      map_id := fun _ => rfl
-      map_comp := fun _ _ => rfl
-      map_push := fun _ _ _ _ => rfl }
+    { toObj := { obj := fun x => x }
+      map := fun φ => φ }
   inv :=
-    { toObj := { obj := fun x => x, obj_push := fun _ _ => rfl }
-      map := fun φ => φ
-      map_id := fun _ => rfl
-      map_comp := fun _ _ => rfl
-      map_push := fun _ _ _ _ => rfl }
+    { toObj := { obj := fun x => x }
+      map := fun φ => φ }
   hom_inv_id := rfl
   inv_hom_id := rfl
 
@@ -110,11 +97,7 @@ def counitStrHom {A : Cat.{u, u}} (X : SplitOpfibOb.{u, u, u, u} A) :
     OpcartesianFunctor (𝟙 A : A ⟶ A).toFunctor (∫ (straightenObj X)) X.toDisplayed where
   toPre :=
     { obj := fun x => x
-      map := fun {_ _ f x _} φ => (X.toDisplayed.olift f x ≫ᵈ φ : X.toDisplayed.Hom f x _)
-      map_id := fun _ => rfl
-      map_comp := fun _ _ => rfl
-      obj_push := fun _ _ => rfl }
-  map_olift _ _ := rfl
+      map := fun {_ _ f x _} φ => (X.toDisplayed.olift f x ≫ᵈ φ : X.toDisplayed.Hom f x _) }
 
 /-- The inverse of the counit at `X`, `X ⟶ ∫ (straightenObj X)`: the identity on objects, and the
 opcartesian factorization on morphisms. -/
@@ -123,11 +106,7 @@ def counitStrInv {A : Cat.{u, u}} (X : SplitOpfibOb.{u, u, u, u} A) :
   toPre :=
     { obj := fun x => x
       map := fun {_ _ f x _} χ =>
-        (X.toDisplayed.opcartesianFactor χ : X.toDisplayed.push f x ⟶[𝟙 _] _)
-      map_id := fun _ => rfl
-      map_comp := fun _ _ => rfl
-      obj_push := fun _ _ => rfl }
-  map_olift _ _ := rfl
+        (X.toDisplayed.opcartesianFactor χ : X.toDisplayed.push f x ⟶[𝟙 _] _) }
 
 /-- The counit at `X`, as an isomorphism of `SplitOpfibStr.Fiber A`: `counitStrHom` and
 `counitStrInv`. -/

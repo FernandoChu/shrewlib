@@ -1,4 +1,4 @@
-import ComprehensionCategory.Model.OverCat.Cat.OpFunctor
+import CategoryTheory.Opposite.OpFunctor
 import Displayed.Discrete.DiscreteCat
 
 /-!
@@ -16,7 +16,7 @@ a discrete category are subsingletons inhabited exactly when `x = y`, so equival
 equal in general.
 
 This file imports no rewrite rules, and must not, for the reason given in
-`ComprehensionCategory/Model/OverCat/Cat/OpFunctor`: it compares category structures given as
+`CategoryTheory/Opposite/OpFunctor`: it compares category structures given as
 structures.
 -/
 
@@ -24,7 +24,7 @@ universe u
 
 namespace ComprehensionCategory.DiscreteModel
 
-open CategoryTheory Displayed.Discrete CatModel
+open CategoryTheory Displayed.Discrete
 
 /-- **The opposite of a discrete category is discrete.** -/
 theorem isDiscrete_opFunctor'_obj (C : Cat.{u, u}) [IsDiscrete C] :

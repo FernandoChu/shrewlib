@@ -46,9 +46,6 @@ def SmallICat : Displayed.{v + 1, v + 2, v + 1, v + 1} Cat.{v + 1, v + 1} where
   Hom u A B := ICatLax.Hom u (lift A) (lift B)
   id A := ICatLax.id (lift A)
   comp φ ψ := ICatLax.comp φ ψ
-  id_comp _ := rfl
-  comp_id _ := rfl
-  assoc _ _ _ := rfl
 
 namespace SmallICat
 
@@ -74,28 +71,18 @@ instance SmallICat.preSplitFib : PreSplitFib SmallICat.{v} where
   pull u X := u.toFunctor ⋙ X
   clift u X := SmallICat.clift u X
   isCartesianClift u X := SmallICat.isCartesianClift u X
-  pull_id _ := rfl
-  pull_comp _ _ _ := rfl
 
-instance SmallICat.splitFib : SplitFib SmallICat.{v} where
-  clift_id _ := rfl
-  clift_comp _ _ _ := rfl
+instance SmallICat.splitFib : SplitFib SmallICat.{v} := {}
 
 /-- **The lift into the category model**, a vertical cartesian functor. -/
 def SmallICat.lift : CartesianFunctor (𝟭 Cat.{v + 1, v + 1}) SmallICat.{v} ICatLax.{v + 1} where
   toPre :=
     { obj A := CatModel.lift A
-      map φ := φ
-      map_id _ := rfl
-      map_comp _ _ := rfl
-      obj_pull _ _ := rfl }
-  map_clift _ _ := rfl
+      map φ := φ }
 
 /-- **The lift is fully faithful**, since the morphisms are those of the category model. -/
 def SmallICat.liftFullyFaithful : VertFunctor.FullyFaithful SmallICat.lift.{v}.toDispFunctor where
   preimage φ := φ
-  map_preimage _ := rfl
-  preimage_map _ := rfl
 
 /-- The comprehension structure of the types of level `v`: that of the category model, along the
 lift. -/
@@ -104,7 +91,7 @@ instance SmallICat.comprehension : Comprehension SmallICat.{v} :=
   Comprehension.comap SmallICat.lift.toDispFunctor SmallICat.lift.isCartesianMap
 
 /-- **The types of level `v`** form a full split comprehension category. -/
-instance SmallICat.splitComprehension : SplitComprehension SmallICat.{v} where
+instance SmallICat.splitComprehension : SplitComprehension SmallICat.{v} := {}
 
 @[instance_reducible]
 instance SmallICat.fullComprehension : FullComprehension SmallICat.{v} where

@@ -45,7 +45,6 @@ transformation over `u` to the induced displayed functor. -/
 def unstraighten : VertFunctor IDisc.{u} DiscOpfibCat.{u} where
   obj X := unstraightenObj X
   map {_ _ u _ _} α := unstraightenMap (u := u.toFunctor) α
-  map_id _ := rfl
   map_comp _ _ := DispFunctor.ext (fun _ => rfl) fun _ => HEq.rfl
 
 /-- The unstraightening, followed by forgetting the discreteness, is the inclusion into the

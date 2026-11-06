@@ -35,9 +35,6 @@ from `x` to `y` is a vertical morphism `B.pull f y ⟶ x`. -/
   Hom {a _} f x y := @Quiver.Hom (B.Fiber a) _ (B.pull f y) x
   id {a} x := 𝟙 (show B.Fiber a from x)
   comp {_ _ _} {f _} {_ _ _} φ ψ := B.pullMap f ψ ≫ φ
-  id_comp _ := rfl
-  comp_id _ := rfl
-  assoc _ _ _ := rfl
 
 theorem dualFib_Ob (a : A) : B.dualFib.Ob a = B.Ob a := rfl
 

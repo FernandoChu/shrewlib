@@ -40,9 +40,6 @@ def SplitFibLax : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
   Hom u X Y := DispFunctor u.toFunctor X.toDisplayed Y.toDisplayed
   id X := DispFunctor.id X.toDisplayed
   comp H K := H.comp K
-  id_comp _ := rfl
-  comp_id _ := rfl
-  assoc _ _ _ := rfl
 
 /-- The split cleavage of an object of `SplitFibLax`. The instance `SplitFibOb.splitFib` does not
 apply to it, since `SplitFibLax.Ob A` is not reducibly `SplitFibOb A`. -/
@@ -54,13 +51,9 @@ instance SplitFibLax.splitFib {A : Cat.{u, u}} (X : SplitFibLax.Ob A) :
 def SplitFibLax.forget : VertFunctor SplitFibLax.{u} DisplayedCat.{u} where
   obj X := X.toDisplayed
   map H := H
-  map_id _ := rfl
-  map_comp _ _ := rfl
 
 /-- Forgetting the split cleavage is fully faithful, since the morphisms are the same. -/
 def SplitFibLax.forgetFullyFaithful : SplitFibLax.forget.{u}.FullyFaithful where
   preimage H := H
-  map_preimage _ := rfl
-  preimage_map _ := rfl
 
 end Displayed

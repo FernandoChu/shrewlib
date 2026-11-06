@@ -47,15 +47,15 @@ structure DoubleDisplayed (B : Displayed.{v₁, u₁, v₂, u₂} A) where
     {c : Ob b} → {c' : Ob b'} → {c'' : Ob b''} →
     Hom g c c' → Hom g' c' c'' → Hom (g ≫ᵈ g') c c''
   id_comp : ∀ {a a' : A} {f : a ⟶ a'} {b : B.Ob a} {b' : B.Ob a'} {g : b ⟶[f] b'}
-    {c : Ob b} {c' : Ob b'} (θ : Hom g c c'), comp (id c) θ = θ
+    {c : Ob b} {c' : Ob b'} (θ : Hom g c c'), comp (id c) θ = θ := by intros; rfl
   comp_id : ∀ {a a' : A} {f : a ⟶ a'} {b : B.Ob a} {b' : B.Ob a'} {g : b ⟶[f] b'}
-    {c : Ob b} {c' : Ob b'} (θ : Hom g c c'), comp θ (id c') = θ
+    {c : Ob b} {c' : Ob b'} (θ : Hom g c c'), comp θ (id c') = θ := by intros; rfl
   assoc : ∀ {a a' a'' a''' : A} {f : a ⟶ a'} {f' : a' ⟶ a''} {f'' : a'' ⟶ a'''}
     {b : B.Ob a} {b' : B.Ob a'} {b'' : B.Ob a''} {b''' : B.Ob a'''}
     {g : b ⟶[f] b'} {g' : b' ⟶[f'] b''} {g'' : b'' ⟶[f''] b'''}
     {c : Ob b} {c' : Ob b'} {c'' : Ob b''} {c''' : Ob b'''}
     (θ : Hom g c c') (θ' : Hom g' c' c'') (θ'' : Hom g'' c'' c'''),
-    comp (comp θ θ') θ'' = comp θ (comp θ' θ'')
+    comp (comp θ θ') θ'' = comp θ (comp θ' θ'') := by intros; rfl
 
 attribute [rewrite_rule] DoubleDisplayed.id_comp DoubleDisplayed.comp_id DoubleDisplayed.assoc
 
@@ -131,12 +131,12 @@ structure VertFunctor (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} 
   map : {a a' : A} → {f : a ⟶ a'} → {b : B.Ob a} → {b' : B.Ob a'} → {g : b ⟶[f] b'} →
     {c : C.Ob b} → {c' : C.Ob b'} → (c ⟶[[g]] c') → ((obj c) ⟶[[g]] (obj c'))
   /-- Preserves identities. -/
-  map_id : ∀ {a : A} {b : B.Ob a} (c : C.Ob b), map (C.id c) = D.id (obj c)
+  map_id : ∀ {a : A} {b : B.Ob a} (c : C.Ob b), map (C.id c) = D.id (obj c) := by intros; rfl
   /-- Preserves composition. -/
   map_comp : ∀ {a a' a'' : A} {f : a ⟶ a'} {f' : a' ⟶ a''} {b : B.Ob a} {b' : B.Ob a'}
     {b'' : B.Ob a''} {g : b ⟶[f] b'} {g' : b' ⟶[f'] b''} {c : C.Ob b} {c' : C.Ob b'}
     {c'' : C.Ob b''} (θ : c ⟶[[g]] c') (θ' : c' ⟶[[g']] c''),
-    map (θ ≫ᵈᵈ θ') = map θ ≫ᵈᵈ map θ'
+    map (θ ≫ᵈᵈ θ') = map θ ≫ᵈᵈ map θ' := by intros; rfl
 
 attribute [rewrite_rule] VertFunctor.map_id VertFunctor.map_comp
 
@@ -161,8 +161,6 @@ theorem ext {C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B}
 def id (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) : VertFunctor C C where
   obj c := c
   map θ := θ
-  map_id _ := rfl
-  map_comp _ _ := rfl
 
 /-- Composition of vertical functors. -/
 def comp {C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B}
@@ -172,8 +170,6 @@ def comp {C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B}
     (G : VertFunctor D E) : VertFunctor C E where
   obj c := G.obj (F.obj c)
   map θ := G.map (F.map θ)
-  map_id _ := rfl
-  map_comp _ _ := rfl
 
 /-- Vertical functors restrict to ordinary functors on fibers. -/
 def fiber {C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B}

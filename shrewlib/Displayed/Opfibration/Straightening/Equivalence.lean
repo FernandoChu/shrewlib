@@ -41,16 +41,12 @@ variable {A : Cat.{u, u}} (X : SplitOpfibOb A)
 def counitHom : unstraighten.obj (straightenObj X) ⟶[𝟙 A] X where
   obj x := (x : X.toDisplayed.Ob _)
   map {_ _ f x y} φ := (X.toDisplayed.olift f x ≫ᵈ φ : X.toDisplayed.Hom f x y)
-  map_id _ := rfl
-  map_comp _ _ := rfl
 
 /-- The inverse of the counit at `D`: the identity on objects, and a morphism goes to its
 opcartesian factorization. -/
 def counitInv : X ⟶[𝟙 A] unstraighten.obj (straightenObj X) where
   obj x := x
   map {_ _ f x y} χ := (X.toDisplayed.opcartesianFactor χ : X.toDisplayed.push f x ⟶[𝟙 _] y)
-  map_id _ := rfl
-  map_comp _ _ := rfl
 
 /-- **The counit** `unstraighten.obj (straightenObj X) ≅ X`, an isomorphism over `A`. -/
 def counitIso : (unstraighten.obj (straightenObj X) : SplitOpfibLax.Fiber A) ≅ X where

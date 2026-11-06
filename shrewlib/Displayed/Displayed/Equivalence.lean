@@ -56,9 +56,9 @@ structure VertFunctor.FullyFaithful (F : VertFunctor D E) where
   preimage : ∀ {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'},
     (F.obj x ⟶[f] F.obj y) → (x ⟶[f] y)
   map_preimage : ∀ {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'}
-    (ψ : F.obj x ⟶[f] F.obj y), F.map (preimage ψ) = ψ
+    (ψ : F.obj x ⟶[f] F.obj y), F.map (preimage ψ) = ψ := by intros; rfl
   preimage_map : ∀ {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} (φ : x ⟶[f] y),
-    preimage (F.map φ) = φ
+    preimage (F.map φ) = φ := by intros; rfl
 
 namespace VertFunctor.FullyFaithful
 

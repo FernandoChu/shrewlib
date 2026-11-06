@@ -62,9 +62,6 @@ def fibres : Displayed.{u, u, u, u} A where
   Hom f x y := FibreHom X f x y
   id x := ⟨𝟙 x.1, rfl⟩
   comp s t := FibreHom.comp s t
-  id_comp _ := rfl
-  comp_id _ := rfl
-  assoc _ _ _ := rfl
 
 theorem fibres.comp_val {a a' a'' : A} {f : a ⟶ a'} {g : a' ⟶ a''} {x : Fibre X a}
     {y : Fibre X a'} {z : Fibre X a''} (s : (fibres X).Hom f x y) (t : (fibres X).Hom g y z) :
@@ -96,8 +93,6 @@ def fibresMap {B : Cat.{u, u}} {u : A ⟶ B} {Y : (cod Cat.{u, u}).Ob B} (w : X 
   obj x := ⟨w.1.toFunctor.obj x.1, (Functor.congr_obj (congrArg Cat.Hom.toFunctor w.2) x.1).trans
     (congrArg u.toFunctor.obj x.2)⟩
   map s := ⟨w.1.toFunctor.map s.1, proj_map_map w s _ _⟩
-  map_id _ := rfl
-  map_comp _ _ := rfl
 
 end Fibres
 
@@ -105,8 +100,6 @@ end Fibres
 def fibresFunctor : VertFunctor (cod Cat.{u, u}) DisplayedCat.{u} where
   obj X := fibres X
   map w := fibresMap w
-  map_id _ := rfl
-  map_comp _ _ := rfl
 
 end DisplayedCat
 

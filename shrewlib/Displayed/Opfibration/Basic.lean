@@ -153,11 +153,12 @@ class Opfib (D : Displayed.{v₁, u₁, v₂, u₂} A) where
   isOpcartesianOlift : ∀ {a a' : A} (f : a ⟶ a') (x : D.Ob a), IsOpcartesian (olift f x)
 
 /-- A pre-split opfibration: an opfibration whose chosen pushforwards are strictly functorial on
-objects. These axioms are rewrite rules. -/
+objects. These axioms are rewrite rules. Its axioms default to `by intros; rfl`, as they hold
+definitionally in most instances. -/
 class PreSplitOpfib (D : Displayed.{v₁, u₁, v₂, u₂} A) extends Opfib D where
-  push_id : ∀ {a : A} (x : D.Ob a), push (𝟙 a) x = x
+  push_id : ∀ {a : A} (x : D.Ob a), push (𝟙 a) x = x := by intros; rfl
   push_comp : ∀ {a a' a'' : A} (f : a ⟶ a') (g : a' ⟶ a'') (x : D.Ob a),
-    push (f ≫ g) x = push g (push f x)
+    push (f ≫ g) x = push g (push f x) := by intros; rfl
 
 attribute [rewrite_rule] PreSplitOpfib.push_id PreSplitOpfib.push_comp
 
@@ -166,15 +167,16 @@ attribute [rewrite_rule] PreSplitOpfib.push_id PreSplitOpfib.push_comp
 The pre-split structure is an instance field rather than a parent: the fields of a parent are
 local variables while the later fields are elaborated, so the rules `push_id` and `push_comp`
 would not apply to them. As a field, `push` is `Opfib.push` of an instance, the axioms on objects
-hold definitionally, and the axioms on lifts are plain equations. -/
+hold definitionally, and the axioms on lifts are plain equations. Its axioms default to
+`by intros; rfl`, as they hold definitionally in most instances. -/
 class SplitOpfib (D : Displayed.{v₁, u₁, v₂, u₂} A) where
   /-- The underlying pre-split opfibration. -/
   [toPreSplitOpfib : PreSplitOpfib D]
   /-- The lift of the identity is the displayed identity. -/
-  olift_id : ∀ {a : A} (x : D.Ob a), Opfib.olift (𝟙 a) x = 𝟙ᵈ x
+  olift_id : ∀ {a : A} (x : D.Ob a), Opfib.olift (𝟙 a) x = 𝟙ᵈ x := by intros; rfl
   /-- The lift of a composite is the composite of lifts. -/
   olift_comp : ∀ {a a' a'' : A} (f : a ⟶ a') (g : a' ⟶ a'') (x : D.Ob a),
-    Opfib.olift (f ≫ g) x = Opfib.olift f x ≫ᵈ Opfib.olift g (Opfib.push f x)
+    Opfib.olift (f ≫ g) x = Opfib.olift f x ≫ᵈ Opfib.olift g (Opfib.push f x) := by intros; rfl
 
 attribute [instance_reducible, instance] SplitOpfib.toPreSplitOpfib
 

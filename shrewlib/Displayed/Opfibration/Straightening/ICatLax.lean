@@ -45,10 +45,11 @@ structure LaxTrans (F G : A ⥤ Cat.{v, u}) where
   naturality_naturality : ∀ {a a' : A} (f : a ⟶ a') {x y : F.obj a} (φ : x ⟶ y),
     (G.map f).toFunctor.map ((app a).map φ) ≫ naturality f y =
       naturality f x ≫ (app a').map ((F.map f).toFunctor.map φ)
-  naturality_id : ∀ {a : A} (x : F.obj a), naturality (𝟙 a) x = 𝟙 ((app a).obj x)
+  naturality_id : ∀ {a : A} (x : F.obj a), naturality (𝟙 a) x = 𝟙 ((app a).obj x) := by intros; rfl
   naturality_comp : ∀ {a a' a'' : A} (f : a ⟶ a') (g : a' ⟶ a'') (x : F.obj a),
     naturality (f ≫ g) x =
       (G.map g).toFunctor.map (naturality f x) ≫ naturality g ((F.map f).toFunctor.obj x)
+    := by intros; rfl
 
 attribute [rewrite_rule] LaxTrans.naturality_id LaxTrans.naturality_comp
 
@@ -76,8 +77,6 @@ protected def id (F : A ⥤ Cat.{v, u}) : LaxTrans F F where
   app _ := 𝟭 _
   naturality _ _ := 𝟙 _
   naturality_naturality {_ _} _ {_ _} _ := rfl
-  naturality_id _ := rfl
-  naturality_comp _ _ _ := rfl
 
 /-- Vertical composition of lax transformations. -/
 def vcomp (α : LaxTrans F G) (β : LaxTrans G H) : LaxTrans F H where
@@ -88,7 +87,6 @@ def vcomp (α : LaxTrans F G) (β : LaxTrans G H) : LaxTrans F H where
       (β.naturality_naturality f ((α.app a).map φ))).trans
       (congrArg (fun t => β.naturality f ((α.app a).obj x) ≫ (β.app a').map t)
         (α.naturality_naturality f φ))
-  naturality_id _ := rfl
   naturality_comp {a _ a''} f g x :=
     congrArg (fun t => (H.map g).toFunctor.map (β.naturality f ((α.app a).obj x)) ≫
         t ≫ (β.app a'').map (α.naturality g ((F.map f).toFunctor.obj x)))
@@ -100,8 +98,6 @@ def whiskerLeft {B : Type u₂} [Category.{v₂} B] (u : B ⥤ A) (α : LaxTrans
   app b := α.app (u.obj b)
   naturality f x := α.naturality (u.map f) x
   naturality_naturality {_ _} f {_ _} φ := α.naturality_naturality (u.map f) φ
-  naturality_id _ := rfl
-  naturality_comp _ _ _ := rfl
 
 end LaxTrans
 
@@ -118,8 +114,6 @@ def ICatLax : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
   Hom u F G := LaxTrans F (u.toFunctor ⋙ G)
   id F := LaxTrans.id F
   comp {_ _ _ u _ _ _ _} α β := LaxTrans.vcomp α (LaxTrans.whiskerLeft u.toFunctor β)
-  id_comp _ := rfl
-  comp_id _ := rfl
   -- The two sides agree componentwise by `rfl`, but the kernel does not see it on the whole
   -- structure, so we go through `ext'`.
   assoc _ _ _ := LaxTrans.ext' (fun _ _ => rfl) (fun _ _ _ _ => HEq.rfl) (fun _ _ => HEq.rfl)
@@ -149,11 +143,7 @@ instance ICatLax.preSplitFib : PreSplitFib ICatLax.{u} where
   pull u G := ICatLax.pull u G
   clift u G := ICatLax.clift u G
   isCartesianClift u G := ICatLax.isCartesianClift u G
-  pull_id _ := rfl
-  pull_comp _ _ _ := rfl
 
-instance ICatLax.splitFib : SplitFib ICatLax.{u} where
-  clift_id _ := rfl
-  clift_comp _ _ _ := rfl
+instance ICatLax.splitFib : SplitFib ICatLax.{u} := {}
 
 end Displayed.Opfibration.Straightening

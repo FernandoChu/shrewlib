@@ -17,7 +17,7 @@ two of them with the same type are definitionally equal, by eta for `ULift` and 
 irrelevance.
 
 This file imports no rewrite rules, and must not, for the reason given in
-`ComprehensionCategory/Model/OverCat/Cat/OpFunctor`: the laws of `discreteCategory'` could not be
+`CategoryTheory/Opposite/OpFunctor`: the laws of `discreteCategory'` could not be
 checked.
 -/
 

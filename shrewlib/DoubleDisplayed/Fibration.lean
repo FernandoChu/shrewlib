@@ -94,25 +94,27 @@ class DDFib (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) where
     (c' : C.Ob b'), IsDDCartesian (clift g c')
 
 /-- A pre-split fibration: the chosen pullbacks are strictly functorial on objects. These axioms
-are rewrite rules. -/
+are rewrite rules. Its axioms default to `by intros; rfl`, as they hold definitionally in most
+instances. -/
 class PreSplitDDFib (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) extends DDFib C where
-  pull_id : ∀ {a : A} {b : B.Ob a} (c : C.Ob b), pull (B.id b) c = c
+  pull_id : ∀ {a : A} {b : B.Ob a} (c : C.Ob b), pull (B.id b) c = c := by intros; rfl
   pull_comp : ∀ {a a' a'' : A} {f : a ⟶ a'} {f' : a' ⟶ a''} {b : B.Ob a} {b' : B.Ob a'}
     {b'' : B.Ob a''} (g : b ⟶[f] b') (g' : b' ⟶[f'] b'') (c : C.Ob b''),
-    pull (g ≫ᵈ g') c = pull g (pull g' c)
+    pull (g ≫ᵈ g') c = pull g (pull g' c) := by intros; rfl
 
 attribute [rewrite_rule] PreSplitDDFib.pull_id PreSplitDDFib.pull_comp
 
 /-- A split fibration: a pre-split fibration whose chosen lifts are strictly functorial. As for
 `SplitFib`, the pre-split structure is an instance field rather than a parent, so that its rules
-apply to the axioms on lifts. -/
+apply to the axioms on lifts. Its axioms default to `by intros; rfl`, as they hold definitionally in
+most instances. -/
 class SplitDDFib (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) where
   /-- The underlying pre-split fibration. -/
   [toPreSplitDDFib : PreSplitDDFib C]
-  clift_id : ∀ {a : A} {b : B.Ob a} (c : C.Ob b), DDFib.clift (B.id b) c = C.id c
+  clift_id : ∀ {a : A} {b : B.Ob a} (c : C.Ob b), DDFib.clift (B.id b) c = C.id c := by intros; rfl
   clift_comp : ∀ {a a' a'' : A} {f : a ⟶ a'} {f' : a' ⟶ a''} {b : B.Ob a} {b' : B.Ob a'}
     {b'' : B.Ob a''} (g : b ⟶[f] b') (g' : b' ⟶[f'] b'') (c : C.Ob b''),
-    DDFib.clift (g ≫ᵈ g') c = DDFib.clift g (DDFib.pull g' c) ≫ᵈᵈ DDFib.clift g' c
+    DDFib.clift (g ≫ᵈ g') c = DDFib.clift g (DDFib.pull g' c) ≫ᵈᵈ DDFib.clift g' c := by intros; rfl
 
 attribute [instance_reducible, instance] SplitDDFib.toPreSplitDDFib
 
@@ -160,14 +162,10 @@ instance reindexDDFib [DDFib C'] : DDFib (C'.reindex H) where
         (DDFib.isCartesianClift (H.map g) c).lift_fac (H.map g₀) χ
       lift_uniq := fun {_ _ _ _ _ _} ψ h => (DDFib.isCartesianClift (H.map g) c).lift_uniq ψ h }
 
-instance reindexPreSplitDDFib [PreSplitDDFib C'] : PreSplitDDFib (C'.reindex H) where
-  pull_id _ := rfl
-  pull_comp _ _ _ := rfl
+instance reindexPreSplitDDFib [PreSplitDDFib C'] : PreSplitDDFib (C'.reindex H) := {}
 
 /-- **The reindexing of a split fibration** is a split fibration. -/
-instance reindexSplitDDFib [SplitDDFib C'] : SplitDDFib (C'.reindex H) where
-  clift_id _ := rfl
-  clift_comp _ _ _ := rfl
+instance reindexSplitDDFib [SplitDDFib C'] : SplitDDFib (C'.reindex H) := {}
 
 variable {C'} {D' : DoubleDisplayed.{v₄, u₄, v₅, u₅, v₆, u₆} B'}
 
