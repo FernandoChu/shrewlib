@@ -24,7 +24,7 @@ open CategoryTheory Displayed Displayed.Opfibration.Straightening Displayed.Disc
 open scoped Displayed
 
 /-- The opposite type of `A`: that of the category model. -/
-def op {Γ : Cat.{u, u}} (A : IDisc.{u}.Ty Γ) : IDisc.{u}.Ty Γ where
+def op {Γ : Cat.{u, u}} (A : IDisc.{u, u}.Ty Γ) : IDisc.{u, u}.Ty Γ where
   toFunctor := CatModel.op A.toFunctor
   isDiscrete γ := @isDiscrete_opFunctor'_obj (A.toFunctor.obj γ) (A.isDiscrete γ)
 
@@ -38,11 +38,11 @@ def unexpandOp : Lean.PrettyPrinter.Unexpander
   | _ => throw ()
 
 /-- **The opposite is involutive**, by `rfl`. -/
-theorem op_op {Γ : Cat.{u, u}} (A : IDisc.{u}.Ty Γ) : (Aᵒᵖ)ᵒᵖ = A :=
+theorem op_op {Γ : Cat.{u, u}} (A : IDisc.{u, u}.Ty Γ) : (Aᵒᵖ)ᵒᵖ = A :=
   rfl
 
 /-- **The opposite is stable under substitution**, by `rfl`. -/
-theorem pull_op {Δ Γ : Cat.{u, u}} (σ : Δ ⟶ Γ) (A : IDisc.{u}.Ty Γ) : (Aᵒᵖ)⦃σ⦄ = A⦃σ⦄ᵒᵖ :=
+theorem pull_op {Δ Γ : Cat.{u, u}} (σ : Δ ⟶ Γ) (A : IDisc.{u, u}.Ty Γ) : (Aᵒᵖ)⦃σ⦄ = A⦃σ⦄ᵒᵖ :=
   rfl
 
 end ComprehensionCategory.DiscreteModel

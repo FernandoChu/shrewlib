@@ -14,7 +14,7 @@ This is not in `Basic.lean` since displayed functors over a functor need the fun
 (`Rules.Functor`), which should not reach every file using opfibrations.
 -/
 
-universe v₁ u₁ v₂ u₂ u
+universe v₂ u₂ v₁ u₁
 
 open CategoryTheory
 
@@ -31,28 +31,32 @@ structure SplitOpfibOb (A : Cat.{v₁, u₁}) where
 
 attribute [instance] SplitOpfibOb.splitOpfib
 
+-- The universes of the displayed categories only occur in the levels of `SplitOpfibLax` through
+-- the `max` of the levels of their objects and morphisms.
+set_option linter.checkUnivs false in
 /-- The split opfibrations, displayed over `Cat`: an object over `A` is a split opfibration over
 `A`, and a morphism over `u` is a displayed functor over `u`, with no condition on the
 opcleavages. -/
-def SplitOpfibLax : Displayed.{u, u + 1} Cat.{u, u} where
-  Ob A := SplitOpfibOb.{u, u, u, u} A
+def SplitOpfibLax : Displayed Cat.{v₁, u₁} where
+  Ob A := SplitOpfibOb.{v₂, u₂} A
   Hom u X Y := DispFunctor u.toFunctor X.toDisplayed Y.toDisplayed
   id X := DispFunctor.id X.toDisplayed
   comp H K := H.comp K
 
 /-- The split opcleavage of an object of `SplitOpfibLax`. The instance `SplitOpfibOb.splitOpfib`
 does not apply to it, since `SplitOpfibLax.Ob A` is not reducibly `SplitOpfibOb A`. -/
-instance SplitOpfibLax.splitOpfib {A : Cat.{u, u}} (X : SplitOpfibLax.Ob A) :
+instance SplitOpfibLax.splitOpfib {A : Cat.{v₁, u₁}} (X : SplitOpfibLax.{v₂, u₂}.Ob A) :
     SplitOpfib (SplitOpfibOb.toDisplayed X) :=
   SplitOpfibOb.splitOpfib X
 
 /-- The vertical functor forgetting the split opcleavage. -/
-def SplitOpfibLax.forget : VertFunctor SplitOpfibLax.{u} DisplayedCat.{u} where
+def SplitOpfibLax.forget :
+    VertFunctor SplitOpfibLax.{v₂, u₂, v₁, u₁} DisplayedCat.{v₂, u₂, v₁, u₁} where
   obj X := X.toDisplayed
   map H := H
 
 /-- Forgetting the split opcleavage is fully faithful, since the morphisms are the same. -/
-def SplitOpfibLax.forgetFullyFaithful : SplitOpfibLax.forget.{u}.FullyFaithful where
+def SplitOpfibLax.forgetFullyFaithful : SplitOpfibLax.forget.{v₂, u₂, v₁, u₁}.FullyFaithful where
   preimage H := H
 
 end Displayed

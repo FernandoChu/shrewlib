@@ -31,7 +31,7 @@ The files give its ingredients:
   identity propositionally: `straightenObj (unstraightenObj F) = F`.
 -/
 
-universe u
+universe u v₁ u₁
 
 open CategoryTheory Displayed Displayed.Straightening
 
@@ -39,38 +39,38 @@ open CategoryTheory Displayed Displayed.Straightening
 
 /-- **Straightening–unstraightening** is an equivalence over `Cat`. -/
 recall Displayed.Straightening.straighteningEquiv :
-    VertEquivalence LaxNormalCat.{u} DisplayedCat.{u}
+    VertEquivalence LaxNormalCat.{u, v₁, u₁} DisplayedCat.{u, u, v₁, u₁}
 
 /-- **Straightening–unstraightening is an isomorphism of categories over `Cat`**: the two vertical
 functors are inverse to each other, on the nose in one direction and propositionally in the
 other. -/
 recall Displayed.Straightening.straighten_comp_unstraighten :
-    straighten ⋙ᵥ unstraighten = VertFunctor.id DisplayedCat.{u}
+    straighten ⋙ᵥ unstraighten = VertFunctor.id DisplayedCat.{u, u, v₁, u₁}
 
 recall Displayed.Straightening.unstraighten_comp_straighten :
-    unstraighten ⋙ᵥ straighten = VertFunctor.id LaxNormalCat.{u}
+    unstraighten ⋙ᵥ straighten = VertFunctor.id LaxNormalCat.{u, v₁, u₁}
 
 /-- On objects. -/
-recall Displayed.Straightening.unstraightenObj_straightenObj {A : Cat.{u, u}}
+recall Displayed.Straightening.unstraightenObj_straightenObj {A : Cat.{v₁, u₁}}
     (D : Displayed.{u, u} A) : unstraightenObj (straightenObj D) = D
 
-recall Displayed.Straightening.straightenObj_unstraightenObj {A : Cat.{u, u}} (F : LaxNormal A) :
+recall Displayed.Straightening.straightenObj_unstraightenObj {A : Cat.{v₁, u₁}} (F : LaxNormal A) :
     straightenObj (unstraightenObj F) = F
 
 /-- `LaxNormalCat` and `DisplayedCat` are split fibrations over `Cat`, by restriction. -/
-recall Displayed.Straightening.splitFibLaxNormalCat : SplitFib LaxNormalCat.{u}
+recall Displayed.Straightening.splitFibLaxNormalCat : SplitFib LaxNormalCat.{u, v₁, u₁}
 
-recall Displayed.DisplayedCat.splitFib : SplitFib DisplayedCat.{u}
+recall Displayed.DisplayedCat.splitFib : SplitFib DisplayedCat.{u, u, v₁, u₁}
 
 /-- Both functors are cartesian functors: they preserve the chosen cartesian lifts strictly. -/
 recall Displayed.Straightening.unstraightenCartesian :
-    CartesianFunctor (𝟭 Cat.{u, u}) LaxNormalCat.{u} DisplayedCat.{u}
+    CartesianFunctor (𝟭 Cat.{v₁, u₁}) LaxNormalCat.{u, v₁, u₁} DisplayedCat.{u, u, v₁, u₁}
 
 recall Displayed.Straightening.straightenCartesian :
-    CartesianFunctor (𝟭 Cat.{u, u}) DisplayedCat.{u} LaxNormalCat.{u}
+    CartesianFunctor (𝟭 Cat.{v₁, u₁}) DisplayedCat.{u, u, v₁, u₁} LaxNormalCat.{u, v₁, u₁}
 
 /-- Both functors preserve cartesian morphisms. -/
 recall Displayed.Straightening.isCartesianUnstraightenMap :
-    unstraighten.{u}.PreservesCartesian
+    unstraighten.{u, v₁, u₁}.PreservesCartesian
 
-recall Displayed.Straightening.isCartesianStraightenMap : straighten.{u}.PreservesCartesian
+recall Displayed.Straightening.isCartesianStraightenMap : straighten.{u, v₁, u₁}.PreservesCartesian

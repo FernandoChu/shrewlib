@@ -49,7 +49,7 @@ instances. (The D2SFib structure of the unstraightening of a dependent profuncto
 functor category, is the fiber category.
 -/
 
-universe v₁ u₁ u v₃ u₃
+universe v₃ u₃ v₂ u₂ v₁ u₁
 
 namespace DoubleDisplayed
 
@@ -63,7 +63,7 @@ namespace DProf
 
 section Generators
 
-variable {A : Type u₁} [Category.{v₁} A] {F : A ⥤ Cat.{u, u}} {a a' a'' : A}
+variable {A : Type u₁} [Category.{v₁} A] {F : A ⥤ Cat.{v₂, u₂}} {a a' a'' : A}
 
 /-- The chosen horizontal morphism `⟨a, b⟩ ⟶ ⟨a', F α b⟩` over `α`. -/
 def horiz (α : a ⟶ a') (b : (∫ F).Ob a) :
@@ -119,7 +119,7 @@ end Generators
 section TotalMap
 
 variable {A : Type u₁} [Category.{v₁} A] {B : Type u₁} [Category.{v₁} B] {u : A ⥤ B}
-  {F : A ⥤ Cat.{u, u}} {G : B ⥤ Cat.{u, u}} {a a' : A}
+  {F : A ⥤ Cat.{v₂, u₂}} {G : B ⥤ Cat.{v₂, u₂}} {a a' : A}
 
 /-- **The functor induced by a strict transformation** `τ` over `u`,
 `(∫ (F ⋙ opFunctor')).Total ⥤ (∫ (G ⋙ opFunctor')).Total`: `⟨a, x⟩ ↦ ⟨u a, τ x⟩`, and
@@ -150,11 +150,11 @@ composites, as rules. -/
 
 section ICatStr
 
-variable {A A' A'' : Cat.{u, u}} {F : A ⥤ Cat.{u, u}} {G : A' ⥤ Cat.{u, u}}
-  {H : A'' ⥤ Cat.{u, u}}
+variable {A A' A'' : Cat.{v₁, u₁}} {F : A ⥤ Cat.{v₂, u₂}} {G : A' ⥤ Cat.{v₂, u₂}}
+  {H : A'' ⥤ Cat.{v₂, u₂}}
 
 @[rewrite_rule]
-theorem totalMap_id (F : A ⥤ Cat.{u, u}) :
+theorem totalMap_id (F : A ⥤ Cat.{v₂, u₂}) :
     totalMap (u := (𝟙 A : A ⟶ A).toFunctor) (StrictTrans.id F) = 𝟭 _ :=
   rfl
 
@@ -176,8 +176,8 @@ set_option linter.checkUnivs false in
 /-- **The category of dependent profunctors**, doubly displayed over `ICatStr`: over `F : A ⥤ Cat`,
 the functors `(∫ (F ⋙ opFunctor')).Total ⥤ Cat`, and over a strict transformation `τ`, the natural
 transformations `P ⟶ totalMap τ ⋙ P'`. -/
-abbrev DProf : DoubleDisplayed ICatStr.{u} where
-  Ob {A} (F : A ⥤ Cat.{u, u}) := (∫ (F ⋙ opFunctor')).Total ⥤ Cat.{v₃, u₃}
+abbrev DProf : DoubleDisplayed ICatStr.{v₂, u₂, v₁, u₁} where
+  Ob {A} (F : A ⥤ Cat.{v₂, u₂}) := (∫ (F ⋙ opFunctor')).Total ⥤ Cat.{v₃, u₃}
   Hom {_ _ u F G} (τ : StrictTrans F (u.toFunctor ⋙ G)) P P' :=
     P ⟶ DProf.totalMap (u := u.toFunctor) τ ⋙ P'
   id P := 𝟙 P
@@ -188,20 +188,20 @@ abbrev DProf : DoubleDisplayed ICatStr.{u} where
 
 /-- The chosen pullback of a dependent profunctor along a strict transformation is the
 precomposition with its `totalMap`, with the identity as chosen lift. -/
-instance DProf.ddFib : DDFib DProf.{u, v₃, u₃} where
-  pull {_ _ u _ G} τ (P' : (∫ ((G : _ ⥤ Cat.{u, u}) ⋙ opFunctor')).Total ⥤ Cat.{v₃, u₃}) :=
+instance DProf.ddFib : DDFib DProf.{v₃, u₃, v₂, u₂, v₁, u₁} where
+  pull {_ _ u _ G} τ (P' : (∫ ((G : _ ⥤ Cat.{v₂, u₂}) ⋙ opFunctor')).Total ⥤ Cat.{v₃, u₃}) :=
     DProf.totalMap (u := u.toFunctor) τ ⋙ P'
-  clift {_ _ u _ G} τ (P' : (∫ ((G : _ ⥤ Cat.{u, u}) ⋙ opFunctor')).Total ⥤ Cat.{v₃, u₃}) :=
+  clift {_ _ u _ G} τ (P' : (∫ ((G : _ ⥤ Cat.{v₂, u₂}) ⋙ opFunctor')).Total ⥤ Cat.{v₃, u₃}) :=
     𝟙 (DProf.totalMap (u := u.toFunctor) τ ⋙ P')
   isCartesianClift _ _ :=
     { lift := fun {_ _ _} _ {_} χ => χ
       lift_fac := fun {_ _ _} _ {_} _ => NatTrans.ext (funext fun _ => rfl)
       lift_uniq := fun {_ _ _ _ _ _} _ h => (NatTrans.ext (funext fun _ => rfl)).trans h }
 
-instance DProf.preSplitDDFib : PreSplitDDFib DProf.{u, v₃, u₃} := {}
+instance DProf.preSplitDDFib : PreSplitDDFib DProf.{v₃, u₃, v₂, u₂, v₁, u₁} := {}
 
 /-- **`DProf` is a split fibration over `ICatStr`**, by precomposition. -/
-instance DProf.splitDDFib : SplitDDFib DProf.{u, v₃, u₃} where
+instance DProf.splitDDFib : SplitDDFib DProf.{v₃, u₃, v₂, u₂, v₁, u₁} where
   clift_comp _ _ _ := NatTrans.ext (funext fun _ => rfl)
 
 end DoubleDisplayed

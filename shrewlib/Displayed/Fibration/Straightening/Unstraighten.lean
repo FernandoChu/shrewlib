@@ -25,7 +25,7 @@ faithful (`unstraightenFullyFaithful`).
 This is the dual of `Opfibration/Straightening/Unstraighten.lean`.
 -/
 
-universe v₁ u₁ v₂ u₂ v u
+universe v u v₁ u₁ v₂ u₂
 
 namespace Displayed.Fibration.Straightening
 
@@ -97,7 +97,7 @@ def unstraightenMap {A : Type u₁} [Category.{v₁} A] {B : Type u₂} [Categor
 
 /-- **The unstraightening**, into the split fibrations: `F` goes to `∫⁻ F`, and a lax
 transformation over `u` to the induced displayed functor. -/
-def unstraighten : VertFunctor ICatOpLax.{u} SplitFibLax.{u} where
+def unstraighten : VertFunctor ICatOpLax.{v, u, v₁, u₁} SplitFibLax.{v, u, v₁, u₁} where
   obj F := { toDisplayed := ∫⁻ F, splitFib := unstraightenSplitFib F }
   map {_ _ u _ _} α := unstraightenMap (u := u.toFunctor) α
   map_comp _ _ := DispFunctor.ext (fun _ => rfl) fun _ => HEq.rfl

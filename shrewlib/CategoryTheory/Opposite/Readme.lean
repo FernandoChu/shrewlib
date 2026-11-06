@@ -11,7 +11,7 @@ In this folder we define the opposite of a category that is involutive on the no
   is Mathlib's `Cat.opFunctor` up to a natural isomorphism. The file imports no rewrite rules.
 -/
 
-universe u
+universe v u
 
 open CategoryTheory
 
@@ -19,6 +19,6 @@ open CategoryTheory
 
 /-- The opposite functor is involutive on the nose, and is Mathlib's `Cat.opFunctor` up to
 isomorphism. -/
-recall CategoryTheory.opFunctor'_comp_opFunctor' : opFunctor'.{u} ⋙ opFunctor' = 𝟭 _
+recall CategoryTheory.opFunctor'_comp_opFunctor' : opFunctor'.{v, u} ⋙ opFunctor' = 𝟭 _
 
-recall CategoryTheory.opFunctor'Iso : opFunctor'.{u} ≅ Cat.opFunctor
+recall CategoryTheory.opFunctor'Iso : opFunctor'.{v, u} ≅ Cat.opFunctor

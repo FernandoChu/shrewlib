@@ -21,7 +21,7 @@ D2SFib structure of its objects is `D2SFibCat.str`. This is safe because the cat
 instance search then finds on `D2SFibStr.Fiber B`, that of `D2SFibCat B`, is the fiber category.
 -/
 
-universe v₁ u₁ v₂ u₂ v₃ u₃
+universe v₃ u₃ v₂ u₂ v₁ u₁
 
 namespace DoubleDisplayed
 
@@ -34,8 +34,8 @@ open scoped Displayed
 set_option linter.checkUnivs false in
 /-- **The fibred category of D2SFibs**, doubly displayed over `SplitOpfibStr`: over `B`, the split
 D2SFibs over `B`, and over an opcartesian functor `H`, the maps of D2SFibs over `H`. -/
-abbrev D2SFibStr : DoubleDisplayed SplitOpfibStr.{v₁, u₁, v₂, u₂} where
-  Ob {_} (B : SplitOpfibOb.{v₁, u₁, v₂, u₂} _) := D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B.toDisplayed
+abbrev D2SFibStr : DoubleDisplayed SplitOpfibStr.{v₂, u₂, v₁, u₁} where
+  Ob {_} (B : SplitOpfibOb.{v₂, u₂} _) := D2SFibCat.{v₃, u₃} B.toDisplayed
   Hom {_ _ u B B'} (H : OpcartesianFunctor u.toFunctor (SplitOpfibOb.toDisplayed B)
       (SplitOpfibOb.toDisplayed B')) E E' :=
     D2SFibMap H (D2SFibCat.C E) (D2SFibCat.C E')
@@ -44,7 +44,7 @@ abbrev D2SFibStr : DoubleDisplayed SplitOpfibStr.{v₁, u₁, v₂, u₂} where
 
 /-- The chosen pullback of a D2SFib along an opcartesian functor `H` is its reindexing along `H`,
 with `D2SFibMap.reindexLift` as chosen lift. -/
-instance D2SFibStr.ddFib : DDFib D2SFibStr.{v₁, u₁, v₂, u₂, v₃, u₃} where
+instance D2SFibStr.ddFib : DDFib D2SFibStr.{v₃, u₃, v₂, u₂, v₁, u₁} where
   pull {_ _ u B B'} (H : OpcartesianFunctor u.toFunctor (SplitOpfibOb.toDisplayed B)
       (SplitOpfibOb.toDisplayed B')) (E : D2SFibCat (SplitOpfibOb.toDisplayed B')) :=
     (⟨E.C.reindex H.toDispFunctor⟩ : D2SFibCat (SplitOpfibOb.toDisplayed B))
@@ -56,9 +56,9 @@ instance D2SFibStr.ddFib : DDFib D2SFibStr.{v₁, u₁, v₂, u₂, v₃, u₃} 
       lift_fac := fun {_ _ _} _ {_} _ => rfl
       lift_uniq := fun {_ _ _ _ _ _} _ h => by subst h; rfl }
 
-instance D2SFibStr.preSplitDDFib : PreSplitDDFib D2SFibStr.{v₁, u₁, v₂, u₂, v₃, u₃} := {}
+instance D2SFibStr.preSplitDDFib : PreSplitDDFib D2SFibStr.{v₃, u₃, v₂, u₂, v₁, u₁} := {}
 
 /-- **`D2SFibStr` is a split fibration over `SplitOpfibStr`**, by reindexing. -/
-instance D2SFibStr.splitDDFib : SplitDDFib D2SFibStr.{v₁, u₁, v₂, u₂, v₃, u₃} := {}
+instance D2SFibStr.splitDDFib : SplitDDFib D2SFibStr.{v₃, u₃, v₂, u₂, v₁, u₁} := {}
 
 end DoubleDisplayed

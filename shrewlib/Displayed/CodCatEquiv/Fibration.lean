@@ -15,7 +15,7 @@ the split fibration `DisplayedCat` along `DisplayedCat.codEquiv`. It is not spli
 `p` along `v ≫ u` is only isomorphic to its pullback along `u` and then `v`.
 -/
 
-universe u
+universe v u
 
 open CategoryTheory
 
@@ -25,13 +25,13 @@ open scoped Displayed
 
 /-- **Reindexing goes to pullbacks**: `(pull u E).Total` is the pullback of `E.Total` along `u`,
 since `total` is an equivalence and the chosen lift `clift u E` is cartesian. -/
-def isCartesianTotalMapClift {A B : Cat.{u, u}} {u : A ⟶ B} {E : Displayed.{u, u} B} :
+def isCartesianTotalMapClift {A B : Cat.{v, u}} {u : A ⟶ B} {E : Displayed.{v, u} B} :
     IsCartesian (total.map (clift u E)) :=
   codEquiv.isCartesianMap (isCartesianClift u E)
 
 /-- **`cod Cat` is a fibration over `Cat`**, with the cleavage transferred from `DisplayedCat` along
 `DisplayedCat.codEquiv`. -/
-instance fibCodCat : Fib (cod Cat.{u, u}) :=
+instance fibCodCat : Fib (cod Cat.{v, u}) :=
   codEquiv.fib
 
 end Displayed.DisplayedCat

@@ -28,7 +28,8 @@ open scoped Displayed
 /-- **Forgetting the discreteness is a strict map of comprehension categories** from the discrete
 model to the category model, over the identity of `Cat`: the comprehension functor of the discrete
 model is `IDisc.forget ⋙ᵥ compr`, so the comprehension functors commute on the nose. -/
-def forgetComprehensionMap : StrictComprehensionMap (𝟭 Cat.{u, u}) IDisc.{u} ICatLax.{u} where
+def forgetComprehensionMap :
+    StrictComprehensionMap (𝟭 Cat.{u, u}) IDisc.{u, u, u, u} ICatLax.{u, u, u, u} where
   toPre.toDispFunctor := IDisc.forget.toDispFunctor
   toPre.isCartesianMap := IDisc.forget.isCartesianMap
   toPre.compr_obj _ := rfl
@@ -40,7 +41,7 @@ theorem forgetComprehensionMap_preservesSigma : forgetComprehensionMap.{u}.Prese
   map_pair _ _ := HEq.rfl
 
 /-- **Forgetting the discreteness preserves opposite types strictly.** -/
-theorem forgetComprehensionMap_obj_op {Γ : Cat.{u, u}} (A : IDisc.{u}.Ty Γ) :
+theorem forgetComprehensionMap_obj_op {Γ : Cat.{u, u}} (A : IDisc.{u, u}.Ty Γ) :
     forgetComprehensionMap.toPre.obj Aᵒᵖ = (forgetComprehensionMap.toPre.obj A)ᵒᵖ :=
   rfl
 

@@ -25,7 +25,7 @@ The files give its ingredients:
   from the equivalence.
 -/
 
-universe u
+universe v u
 
 open CategoryTheory Displayed
 
@@ -33,15 +33,15 @@ open CategoryTheory Displayed
 
 /-- **Displayed categories over `A` are the functors into `A`**: taking total categories is an
 equivalence over `Cat`, with inverse taking fibres. -/
-recall Displayed.DisplayedCat.codEquiv : VertEquivalence DisplayedCat.{u} (cod Cat.{u, u})
+recall Displayed.DisplayedCat.codEquiv : VertEquivalence DisplayedCat.{v, u, v, u} (cod Cat.{v, u})
 
 /-- Taking total categories is fully faithful. -/
-recall Displayed.DisplayedCat.totalFullyFaithful : DisplayedCat.total.{u}.FullyFaithful
+recall Displayed.DisplayedCat.totalFullyFaithful : DisplayedCat.total.{v, u}.FullyFaithful
 
 /-- Taking total categories sends the chosen lifts of `DisplayedCat` to pullback squares. -/
-recall Displayed.DisplayedCat.isCartesianTotalMapClift {A B : Cat.{u, u}} {u : A ⟶ B}
-    {E : Displayed.{u, u} B} :
+recall Displayed.DisplayedCat.isCartesianTotalMapClift {A B : Cat.{v, u}} {u : A ⟶ B}
+    {E : Displayed.{v, u} B} :
     IsCartesian (DisplayedCat.total.map (DisplayedCat.clift u E))
 
 /-- `cod Cat` is a fibration, by transfer along `DisplayedCat.codEquiv`. It is not split. -/
-recall Displayed.DisplayedCat.fibCodCat : Fib (cod Cat.{u, u})
+recall Displayed.DisplayedCat.fibCodCat : Fib (cod Cat.{v, u})

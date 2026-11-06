@@ -26,7 +26,7 @@ A strict transformation `τ` over `u` unstraightens to an opcartesian functor
 of `ICatStr`, as rules.
 -/
 
-universe v₁ u₁ v₂ u₂ v₃ u₃ v u
+universe v u v₁ u₁ v₂ u₂ v₃ u₃
 
 namespace Displayed.Opfibration.Straightening
 
@@ -113,12 +113,15 @@ end StrictTrans
 
 /-! ## The displayed category of indexed categories -/
 
+-- The universes of the fibers `Cat.{v, u}` only occur in the levels of `ICatStr` through the
+-- `max` of the levels of its objects and morphisms.
+set_option linter.checkUnivs false in
 /-- **`ICat_str`**: the indexed categories and strict natural transformations, displayed over
 `Cat`. An object over `A` is a functor `A ⥤ Cat`, and a morphism over `u : A ⟶ A'` from `F` to `G`
 is a strict transformation `StrictTrans F (u ⋙ G)`. Composition restricts the second
 transformation along the first base functor. -/
-def ICatStr : Displayed.{u, u + 1} Cat.{u, u} where
-  Ob A := A ⥤ Cat.{u, u}
+def ICatStr : Displayed Cat.{v₁, u₁} where
+  Ob A := A ⥤ Cat.{v, u}
   Hom u F G := StrictTrans F (u.toFunctor ⋙ G)
   id F := StrictTrans.id F
   comp {_ _ _ u _ _ _ _} τ σ := StrictTrans.vcomp τ (StrictTrans.whiskerLeft u.toFunctor σ)
@@ -131,7 +134,7 @@ def StrictTrans.toLaxTrans {A : Type u₁} [Category.{v₁} A] {F G : A ⥤ Cat.
   naturality_naturality _ _ _ _ := rfl
 
 /-- The vertical functor `ICatStr ⟶ ICatLax` seeing a strict transformation as a lax one. -/
-def ICatStr.forget : VertFunctor ICatStr.{u} ICatLax.{u} where
+def ICatStr.forget : VertFunctor ICatStr.{v, u, v₁, u₁} ICatLax.{v, u, v₁, u₁} where
   obj F := F
   map τ := StrictTrans.toLaxTrans τ
   map_comp _ _ := LaxTrans.ext' (fun _ _ => rfl) (fun _ _ _ _ => HEq.rfl) (fun _ _ => HEq.rfl)
@@ -154,18 +157,18 @@ end StrictTrans
 
 namespace ICatStr
 
-variable {A A' A'' : Cat.{u, u}} {F : A ⥤ Cat.{u, u}} {G : A' ⥤ Cat.{u, u}} {H : A'' ⥤ Cat.{u, u}}
+variable {A A' A'' : Cat.{v₁, u₁}} {F : A ⥤ Cat.{v, u}} {G : A' ⥤ Cat.{v, u}} {H : A'' ⥤ Cat.{v, u}}
 
 /-- The unstraightening of an object of `ICatStr` is a split opfibration. The instance
 `unstraightenSplitOpfib` does not apply to it, since `ICatStr.Ob A` is not reducibly `A ⥤ Cat`. -/
-instance splitOpfib (F : ICatStr.Ob A) : SplitOpfib (∫ (F : A ⥤ Cat.{u, u})) :=
+instance splitOpfib (F : ICatStr.{v, u}.Ob A) : SplitOpfib (∫ (F : A ⥤ Cat.{v, u})) :=
   unstraightenSplitOpfib F
 
 /-! The unstraightening of the identities and composites of `ICatStr` are the identities and
 composites of opcartesian functors, as rules. -/
 
 @[rewrite_rule]
-theorem unstraighten_id (F : A ⥤ Cat.{u, u}) :
+theorem unstraighten_id (F : A ⥤ Cat.{v, u}) :
     StrictTrans.unstraighten (u := (𝟙 A : A ⟶ A).toFunctor) (StrictTrans.id F) =
       OpcartesianFunctor.id (∫ F) := rfl
 

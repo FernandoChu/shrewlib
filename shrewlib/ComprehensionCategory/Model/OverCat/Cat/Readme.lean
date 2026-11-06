@@ -47,9 +47,9 @@ open scoped Displayed
 /-! ## Main results -/
 
 /-- **The category model** is a full split comprehension category over `Cat`. -/
-recall ComprehensionCategory.CatModel.splitComprehension : SplitComprehension ICatLax.{u}
+recall ComprehensionCategory.CatModel.splitComprehension : SplitComprehension ICatLax.{u, u, u, u}
 
-recall ComprehensionCategory.CatModel.fullComprehension : FullComprehension ICatLax.{u}
+recall ComprehensionCategory.CatModel.fullComprehension : FullComprehension ICatLax.{u, u, u, u}
 
 /-- The chosen lifts go to pullbacks: `A ⋉ ICatLax.pull u G` is the pullback of `B ⋉ G` along `u`.
 -/
@@ -61,10 +61,10 @@ transformations `LaxTrans F (u ⋙ G)`. -/
 recall ComprehensionCategory.CatModel.comprFullyFaithful : CatModel.compr.{u}.FullyFaithful
 
 /-- **The category model has Σ-types.** -/
-recall ComprehensionCategory.CatModel.hasSigma : HasSigma ICatLax.{u}
+recall ComprehensionCategory.CatModel.hasSigma : HasSigma ICatLax.{u, u, u, u}
 
 /-- **The category model has opposite types**, involutive by `rfl`. -/
-recall ComprehensionCategory.CatModel.op_op {Γ : Cat.{u, u}} (A : ICatLax.{u}.Ty Γ) :
+recall ComprehensionCategory.CatModel.op_op {Γ : Cat.{u, u}} (A : ICatLax.{u, u}.Ty Γ) :
     CatModel.op (CatModel.op A) = A
 
 /-- The terms of the constant type at `K` are the functors `Γ ⥤ K`. -/

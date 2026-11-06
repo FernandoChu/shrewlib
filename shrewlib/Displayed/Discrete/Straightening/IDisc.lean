@@ -24,7 +24,7 @@ how the straightening of discrete opfibrations is that of split opfibrations (`E
 how the discrete model gets its Σ-types (`ComprehensionCategory/Model/OverCat/Discrete`).
 -/
 
-universe u w
+universe v₂ u₂ v₁ u₁
 
 namespace Displayed.Discrete.Straightening
 
@@ -32,27 +32,30 @@ open CategoryTheory Displayed Displayed.Opfibration.Straightening
 
 open scoped Displayed
 
-/-- A functor `A ⥤ Cat` into discrete categories. The categories may be smaller than `A`: they are
-in `Cat.{u, u}`, and `A` in `Cat.{w, w}`. -/
-structure IDiscOb (A : Cat.{w, w}) where
+/-- A functor `A ⥤ Cat` into discrete categories. The categories are in `Cat.{v₂, u₂}`, and `A` in
+`Cat.{v₁, u₁}`. -/
+structure IDiscOb (A : Cat.{v₁, u₁}) where
   /-- The functor. -/
-  toFunctor : A ⥤ Cat.{u, u}
+  toFunctor : A ⥤ Cat.{v₂, u₂}
   /-- Its values are discrete. -/
   isDiscrete : ∀ a, IsDiscrete (toFunctor.obj a)
 
 /-- Two functors into discrete categories are equal if their functors are, since discreteness is a
 proposition. -/
-theorem IDiscOb.ext {A : Cat.{w, w}} {X Y : IDiscOb.{u} A} (h : X.toFunctor = Y.toFunctor) :
+theorem IDiscOb.ext {A : Cat.{v₁, u₁}} {X Y : IDiscOb.{v₂, u₂} A} (h : X.toFunctor = Y.toFunctor) :
     X = Y := by
   cases X
   cases Y
   cases h
   rfl
 
+-- The universes of the discrete categories only occur in the levels of `IDisc` through
+-- the `max` of the levels of their objects and morphisms.
+set_option linter.checkUnivs false in
 /-- The indexed discrete categories, displayed over `Cat`: the full subcategory of `ICatLax` on the
 functors into discrete categories. -/
-def IDisc : Displayed.{u, u + 1} Cat.{u, u} where
-  Ob A := IDiscOb.{u} A
+def IDisc : Displayed Cat.{v₁, u₁} where
+  Ob A := IDiscOb.{v₂, u₂} A
   Hom u X Y := ICatLax.Hom u X.toFunctor Y.toFunctor
   id X := ICatLax.id X.toFunctor
   comp φ ψ := ICatLax.comp φ ψ
@@ -61,16 +64,16 @@ namespace IDisc
 
 /-- Reindexing `pull u X` of `X` along `u : A ⟶ B`: the reindexing of `ICatLax`, whose values are
 those of `X`. -/
-def pull {A B : Cat.{u, u}} (u : A ⟶ B) (X : IDiscOb.{u} B) : IDiscOb.{u} A where
+def pull {A B : Cat.{v₁, u₁}} (u : A ⟶ B) (X : IDiscOb.{v₂, u₂} B) : IDiscOb.{v₂, u₂} A where
   toFunctor := Fib.pull (D := ICatLax) u X.toFunctor
   isDiscrete a := X.isDiscrete (u.toFunctor.obj a)
 
 /-- The cartesian lift `pull u X ⟶[u] X`: that of `ICatLax`. -/
-def clift {A B : Cat.{u, u}} (u : A ⟶ B) (X : IDiscOb.{u} B) : IDisc.Hom u (pull u X) X :=
+def clift {A B : Cat.{v₁, u₁}} (u : A ⟶ B) (X : IDiscOb.{v₂, u₂} B) : IDisc.Hom u (pull u X) X :=
   Fib.clift (D := ICatLax) u X.toFunctor
 
 /-- The chosen lift is cartesian, since it is in `ICatLax` and the morphisms are the same. -/
-def isCartesianClift {A B : Cat.{u, u}} (u : A ⟶ B) (X : IDiscOb.{u} B) :
+def isCartesianClift {A B : Cat.{v₁, u₁}} (u : A ⟶ B) (X : IDiscOb.{v₂, u₂} B) :
     IsCartesian (clift u X) :=
   let H := Fib.isCartesianClift (D := ICatLax) u X.toFunctor
   { lift := fun g _ χ => H.lift g χ
@@ -81,22 +84,24 @@ end IDisc
 
 /-- **`IDisc` is a split fibration over `Cat`**, with the reindexing and the chosen lifts of
 `ICatLax`. -/
-instance IDisc.preSplitFib : PreSplitFib IDisc.{u} where
+instance IDisc.preSplitFib : PreSplitFib IDisc.{v₂, u₂, v₁, u₁} where
   pull u X := IDisc.pull u X
   clift u X := IDisc.clift u X
   isCartesianClift u X := IDisc.isCartesianClift u X
 
-instance IDisc.splitFib : SplitFib IDisc.{u} := {}
+instance IDisc.splitFib : SplitFib IDisc.{v₂, u₂, v₁, u₁} := {}
 
 /-- **Forgetting the discreteness**, a vertical cartesian functor `IDisc ⟶ ICatLax`: the inclusion
 of the full subcategory. -/
-def IDisc.forget : CartesianFunctor (𝟭 Cat.{u, u}) IDisc.{u} ICatLax.{u} where
+def IDisc.forget :
+    CartesianFunctor (𝟭 Cat.{v₁, u₁}) IDisc.{v₂, u₂, v₁, u₁} ICatLax.{v₂, u₂, v₁, u₁} where
   toPre :=
     { obj X := X.toFunctor
       map φ := φ }
 
 /-- **Forgetting the discreteness is fully faithful**, since the morphisms are the same. -/
-def IDisc.forgetFullyFaithful : VertFunctor.FullyFaithful IDisc.forget.{u}.toDispFunctor where
+def IDisc.forgetFullyFaithful :
+    VertFunctor.FullyFaithful IDisc.forget.{v₂, u₂, v₁, u₁}.toDispFunctor where
   preimage φ := φ
 
 end Displayed.Discrete.Straightening

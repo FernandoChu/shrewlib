@@ -31,7 +31,7 @@ The files give its ingredients:
   `straighteningEquiv`.
 -/
 
-universe u
+universe v₂ u₂ v₁ u₁
 
 open CategoryTheory Displayed Displayed.Discrete.Straightening
 
@@ -39,21 +39,23 @@ open CategoryTheory Displayed Displayed.Discrete.Straightening
 
 /-- **Straightening–unstraightening for discrete opfibrations** is an equivalence over `Cat`. -/
 recall Displayed.Discrete.Straightening.straighteningEquiv :
-    VertEquivalence IDisc.{u} DiscOpfibCat.{u}
+    VertEquivalence IDisc.{v₂, u₂, v₁, u₁} DiscOpfibCat.{v₂, u₂, v₁, u₁}
 
 /-- Straightening undoes unstraightening on the nose. -/
-recall Displayed.Discrete.Straightening.straightenObj_unstraightenObj {A : Cat.{u, u}}
+recall Displayed.Discrete.Straightening.straightenObj_unstraightenObj {A : Cat.{v₁, u₁}}
     (X : IDiscOb A) : straightenObj (unstraightenObj X) = X
 
 /-- The unstraightening is fully faithful. -/
-recall Displayed.Discrete.Straightening.unstraightenFullyFaithful : unstraighten.{u}.FullyFaithful
+recall Displayed.Discrete.Straightening.unstraightenFullyFaithful :
+    unstraighten.{v₂, u₂, v₁, u₁}.FullyFaithful
 
-recall Displayed.Discrete.Straightening.IDisc.splitFib : SplitFib IDisc.{u}
+recall Displayed.Discrete.Straightening.IDisc.splitFib : SplitFib IDisc.{v₂, u₂, v₁, u₁}
 
 /-- Forgetting the discreteness of the functors into discrete categories is a fully faithful
 cartesian functor. -/
 recall Displayed.Discrete.Straightening.IDisc.forget :
-    CartesianFunctor (𝟭 Cat.{u, u}) IDisc.{u} Opfibration.Straightening.ICatLax.{u}
+    CartesianFunctor (𝟭 Cat.{v₁, u₁}) IDisc.{v₂, u₂, v₁, u₁}
+    Opfibration.Straightening.ICatLax.{v₂, u₂, v₁, u₁}
 
 recall Displayed.Discrete.Straightening.IDisc.forgetFullyFaithful :
-    VertFunctor.FullyFaithful IDisc.forget.{u}.toDispFunctor
+    VertFunctor.FullyFaithful IDisc.forget.{v₂, u₂, v₁, u₁}.toDispFunctor

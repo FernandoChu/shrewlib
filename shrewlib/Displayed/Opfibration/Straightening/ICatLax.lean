@@ -21,7 +21,7 @@ displayed over `Cat` (`ICatLax`): an object over `A` is a functor `A ⥤ Cat`, a
 fibration over `Cat`, whose splitting laws hold by `rfl`.
 -/
 
-universe v₁ u₁ v₂ u₂ v u
+universe v u v₁ u₁ v₂ u₂
 
 namespace Displayed.Opfibration.Straightening
 
@@ -105,12 +105,15 @@ end LaxTrans
 
 /-! ## The displayed category of indexed categories -/
 
+-- The universes of the fibers `Cat.{v, u}` only occur in the levels of `ICatLax` through the
+-- `max` of the levels of its objects and morphisms.
+set_option linter.checkUnivs false in
 /-- The indexed categories and lax transformations, displayed over `Cat`: an object over `A` is a
 functor `A ⥤ Cat`, and a morphism over `u : A ⟶ B` from `F` to `G` is a lax transformation
 `LaxTrans F (u ⋙ G)`. Composition restricts the second transformation along the first base
 functor. -/
-def ICatLax : Displayed.{u, u + 1} Cat.{u, u} where
-  Ob A := A ⥤ Cat.{u, u}
+def ICatLax : Displayed Cat.{v₁, u₁} where
+  Ob A := A ⥤ Cat.{v, u}
   Hom u F G := LaxTrans F (u.toFunctor ⋙ G)
   id F := LaxTrans.id F
   comp {_ _ _ u _ _ _ _} α β := LaxTrans.vcomp α (LaxTrans.whiskerLeft u.toFunctor β)
@@ -121,15 +124,16 @@ def ICatLax : Displayed.{u, u + 1} Cat.{u, u} where
 namespace ICatLax
 
 /-- Reindexing `pull u G = u ⋙ G` of `G : B ⥤ Cat` along `u : A ⟶ B`. -/
-def pull {A B : Cat.{u, u}} (u : A ⟶ B) (G : B ⥤ Cat.{u, u}) : A ⥤ Cat.{u, u} :=
+def pull {A B : Cat.{v₁, u₁}} (u : A ⟶ B) (G : B ⥤ Cat.{v, u}) : A ⥤ Cat.{v, u} :=
   u.toFunctor ⋙ G
 
 /-- The cartesian lift `pull u G ⟶[u] G`: the identity transformation. -/
-def clift {A B : Cat.{u, u}} (u : A ⟶ B) (G : B ⥤ Cat.{u, u}) : ICatLax.Hom u (pull u G) G :=
+def clift {A B : Cat.{v₁, u₁}} (u : A ⟶ B) (G : B ⥤ Cat.{v, u}) :
+    ICatLax.{v, u}.Hom u (pull u G) G :=
   LaxTrans.id (u.toFunctor ⋙ G)
 
 /-- The chosen lift is cartesian: a transformation over `g ≫ u` is its own factorization. -/
-def isCartesianClift {A B : Cat.{u, u}} (u : A ⟶ B) (G : B ⥤ Cat.{u, u}) :
+def isCartesianClift {A B : Cat.{v₁, u₁}} (u : A ⟶ B) (G : B ⥤ Cat.{v, u}) :
     IsCartesian (clift u G) where
   lift _ _ χ := χ
   lift_fac _ _ _ := rfl
@@ -139,11 +143,11 @@ end ICatLax
 
 /-- **`ICatLax` is a split fibration over `Cat`**, cloven by reindexing `ICatLax.pull u G = u ⋙ G`,
 with the identity transformations as chosen lifts. -/
-instance ICatLax.preSplitFib : PreSplitFib ICatLax.{u} where
+instance ICatLax.preSplitFib : PreSplitFib ICatLax.{v, u, v₁, u₁} where
   pull u G := ICatLax.pull u G
   clift u G := ICatLax.clift u G
   isCartesianClift u G := ICatLax.isCartesianClift u G
 
-instance ICatLax.splitFib : SplitFib ICatLax.{u} := {}
+instance ICatLax.splitFib : SplitFib ICatLax.{v, u, v₁, u₁} := {}
 
 end Displayed.Opfibration.Straightening

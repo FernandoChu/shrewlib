@@ -22,7 +22,7 @@ naturality with respect to a displayed functor `H` is that `H (olift f x)` is th
 followed by its factorization.
 -/
 
-universe u
+universe v₂ u₂ v₁ u₁
 
 namespace Displayed.Opfibration.Straightening
 
@@ -34,7 +34,7 @@ open scoped Displayed
 
 section Counit
 
-variable {A : Cat.{u, u}} (X : SplitOpfibOb A)
+variable {A : Cat.{v₁, u₁}} (X : SplitOpfibOb.{v₂, u₂} A)
 
 /-- The counit at `D`: the identity on objects, and `φ : push f x ⟶ y` goes to
 `olift f x ≫ φ`. -/
@@ -58,7 +58,8 @@ def counitIso : (unstraighten.obj (straightenObj X) : SplitOpfibLax.Fiber A) ≅
 end Counit
 
 /-- **The counit** `straighten ⋙ unstraighten ≅ 𝟭`. -/
-def counitNatIso : straighten.{u} ⋙ᵥ unstraighten ≅ VertFunctor.id SplitOpfibLax.{u} :=
+def counitNatIso :
+    straighten.{v₂, u₂, v₁, u₁} ⋙ᵥ unstraighten ≅ VertFunctor.id SplitOpfibLax.{v₂, u₂, v₁, u₁} :=
   VertNatIso.ofComponents (fun X => counitIso X) fun {_ _ _ X _} H =>
     DispFunctor.ext (fun _ => rfl) fun {_ _ f x _} φ =>
       heq_of_eq (H.map_comp (f := f) (g := 𝟙 _) (X.toDisplayed.olift f x) φ).symm
@@ -66,7 +67,7 @@ def counitNatIso : straighten.{u} ⋙ᵥ unstraighten ≅ VertFunctor.id SplitOp
 /-! ## The unit -/
 
 /-- The unit at `F`: `F ≅ straightenObj (∫ F)`, by identities. -/
-def unitIso {A : Cat.{u, u}} (F : ICatLax.Ob A) :
+def unitIso {A : Cat.{v₁, u₁}} (F : ICatLax.{v₂, u₂}.Ob A) :
     ((VertFunctor.id ICatLax).obj F : ICatLax.Fiber A) ≅ (unstraighten ⋙ᵥ straighten).obj F where
   hom :=
     { app := fun _ => 𝟭 _
@@ -84,7 +85,7 @@ def unitIso {A : Cat.{u, u}} (F : ICatLax.Ob A) :
   inv_hom_id := LaxTrans.ext' (fun _ _ => rfl) (fun _ _ _ _ => HEq.rfl) (fun _ _ => HEq.rfl)
 
 /-- **The unit** `𝟭 ≅ unstraighten ⋙ straighten`, by identities. -/
-def unitNatIso : VertFunctor.id ICatLax.{u} ≅ unstraighten ⋙ᵥ straighten :=
+def unitNatIso : VertFunctor.id ICatLax.{v₂, u₂, v₁, u₁} ≅ unstraighten ⋙ᵥ straighten :=
   VertNatIso.ofComponents (fun F => unitIso F) fun _ =>
     LaxTrans.ext' (fun _ _ => rfl) (fun _ _ _ _ => HEq.rfl) (fun _ _ => HEq.rfl)
 
@@ -93,7 +94,8 @@ def unitNatIso : VertFunctor.id ICatLax.{u} ≅ unstraighten ⋙ᵥ straighten :
 /-- **Straightening–unstraightening for split opfibrations**: the unstraightening is an
 equivalence over `Cat` between `ICatLax` and the split opfibrations, with all displayed functors as
 morphisms. -/
-def straighteningEquivLax : VertEquivalence ICatLax.{u} SplitOpfibLax.{u} where
+def straighteningEquivLax :
+    VertEquivalence ICatLax.{v₂, u₂, v₁, u₁} SplitOpfibLax.{v₂, u₂, v₁, u₁} where
   functor := unstraighten
   inverse := straighten
   unitIso := unitNatIso
@@ -101,15 +103,16 @@ def straighteningEquivLax : VertEquivalence ICatLax.{u} SplitOpfibLax.{u} where
 
 /-- **The unstraightening is fully faithful**, as the functor of an equivalence: displayed
 functors between unstraightenings over `u` are lax transformations. -/
-def unstraightenFullyFaithful : unstraighten.{u}.FullyFaithful :=
+def unstraightenFullyFaithful : unstraighten.{v₂, u₂, v₁, u₁}.FullyFaithful :=
   straighteningEquivLax.fullyFaithful
 
 /-- The induced equivalence of total categories, over `Cat`. -/
-def straighteningEquivLaxTotal : ICatLax.{u}.Total ≌ SplitOpfibLax.{u}.Total :=
+def straighteningEquivLaxTotal :
+    ICatLax.{v₂, u₂, v₁, u₁}.Total ≌ SplitOpfibLax.{v₂, u₂, v₁, u₁}.Total :=
   straighteningEquivLax.total
 
 theorem straighteningEquivTotal_functor_comp_π :
-    straighteningEquivLaxTotal.{u}.functor ⋙ SplitOpfibLax.π = ICatLax.π :=
+    straighteningEquivLaxTotal.{v₂, u₂, v₁, u₁}.functor ⋙ SplitOpfibLax.π = ICatLax.π :=
   rfl
 
 end Displayed.Opfibration.Straightening

@@ -42,7 +42,7 @@ the unit and counit hold by `rfl`. This is a rewrite of a development on Lean an
 repository), at about half its size.
 -/
 
-universe v₁ u₁ v₂ u₂ v₃ u₃ u
+universe v₃ u₃ v₂ u₂ v₁ u₁
 
 open CategoryTheory Displayed
 
@@ -53,11 +53,12 @@ open CategoryTheory Displayed
 equivalence `ICatStr ≃ SplitOpfibStr`. -/
 recall DoubleDisplayed.D2SFib.Straightening.straighteningEquiv :
     DoubleDisplayed.EquivalenceOver
-      Displayed.Opfibration.Straightening.straighteningEquivStr.{u}
-      DoubleDisplayed.DProf.{u, v₃, u₃} DoubleDisplayed.D2SFibStr.{u, u, u, u, v₃, u₃}
+      Displayed.Opfibration.Straightening.straighteningEquivStr.{v₂, u₂, v₁, u₁}
+      DoubleDisplayed.DProf.{v₃, u₃, v₂, u₂, v₁, u₁}
+      DoubleDisplayed.D2SFibStr.{v₃, u₃, v₂, u₂, v₁, u₁}
 
 recall DoubleDisplayed.DProf.splitDDFib :
-    DoubleDisplayed.SplitDDFib DoubleDisplayed.DProf.{u, v₃, u₃}
+    DoubleDisplayed.SplitDDFib DoubleDisplayed.DProf.{v₃, u₃, v₂, u₂, v₁, u₁}
 
 recall DoubleDisplayed.D2SFibStr.splitDDFib :
-    DoubleDisplayed.SplitDDFib DoubleDisplayed.D2SFibStr.{v₁, u₁, v₂, u₂, v₃, u₃}
+    DoubleDisplayed.SplitDDFib DoubleDisplayed.D2SFibStr.{v₃, u₃, v₂, u₂, v₁, u₁}

@@ -37,7 +37,7 @@ open CategoryTheory Bicategory Profunctor
 
 open scoped Displayed
 
-universe v₁ u₁ u
+universe u v₁ u₁
 
 namespace Displayed.Straightening
 
@@ -56,7 +56,7 @@ def unstraightenObj {C : Type u₁} [Category.{v₁} C]
 
 /-- `unstraighten` on morphisms: the displayed functor of a transformation with representable
 components. -/
-def unstraightenMap {A B : Cat.{u, u}} {u : A ⟶ B} {F : LaxNormal A} {G : LaxNormal B}
+def unstraightenMap {A B : Cat.{v₁, u₁}} {u : A ⟶ B} {F : LaxNormal A} {G : LaxNormal B}
     (φ : ReprHom u F G) : DisplayedCat.Hom u (unstraightenObj F) (unstraightenObj G) where
   obj x := φ.obj x
   map s := φ.map s
@@ -64,7 +64,7 @@ def unstraightenMap {A B : Cat.{u, u}} {u : A ⟶ B} {F : LaxNormal A} {G : LaxN
   map_comp s t := φ.map_mul s t
 
 /-- **The unstraightening functor `unstraighten : VertFunctor LaxNormalCat DisplayedCat`.** -/
-def unstraighten : VertFunctor LaxNormalCat.{u} DisplayedCat.{u} where
+def unstraighten : VertFunctor LaxNormalCat.{u, v₁, u₁} DisplayedCat.{u, u, v₁, u₁} where
   obj F := unstraightenObj F
   map φ := unstraightenMap φ
 

@@ -43,20 +43,21 @@ open CategoryTheory Displayed ComprehensionCategory DiscreteModel Opfibration.St
 /-! ## Main results -/
 
 /-- **The discrete model** is a full split comprehension category over `Cat`. -/
-recall ComprehensionCategory.DiscreteModel.splitComprehension : SplitComprehension IDisc.{u}
+recall ComprehensionCategory.DiscreteModel.splitComprehension :
+    SplitComprehension IDisc.{u, u, u, u}
 
-recall ComprehensionCategory.DiscreteModel.fullComprehension : FullComprehension IDisc.{u}
+recall ComprehensionCategory.DiscreteModel.fullComprehension : FullComprehension IDisc.{u, u, u, u}
 
 /-- **The discrete model has Σ-types.** -/
-recall ComprehensionCategory.DiscreteModel.hasSigma : HasSigma IDisc.{u}
+recall ComprehensionCategory.DiscreteModel.hasSigma : HasSigma IDisc.{u, u, u, u}
 
 /-- The Σ-types of the discrete model are those of the category model, on the nose. -/
-example {Γ : Cat.{u, u}} (A : IDisc.{u}.Ty Γ) (B : IDisc.{u}.Ty (Γ ▹ A)) :
+example {Γ : Cat.{u, u}} (A : IDisc.{u, u}.Ty Γ) (B : IDisc.{u, u}.Ty (Γ ▹ A)) :
     IDisc.forget.toDispFunctor.obj (Σ[A] B) = ICatLax.sigma A.toFunctor B.toFunctor :=
   rfl
 
 /-- **The discrete model has opposite types**, involutive by `rfl`. -/
-recall ComprehensionCategory.DiscreteModel.op_op {Γ : Cat.{u, u}} (A : IDisc.{u}.Ty Γ) :
+recall ComprehensionCategory.DiscreteModel.op_op {Γ : Cat.{u, u}} (A : IDisc.{u, u}.Ty Γ) :
     DiscreteModel.op (DiscreteModel.op A) = A
 
 /-- A discrete category is its own opposite. -/

@@ -37,7 +37,7 @@ transformation is sent to one with the same components (`ReprHom.hext`). Consequ
   `isCartesianStraightenMap`).
 -/
 
-universe u
+universe u v₁ u₁
 
 namespace Displayed.Straightening
 
@@ -49,7 +49,7 @@ open scoped Displayed
 
 section Unit
 
-variable {A : Cat.{u, u}} (F : LaxNormal A)
+variable {A : Cat.{v₁, u₁}} (F : LaxNormal A)
 
 /-- The unit at `F`, with identity components. -/
 def unitHom : ReprHom (𝟙 A) F (straightenObj (unstraightenObj F)) where
@@ -73,7 +73,7 @@ theorem unitInv_unitHom :
 end Unit
 
 /-- **The unit** `VertFunctor.id LaxNormalCat ≅ unstraighten ⋙ᵥ straighten`, vertical over `Cat`. -/
-def unitIso : VertFunctor.id LaxNormalCat.{u} ≅ unstraighten ⋙ᵥ straighten :=
+def unitIso : VertFunctor.id LaxNormalCat.{u, v₁, u₁} ≅ unstraighten ⋙ᵥ straighten :=
   VertNatIso.ofComponents
     (fun F => ⟨unitHom F, unitInv F, unitHom_unitInv F, unitInv_unitHom F⟩) (fun _ => rfl)
 
@@ -105,7 +105,7 @@ the same categories `F.obj a`, but those of `straightenObj (unstraightenObj F)` 
 composition constraint of `F` (`mul_eq_comp`). They have the same elements, on which the morphisms
 of the fibers act by the composition constraint (`lmap_eq_mul`, `rmap_eq_mul`), and the same
 composition constraints. Once the categories are identified, all of these hold by `rfl`. -/
-theorem straightenObj_unstraightenObj {A : Cat.{u, u}} (F : LaxNormal A) :
+theorem straightenObj_unstraightenObj {A : Cat.{v₁, u₁}} (F : LaxNormal A) :
     straightenObj (unstraightenObj F) = F := by
   refine LaxNormal.ext (fun a => ?_) ?_ ?_ ?_ ?_
   · refine congrArg (@ProfCat.of _) (category_eq _ _ rfl (fun _ => HEq.rfl) ?_)
@@ -143,7 +143,7 @@ theorem straightenObj_unstraightenObj {A : Cat.{u, u}} (F : LaxNormal A) :
 
 section Counit
 
-variable {A : Cat.{u, u}} (D : Displayed.{u, u} A)
+variable {A : Cat.{v₁, u₁}} (D : Displayed.{u, u} A)
 
 /-- **Unstraightening the straightening of `D` gives back `D`**, on the nose. -/
 theorem unstraightenObj_straightenObj : unstraightenObj (straightenObj D) = D :=
@@ -161,14 +161,14 @@ end Counit
 
 /-- **The counit** `straighten ⋙ᵥ unstraighten ≅ VertFunctor.id DisplayedCat`, vertical over `Cat`,
 the identity. -/
-def counitIso : straighten ⋙ᵥ unstraighten ≅ VertFunctor.id DisplayedCat.{u} :=
+def counitIso : straighten ⋙ᵥ unstraighten ≅ VertFunctor.id DisplayedCat.{u, u, v₁, u₁} :=
   VertNatIso.ofComponents (fun D => ⟨counitHom D, counitInv D, rfl, rfl⟩) (fun _ => rfl)
 
 /-! ## Straightening–unstraightening -/
 
 /-- **Straightening–unstraightening**: `unstraighten : VertFunctor LaxNormalCat DisplayedCat` is an
 equivalence over `Cat`, with inverse the straightening. -/
-def straighteningEquiv : VertEquivalence LaxNormalCat.{u} DisplayedCat.{u} where
+def straighteningEquiv : VertEquivalence LaxNormalCat.{u, v₁, u₁} DisplayedCat.{u, u, v₁, u₁} where
   functor := unstraighten
   inverse := straighten
   unitIso := unitIso
@@ -176,24 +176,24 @@ def straighteningEquiv : VertEquivalence LaxNormalCat.{u} DisplayedCat.{u} where
 
 /-- The induced equivalence `LaxNormalCat.Total ≌ DisplayedCat.Total` of total categories. It
 commutes with the projections to `Cat` (`straighteningEquivTotal_functor_comp_π`). -/
-def straighteningEquivTotal : LaxNormalCat.{u}.Total ≌ DisplayedCat.{u}.Total :=
+def straighteningEquivTotal : LaxNormalCat.{u, v₁, u₁}.Total ≌ DisplayedCat.{u, u, v₁, u₁}.Total :=
   straighteningEquiv.total
 
 theorem straighteningEquivTotal_functor_comp_π :
-    straighteningEquivTotal.{u}.functor ⋙ DisplayedCat.{u}.π = LaxNormalCat.π :=
+    straighteningEquivTotal.{u, v₁, u₁}.functor ⋙ DisplayedCat.{u, u, v₁, u₁}.π = LaxNormalCat.π :=
   rfl
 
 /-! ## An isomorphism of categories over `Cat` -/
 
 /-- **Straightening, then unstraightening, is the identity**, on the nose. -/
 theorem straighten_comp_unstraighten :
-    straighten ⋙ᵥ unstraighten = VertFunctor.id DisplayedCat.{u} :=
+    straighten ⋙ᵥ unstraighten = VertFunctor.id DisplayedCat.{u, u, v₁, u₁} :=
   rfl
 
 /-- **Unstraightening, then straightening, is the identity**, propositionally: on objects by
 `straightenObj_unstraightenObj`, and a transformation is sent to one with the same components. -/
 theorem unstraighten_comp_straighten :
-    unstraighten ⋙ᵥ straighten = VertFunctor.id LaxNormalCat.{u} :=
+    unstraighten ⋙ᵥ straighten = VertFunctor.id LaxNormalCat.{u, v₁, u₁} :=
   DispFunctor.ext (fun F => straightenObj_unstraightenObj F) fun _ =>
     ReprHom.hext (straightenObj_unstraightenObj _) (straightenObj_unstraightenObj _)
       (fun x x' hx => by
@@ -208,11 +208,11 @@ theorem unstraighten_comp_straighten :
 /-- **The total categories are isomorphic**: the functors of `straighteningEquivTotal` are inverse
 to each other. -/
 theorem straighteningEquivTotal_functor_comp_inverse :
-    straighteningEquivTotal.{u}.functor ⋙ straighteningEquivTotal.inverse = 𝟭 _ :=
+    straighteningEquivTotal.{u, v₁, u₁}.functor ⋙ straighteningEquivTotal.inverse = 𝟭 _ :=
   congrArg DispFunctor.total unstraighten_comp_straighten
 
 theorem straighteningEquivTotal_inverse_comp_functor :
-    straighteningEquivTotal.{u}.inverse ⋙ straighteningEquivTotal.functor = 𝟭 _ :=
+    straighteningEquivTotal.{u, v₁, u₁}.inverse ⋙ straighteningEquivTotal.functor = 𝟭 _ :=
   rfl
 
 /-! ## Cartesian functors -/
@@ -221,7 +221,7 @@ theorem straighteningEquivTotal_inverse_comp_functor :
 component by `rfl`, but not as a whole in the kernel. The rules for the laws of displayed categories
 reduce the laws of `DisplayedCat.pull u (unstraightenObj G)` to `rfl`, while those of
 `unstraightenObj (pullback u G)` are the laws of `G`, which hold only propositionally. -/
-theorem unstraightenObj_pullback {A B : Cat.{u, u}} (u : A ⟶ B) (G : LaxNormal B) :
+theorem unstraightenObj_pullback {A B : Cat.{v₁, u₁}} (u : A ⟶ B) (G : LaxNormal B) :
     unstraightenObj (pullback u G) = DisplayedCat.pull u (unstraightenObj G) :=
   Displayed.ext_heq rfl HEq.rfl HEq.rfl HEq.rfl
 
@@ -229,22 +229,22 @@ theorem unstraightenObj_pullback {A B : Cat.{u, u}} (u : A ⟶ B) (G : LaxNormal
 `LaxNormalCat` to those of `DisplayedCat`. On lifts, both are identities, compared pointwise so
 that the kernel does not compare their domains as wholes. -/
 def unstraightenCartesian :
-    CartesianFunctor (𝟭 Cat.{u, u}) LaxNormalCat.{u} DisplayedCat.{u} where
+    CartesianFunctor (𝟭 Cat.{v₁, u₁}) LaxNormalCat.{u, v₁, u₁} DisplayedCat.{u, u, v₁, u₁} where
   toPre := { toDispFunctor := unstraighten, obj_pull := unstraightenObj_pullback }
   map_clift _ _ := DispFunctor.ext (fun _ => rfl) fun _ => HEq.rfl
 
 /-- **`straighten` is a cartesian functor**: it sends the chosen pullbacks and lifts of
 `DisplayedCat` to those of `LaxNormalCat`, on the nose. -/
 def straightenCartesian :
-    CartesianFunctor (𝟭 Cat.{u, u}) DisplayedCat.{u} LaxNormalCat.{u} where
+    CartesianFunctor (𝟭 Cat.{v₁, u₁}) DisplayedCat.{u, u, v₁, u₁} LaxNormalCat.{u, v₁, u₁} where
   toPre := { toDispFunctor := straighten }
 
 /-- **`unstraighten` preserves cartesian morphisms.** -/
-def isCartesianUnstraightenMap : unstraighten.{u}.PreservesCartesian :=
+def isCartesianUnstraightenMap : unstraighten.{u, v₁, u₁}.PreservesCartesian :=
   straighteningEquiv.isCartesianMap
 
 /-- **The straightening preserves cartesian morphisms.** -/
-def isCartesianStraightenMap : straighten.{u}.PreservesCartesian :=
+def isCartesianStraightenMap : straighten.{u, v₁, u₁}.PreservesCartesian :=
   straighteningEquiv.symm.isCartesianMap
 
 end Displayed.Straightening

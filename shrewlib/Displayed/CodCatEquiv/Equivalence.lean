@@ -13,7 +13,7 @@ equation `e.1 = a` of an object of the fibre. The counit `total (fibres X) ⟶ X
 component, and its inverse sends `e` to `⟨p e, ⟨e, rfl⟩⟩`. Their naturality holds by `rfl`.
 -/
 
-universe u
+universe v u
 
 open CategoryTheory
 
@@ -29,7 +29,7 @@ namespace CodEquiv
 
 section Unit
 
-variable {A : Cat.{u, u}} (D : Displayed.{u, u} A)
+variable {A : Cat.{v, u}} (D : Displayed.{v, u} A)
 
 /-- The unit at `D`: `x ↦ ⟨⟨a, x⟩, rfl⟩`. -/
 def unitHom : DisplayedCat.Hom (𝟙 A) D (fibres (totalObj D)) where
@@ -89,7 +89,7 @@ end Unit
 
 section Counit
 
-variable {A : Cat.{u, u}} (X : (cod Cat.{u, u}).Ob A)
+variable {A : Cat.{v, u}} (X : (cod Cat.{v, u}).Ob A)
 
 /-- The counit at `p : E ⥤ A`, as a functor: forget the base component. -/
 def counitFunctor : (fibres X).Total ⥤ X.dom where
@@ -106,18 +106,18 @@ def counitInvFunctor : X.dom ⥤ (fibres X).Total where
   map_comp _ _ := rfl
 
 /-- The counit at `p`. -/
-def counitHom : (cod Cat.{u, u}).Hom (𝟙 A) (totalObj (fibres X)) X :=
+def counitHom : (cod Cat.{v, u}).Hom (𝟙 A) (totalObj (fibres X)) X :=
   ⟨(counitFunctor X).toCatHom,
     Cat.Hom.ext (CategoryTheory.Functor.ext (fun Y => Y.2.2)
       (fun _ _ g => FibreHom.proj_map g.fiber))⟩
 
 /-- The inverse of the counit at `p`. -/
-def counitInv : (cod Cat.{u, u}).Hom (𝟙 A) X (totalObj (fibres X)) :=
+def counitInv : (cod Cat.{v, u}).Hom (𝟙 A) X (totalObj (fibres X)) :=
   ⟨(counitInvFunctor X).toCatHom, rfl⟩
 
 theorem counitHom_counitInv :
-    ((cod Cat.{u, u}).comp (counitHom X) (counitInv X) : (cod Cat.{u, u}).Hom (𝟙 A) _ _) =
-      (cod Cat.{u, u}).id (totalObj (fibres X)) := by
+    ((cod Cat.{v, u}).comp (counitHom X) (counitInv X) : (cod Cat.{v, u}).Hom (𝟙 A) _ _) =
+      (cod Cat.{v, u}).id (totalObj (fibres X)) := by
   refine CodHom.ext (Cat.Hom.ext (Functor.hext (fun Y => ?_) ?_))
   · obtain ⟨a, _, h⟩ := Y
     obtain rfl : _ = a := h
@@ -130,8 +130,8 @@ theorem counitHom_counitInv :
   rfl
 
 theorem counitInv_counitHom :
-    ((cod Cat.{u, u}).comp (counitInv X) (counitHom X) : (cod Cat.{u, u}).Hom (𝟙 A) X X) =
-      (cod Cat.{u, u}).id X :=
+    ((cod Cat.{v, u}).comp (counitInv X) (counitHom X) : (cod Cat.{v, u}).Hom (𝟙 A) X X) =
+      (cod Cat.{v, u}).id X :=
   rfl
 
 end Counit
@@ -140,20 +140,20 @@ end CodEquiv
 
 open CodEquiv in
 /-- **The unit** `VertFunctor.id DisplayedCat ≅ total ⋙ᵥ fibresFunctor`, vertical over `Cat`. -/
-def codUnitIso : VertFunctor.id DisplayedCat.{u} ≅ total ⋙ᵥ fibresFunctor :=
+def codUnitIso : VertFunctor.id DisplayedCat.{v, u, v, u} ≅ total ⋙ᵥ fibresFunctor :=
   VertNatIso.ofComponents
     (fun D => ⟨unitHom D, unitInv D, unitHom_unitInv D, unitInv_unitHom D⟩) (fun _ => rfl)
 
 open CodEquiv in
 /-- **The counit** `fibresFunctor ⋙ᵥ total ≅ VertFunctor.id (cod Cat)`, vertical over `Cat`. -/
-def codCounitIso : fibresFunctor ⋙ᵥ total ≅ VertFunctor.id (cod Cat.{u, u}) :=
+def codCounitIso : fibresFunctor ⋙ᵥ total ≅ VertFunctor.id (cod Cat.{v, u}) :=
   VertNatIso.ofComponents
     (fun X => ⟨counitHom X, counitInv X, counitHom_counitInv X, counitInv_counitHom X⟩)
     (fun _ => rfl)
 
 /-- **Displayed categories over `A` are the functors into `A`**: taking total categories is an
 equivalence `DisplayedCat ≃ cod Cat` over `Cat`, with inverse taking fibres. -/
-def codEquiv : VertEquivalence DisplayedCat.{u} (cod Cat.{u, u}) where
+def codEquiv : VertEquivalence DisplayedCat.{v, u, v, u} (cod Cat.{v, u}) where
   functor := total
   inverse := fibresFunctor
   unitIso := codUnitIso
@@ -161,7 +161,7 @@ def codEquiv : VertEquivalence DisplayedCat.{u} (cod Cat.{u, u}) where
 
 /-- **Taking total categories is fully faithful**: functors `D.Total ⥤ E.Total` over `u` are
 displayed functors over `u`. -/
-def totalFullyFaithful : total.{u}.FullyFaithful :=
+def totalFullyFaithful : total.{v, u}.FullyFaithful :=
   codEquiv.fullyFaithful
 
 end DisplayedCat

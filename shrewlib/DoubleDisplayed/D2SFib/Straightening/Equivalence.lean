@@ -35,7 +35,7 @@ them. The components are therefore stated over `∫ (straightenObj B)` and `B`, 
 the kernel checks that they have the types that `EquivalenceOver` asks for.
 -/
 
-universe v₁ u₁ v₃ u₃ u
+universe v₃ u₃ v₂ u₂ v₁ u₁
 
 namespace DoubleDisplayed.D2SFib.Straightening
 
@@ -51,7 +51,7 @@ section Unit
 
 namespace Unstraightening
 
-variable {A : Type u₁} [Category.{v₁} A] {F : A ⥤ Cat.{u, u}}
+variable {A : Type u₁} [Category.{v₁} A] {F : A ⥤ Cat.{v₂, u₂}}
   (P : (∫ (F ⋙ opFunctor')).Total ⥤ Cat.{v₃, u₃}) {a : A}
 
 /-- The unit component, forward direction: the fiber of `Unstraightening P` over `b` is
@@ -82,7 +82,7 @@ def unitFiberIso (b : (∫ F).Ob a) :
 end Unstraightening
 
 /-- **The unit at `P`**: `P ≅ straightenObj (Unstraightening P)`, by identity functors. -/
-def unitApp {A : Type u₁} [Category.{v₁} A] {F : A ⥤ Cat.{u, u}}
+def unitApp {A : Type u₁} [Category.{v₁} A] {F : A ⥤ Cat.{v₂, u₂}}
     (P : (∫ (F ⋙ opFunctor')).Total ⥤ Cat.{v₃, u₃}) :
     P ≅ (straightenObj (Unstraightening P) : (∫ (F ⋙ opFunctor')).Total ⥤ Cat.{v₃, u₃}) :=
   NatIso.ofComponents (fun x => Unstraightening.unitFiberIso P x.2) (fun {x y} h => by
@@ -97,17 +97,17 @@ def unitApp {A : Type u₁} [Category.{v₁} A] {F : A ⥤ Cat.{u, u}}
     rw [Unstraightening.map_eq P h]
     exact Functor.ext (fun _ => rfl) (fun _ _ _ => rfl))
 
-variable {A : Cat.{u, u}} {F : ICatStr.{u}.Ob A}
+variable {A : Cat.{v₁, u₁}} {F : ICatStr.{v₂, u₂, v₁, u₁}.Ob A}
 
 /-- The unit at `P`, over the unit of `straighteningEquivStr`: identity functors. -/
-def unitHom (P : DProf.{u, v₃, u₃}.Ob F) :
+def unitHom (P : DProf.{v₃, u₃, v₂, u₂, v₁, u₁}.Ob F) :
     P ⟶[[Opfibration.Straightening.straighteningEquivStr.unitIso.hom.app F]]
       straighten.obj (unstraighten.obj P) where
   app x := (unitApp P).hom.app x
   naturality _ _ h := (unitApp P).hom.naturality h
 
 /-- The inverse of the unit at `P`. -/
-def unitInv (P : DProf.{u, v₃, u₃}.Ob F) :
+def unitInv (P : DProf.{v₃, u₃, v₂, u₂, v₁, u₁}.Ob F) :
     straighten.obj (unstraighten.obj P)
       ⟶[[Opfibration.Straightening.straighteningEquivStr.unitIso.inv.app F]] P where
   app x := (unitApp P).inv.app x
@@ -119,8 +119,8 @@ end Unit
 
 namespace Counit
 
-variable {A : Cat.{u, u}} {B : SplitOpfibOb.{u, u, u, u} A}
-  {E : D2SFibCat.{u, u, u, u, v₃, u₃} B.toDisplayed}
+variable {A : Cat.{v₁, u₁}} {B : SplitOpfibOb.{v₂, u₂} A}
+  {E : D2SFibCat.{v₃, u₃} B.toDisplayed}
 
 section
 
@@ -230,8 +230,8 @@ end Counit
 
 section Counit
 
-variable {A : Cat.{u, u}} {B : SplitOpfibOb.{u, u, u, u} A}
-  (E : D2SFibCat.{u, u, u, u, v₃, u₃} B.toDisplayed)
+variable {A : Cat.{v₁, u₁}} {B : SplitOpfibOb.{v₂, u₂} A}
+  (E : D2SFibCat.{v₃, u₃} B.toDisplayed)
 
 /-- **The counit at `E`**, over `counitStrHom B`: the identity on objects, and `d2sHomEquiv⁻¹` on
 morphisms. -/
@@ -270,13 +270,13 @@ end Counit
 
 section Naturality
 
-variable {A A' : Cat.{u, u}} {u : A ⟶ A'} {B : SplitOpfibOb.{u, u, u, u} A}
-  {B' : SplitOpfibOb.{u, u, u, u} A'}
+variable {A A' : Cat.{v₁, u₁}} {u : A ⟶ A'} {B : SplitOpfibOb.{v₂, u₂} A}
+  {B' : SplitOpfibOb.{v₂, u₂} A'}
 
 /-- The counit commutes with maps of D2SFibs over arbitrary opcartesian functors. -/
 theorem Counit.map_naturality {H : OpcartesianFunctor u.toFunctor B.toDisplayed B'.toDisplayed}
-    {E : D2SFibCat.{u, u, u, u, v₃, u₃} B.toDisplayed}
-    {E' : D2SFibCat.{u, u, u, u, v₃, u₃} B'.toDisplayed} (Φ : D2SFibMap H E.C E'.C) {a a' : A}
+    {E : D2SFibCat.{v₃, u₃} B.toDisplayed}
+    {E' : D2SFibCat.{v₃, u₃} B'.toDisplayed} (Φ : D2SFibMap H E.C E'.C) {a a' : A}
     {α : a ⟶ a'} {b : (∫ (Opfibration.Straightening.straightenObj B)).Ob a}
     {b' : (∫ (Opfibration.Straightening.straightenObj B)).Ob a'} {g : b ⟶[α] b'}
     {c : E.C.Ob (b : B.toDisplayed.Ob a)} {c' : E.C.Ob (b' : B.toDisplayed.Ob a')}
@@ -289,8 +289,8 @@ theorem Counit.map_naturality {H : OpcartesianFunctor u.toFunctor B.toDisplayed 
 
 /-- The counit is natural with respect to maps of D2SFibs over arbitrary opcartesian functors. -/
 theorem counitHom_naturality {H : OpcartesianFunctor u.toFunctor B.toDisplayed B'.toDisplayed}
-    {E : D2SFibCat.{u, u, u, u, v₃, u₃} B.toDisplayed}
-    {E' : D2SFibCat.{u, u, u, u, v₃, u₃} B'.toDisplayed} (Φ : D2SFibMap H E.C E'.C) :
+    {E : D2SFibCat.{v₃, u₃} B.toDisplayed}
+    {E' : D2SFibCat.{v₃, u₃} B'.toDisplayed} (Φ : D2SFibMap H E.C E'.C) :
     (unstraightenStrMap (τ := Opfibration.Straightening.straightenStrMap H)
       (straightenMap Φ)).comp (counitHom E') ≍ (counitHom E).comp Φ :=
   D2SFibMap.hext (by kernel_exact Opfibration.Straightening.counitStrIso.hom.naturality H)
@@ -305,8 +305,8 @@ an equivalence between `DProf` over `ICatStr` and `D2SFibStr` over `SplitOpfibSt
 straightening–unstraightening equivalence `ICatStr ≃ SplitOpfibStr`, with inverse the
 straightening. -/
 def straighteningEquiv :
-    EquivalenceOver Opfibration.Straightening.straighteningEquivStr DProf.{u, v₃, u₃}
-      D2SFibStr.{u, u, u, u, v₃, u₃} where
+    EquivalenceOver Opfibration.Straightening.straighteningEquivStr DProf.{v₃, u₃, v₂, u₂, v₁, u₁}
+      D2SFibStr.{v₃, u₃, v₂, u₂, v₁, u₁} where
   functor := unstraighten
   inverse := straighten
   unitHom P := unitHom P

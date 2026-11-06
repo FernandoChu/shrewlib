@@ -15,7 +15,7 @@ The equivalence `DisplayedCat ≃ cod Cat` over `Cat` taking total categories is
 `Displayed/CodCatEquiv`.
 -/
 
-universe u
+universe v₂ u₂ v₁ u₁
 
 open CategoryTheory
 
@@ -25,10 +25,13 @@ open scoped Displayed
 
 /-! ## The category of displayed categories -/
 
+-- The universes of the displayed categories only occur in the levels of `DisplayedCat` through
+-- the `max` of the levels of their objects and morphisms.
+set_option linter.checkUnivs false in
 /-- The displayed categories, displayed over `Cat`: a morphism over `u` is a displayed functor
 over `u`. -/
-def DisplayedCat : Displayed.{u, u + 1} Cat.{u, u} where
-  Ob A := Displayed.{u, u} A
+def DisplayedCat : Displayed Cat.{v₁, u₁} where
+  Ob A := Displayed.{v₂, u₂} A
   Hom u D E := DispFunctor u.toFunctor D E
   id D := DispFunctor.id D
   comp H K := H.comp K
@@ -39,11 +42,11 @@ namespace DisplayedCat
 
 section Pull
 
-variable {A B : Cat.{u, u}} (u : A ⟶ B) (E : Displayed.{u, u} B)
+variable {A B : Cat.{v₁, u₁}} (u : A ⟶ B) (E : Displayed.{v₂, u₂} B)
 
 /-- The reindexing `pull u E` of `E` along `u : A ⟶ B`: the objects of `E` over `u a`, and the
 morphisms of `E` over `u f`. -/
-def pull : Displayed.{u, u} A where
+def pull : Displayed.{v₂, u₂} A where
   Ob a := E.Ob (u.toFunctor.obj a)
   Hom f x y := x ⟶[u.toFunctor.map f] y
   id x := 𝟙ᵈ x

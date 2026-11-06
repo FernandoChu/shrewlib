@@ -35,7 +35,7 @@ The files give its ingredients:
   `straighteningEquivLax`.
 -/
 
-universe v₁ u₁ v u
+universe v u v₁ u₁
 
 open CategoryTheory Displayed Displayed.Fibration.Straightening
 
@@ -43,9 +43,9 @@ open CategoryTheory Displayed Displayed.Fibration.Straightening
 
 /-- **Straightening–unstraightening for split fibrations** is an equivalence over `Cat`. -/
 recall Displayed.Fibration.Straightening.straighteningEquivLax :
-    VertEquivalence ICatOpLax.{u} SplitFibLax.{u}
+    VertEquivalence ICatOpLax.{v, u, v₁, u₁} SplitFibLax.{v, u, v₁, u₁}
 
-recall Displayed.Fibration.Straightening.ICatOpLax.splitFib : SplitFib ICatOpLax.{u}
+recall Displayed.Fibration.Straightening.ICatOpLax.splitFib : SplitFib ICatOpLax.{v, u, v₁, u₁}
 
 /-- The unstraightening `∫⁻ F` of `F : Aᵒᵖ ⥤ Cat` is a split fibration. -/
 recall Displayed.Fibration.Straightening.unstraightenSplitFib {A : Type u₁}
@@ -54,4 +54,4 @@ recall Displayed.Fibration.Straightening.unstraightenSplitFib {A : Type u₁}
 /-- The unstraightening is fully faithful: displayed functors from `∫⁻ F` to `∫⁻ G` over `u` are
 lax transformations `LaxTrans F (reindex u G)`. -/
 recall Displayed.Fibration.Straightening.unstraightenFullyFaithful :
-    unstraighten.{u}.FullyFaithful
+    unstraighten.{v, u, v₁, u₁}.FullyFaithful

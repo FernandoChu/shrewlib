@@ -16,7 +16,7 @@ import Displayed.Discrete.Straightening.Readme
   equivalence with the discrete opfibrations over `Cat` (see its `Readme.lean`).
 -/
 
-universe v₁ u₁ u
+universe v₁ u₁ v₂ u₂
 
 open CategoryTheory Displayed
 
@@ -28,5 +28,5 @@ recall Displayed.isDiscrete_sigmaDisp {A : Type u₁} [Category.{v₁} A] {D : D
     IsDiscrete ((D.sigmaDisp E).Fiber a)
 
 /-- Discrete opfibrations compose. -/
-recall Displayed.DiscOpfibOb.sigma {A : Cat.{u, u}} (X : DiscOpfibOb A)
-    (Y : DiscOpfibOb (Cat.of X.toDisplayed.Total)) : DiscOpfibOb A
+recall Displayed.DiscOpfibOb.sigma {A : Cat.{v₁, u₁}} (X : DiscOpfibOb.{v₂, u₂} A)
+    (Y : DiscOpfibOb.{v₂, u₂} (Cat.of X.toDisplayed.Total)) : DiscOpfibOb.{v₂, u₂} A

@@ -5,7 +5,7 @@ import ComprehensionCategory.Model.OverCat.Discrete.Basic
 # The discrete types of a lower level
 
 The discrete types of level `v` over the contexts of level `v + 1` are the functors
-`Γ ⥤ Cat.{v, v}` into discrete categories (`IDiscOb.{v} Γ`). They are types of the category model
+`Γ ⥤ Cat.{v, v}` into discrete categories (`IDiscOb.{v, v} Γ`). They are types of the category model
 at level `v + 1` by the lift `lift A = A ⋙ Cat.asSmallFunctor` of `Cat/Small`, and of the discrete
 model by `liftDisc`, since the categories `AsSmall C` of discrete categories `C` are discrete
 (`isDiscrete_asSmall`).
@@ -40,12 +40,12 @@ theorem isDiscrete_asSmall (C : Cat.{v, v}) [IsDiscrete C] :
 
 /-- A discrete type of level `v` as a type of the discrete model: each category replaced by the
 equivalent `AsSmall` category of `Cat.{v + 1, v + 1}`. -/
-def liftDisc (A : IDiscOb.{v} Γ) : IDisc.{v + 1}.Ty Γ where
+def liftDisc (A : IDiscOb.{v, v} Γ) : IDisc.{v + 1, v + 1}.Ty Γ where
   toFunctor := CatModel.lift A.toFunctor
   isDiscrete γ := @isDiscrete_asSmall (A.toFunctor.obj γ) (A.isDiscrete γ)
 
 /-- `liftDisc` commutes with substitution. -/
-theorem liftDisc_pull (σ : Δ ⟶ Γ) (A : IDiscOb.{v} Γ) :
+theorem liftDisc_pull (σ : Δ ⟶ Γ) (A : IDiscOb.{v, v} Γ) :
     liftDisc ⟨σ.toFunctor ⋙ A.toFunctor, fun δ => A.isDiscrete (σ.toFunctor.obj δ)⟩ =
       (liftDisc A)⦃σ⦄ :=
   rfl
@@ -54,7 +54,7 @@ theorem liftDisc_pull (σ : Δ ⟶ Γ) (A : IDiscOb.{v} Γ) :
 `Cat.{v + 1, v + 1}`: the functors `Γ ⥤ Cat.{v, v}` into discrete categories, with the morphisms of
 the category model between their lifts. -/
 def SmallIDisc : Displayed.{v + 1, v + 1} Cat.{v + 1, v + 1} where
-  Ob Γ := IDiscOb.{v} Γ
+  Ob Γ := IDiscOb.{v, v} Γ
   Hom u A B := ICatLax.Hom u (CatModel.lift A.toFunctor) (CatModel.lift B.toFunctor)
   id A := ICatLax.id (CatModel.lift A.toFunctor)
   comp φ ψ := ICatLax.comp φ ψ
@@ -62,18 +62,18 @@ def SmallIDisc : Displayed.{v + 1, v + 1} Cat.{v + 1, v + 1} where
 namespace SmallIDisc
 
 /-- Reindexing `pull u X` of `X` along `u`: precomposition, whose values are those of `X`. -/
-def pull {A B : Cat.{v + 1, v + 1}} (u : A ⟶ B) (X : IDiscOb.{v} B) : IDiscOb.{v} A where
+def pull {A B : Cat.{v + 1, v + 1}} (u : A ⟶ B) (X : IDiscOb.{v, v} B) : IDiscOb.{v, v} A where
   toFunctor := u.toFunctor ⋙ X.toFunctor
   isDiscrete a := X.isDiscrete (u.toFunctor.obj a)
 
 /-- The chosen lift of `u` at `X`: that of the category model at its lift. -/
-def clift {A B : Cat.{v + 1, v + 1}} (u : A ⟶ B) (X : IDiscOb.{v} B) :
+def clift {A B : Cat.{v + 1, v + 1}} (u : A ⟶ B) (X : IDiscOb.{v, v} B) :
     SmallIDisc.Hom u (pull u X) X :=
   Fib.clift (D := ICatLax) u (CatModel.lift X.toFunctor)
 
 /-- The chosen lift is cartesian, since it is in the category model and the morphisms are the
 same. -/
-def isCartesianClift {A B : Cat.{v + 1, v + 1}} (u : A ⟶ B) (X : IDiscOb.{v} B) :
+def isCartesianClift {A B : Cat.{v + 1, v + 1}} (u : A ⟶ B) (X : IDiscOb.{v, v} B) :
     IsCartesian (D := SmallIDisc) (clift u X) :=
   let H := Fib.isCartesianClift (D := ICatLax) u (CatModel.lift X.toFunctor)
   { lift := fun g _ χ => H.lift g χ
@@ -92,7 +92,8 @@ instance SmallIDisc.preSplitFib : PreSplitFib SmallIDisc.{v} where
 instance SmallIDisc.splitFib : SplitFib SmallIDisc.{v} := {}
 
 /-- **The lift into the category model**, a vertical cartesian functor. -/
-def SmallIDisc.lift : CartesianFunctor (𝟭 Cat.{v + 1, v + 1}) SmallIDisc.{v} ICatLax.{v + 1} where
+def SmallIDisc.lift : CartesianFunctor (𝟭 Cat.{v + 1, v + 1}) SmallIDisc.{v}
+    ICatLax.{v + 1, v + 1, v + 1, v + 1} where
   toPre :=
     { obj A := CatModel.lift A.toFunctor
       map φ := φ }

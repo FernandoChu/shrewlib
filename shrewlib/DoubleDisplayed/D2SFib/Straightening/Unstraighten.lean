@@ -42,7 +42,7 @@ unfolded. With these rules, `unstraightenStrMap κ` is a functor and preserves t
 `rfl`.
 -/
 
-universe v₁ u₁ v₃ u₃ u
+universe v₃ u₃ v₂ u₂ v₁ u₁
 
 namespace DoubleDisplayed.D2SFib.Straightening
 
@@ -56,7 +56,7 @@ open Displayed.Opfibration.Straightening (ICatStr StrictTrans)
 
 section
 
-variable {A : Type u₁} [Category.{v₁} A] {F : A ⥤ Cat.{u, u}}
+variable {A : Type u₁} [Category.{v₁} A] {F : A ⥤ Cat.{v₂, u₂}}
 
 namespace Unstraightening
 
@@ -265,8 +265,9 @@ instance instSplitD2SFib : SplitD2SFib (Unstraightening P) := {}
 /-- The unstraightening of a dependent profunctor over an object of `ICatStr` is a split D2SFib.
 The instance `instSplitD2SFib` does not apply to it, since `ICatStr.Ob A` is not reducibly
 `A ⥤ Cat`. -/
-instance instSplitD2SFibICatStr {A : Cat.{u, u}} {F : ICatStr.{u}.Ob A}
-    (P : DProf.{u, v₃, u₃}.Ob F) : SplitD2SFib (Unstraightening (F := (F : A ⥤ Cat.{u, u})) P) :=
+instance instSplitD2SFibICatStr {A : Cat.{v₁, u₁}} {F : ICatStr.{v₂, u₂, v₁, u₁}.Ob A}
+    (P : DProf.{v₃, u₃}.Ob F) :
+    SplitD2SFib (Unstraightening (F := (F : A ⥤ Cat.{v₂, u₂})) P) :=
   instSplitD2SFib P
 
 section Maps
@@ -293,7 +294,7 @@ end Unstraightening
 
 /-- Bundled form: the object of `D2SFibCat (∫ F)` carried by the unstraightening. -/
 def unstraightenObj (P : (∫ (F ⋙ opFunctor')).Total ⥤ Cat.{v₃, u₃}) :
-    D2SFibCat.{v₁, u₁, u, u, v₃, u₃} (∫ F) :=
+    D2SFibCat.{v₃, u₃} (∫ F) :=
   ⟨Unstraightening P⟩
 
 end
@@ -302,7 +303,7 @@ section Morphisms
 
 open Unstraightening
 
-variable {A A' : Cat.{u, u}} {u : A ⟶ A'} {F : A ⥤ Cat.{u, u}} {G : A' ⥤ Cat.{u, u}}
+variable {A A' : Cat.{v₁, u₁}} {u : A ⟶ A'} {F : A ⥤ Cat.{v₂, u₂}} {G : A' ⥤ Cat.{v₂, u₂}}
   {τ : StrictTrans F (u.toFunctor ⋙ G)} {P : (∫ (F ⋙ opFunctor')).Total ⥤ Cat.{v₃, u₃}}
   {P' : (∫ (G ⋙ opFunctor')).Total ⥤ Cat.{v₃, u₃}}
 
@@ -377,7 +378,7 @@ theorem tmor_vmor {x y : (∫ F).Ob a} (β : x ⟶[𝟙 a] y)
 /-! The components of composites of morphisms of dependent profunctors, as rules, so that the
 heads `tobj` and `tmor` are kept when a composite is unfolded. -/
 
-variable {A'' : Cat.{u, u}} {u' : A' ⟶ A''} {H : A'' ⥤ Cat.{u, u}}
+variable {A'' : Cat.{v₁, u₁}} {u' : A' ⟶ A''} {H : A'' ⥤ Cat.{v₂, u₂}}
   {σ : StrictTrans G (u'.toFunctor ⋙ H)} {P'' : (∫ (H ⋙ opFunctor')).Total ⥤ Cat.{v₃, u₃}}
 
 @[rewrite_rule]
@@ -412,8 +413,8 @@ unstraightening `ICatStr ⟶ SplitOpfibStr` of indexed categories: a dependent p
 `F` goes to its unstraightening, a split D2SFib over `∫ F`, and a morphism over `τ` to the map of
 D2SFibs over `τ.unstraighten` given by its components. -/
 def unstraighten :
-    DDFunctor Displayed.Opfibration.Straightening.unstraightenStr DProf.{u, v₃, u₃}
-      D2SFibStr.{u, u, u, u, v₃, u₃} where
+    DDFunctor Displayed.Opfibration.Straightening.unstraightenStr DProf.{v₃, u₃, v₂, u₂, v₁, u₁}
+      D2SFibStr.{v₃, u₃, v₂, u₂, v₁, u₁} where
   obj P := unstraightenObj P
   map {_ _ _ _ _ τ _ _} κ := unstraightenStrMap (τ := τ) κ
   map_comp _ _ := D2SFibMap.ext (DDFunctor.ext (fun _ => rfl) fun _ => HEq.rfl)

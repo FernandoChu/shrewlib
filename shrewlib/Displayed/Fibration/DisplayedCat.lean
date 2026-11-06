@@ -15,7 +15,7 @@ That taking total categories sends these lifts to pullbacks, and the cleavage of
 `Displayed/CodCatEquiv/Fibration`.
 -/
 
-universe u
+universe v₂ u₂ v₁ u₁
 
 open CategoryTheory
 
@@ -25,7 +25,7 @@ open scoped Displayed
 
 section Split
 
-variable {A B : Cat.{u, u}} (u : A ⟶ B) (E : Displayed.{u, u} B)
+variable {A B : Cat.{v₁, u₁}} (u : A ⟶ B) (E : Displayed.{v₂, u₂} B)
 
 /-- The chosen lift is cartesian: a displayed functor over `w ≫ u` is its own factorization. -/
 def isCartesianClift : IsCartesian (D := DisplayedCat) (clift u E) where
@@ -37,12 +37,12 @@ def isCartesianClift : IsCartesian (D := DisplayedCat) (clift u E) where
 
 /-- **`DisplayedCat` is a split fibration over `Cat`**, cloven by reindexing. Reindexing along the
 identity and along composites holds on the nose. -/
-instance preSplitFib : PreSplitFib DisplayedCat.{u} where
+instance preSplitFib : PreSplitFib DisplayedCat.{v₂, u₂, v₁, u₁} where
   pull u E := pull u E
   clift u E := clift u E
   isCartesianClift u E := isCartesianClift u E
 
-instance splitFib : SplitFib DisplayedCat.{u} := {}
+instance splitFib : SplitFib DisplayedCat.{v₂, u₂, v₁, u₁} := {}
 
 end Split
 

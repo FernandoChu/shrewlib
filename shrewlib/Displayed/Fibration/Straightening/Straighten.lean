@@ -17,7 +17,7 @@ chosen lifts. This is the vertical functor `straighten : SplitFibLax ⟶ ICatOpL
 of `Opfibration/Straightening/Straighten.lean`.
 -/
 
-universe u
+universe v₂ u₂ v₁ u₁
 
 namespace Displayed.Fibration.Straightening
 
@@ -25,10 +25,10 @@ open CategoryTheory Opposite Displayed
 
 open scoped Displayed
 
-variable {A : Cat.{u, u}} (X : SplitFibOb A)
+variable {A : Cat.{v₁, u₁}} (X : SplitFibOb.{v₂, u₂} A)
 
 /-- **The straightening of a split fibration** `D`: its fibres, with the pullback functors. -/
-def straightenObj : Aᵒᵖ ⥤ Cat.{u, u} where
+def straightenObj : Aᵒᵖ ⥤ Cat.{v₂, u₂} where
   obj a := Cat.of (X.toDisplayed.Fiber a.unop)
   map f := (X.toDisplayed.pullFunctor f.unop).toCatHom
   map_id _ := rfl
@@ -39,7 +39,7 @@ variable {X}
 /-- **The straightening of a displayed functor** `H` over `u` between split fibrations: the lax
 transformation with components `H` on the fibres, and with 2-cells the cartesian factorizations of
 the images of the chosen lifts. -/
-def straightenMap {B : Cat.{u, u}} {u : A ⟶ B} {Y : SplitFibOb B}
+def straightenMap {B : Cat.{v₁, u₁}} {u : A ⟶ B} {Y : SplitFibOb.{v₂, u₂} B}
     (H : DispFunctor u.toFunctor X.toDisplayed Y.toDisplayed) :
     LaxTrans (straightenObj X) (reindex u.toFunctor (straightenObj Y)) where
   app a :=
@@ -73,8 +73,9 @@ def straightenMap {B : Cat.{u, u}} {u : A ⟶ B} {Y : SplitFibOb B}
 
 /-- The 2-cells of the straightening of a composite: the factorization of `K (H (clift f y))` is
 `K` of that of `H (clift f y)` followed by that of `K (clift (u f) (H y))`. -/
-theorem straightenMap_comp_naturality {B C : Cat.{u, u}} {u : A ⟶ B} {v : B ⟶ C}
-    {Y : SplitFibOb B} {Z : SplitFibOb C} (H : DispFunctor u.toFunctor X.toDisplayed Y.toDisplayed)
+theorem straightenMap_comp_naturality {B C : Cat.{v₁, u₁}} {u : A ⟶ B} {v : B ⟶ C}
+    {Y : SplitFibOb.{v₂, u₂} B} {Z : SplitFibOb.{v₂, u₂} C}
+    (H : DispFunctor u.toFunctor X.toDisplayed Y.toDisplayed)
     (K : DispFunctor v.toFunctor Y.toDisplayed Z.toDisplayed) {a a' : A} (f : a ⟶ a')
     (y : X.toDisplayed.Ob a') :
     Z.toDisplayed.cartesianFactor (K.map (H.map (X.toDisplayed.clift f y))) =
@@ -93,7 +94,7 @@ theorem straightenMap_comp_naturality {B C : Cat.{u, u}} {u : A ⟶ B} {v : B �
 
 /-- **The straightening of split fibrations**: a split fibration goes to the functor of its
 fibres, and a displayed functor to the lax transformation `straightenMap`. -/
-def straighten : VertFunctor SplitFibLax.{u} ICatOpLax.{u} where
+def straighten : VertFunctor SplitFibLax.{v₂, u₂, v₁, u₁} ICatOpLax.{v₂, u₂, v₁, u₁} where
   obj X := straightenObj X
   map H := straightenMap H
   map_id _ := LaxTrans.ext' (fun _ _ => rfl) (fun _ _ _ _ => HEq.rfl) (fun _ _ => HEq.rfl)

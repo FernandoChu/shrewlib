@@ -40,28 +40,28 @@ open scoped Displayed
 /-! ## Main results -/
 
 /-- **Hom-op**: the Hom-type is its own opposite, as a rewrite rule. -/
-recall ComprehensionCategory.OverCat.op_hom {Γ : Cat.{u, u}} (A : ICatLax.{u}.Ty Γ) :
+recall ComprehensionCategory.OverCat.op_hom {Γ : Cat.{u, u}} (A : ICatLax.{u, u}.Ty Γ) :
     Hom[A]ᵒᵖ = Hom[A]
 
 /-- The Hom-types are stable under substitution. -/
 recall ComprehensionCategory.OverCat.pull_hom {Γ Δ : Cat.{u, u}} (σ : Δ ⟶ Γ)
-    (A : ICatLax.{u}.Ty Γ) :
+    (A : ICatLax.{u, u}.Ty Γ) :
     Hom[A]⦃𝐪(𝐪(σ, A), (A⦃𝐩 A⦄)ᵒᵖ)⦄ = Hom[A⦃σ⦄]
 
 section
 
-variable {Γ : Cat.{u, u}} (A : ICatLax.{u}.Ty Γ)
+variable {Γ : Cat.{u, u}} (A : ICatLax.{u, u}.Ty Γ)
 
 /-- The Hom-type of a type of the category model is a type of the discrete model. -/
-example : IDisc.{u}.Ty (Γ ▹ A ▹ (A⦃𝐩 A⦄)ᵒᵖ) := Hom[A]
+example : IDisc.{u, u}.Ty (Γ ▹ A ▹ (A⦃𝐩 A⦄)ᵒᵖ) := Hom[A]
 
 /-- Hom-op holds judgmentally, by the rule `op_hom`. -/
 example : Hom[A]ᵒᵖ = Hom[A] := rfl
 
 /-- The rule leaves the other opposites of the discrete model unfolding as before. -/
-example (B : IDisc.{u}.Ty Γ) : (Bᵒᵖ)ᵒᵖ = B := rfl
+example (B : IDisc.{u, u}.Ty Γ) : (Bᵒᵖ)ᵒᵖ = B := rfl
 
-example (B : IDisc.{u}.Ty Γ) : (Bᵒᵖ).toFunctor = B.toFunctorᵒᵖ := rfl
+example (B : IDisc.{u, u}.Ty Γ) : (Bᵒᵖ).toFunctor = B.toFunctorᵒᵖ := rfl
 
 end
 
@@ -72,7 +72,7 @@ universe v
 /-- **The universe of discrete types is Coquand-style**: its terms are the functors into discrete
 categories of `Cat.{v, v}`. -/
 recall ComprehensionCategory.OverCat.ElDisc_codeDisc {Γ : Cat.{v + 1, v + 1}}
-    (A : Discrete.Straightening.IDiscOb.{v} Γ) : ElDisc (codeDisc A) = A
+    (A : Discrete.Straightening.IDiscOb.{v, v} Γ) : ElDisc (codeDisc A) = A
 
 recall ComprehensionCategory.OverCat.codeDisc_ElDisc {Γ : Cat.{v + 1, v + 1}}
     (t : Tm(Γ, UDisc Γ)) : codeDisc (ElDisc t) = t
@@ -87,14 +87,15 @@ recall ComprehensionCategory.OverCat.hasUniverseDisc : HasUniverse liftDiscCompr
 end Universe
 
 /-- **Twist-Weak**: the twist of a weakened type is the type, in the displayed model, weakened. -/
-recall ComprehensionCategory.OverCat.twist_weak {Γ : Cat.{u, u}} (B C : ICatLax.{u}.Ty Γ) :
+recall ComprehensionCategory.OverCat.twist_weak {Γ : Cat.{u, u}} (B C : ICatLax.{u, u}.Ty Γ) :
     twist (C⦃𝐩 (Bᵒᵖ)⦄) = (catToDisp C)⦃𝐩 B⦄
 
 /-- **The twisted Hom-type is derivable**: the twist of the Hom-type, substituted along the
 diagonal. -/
-recall ComprehensionCategory.OverCat.twistedHom_eq {Γ : Cat.{u, u}} (A : ICatLax.{u}.Ty Γ) :
+recall ComprehensionCategory.OverCat.twistedHom_eq {Γ : Cat.{u, u}} (A : ICatLax.{u, u}.Ty Γ)
+    :
     twistedHom A = (twist (homFunctor A))⦃diag A⦄
 
 /-- **Hom-Intro**: the identities are a term of the twisted Hom-type. -/
-recall ComprehensionCategory.OverCat.refl {Γ : Cat.{u, u}} (A : ICatLax.{u}.Ty Γ) :
+recall ComprehensionCategory.OverCat.refl {Γ : Cat.{u, u}} (A : ICatLax.{u, u}.Ty Γ) :
     Tm(Γ ▹ A, twistedHom A)

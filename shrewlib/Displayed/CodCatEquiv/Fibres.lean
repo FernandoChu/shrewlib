@@ -12,7 +12,7 @@ Taking fibres is a vertical functor `DisplayedCat.fibresFunctor : cod Cat ⟶ Di
 of `w` to the fibres. It is the inverse of `DisplayedCat.total`, in `CodCatEquiv/Equivalence`.
 -/
 
-universe u
+universe v u
 
 open CategoryTheory
 
@@ -24,13 +24,13 @@ namespace DisplayedCat
 
 section Fibres
 
-variable {A : Cat.{u, u}} (X : (cod Cat.{u, u}).Ob A)
+variable {A : Cat.{v, u}} (X : (cod Cat.{v, u}).Ob A)
 
 /-- The fibre of `p : E ⥤ A` over `a`, on objects. -/
 def Fibre (a : A) : Type u := { e : X.dom // X.hom.toFunctor.obj e = a }
 
 /-- The morphisms of `E` over `f`, between objects of the fibres. -/
-def FibreHom {a a' : A} (f : a ⟶ a') (x : Fibre X a) (y : Fibre X a') : Type u :=
+def FibreHom {a a' : A} (f : a ⟶ a') (x : Fibre X a) (y : Fibre X a') : Type v :=
   { g : x.1 ⟶ y.1 // X.hom.toFunctor.map g ≫ eqToHom y.2 = eqToHom x.2 ≫ f }
 
 variable {X}
@@ -57,7 +57,7 @@ theorem FibreHom.heq_of_val {a a' : A} {f f' : a ⟶ a'} (h : f = f') {x : Fibre
 variable (X) in
 /-- The fibres of `p : E ⥤ A`, displayed over `A`: the objects over `a` are those of
 `Fibre X a`, and the morphisms over `f` are the morphisms of `E` over `f`. -/
-def fibres : Displayed.{u, u} A where
+def fibres : Displayed.{v, u} A where
   Ob a := Fibre X a
   Hom f x y := FibreHom X f x y
   id x := ⟨𝟙 x.1, rfl⟩
@@ -70,7 +70,7 @@ theorem fibres.comp_val {a a' a'' : A} {f : a ⟶ a'} {g : a' ⟶ a''} {x : Fibr
   rfl
 
 /-- A commuting square `w ⋙ p' = p ⋙ u` restricts to the fibres. -/
-theorem proj_map_map {B : Cat.{u, u}} {u : A ⟶ B} {Y : (cod Cat.{u, u}).Ob B} (w : X ⟶[u] Y)
+theorem proj_map_map {B : Cat.{v, u}} {u : A ⟶ B} {Y : (cod Cat.{v, u}).Ob B} (w : X ⟶[u] Y)
     {a a' : A}
     {f : a ⟶ a'} {x : Fibre X a} {y : Fibre X a'} (s : FibreHom X f x y)
     (hx : Y.hom.toFunctor.obj (w.1.toFunctor.obj x.1) = u.toFunctor.obj a)
@@ -88,7 +88,7 @@ theorem proj_map_map {B : Cat.{u, u}} {u : A ⟶ B} {Y : (cod Cat.{u, u}).Ob B} 
     ((eqToHom_trans _ hy).trans (eqToHom_refl _ _))
 
 /-- The restriction of a commuting square to the fibres, a displayed functor over `u`. -/
-def fibresMap {B : Cat.{u, u}} {u : A ⟶ B} {Y : (cod Cat.{u, u}).Ob B} (w : X ⟶[u] Y) :
+def fibresMap {B : Cat.{v, u}} {u : A ⟶ B} {Y : (cod Cat.{v, u}).Ob B} (w : X ⟶[u] Y) :
     DispFunctor u.toFunctor (fibres X) (fibres Y) where
   obj x := ⟨w.1.toFunctor.obj x.1, (Functor.congr_obj (congrArg Cat.Hom.toFunctor w.2) x.1).trans
     (congrArg u.toFunctor.obj x.2)⟩
@@ -97,7 +97,7 @@ def fibresMap {B : Cat.{u, u}} {u : A ⟶ B} {Y : (cod Cat.{u, u}).Ob B} (w : X 
 end Fibres
 
 /-- **Taking fibres**, a vertical functor from `cod Cat`. -/
-def fibresFunctor : VertFunctor (cod Cat.{u, u}) DisplayedCat.{u} where
+def fibresFunctor : VertFunctor (cod Cat.{v, u}) DisplayedCat.{v, u, v, u} where
   obj X := fibres X
   map w := fibresMap w
 

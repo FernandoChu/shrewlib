@@ -29,14 +29,16 @@ open CategoryTheory Displayed ComprehensionCategory Straightening
 /-! ## Main results -/
 
 /-- **The displayed category model** is a full split comprehension category over `Cat`. -/
-recall ComprehensionCategory.DisplayedModel.splitComprehension : SplitComprehension LaxNormalCat.{u}
+recall ComprehensionCategory.DisplayedModel.splitComprehension :
+    SplitComprehension LaxNormalCat.{u, u, u}
 
-recall ComprehensionCategory.DisplayedModel.fullComprehension : FullComprehension LaxNormalCat.{u}
+recall ComprehensionCategory.DisplayedModel.fullComprehension :
+    FullComprehension LaxNormalCat.{u, u, u}
 
 /-- Its comprehension functor is the composite equivalence `LaxNormalCat ≃ DisplayedCat ≃ cod Cat`.
 -/
 recall ComprehensionCategory.DisplayedModel.compr :
-    VertFunctor LaxNormalCat.{u} (cod Cat.{u, u})
+    VertFunctor LaxNormalCat.{u, u, u} (cod Cat.{u, u})
 
 /-- **The displayed category model has Σ-types.** -/
-recall ComprehensionCategory.DisplayedModel.hasSigma : HasSigma LaxNormalCat.{u}
+recall ComprehensionCategory.DisplayedModel.hasSigma : HasSigma LaxNormalCat.{u, u, u}

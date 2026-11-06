@@ -34,7 +34,7 @@ open CategoryTheory Displayed Displayed.Straightening
 
 /-- The comprehension functor of the displayed category model: unstraighten, then take the total
 category. It is the composite equivalence `LaxNormalCat ≃ DisplayedCat ≃ cod Cat`. -/
-def compr : VertFunctor LaxNormalCat.{u} (cod Cat.{u, u}) :=
+def compr : VertFunctor LaxNormalCat.{u, u, u} (cod Cat.{u, u}) :=
   unstraighten ⋙ᵥ DisplayedCat.total
 
 /-- **The comprehension functor preserves cartesian morphisms**, as a composite of equivalences. -/
@@ -47,15 +47,15 @@ def comprFullyFaithful : compr.{u}.FullyFaithful :=
 
 /-- The comprehension structure of the displayed category model. -/
 @[instance_reducible]
-instance comprehension : Comprehension LaxNormalCat.{u} where
+instance comprehension : Comprehension LaxNormalCat.{u, u, u} where
   compr := compr
   isCartesianComprMap := isCartesianComprMap
 
 /-- **The displayed category model** is a full split comprehension category over `Cat`. -/
-instance splitComprehension : SplitComprehension LaxNormalCat.{u} where
+instance splitComprehension : SplitComprehension LaxNormalCat.{u, u, u} where
 
 @[instance_reducible]
-instance fullComprehension : FullComprehension LaxNormalCat.{u} where
+instance fullComprehension : FullComprehension LaxNormalCat.{u, u, u} where
   comprFullyFaithful := comprFullyFaithful
 
 end ComprehensionCategory.DisplayedModel

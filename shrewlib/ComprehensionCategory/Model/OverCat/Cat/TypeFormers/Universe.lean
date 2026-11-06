@@ -40,7 +40,7 @@ def smallCat : Cat.{v + 1, v + 1} :=
   Cat.of (AsSmall.{v + 1} Cat.{v, v})
 
 /-- **The universe** in context `Γ`: the constant type at the category of small categories. -/
-def U (Γ : Cat.{v + 1, v + 1}) : ICatLax.{v + 1}.Ty Γ :=
+def U (Γ : Cat.{v + 1, v + 1}) : ICatLax.{v + 1, v + 1}.Ty Γ :=
   constTy Γ smallCat
 
 variable {Γ Δ : Cat.{v + 1, v + 1}}

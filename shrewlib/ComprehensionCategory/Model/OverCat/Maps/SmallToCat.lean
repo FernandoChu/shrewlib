@@ -22,7 +22,8 @@ open CategoryTheory Displayed Displayed.Opfibration.Straightening CatModel Discr
 /-- **The lift of the types of level `v` is a strict map of comprehension categories** into the
 category model. -/
 def liftComprehensionMap :
-    StrictComprehensionMap (𝟭 Cat.{v + 1, v + 1}) SmallICat.{v} ICatLax.{v + 1} where
+    StrictComprehensionMap (𝟭 Cat.{v + 1, v + 1}) SmallICat.{v} ICatLax.{v + 1, v + 1, v + 1, v + 1}
+    where
   toPre.toDispFunctor := SmallICat.lift.toDispFunctor
   toPre.isCartesianMap := SmallICat.lift.isCartesianMap
   toPre.compr_obj _ := rfl
@@ -30,7 +31,8 @@ def liftComprehensionMap :
 /-- **The lift of the discrete types of level `v` is a strict map of comprehension categories**
 into the category model. -/
 def liftDiscComprehensionMap :
-    StrictComprehensionMap (𝟭 Cat.{v + 1, v + 1}) SmallIDisc.{v} ICatLax.{v + 1} where
+    StrictComprehensionMap (𝟭 Cat.{v + 1, v + 1}) SmallIDisc.{v}
+    ICatLax.{v + 1, v + 1, v + 1, v + 1} where
   toPre.toDispFunctor := SmallIDisc.lift.toDispFunctor
   toPre.isCartesianMap := SmallIDisc.lift.isCartesianMap
   toPre.compr_obj _ := rfl

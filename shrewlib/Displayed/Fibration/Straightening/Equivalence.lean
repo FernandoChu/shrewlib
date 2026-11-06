@@ -24,7 +24,7 @@ followed by the chosen lift.
 This is the dual of `Opfibration/Straightening/Equivalence.lean`.
 -/
 
-universe u
+universe v₂ u₂ v₁ u₁
 
 namespace Displayed.Fibration.Straightening
 
@@ -36,7 +36,7 @@ open scoped Displayed
 
 section Counit
 
-variable {A : Cat.{u, u}} (X : SplitFibOb A)
+variable {A : Cat.{v₁, u₁}} (X : SplitFibOb.{v₂, u₂} A)
 
 /-- The counit at `D`: the identity on objects, and `φ : x ⟶ pull f y` goes to
 `φ ≫ clift f y`. -/
@@ -61,7 +61,8 @@ def counitIso : (unstraighten.obj (straightenObj X) : SplitFibLax.Fiber A) ≅ X
 end Counit
 
 /-- **The counit** `straighten ⋙ unstraighten ≅ 𝟭`. -/
-def counitNatIso : straighten.{u} ⋙ᵥ unstraighten ≅ VertFunctor.id SplitFibLax.{u} :=
+def counitNatIso :
+    straighten.{v₂, u₂, v₁, u₁} ⋙ᵥ unstraighten ≅ VertFunctor.id SplitFibLax.{v₂, u₂, v₁, u₁} :=
   VertNatIso.ofComponents (fun X => counitIso X) fun {_ _ _ X _} H =>
     DispFunctor.ext (fun _ => rfl) fun {_ _ f _ y} φ =>
       heq_of_eq (H.map_comp (f := 𝟙 _) (g := f) φ (X.toDisplayed.clift f y)).symm
@@ -69,7 +70,7 @@ def counitNatIso : straighten.{u} ⋙ᵥ unstraighten ≅ VertFunctor.id SplitFi
 /-! ## The unit -/
 
 /-- The unit at `F`: `F ≅ straightenObj (∫⁻ F)`, by identities. -/
-def unitIso {A : Cat.{u, u}} (F : ICatOpLax.Ob A) :
+def unitIso {A : Cat.{v₁, u₁}} (F : ICatOpLax.{v₂, u₂}.Ob A) :
     ((VertFunctor.id ICatOpLax).obj F : ICatOpLax.Fiber A) ≅ (unstraighten ⋙ᵥ straighten).obj F
     where
   hom :=
@@ -88,7 +89,7 @@ def unitIso {A : Cat.{u, u}} (F : ICatOpLax.Ob A) :
   inv_hom_id := LaxTrans.ext' (fun _ _ => rfl) (fun _ _ _ _ => HEq.rfl) (fun _ _ => HEq.rfl)
 
 /-- **The unit** `𝟭 ≅ unstraighten ⋙ straighten`, by identities. -/
-def unitNatIso : VertFunctor.id ICatOpLax.{u} ≅ unstraighten ⋙ᵥ straighten :=
+def unitNatIso : VertFunctor.id ICatOpLax.{v₂, u₂, v₁, u₁} ≅ unstraighten ⋙ᵥ straighten :=
   VertNatIso.ofComponents (fun F => unitIso F) fun _ =>
     LaxTrans.ext' (fun _ _ => rfl) (fun _ _ _ _ => HEq.rfl) (fun _ _ => HEq.rfl)
 
@@ -97,7 +98,8 @@ def unitNatIso : VertFunctor.id ICatOpLax.{u} ≅ unstraighten ⋙ᵥ straighten
 /-- **Straightening–unstraightening for split fibrations**: the unstraightening is an equivalence
 over `Cat` between `ICatOpLax` and the split fibrations, with all displayed functors as morphisms.
 -/
-def straighteningEquivLax : VertEquivalence ICatOpLax.{u} SplitFibLax.{u} where
+def straighteningEquivLax :
+    VertEquivalence ICatOpLax.{v₂, u₂, v₁, u₁} SplitFibLax.{v₂, u₂, v₁, u₁} where
   functor := unstraighten
   inverse := straighten
   unitIso := unitNatIso
@@ -105,15 +107,16 @@ def straighteningEquivLax : VertEquivalence ICatOpLax.{u} SplitFibLax.{u} where
 
 /-- **The unstraightening is fully faithful**, as the functor of an equivalence: displayed
 functors between unstraightenings over `u` are lax transformations. -/
-def unstraightenFullyFaithful : unstraighten.{u}.FullyFaithful :=
+def unstraightenFullyFaithful : unstraighten.{v₂, u₂, v₁, u₁}.FullyFaithful :=
   straighteningEquivLax.fullyFaithful
 
 /-- The induced equivalence of total categories, over `Cat`. -/
-def straighteningEquivLaxTotal : ICatOpLax.{u}.Total ≌ SplitFibLax.{u}.Total :=
+def straighteningEquivLaxTotal :
+    ICatOpLax.{v₂, u₂, v₁, u₁}.Total ≌ SplitFibLax.{v₂, u₂, v₁, u₁}.Total :=
   straighteningEquivLax.total
 
 theorem straighteningEquivTotal_functor_comp_π :
-    straighteningEquivLaxTotal.{u}.functor ⋙ SplitFibLax.π = ICatOpLax.π :=
+    straighteningEquivLaxTotal.{v₂, u₂, v₁, u₁}.functor ⋙ SplitFibLax.π = ICatOpLax.π :=
   rfl
 
 end Displayed.Fibration.Straightening

@@ -15,7 +15,7 @@ direction, straightening undoes unstraightening on the nose (`straightenObj_unst
 the unit is the identity.
 -/
 
-universe u
+universe v₂ u₂ v₁ u₁
 
 namespace Displayed.Discrete.Straightening
 
@@ -27,7 +27,7 @@ open scoped Displayed
 
 section Counit
 
-variable {A : Cat.{u, u}} (X : DiscOpfibOb A)
+variable {A : Cat.{v₁, u₁}} (X : DiscOpfibOb.{v₂, u₂} A)
 
 /-- The counit at `X`: that of `X` as a split opfibration. -/
 def counitHom : unstraighten.obj (straightenObj X) ⟶[𝟙 A] X :=
@@ -47,7 +47,8 @@ def counitIso : (unstraighten.obj (straightenObj X) : DiscOpfibCat.Fiber A) ≅ 
 end Counit
 
 /-- **The counit** `straighten ⋙ unstraighten ≅ 𝟭`. -/
-def counitNatIso : straighten.{u} ⋙ᵥ unstraighten ≅ VertFunctor.id DiscOpfibCat.{u} :=
+def counitNatIso :
+    straighten.{v₂, u₂, v₁, u₁} ⋙ᵥ unstraighten ≅ VertFunctor.id DiscOpfibCat.{v₂, u₂, v₁, u₁} :=
   VertNatIso.ofComponents (fun X => counitIso X) fun {_ _ _ X _} H =>
     DispFunctor.ext (fun _ => rfl) fun {_ _ f x _} φ =>
       heq_of_eq (H.map_comp (f := f) (g := 𝟙 _) (X.toDisplayed.olift f x) φ).symm
@@ -56,14 +57,14 @@ def counitNatIso : straighten.{u} ⋙ᵥ unstraighten ≅ VertFunctor.id DiscOpf
 
 /-- Straightening undoes unstraightening on the nose: the fibres of `∫ X` are the values of `X`,
 and its pushforwards are those of `X`. -/
-theorem straightenObj_unstraightenObj {A : Cat.{u, u}} (X : IDiscOb.{u} A) :
+theorem straightenObj_unstraightenObj {A : Cat.{v₁, u₁}} (X : IDiscOb.{v₂, u₂} A) :
     straightenObj (unstraightenObj X) = X :=
   rfl
 
 /-- **Straightening–unstraightening for discrete opfibrations**: the unstraightening is an
 equivalence over `Cat` between the functors into discrete categories and the discrete
 opfibrations. -/
-def straighteningEquiv : VertEquivalence IDisc.{u} DiscOpfibCat.{u} where
+def straighteningEquiv : VertEquivalence IDisc.{v₂, u₂, v₁, u₁} DiscOpfibCat.{v₂, u₂, v₁, u₁} where
   functor := unstraighten
   inverse := straighten
   unitIso := VertNatIso.ofComponents (fun X => Iso.refl X) fun _ =>
@@ -73,7 +74,7 @@ def straighteningEquiv : VertEquivalence IDisc.{u} DiscOpfibCat.{u} where
 
 /-- **The unstraightening is fully faithful**, as the functor of an equivalence: displayed
 functors between unstraightenings over `u` are lax transformations. -/
-def unstraightenFullyFaithful : unstraighten.{u}.FullyFaithful :=
+def unstraightenFullyFaithful : unstraighten.{v₂, u₂, v₁, u₁}.FullyFaithful :=
   straighteningEquiv.fullyFaithful
 
 end Displayed.Discrete.Straightening

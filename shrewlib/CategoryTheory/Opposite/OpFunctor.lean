@@ -19,14 +19,14 @@ kernel. Once defined, composites in `opCategory' c` are composites in
 `Category.toCategoryStruct (opCategory' c)`, on which the rules apply.
 -/
 
-universe u
+universe v u
 
 namespace CategoryTheory
 
 /-- The opposite category structure on the type `C` itself: a morphism from `x` to `y` is a
 morphism `y ⟶ x` of `c`. Unlike the category `Cᵒᵖ`, its double opposite is `c` definitionally. -/
 @[instance_reducible]
-def opCategory' {C : Type u} (c : Category.{u} C) : Category.{u} C where
+def opCategory' {C : Type u} (c : Category.{v} C) : Category.{v} C where
   Hom x y := y ⟶ x
   id x := 𝟙 x
   comp f g := g ≫ f
@@ -36,7 +36,7 @@ def opCategory' {C : Type u} (c : Category.{u} C) : Category.{u} C where
 
 /-- **The opposite functor** `Cat ⥤ Cat`, sending a category to the opposite structure on its
 objects, and a functor to the functor with the same components. -/
-def opFunctor' : Cat.{u, u} ⥤ Cat.{u, u} where
+def opFunctor' : Cat.{v, u} ⥤ Cat.{v, u} where
   obj C := @Cat.of C (opCategory' (Cat.str C))
   map F := Cat.Hom.ofFunctor
     { obj X := F.toFunctor.obj X
@@ -47,12 +47,12 @@ def opFunctor' : Cat.{u, u} ⥤ Cat.{u, u} where
   map_comp _ _ := rfl
 
 /-- **The opposite functor is involutive on the nose.** -/
-theorem opFunctor'_comp_opFunctor' : opFunctor'.{u} ⋙ opFunctor' = 𝟭 _ :=
+theorem opFunctor'_comp_opFunctor' : opFunctor'.{v, u} ⋙ opFunctor' = 𝟭 _ :=
   rfl
 
 /-- The opposite of `C` is Mathlib's `Cᵒᵖ`: `x ↦ op x`, with inverse `unop`. The two composites are
 identities by eta for `Opposite`. -/
-def opFunctor'ObjIso (C : Cat.{u, u}) : opFunctor'.obj C ≅ Cat.opFunctor.obj C where
+def opFunctor'ObjIso (C : Cat.{v, u}) : opFunctor'.obj C ≅ Cat.opFunctor.obj C where
   hom := Cat.Hom.ofFunctor
     { obj X := Opposite.op X
       map f := Quiver.Hom.op f
@@ -67,7 +67,7 @@ def opFunctor'ObjIso (C : Cat.{u, u}) : opFunctor'.obj C ≅ Cat.opFunctor.obj C
   inv_hom_id := rfl
 
 /-- **The opposite functor is Mathlib's `Cat.opFunctor`**, up to a natural isomorphism. -/
-def opFunctor'Iso : opFunctor'.{u} ≅ Cat.opFunctor :=
+def opFunctor'Iso : opFunctor'.{v, u} ≅ Cat.opFunctor :=
   NatIso.ofComponents opFunctor'ObjIso fun _ => rfl
 
 end CategoryTheory

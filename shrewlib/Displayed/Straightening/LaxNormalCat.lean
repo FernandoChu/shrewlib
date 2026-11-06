@@ -45,7 +45,7 @@ by identities is cartesian, and these lifts make `LaxNormalCat` a split fibratio
 instance).
 -/
 
-universe v₁ u₁ u
+universe u v₁ u₁
 
 namespace Displayed.Straightening
 
@@ -56,7 +56,7 @@ open scoped Displayed
 /-! ## Lax normal functors into `ProfCat`, on elements -/
 
 /-- Lax normal functors from `A` to the bicategory of categories and profunctors. -/
-abbrev LaxNormal (A : Cat.{u, u}) : Type (u + 1) :=
+abbrev LaxNormal (A : Cat.{v₁, u₁}) : Type (max (u + 1) u₁ v₁) :=
   StrictlyUnitaryLaxFunctor (LocallyDiscrete A) ProfCat.{u}
 
 section LaxNormal
@@ -145,7 +145,7 @@ elements of the profunctors `F.map f` with their actions, and the composition co
 elements. The data are compared on heterogeneously equal arguments, as their types are only equal
 once the categories `F.obj a` are. The 2-cells and units are determined by the structure: the
 2-cells of `LocallyDiscrete A` are identities, and `F` is strictly unitary. -/
-theorem LaxNormal.ext {A : Cat.{u, u}} {F G : LaxNormal A} (hobj : ∀ a, F.obj a = G.obj a)
+theorem LaxNormal.ext {A : Cat.{v₁, u₁}} {F G : LaxNormal A} (hobj : ∀ a, F.obj a = G.obj a)
     (hprof : ∀ {a b : LocallyDiscrete A} (f : a ⟶ b) {x : F.obj a} {x' : G.obj a} {y : F.obj b}
       {y' : G.obj b}, x ≍ x' → y ≍ y' → (F.map f).obj x y = (G.map f).obj x' y')
     (hlmap : ∀ {a b : LocallyDiscrete A} (f : a ⟶ b) {x₁ x₂ : F.obj a} {x₁' x₂' : G.obj a}
@@ -189,7 +189,7 @@ theorem LaxNormal.ext {A : Cat.{u, u}} {F G : LaxNormal A} (hobj : ∀ a, F.obj 
 
 /-- A lax transformation from `F` to `G` restricted along `u`, with representable components, as
 a map of elements. -/
-structure ReprHom {A B : Cat.{u, u}} (u : A ⟶ B) (F : LaxNormal A) (G : LaxNormal B) where
+structure ReprHom {A B : Cat.{v₁, u₁}} (u : A ⟶ B) (F : LaxNormal A) (G : LaxNormal B) where
   /-- The component functors `F.obj ⟨a⟩ ⥤ G.obj ⟨u a⟩`, on objects. -/
   obj : {a : A} → F.obj ⟨a⟩ → G.obj ⟨u.toFunctor.obj a⟩
   /-- The 2-cells, on elements. -/
@@ -204,7 +204,7 @@ attribute [rewrite_rule] ReprHom.map_id ReprHom.map_mul
 
 namespace ReprHom
 
-variable {A B : Cat.{u, u}} {u : A ⟶ B} {F : LaxNormal A} {G : LaxNormal B}
+variable {A B : Cat.{v₁, u₁}} {u : A ⟶ B} {F : LaxNormal A} {G : LaxNormal B}
 
 theorem ext {φ ψ : ReprHom u F G} (hobj : ∀ (a : A) (x : F.obj ⟨a⟩), φ.obj x = ψ.obj x)
     (hmap : ∀ (a a' : A) (f : a ⟶ a') (x : F.obj ⟨a⟩) (y : F.obj ⟨a'⟩) (s : (prof F f).obj x y),
@@ -233,8 +233,8 @@ end ReprHom
 
 /-- `LaxNormalCat`, displayed over `Cat`: the lax normal functors from `A` into profunctors over
 `A`, and the transformations with representable components over `u : A ⟶ B`. -/
-def LaxNormalCat : Displayed.{u, u + 1} Cat.{u, u} where
-  Ob := LaxNormal
+def LaxNormalCat : Displayed Cat.{v₁, u₁} where
+  Ob := LaxNormal.{u}
   Hom := ReprHom
   id _ :=
     { obj := fun x => x
@@ -246,7 +246,7 @@ def LaxNormalCat : Displayed.{u, u + 1} Cat.{u, u} where
 /-! ## Pullbacks and the fibration property -/
 
 /-- The pullback of a lax normal functor along `u : A ⟶ B`. -/
-def pullback {A B : Cat.{u, u}} (u : A ⟶ B) (G : LaxNormal B) : LaxNormal A where
+def pullback {A B : Cat.{v₁, u₁}} (u : A ⟶ B) (G : LaxNormal B) : LaxNormal A where
   obj a := G.obj ⟨u.toFunctor.obj a.as⟩
   map f := G.map (u.toFunctor.map f.as).toLoc
   -- The 2-cell is built with the constructor of the hom-types of `LocallyDiscrete B`, rather than
@@ -272,13 +272,13 @@ def pullback {A B : Cat.{u, u}} (u : A ⟶ B) (G : LaxNormal B) : LaxNormal A wh
   mapId_eq_eqToHom _ := rfl
 
 /-- The cartesian lift of `G` along `u`: identities `pullback u G ⟶[u] G`. -/
-def pullbackLift {A B : Cat.{u, u}} (u : A ⟶ B) (G : LaxNormal B) :
+def pullbackLift {A B : Cat.{v₁, u₁}} (u : A ⟶ B) (G : LaxNormal B) :
     LaxNormalCat.Hom u (pullback u G) G where
   obj x := x
   map s := s
 
 /-- The chosen lift is cartesian: a transformation over `v ≫ u` is its own factorization. -/
-def isCartesianPullbackLift {A B : Cat.{u, u}} (u : A ⟶ B) (G : LaxNormal B) :
+def isCartesianPullbackLift {A B : Cat.{v₁, u₁}} (u : A ⟶ B) (G : LaxNormal B) :
     IsCartesian (D := LaxNormalCat) (pullbackLift u G) where
   lift _ _ χ := ⟨χ.obj, χ.map, χ.map_id, χ.map_mul⟩
   lift_fac _ _ _ := rfl
@@ -288,11 +288,11 @@ def isCartesianPullbackLift {A B : Cat.{u, u}} (u : A ⟶ B) (G : LaxNormal B) :
 
 /-- **`LaxNormalCat` is a split fibration over `Cat`**, cloven by the pullbacks. Pullback along the
 identity and along composites holds on the nose. -/
-instance preSplitFibLaxNormalCat : PreSplitFib LaxNormalCat.{u} where
+instance preSplitFibLaxNormalCat : PreSplitFib LaxNormalCat.{u, v₁, u₁} where
   pull u G := pullback u G
   clift u G := pullbackLift u G
   isCartesianClift u G := isCartesianPullbackLift u G
 
-instance splitFibLaxNormalCat : SplitFib LaxNormalCat.{u} := {}
+instance splitFibLaxNormalCat : SplitFib LaxNormalCat.{u, v₁, u₁} := {}
 
 end Displayed.Straightening

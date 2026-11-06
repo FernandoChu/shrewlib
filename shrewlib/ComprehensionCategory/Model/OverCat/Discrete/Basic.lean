@@ -68,14 +68,14 @@ open scoped Displayed
 /-- The comprehension structure of the discrete model: that of the category model, along the
 functor forgetting the discreteness. -/
 @[instance_reducible]
-instance comprehension : Comprehension IDisc.{u} :=
+instance comprehension : Comprehension IDisc.{u, u, u, u} :=
   Comprehension.comap IDisc.forget.toDispFunctor IDisc.forget.isCartesianMap
 
 /-- **The discrete model** is a full split comprehension category over `Cat`. -/
-instance splitComprehension : SplitComprehension IDisc.{u} where
+instance splitComprehension : SplitComprehension IDisc.{u, u, u, u} where
 
 @[instance_reducible]
-instance fullComprehension : FullComprehension IDisc.{u} where
+instance fullComprehension : FullComprehension IDisc.{u, u, u, u} where
   comprFullyFaithful := IDisc.forgetFullyFaithful.comp comprFullyFaithful
 
 end ComprehensionCategory.DiscreteModel

@@ -23,7 +23,7 @@ open CategoryTheory Displayed ComprehensionCategory OverCat Opfibration.Straight
 /-- **Forgetting the discreteness is a strict map of comprehension categories** from the discrete
 model to the category model. -/
 recall ComprehensionCategory.OverCat.forgetComprehensionMap :
-    StrictComprehensionMap (𝟭 Cat.{u, u}) IDisc.{u} ICatLax.{u}
+    StrictComprehensionMap (𝟭 Cat.{u, u}) IDisc.{u, u, u, u} ICatLax.{u, u, u, u}
 
 /-- **It preserves Σ-types strictly.** -/
 recall ComprehensionCategory.OverCat.forgetComprehensionMap_preservesSigma :
@@ -31,7 +31,7 @@ recall ComprehensionCategory.OverCat.forgetComprehensionMap_preservesSigma :
 
 /-- **It preserves opposite types strictly.** -/
 recall ComprehensionCategory.OverCat.forgetComprehensionMap_obj_op {Γ : Cat.{u, u}}
-    (A : IDisc.{u}.Ty Γ) :
+    (A : IDisc.{u, u}.Ty Γ) :
     forgetComprehensionMap.toPre.obj (DiscreteModel.op A) =
       CatModel.op (forgetComprehensionMap.toPre.obj A)
 
@@ -41,9 +41,11 @@ universe v
 
 /-- **The lifts of the types of level `v`** are strict maps of comprehension categories. -/
 recall ComprehensionCategory.OverCat.liftComprehensionMap :
-    StrictComprehensionMap (𝟭 Cat.{v + 1, v + 1}) CatModel.SmallICat.{v} ICatLax.{v + 1}
+    StrictComprehensionMap (𝟭 Cat.{v + 1, v + 1}) CatModel.SmallICat.{v}
+    ICatLax.{v + 1, v + 1, v + 1, v + 1}
 
 recall ComprehensionCategory.OverCat.liftDiscComprehensionMap :
-    StrictComprehensionMap (𝟭 Cat.{v + 1, v + 1}) DiscreteModel.SmallIDisc.{v} ICatLax.{v + 1}
+    StrictComprehensionMap (𝟭 Cat.{v + 1, v + 1}) DiscreteModel.SmallIDisc.{v}
+    ICatLax.{v + 1, v + 1, v + 1, v + 1}
 
 end Small

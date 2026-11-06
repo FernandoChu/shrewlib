@@ -39,7 +39,7 @@ opcartesian functors:
   counit is that of `straighteningEquivLax`.
 -/
 
-universe v₁ u₁ v u
+universe v u v₁ u₁
 
 open CategoryTheory Displayed Displayed.Opfibration.Straightening
 
@@ -47,21 +47,21 @@ open CategoryTheory Displayed Displayed.Opfibration.Straightening
 
 /-- **Straightening–unstraightening for split opfibrations** is an equivalence over `Cat`. -/
 recall Displayed.Opfibration.Straightening.straighteningEquivLax :
-    VertEquivalence ICatLax.{u} SplitOpfibLax.{u}
+    VertEquivalence ICatLax.{v, u, v₁, u₁} SplitOpfibLax.{v, u, v₁, u₁}
 
-recall Displayed.Opfibration.Straightening.ICatLax.splitFib : SplitFib ICatLax.{u}
+recall Displayed.Opfibration.Straightening.ICatLax.splitFib : SplitFib ICatLax.{v, u, v₁, u₁}
 
 /-- **Straightening–unstraightening for split opfibrations, with strict morphisms**. -/
 recall Displayed.Opfibration.Straightening.straighteningEquivStr :
-    VertEquivalence ICatStr.{u} SplitOpfibStr.{u}
+    VertEquivalence ICatStr.{v, u, v₁, u₁} SplitOpfibStr.{v, u, v₁, u₁}
 
 /-- With strict morphisms, the unstraightening and the straightening are those of the underlying
 lax morphisms. -/
 recall Displayed.Opfibration.Straightening.unstraightenStr_comp_forget :
-    unstraightenStr.{u} ⋙ᵥ SplitOpfibStr.forget = ICatStr.forget ⋙ᵥ unstraighten
+    unstraightenStr.{v, u, v₁, u₁} ⋙ᵥ SplitOpfibStr.forget = ICatStr.forget ⋙ᵥ unstraighten
 
 recall Displayed.Opfibration.Straightening.straightenStr_comp_forget :
-    straightenStr.{u} ⋙ᵥ ICatStr.forget = SplitOpfibStr.forget ⋙ᵥ straighten
+    straightenStr.{v, u, v₁, u₁} ⋙ᵥ ICatStr.forget = SplitOpfibStr.forget ⋙ᵥ straighten
 
 /-- The unstraightening `∫ F` of `F : A ⥤ Cat` is a split opfibration. -/
 recall Displayed.Opfibration.Straightening.unstraightenSplitOpfib {A : Type u₁}
@@ -70,4 +70,4 @@ recall Displayed.Opfibration.Straightening.unstraightenSplitOpfib {A : Type u₁
 /-- The unstraightening is fully faithful: displayed functors from `∫ F` to
 `∫ G` over `u` are lax transformations `LaxTrans F (u ⋙ G)`. -/
 recall Displayed.Opfibration.Straightening.unstraightenFullyFaithful :
-    unstraighten.{u}.FullyFaithful
+    unstraighten.{v, u, v₁, u₁}.FullyFaithful

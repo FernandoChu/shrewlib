@@ -12,7 +12,7 @@ straightening as a functor between split opfibrations, a lax transformation, whi
 `IDisc`: this is the vertical functor `straighten : DiscOpfibCat ⟶ IDisc`.
 -/
 
-universe u
+universe v₂ u₂ v₁ u₁
 
 namespace Displayed.Discrete.Straightening
 
@@ -20,17 +20,17 @@ open CategoryTheory Displayed
 
 open scoped Displayed
 
-variable {A : Cat.{u, u}} (X : DiscOpfibOb A)
+variable {A : Cat.{v₁, u₁}} (X : DiscOpfibOb.{v₂, u₂} A)
 
 /-- **The straightening of a discrete opfibration** `X`: its fibres, with the pushforward
 functors. -/
-def straightenObj : IDiscOb.{u} A where
+def straightenObj : IDiscOb.{v₂, u₂} A where
   toFunctor := Opfibration.Straightening.straightenObj (DiscOpfibCat.forget.obj X)
   isDiscrete := X.isDiscrete
 
 /-- **The straightening of discrete opfibrations**: that of split opfibrations, on the discrete
 ones. -/
-def straighten : VertFunctor DiscOpfibCat.{u} IDisc.{u} where
+def straighten : VertFunctor DiscOpfibCat.{v₂, u₂, v₁, u₁} IDisc.{v₂, u₂, v₁, u₁} where
   obj X := straightenObj X
   map H := Opfibration.Straightening.straighten.map (DiscOpfibCat.forget.map H)
   map_id X := Opfibration.Straightening.straighten.map_id (DiscOpfibCat.forget.obj X)

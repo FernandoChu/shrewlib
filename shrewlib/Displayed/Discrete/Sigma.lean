@@ -11,7 +11,7 @@ and then `ψ` lies over the identity of `⟨a, x⟩`, so `b = b'`. With the comp
 opfibrations (`sigmaSplitOpfib`), discrete opfibrations compose (`DiscOpfibOb.sigma`).
 -/
 
-universe v₁ u₁ v₂ u₂ v₃ u₃ u
+universe v₁ u₁ v₂ u₂ v₃ u₃
 
 open CategoryTheory
 
@@ -40,8 +40,8 @@ theorem isDiscrete_sigmaDisp {A : Type u₁} [Category.{v₁} A] {D : Displayed.
 
 /-- **Discrete opfibrations compose**: the composite of a discrete opfibration `X` over `A` and a
 discrete opfibration over its total category. -/
-def DiscOpfibOb.sigma {A : Cat.{u, u}} (X : DiscOpfibOb A)
-    (Y : DiscOpfibOb (Cat.of X.toDisplayed.Total)) : DiscOpfibOb A where
+def DiscOpfibOb.sigma {A : Cat.{v₁, u₁}} (X : DiscOpfibOb.{v₂, u₂} A)
+    (Y : DiscOpfibOb.{v₂, u₂} (Cat.of X.toDisplayed.Total)) : DiscOpfibOb.{v₂, u₂} A where
   toDisplayed := X.toDisplayed.sigmaDisp Y.toDisplayed
   splitOpfib := @sigmaSplitOpfib _ _ _ _ X.splitOpfib Y.splitOpfib
   isDiscrete := @isDiscrete_sigmaDisp _ _ _ _ X.isDiscrete Y.isDiscrete

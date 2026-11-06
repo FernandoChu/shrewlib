@@ -22,7 +22,7 @@ It is an equivalence over `Cat`, with inverse the straightening (`Equivalence.le
 faithful (`unstraightenFullyFaithful`).
 -/
 
-universe v₁ u₁ v₂ u₂ v u
+universe v u v₁ u₁ v₂ u₂
 
 namespace Displayed.Opfibration.Straightening
 
@@ -66,8 +66,8 @@ instance unstraightenSplitOpfib (F : A ⥤ Cat.{v, u}) : SplitOpfib (∫ F) := {
 
 /-- The unstraightening of an object of `ICatLax` is a split opfibration. The instance
 `unstraightenSplitOpfib` does not apply to it, since `ICatLax.Ob A` is not reducibly `A ⥤ Cat`. -/
-instance ICatLax.splitOpfib {A : Cat.{u, u}} (F : ICatLax.Ob A) :
-    SplitOpfib (∫ (F : A ⥤ Cat.{u, u})) :=
+instance ICatLax.splitOpfib {A : Cat.{v₁, u₁}} (F : ICatLax.{v, u}.Ob A) :
+    SplitOpfib (∫ (F : A ⥤ Cat.{v, u})) :=
   unstraightenSplitOpfib F
 
 /-- Transport in `∫ F` along `f` is `F f`, as a rule, so that the straightening of
@@ -98,7 +98,7 @@ def unstraightenMap {A : Type u₁} [Category.{v₁} A] {B : Type u₂} [Categor
 
 /-- **The unstraightening**, into the split opfibrations: `F` goes to `∫ F`, and a lax
 transformation over `u` to the induced displayed functor. -/
-def unstraighten : VertFunctor ICatLax.{u} SplitOpfibLax.{u} where
+def unstraighten : VertFunctor ICatLax.{v, u, v₁, u₁} SplitOpfibLax.{v, u, v₁, u₁} where
   obj F := { toDisplayed := ∫ F, splitOpfib := unstraightenSplitOpfib F }
   map {_ _ u _ _} α := unstraightenMap (u := u.toFunctor) α
   map_comp _ _ := DispFunctor.ext (fun _ => rfl) fun _ => HEq.rfl

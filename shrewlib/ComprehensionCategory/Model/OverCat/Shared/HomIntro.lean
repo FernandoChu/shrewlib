@@ -49,21 +49,22 @@ variable {Γ : Cat.{u, u}}
 
 /-- The displayed category of the twisted Hom-type of `A`, over `Γ ▹ A`: the twist of its Hom-type,
 reindexed along the diagonal. Its objects over `(γ, a)` are the endomorphisms of `a`. -/
-def twistedHomDisp (A : ICatLax.{u}.Ty Γ) :
+def twistedHomDisp (A : ICatLax.{u, u}.Ty Γ) :
     Displayed.{u, u} ((Γ ▹ A : Cat.{u, u}) : Type u) :=
   DisplayedCat.pull (diag A) (twistDisp (homFunctor A))
 
 /-- **The twisted Hom-type of `A`**, `Γ ▹ a : A ⊢ Homₐ(ā, a)`, a type of the displayed model. -/
-def twistedHom (A : ICatLax.{u}.Ty Γ) : Straightening.LaxNormalCat.{u}.Ty (Γ ▹ A) :=
+def twistedHom (A : ICatLax.{u, u}.Ty Γ) : Straightening.LaxNormalCat.{u, u, u}.Ty (Γ ▹ A) :=
   Straightening.straightenObj (twistedHomDisp A)
 
 /-- **The twisted Hom-type is derivable**: it is the twist of the Hom-type of `A`, substituted along
 the diagonal. -/
-theorem twistedHom_eq (A : ICatLax.{u}.Ty Γ) : twistedHom A = (twist (homFunctor A))⦃diag A⦄ :=
+theorem twistedHom_eq (A : ICatLax.{u, u}.Ty Γ) :
+    twistedHom A = (twist (homFunctor A))⦃diag A⦄ :=
   (DisplayedModel.straightenObj_pull (diag A) (twistDisp (homFunctor A))).symm
 
 /-- **Hom-Intro**: the term `refl` of the twisted Hom-type, the section `(γ, a) ↦ 𝟙 a`. -/
-def refl (A : ICatLax.{u}.Ty Γ) : Tm(Γ ▹ A, twistedHom A) :=
+def refl (A : ICatLax.{u, u}.Ty Γ) : Tm(Γ ▹ A, twistedHom A) :=
   DisplayedModel.tmMk (D := twistedHomDisp A) (fun x => 𝟙 (show A.obj x.1 from x.2))
     (fun _ => ⟨⟨rfl⟩⟩) (fun _ => rfl) fun _ _ => rfl
 

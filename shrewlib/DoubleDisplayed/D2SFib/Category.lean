@@ -14,7 +14,7 @@ data (`D2SFibCat.ext`, `SplitD2SFib.ext`, `SplitD2SFib.hext`), the cartesian and
 structures of the chosen lifts being subsingletons.
 -/
 
-universe v₁ u₁ v₂ u₂ v₃ u₃
+universe v₃ u₃ v₁ u₁ v₂ u₂
 
 namespace DoubleDisplayed
 
@@ -87,7 +87,7 @@ theorem SplitD2SFib.hext {C C' : DoubleDisplayed.{v₃, u₃} B} (hC : C = C')
     hpushLift))
 
 /-- Bundled D2SFibs are determined by their doubly displayed categories and D2SFib structures. -/
-theorem D2SFibCat.ext {E E' : D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B} (hC : E.C = E'.C)
+theorem D2SFibCat.ext {E E' : D2SFibCat.{v₃, u₃} B} (hC : E.C = E'.C)
     (hstr : E.str ≍ E'.str) : E = E' := by
   obtain @⟨C, s⟩ := E
   obtain @⟨C', s'⟩ := E'
@@ -98,7 +98,7 @@ theorem D2SFibCat.ext {E E' : D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B} 
   rfl
 
 /-- The category structure on bundled D2SFibs. -/
-instance : Category (D2SFibCat.{v₁, u₁, v₂, u₂, v₃, u₃} B) where
+instance : Category (D2SFibCat.{v₃, u₃} B) where
   Hom E E' := D2SFibMap (OpcartesianFunctor.id B) E.C E'.C
   id E := D2SFibMap.id E.C
   comp F G := F.comp G

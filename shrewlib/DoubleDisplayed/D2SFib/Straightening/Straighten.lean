@@ -30,7 +30,7 @@ doubly displayed functor `straighten : D2SFibStr ⟶ DProf` over the straighteni
 `straightenObj B : A ⥤ Cat` of its fibres.
 -/
 
-universe v₁ u₁ v₂ u₂ v₃ u₃ u
+universe v₃ u₃ v₂ u₂ v₁ u₁
 
 namespace DoubleDisplayed.D2SFib.Straightening
 
@@ -89,14 +89,14 @@ def straightenStrMap (Φ : D2SFibMap H C C') :
 
 end Map
 
-variable {A A' : Cat.{u, u}} {u : A ⟶ A'} {B : SplitOpfibOb.{u, u, u, u} A}
-  {B' : SplitOpfibOb.{u, u, u, u} A'}
+variable {A A' : Cat.{v₁, u₁}} {u : A ⟶ A'} {B : SplitOpfibOb.{v₂, u₂} A}
+  {B' : SplitOpfibOb.{v₂, u₂} A'}
 
 /-- **The straightening of a D2SFib** `C` over `B`, as a dependent profunctor over the functor
 `straightenObj B` of the fibres of `B`: the values of `straightenObj C`, `⟨a, x⟩ ↦ C.Fiber x`, and
 a morphism `⟨α, β⟩` goes to `pushFunctor α ⋙ pullFunctor β`. -/
-def straightenDProf (E : D2SFibCat.{u, u, u, u, v₃, u₃} B.toDisplayed) :
-    DProf.{u, v₃, u₃}.Ob (Opfibration.Straightening.straightenObj B) where
+def straightenDProf (E : D2SFibCat.{v₃, u₃} B.toDisplayed) :
+    DProf.{v₃, u₃, v₂, u₂, v₁, u₁}.Ob (Opfibration.Straightening.straightenObj B) where
   obj x := (straightenObj E.C).obj x
   map F := (straightenObj E.C).map ⟨F.base, F.fiber⟩
   map_id x := (straightenObj E.C).map_id x
@@ -106,8 +106,8 @@ def straightenDProf (E : D2SFibCat.{u, u, u, u, v₃, u₃} B.toDisplayed) :
 /-- **The straightening of a map of D2SFibs** `Φ` over `H`: the natural transformation whose
 components are the fiber functors of `Φ`. -/
 def straightenMap {H : OpcartesianFunctor u.toFunctor B.toDisplayed B'.toDisplayed}
-    {E : D2SFibCat.{u, u, u, u, v₃, u₃} B.toDisplayed}
-    {E' : D2SFibCat.{u, u, u, u, v₃, u₃} B'.toDisplayed} (Φ : D2SFibMap H E.C E'.C) :
+    {E : D2SFibCat.{v₃, u₃} B.toDisplayed}
+    {E' : D2SFibCat.{v₃, u₃} B'.toDisplayed} (Φ : D2SFibMap H E.C E'.C) :
     DProf.Hom (Opfibration.Straightening.straightenStr.map H) (straightenDProf E)
       (straightenDProf E') where
   app x := (straightenStrMap Φ).app x
@@ -117,8 +117,8 @@ def straightenMap {H : OpcartesianFunctor u.toFunctor B.toDisplayed B'.toDisplay
 `SplitOpfibStr ⟶ ICatStr` of split opfibrations: a D2SFib goes to its straightening, and a map
 of D2SFibs over `H` to the morphism of dependent profunctors given by its fiber functors. -/
 def straighten :
-    DDFunctor Opfibration.Straightening.straightenStr D2SFibStr.{u, u, u, u, v₃, u₃}
-      DProf.{u, v₃, u₃} where
+    DDFunctor Opfibration.Straightening.straightenStr D2SFibStr.{v₃, u₃, v₂, u₂, v₁, u₁}
+      DProf.{v₃, u₃, v₂, u₂, v₁, u₁} where
   obj E := straightenDProf E
   map Φ := straightenMap Φ
 

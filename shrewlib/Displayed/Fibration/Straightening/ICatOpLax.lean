@@ -27,7 +27,7 @@ Some of these definitional equalities are checked in the kernel (`kernel_exact`,
 the elaborator is slow on them, as it tries the rules on opposites at every `Functor.map`.
 -/
 
-universe v₁ u₁ v₂ u₂ v u
+universe v u v₁ u₁ v₂ u₂
 
 namespace Displayed.Fibration.Straightening
 
@@ -122,12 +122,15 @@ end LaxTrans
 
 /-! ## The displayed category of contravariant indexed categories -/
 
+-- The universes of the fibers `Cat.{v, u}` only occur in the levels of `ICatOpLax` through the
+-- `max` of the levels of its objects and morphisms.
+set_option linter.checkUnivs false in
 /-- The contravariant indexed categories and lax transformations, displayed over `Cat`: an object
 over `A` is a functor `Aᵒᵖ ⥤ Cat`, and a morphism over `u : A ⟶ B` from `F` to `G` is a lax
 transformation `LaxTrans F (reindex u G)`. Composition restricts the second transformation along the
 first base functor. -/
-def ICatOpLax : Displayed.{u, u + 1} Cat.{u, u} where
-  Ob A := Aᵒᵖ ⥤ Cat.{u, u}
+def ICatOpLax : Displayed Cat.{v₁, u₁} where
+  Ob A := Aᵒᵖ ⥤ Cat.{v, u}
   Hom u F G := LaxTrans F (reindex u.toFunctor G)
   id F := LaxTrans.id F
   comp {_ _ _ u _ _ _ _} α β := LaxTrans.vcomp α (LaxTrans.whiskerLeft u.toFunctor β)
@@ -139,15 +142,16 @@ def ICatOpLax : Displayed.{u, u + 1} Cat.{u, u} where
 namespace ICatOpLax
 
 /-- Reindexing `pull u G = reindex u G` of `G : Bᵒᵖ ⥤ Cat` along `u : A ⟶ B`. -/
-def pull {A B : Cat.{u, u}} (u : A ⟶ B) (G : Bᵒᵖ ⥤ Cat.{u, u}) : Aᵒᵖ ⥤ Cat.{u, u} :=
+def pull {A B : Cat.{v₁, u₁}} (u : A ⟶ B) (G : Bᵒᵖ ⥤ Cat.{v, u}) : Aᵒᵖ ⥤ Cat.{v, u} :=
   reindex u.toFunctor G
 
 /-- The cartesian lift `pull u G ⟶[u] G`: the identity transformation. -/
-def clift {A B : Cat.{u, u}} (u : A ⟶ B) (G : Bᵒᵖ ⥤ Cat.{u, u}) : ICatOpLax.Hom u (pull u G) G :=
+def clift {A B : Cat.{v₁, u₁}} (u : A ⟶ B) (G : Bᵒᵖ ⥤ Cat.{v, u}) :
+    ICatOpLax.{v, u}.Hom u (pull u G) G :=
   LaxTrans.id (reindex u.toFunctor G)
 
 /-- The chosen lift is cartesian: a transformation over `g ≫ u` is its own factorization. -/
-def isCartesianClift {A B : Cat.{u, u}} (u : A ⟶ B) (G : Bᵒᵖ ⥤ Cat.{u, u}) :
+def isCartesianClift {A B : Cat.{v₁, u₁}} (u : A ⟶ B) (G : Bᵒᵖ ⥤ Cat.{v, u}) :
     IsCartesian (clift u G) where
   lift _ _ χ := χ
   lift_fac _ _ _ := rfl
@@ -157,11 +161,11 @@ end ICatOpLax
 
 /-- **`ICatOpLax` is a split fibration over `Cat`**, cloven by reindexing
 `ICatOpLax.pull u G = reindex u G`, with the identity transformations as chosen lifts. -/
-instance ICatOpLax.preSplitFib : PreSplitFib ICatOpLax.{u} where
+instance ICatOpLax.preSplitFib : PreSplitFib ICatOpLax.{v, u, v₁, u₁} where
   pull u G := ICatOpLax.pull u G
   clift u G := ICatOpLax.clift u G
   isCartesianClift u G := ICatOpLax.isCartesianClift u G
 
-instance ICatOpLax.splitFib : SplitFib ICatOpLax.{u} := {}
+instance ICatOpLax.splitFib : SplitFib ICatOpLax.{v, u, v₁, u₁} := {}
 
 end Displayed.Fibration.Straightening

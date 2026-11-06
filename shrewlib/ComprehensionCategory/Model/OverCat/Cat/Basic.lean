@@ -29,7 +29,7 @@ open CategoryTheory Displayed Opfibration.Straightening
 
 /-- The comprehension functor of the category model: unstraighten, forget the opcleavage, and take
 the total category. -/
-def compr : VertFunctor ICatLax.{u} (cod Cat.{u, u}) :=
+def compr : VertFunctor ICatLax.{u, u, u, u} (cod Cat.{u, u}) :=
   unstraighten ⋙ᵥ SplitOpfibLax.forget ⋙ᵥ DisplayedCat.total
 
 /-- **The comprehension functor sends the chosen lifts to cartesian morphisms**:
@@ -44,14 +44,14 @@ def comprFullyFaithful : compr.{u}.FullyFaithful :=
     (SplitOpfibLax.forgetFullyFaithful.comp DisplayedCat.totalFullyFaithful)
 
 @[instance_reducible]
-instance comprehension : Comprehension ICatLax.{u} :=
+instance comprehension : Comprehension ICatLax.{u, u, u, u} :=
   Comprehension.ofClift compr isCartesianComprClift
 
 /-- **The category model** is a full split comprehension category over `Cat`. -/
-instance splitComprehension : SplitComprehension ICatLax.{u} where
+instance splitComprehension : SplitComprehension ICatLax.{u, u, u, u} where
 
 @[instance_reducible]
-instance fullComprehension : FullComprehension ICatLax.{u} where
+instance fullComprehension : FullComprehension ICatLax.{u, u, u, u} where
   comprFullyFaithful := comprFullyFaithful
 
 end ComprehensionCategory.CatModel

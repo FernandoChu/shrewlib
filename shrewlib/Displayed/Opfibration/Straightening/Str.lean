@@ -25,7 +25,7 @@ functors (`straighteningEquivStr`).
   in this form by the straightening of D2SFibs.
 -/
 
-universe u
+universe v₂ u₂ v₁ u₁
 
 namespace Displayed.Opfibration.Straightening
 
@@ -37,19 +37,20 @@ open scoped Displayed
 
 /-- **The unstraightening with strict morphisms**: `F` goes to `∫ F`, and a strict
 transformation `τ` to the opcartesian functor `τ.unstraighten`. -/
-def unstraightenStr : VertFunctor ICatStr.{u} SplitOpfibStr.{u} where
-  obj F := { toDisplayed := ∫ (F : _ ⥤ Cat.{u, u}), splitOpfib := unstraightenSplitOpfib F }
+def unstraightenStr : VertFunctor ICatStr.{v₂, u₂, v₁, u₁} SplitOpfibStr.{v₂, u₂, v₁, u₁} where
+  obj F := { toDisplayed := ∫ (F : _ ⥤ Cat.{v₂, u₂}), splitOpfib := unstraightenSplitOpfib F }
   map {_ _ u _ _} τ := StrictTrans.unstraighten (u := u.toFunctor) τ
 
 /-- The unstraightening with strict morphisms is the unstraightening of their underlying lax
 data. -/
 theorem unstraightenStr_comp_forget :
-    unstraightenStr.{u} ⋙ᵥ SplitOpfibStr.forget = ICatStr.forget ⋙ᵥ unstraighten :=
+    unstraightenStr.{v₂, u₂, v₁, u₁} ⋙ᵥ SplitOpfibStr.forget = ICatStr.forget ⋙ᵥ unstraighten :=
   DispFunctor.ext (fun _ => rfl) fun _ => HEq.rfl
 
 /-- The straightening of an opcartesian functor `H` over `u`: the strict transformation
 `straightenObj X ⟶ u ⋙ straightenObj Y` whose components are `H` on the fibres. -/
-def straightenStrMap {A B : Cat.{u, u}} {u : A ⟶ B} {X : SplitOpfibOb A} {Y : SplitOpfibOb B}
+def straightenStrMap {A B : Cat.{v₁, u₁}} {u : A ⟶ B} {X : SplitOpfibOb.{v₂, u₂} A}
+    {Y : SplitOpfibOb.{v₂, u₂} B}
     (H : OpcartesianFunctor u.toFunctor X.toDisplayed Y.toDisplayed) :
     StrictTrans (straightenObj X) (u.toFunctor ⋙ straightenObj Y) where
   toObj := { obj := fun x => H.toPre.obj x }
@@ -57,7 +58,7 @@ def straightenStrMap {A B : Cat.{u, u}} {u : A ⟶ B} {X : SplitOpfibOb A} {Y : 
 
 /-- **The straightening with strict morphisms**: a split opfibration goes to the functor of its
 fibres, and an opcartesian functor to the strict transformation of its actions on the fibres. -/
-def straightenStr : VertFunctor SplitOpfibStr.{u} ICatStr.{u} where
+def straightenStr : VertFunctor SplitOpfibStr.{v₂, u₂, v₁, u₁} ICatStr.{v₂, u₂, v₁, u₁} where
   obj X := straightenObj X
   map H := straightenStrMap H
 
@@ -65,14 +66,14 @@ def straightenStr : VertFunctor SplitOpfibStr.{u} ICatStr.{u} where
 functors: the 2-cells of the latter are the factorizations of the chosen lifts, which are
 identities. -/
 theorem straightenStr_comp_forget :
-    straightenStr.{u} ⋙ᵥ ICatStr.forget = SplitOpfibStr.forget ⋙ᵥ straighten :=
+    straightenStr.{v₂, u₂, v₁, u₁} ⋙ᵥ ICatStr.forget = SplitOpfibStr.forget ⋙ᵥ straighten :=
   DispFunctor.ext (fun _ => rfl) fun _ =>
     heq_of_eq (LaxTrans.ext' (fun _ _ => rfl) (fun _ _ _ _ => HEq.rfl) (fun _ _ => HEq.rfl))
 
 /-! ## The unit and counit -/
 
 /-- The unit at `F`: `F ≅ straightenObj (∫ F)`, by identities. -/
-def unitStrApp {A : Cat.{u, u}} (F : ICatStr.Ob A) :
+def unitStrApp {A : Cat.{v₁, u₁}} (F : ICatStr.{v₂, u₂}.Ob A) :
     ((VertFunctor.id ICatStr).obj F : ICatStr.Fiber A) ≅ (unstraightenStr ⋙ᵥ straightenStr).obj F
  where
   hom :=
@@ -85,7 +86,7 @@ def unitStrApp {A : Cat.{u, u}} (F : ICatStr.Ob A) :
   inv_hom_id := rfl
 
 /-- **The unit** `𝟭 ≅ unstraightenStr ⋙ straightenStr`, by identities. -/
-def unitStrIso : VertFunctor.id ICatStr.{u} ≅ unstraightenStr ⋙ᵥ straightenStr :=
+def unitStrIso : VertFunctor.id ICatStr.{v₂, u₂, v₁, u₁} ≅ unstraightenStr ⋙ᵥ straightenStr :=
   VertNatIso.ofComponents (fun F => unitStrApp F) fun _ =>
     StrictTrans.ext (fun _ => rfl) fun _ => HEq.rfl
 
@@ -93,7 +94,7 @@ def unitStrIso : VertFunctor.id ICatStr.{u} ≅ unstraightenStr ⋙ᵥ straighte
 `φ ↦ olift f x ≫ φ` on morphisms. Its source and target are stated as `∫ (straightenObj X)` and
 `X`, rather than as the images of `X` under `straightenStr ⋙ unstraightenStr` and the identity, so
 that instance search finds their split opfibration structures. -/
-def counitStrHom {A : Cat.{u, u}} (X : SplitOpfibOb.{u, u, u, u} A) :
+def counitStrHom {A : Cat.{v₁, u₁}} (X : SplitOpfibOb.{v₂, u₂} A) :
     OpcartesianFunctor (𝟙 A : A ⟶ A).toFunctor (∫ (straightenObj X)) X.toDisplayed where
   toPre :=
     { obj := fun x => x
@@ -101,7 +102,7 @@ def counitStrHom {A : Cat.{u, u}} (X : SplitOpfibOb.{u, u, u, u} A) :
 
 /-- The inverse of the counit at `X`, `X ⟶ ∫ (straightenObj X)`: the identity on objects, and the
 opcartesian factorization on morphisms. -/
-def counitStrInv {A : Cat.{u, u}} (X : SplitOpfibOb.{u, u, u, u} A) :
+def counitStrInv {A : Cat.{v₁, u₁}} (X : SplitOpfibOb.{v₂, u₂} A) :
     OpcartesianFunctor (𝟙 A : A ⟶ A).toFunctor X.toDisplayed (∫ (straightenObj X)) where
   toPre :=
     { obj := fun x => x
@@ -110,7 +111,7 @@ def counitStrInv {A : Cat.{u, u}} (X : SplitOpfibOb.{u, u, u, u} A) :
 
 /-- The counit at `X`, as an isomorphism of `SplitOpfibStr.Fiber A`: `counitStrHom` and
 `counitStrInv`. -/
-def counitStrApp {A : Cat.{u, u}} (X : SplitOpfibStr.Ob A) :
+def counitStrApp {A : Cat.{v₁, u₁}} (X : SplitOpfibStr.{v₂, u₂}.Ob A) :
     ((straightenStr ⋙ᵥ unstraightenStr).obj X : SplitOpfibStr.Fiber A) ≅
       (VertFunctor.id SplitOpfibStr).obj X where
   hom := counitStrHom X
@@ -119,7 +120,8 @@ def counitStrApp {A : Cat.{u, u}} (X : SplitOpfibStr.Ob A) :
   inv_hom_id := OpcartesianFunctor.ext (DispFunctor.ext (fun _ => rfl) fun _ => HEq.rfl)
 
 /-- **The counit** `straightenStr ⋙ unstraightenStr ≅ 𝟭`. -/
-def counitStrIso : straightenStr ⋙ᵥ unstraightenStr ≅ VertFunctor.id SplitOpfibStr.{u} :=
+def counitStrIso :
+    straightenStr ⋙ᵥ unstraightenStr ≅ VertFunctor.id SplitOpfibStr.{v₂, u₂, v₁, u₁} :=
   VertNatIso.ofComponents (fun X => counitStrApp X) fun {_ _ _ X _} H =>
     OpcartesianFunctor.ext (DispFunctor.ext (fun _ => rfl) fun {_ _ f x _} φ =>
       heq_of_eq (H.toPre.map_comp (f := f) (g := 𝟙 _) (X.toDisplayed.olift f x) φ).symm)
@@ -128,7 +130,8 @@ def counitStrIso : straightenStr ⋙ᵥ unstraightenStr ≅ VertFunctor.id Split
 
 /-- **Straightening–unstraightening for split opfibrations, with strict morphisms**: the
 unstraightening is an equivalence over `Cat` between `ICatStr` and `SplitOpfibStr`. -/
-def straighteningEquivStr : VertEquivalence ICatStr.{u} SplitOpfibStr.{u} where
+def straighteningEquivStr :
+    VertEquivalence ICatStr.{v₂, u₂, v₁, u₁} SplitOpfibStr.{v₂, u₂, v₁, u₁} where
   functor := unstraightenStr
   inverse := straightenStr
   unitIso := unitStrIso

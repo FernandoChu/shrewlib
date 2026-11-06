@@ -31,7 +31,7 @@ variable {Γ Δ : Cat.{v + 1, v + 1}}
 
 /-- A type of level `v` as a type of the category model: each category replaced by the equivalent
 `AsSmall` category of `Cat.{v + 1, v + 1}`. -/
-def lift (A : Γ ⥤ Cat.{v, v}) : ICatLax.{v + 1}.Ty Γ :=
+def lift (A : Γ ⥤ Cat.{v, v}) : ICatLax.{v + 1, v + 1}.Ty Γ :=
   A ⋙ Cat.asSmallFunctor.{v + 1}
 
 /-- `lift` commutes with substitution. -/
@@ -75,7 +75,8 @@ instance SmallICat.preSplitFib : PreSplitFib SmallICat.{v} where
 instance SmallICat.splitFib : SplitFib SmallICat.{v} := {}
 
 /-- **The lift into the category model**, a vertical cartesian functor. -/
-def SmallICat.lift : CartesianFunctor (𝟭 Cat.{v + 1, v + 1}) SmallICat.{v} ICatLax.{v + 1} where
+def SmallICat.lift :
+    CartesianFunctor (𝟭 Cat.{v + 1, v + 1}) SmallICat.{v} ICatLax.{v + 1, v + 1, v + 1, v + 1} where
   toPre :=
     { obj A := CatModel.lift A
       map φ := φ }

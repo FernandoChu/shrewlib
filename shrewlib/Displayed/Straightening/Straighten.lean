@@ -13,7 +13,7 @@ Its normality holds by `rfl`, since the profunctor of the morphisms over `𝟙 a
 of the fiber, and so does its functoriality.
 -/
 
-universe u
+universe u v₁ u₁
 
 namespace Displayed.Straightening
 
@@ -23,7 +23,7 @@ open scoped Displayed Profunctor
 
 section Straighten
 
-variable {A : Cat.{u, u}} (D : Displayed.{u, u} A)
+variable {A : Cat.{v₁, u₁}} (D : Displayed.{u, u} A)
 
 /-- The profunctor `D.Fiber a ⇸ D.Fiber a'` of the morphisms over `f`, on which the vertical
 morphisms act by displayed composition. -/
@@ -85,7 +85,7 @@ variable {D}
 
 /-- The straightening of a displayed functor over `u`: the transformation with the same
 components. -/
-def straightenMap {B : Cat.{u, u}} {u : A ⟶ B} {E : Displayed.{u, u} B}
+def straightenMap {B : Cat.{v₁, u₁}} {u : A ⟶ B} {E : Displayed.{u, u} B}
     (H : DisplayedCat.Hom u D E) : ReprHom u (straightenObj D) (straightenObj E) where
   obj x := H.obj x
   map s := H.map s
@@ -93,7 +93,7 @@ def straightenMap {B : Cat.{u, u}} {u : A ⟶ B} {E : Displayed.{u, u} B}
 end Straighten
 
 /-- **The straightening functor `straighten : VertFunctor DisplayedCat LaxNormalCat`.** -/
-def straighten : VertFunctor DisplayedCat.{u} LaxNormalCat.{u} where
+def straighten : VertFunctor DisplayedCat.{u, u, v₁, u₁} LaxNormalCat.{u, v₁, u₁} where
   obj D := straightenObj D
   map H := straightenMap H
 

@@ -75,6 +75,19 @@ equivalence both ways, with an explicit unit and counit, rather than through
 `VertEquivalence.ofFullyFaithful`, so that its inverse is the expected construction and compares
 with others by `rfl`, as the strict straightening with the lax one (`straightenStr_comp_forget`).
 
+These categories are displayed over `Cat.{v₁, u₁}`, with fibers in other universes, `Cat.{v₂, u₂}`
+or `Displayed.{v₂, u₂}`. Their universe parameters are those of the fibers, then those of the
+base, as for `Displayed`: `ICatLax.{v₂, u₂, v₁, u₁}`, an order that comes from declaring
+`universe v₂ u₂ v₁ u₁` in their files. The fiber universes only occur in a `max` in the levels of
+these categories (hence `set_option linter.checkUnivs false` on them) and are never inferred, so
+statements give all four, or the first two when an argument fixes the base
+(`ICatLax.{u, u}.Ty Γ`). Categories doubly displayed over them put their own universes before
+these: `DProf.{v₃, u₃, v₂, u₂, v₁, u₁}` over `ICatStr.{v₂, u₂, v₁, u₁}`, and `D2SFibCat.{v₃, u₃} B`
+as `DoubleDisplayed.{v₃, u₃} B`. `LaxNormalCat.{u, v₁, u₁}` has one fiber universe, since
+profunctors are between small categories. `DisplayedCat.{v, u, v, u} ≃ cod Cat.{v, u}` needs the
+total categories in the base, as do the comprehension models, which use these categories at
+`u, u, u, u`.
+
 ## Kernel tactics
 
 `Tactic/` provides `kernel_rfl'`, `kernel_exact e` and `kernel_rfl`, which check a definitional

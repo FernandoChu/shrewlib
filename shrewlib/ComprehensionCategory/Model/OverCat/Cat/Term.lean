@@ -32,7 +32,7 @@ variable {Γ Δ : Cat.{u, u}}
 
 /-- **The term of `A` with values `obj γ : A γ`** and transports `map f : A f (obj γ) ⟶ obj γ'`:
 the section `γ ↦ (γ, obj γ)` of the projection, which is a section by `rfl`. -/
-def tmMk {A : ICatLax.{u}.Ty Γ} (obj : ∀ γ : Γ, A.obj γ)
+def tmMk {A : ICatLax.{u, u}.Ty Γ} (obj : ∀ γ : Γ, A.obj γ)
     (map : ∀ {γ γ' : Γ} (f : γ ⟶ γ'), (A.map f).toFunctor.obj (obj γ) ⟶ obj γ')
     (map_id : ∀ γ : Γ, map (𝟙 γ) = 𝟙 (obj γ))
     (map_comp : ∀ {γ γ' γ'' : Γ} (f : γ ⟶ γ') (g : γ' ⟶ γ''),
@@ -45,18 +45,18 @@ def tmMk {A : ICatLax.{u}.Ty Γ} (obj : ∀ γ : Γ, A.obj γ)
   sec_proj := rfl
 
 /-- **The variable of `A`**: the term of `A⦃𝐩 A⦄` in context `Γ ▹ A`, `(γ, a) ↦ a`. -/
-def var (A : ICatLax.{u}.Ty Γ) : Tm(Γ ▹ A, A⦃𝐩 A⦄) :=
+def var (A : ICatLax.{u, u}.Ty Γ) : Tm(Γ ▹ A, A⦃𝐩 A⦄) :=
   tmMk (A := A⦃𝐩 A⦄) (fun x => x.2) (fun f => f.fiber) (fun _ => rfl) fun _ _ => rfl
 
 /-- **The diagonal** `Γ ▹ A ⟶ Γ ▹ A ▹ A⦃𝐩 A⦄`, `(γ, a) ↦ ((γ, a), a)`: the section of the
 variable of `A`. -/
-def diag (A : ICatLax.{u}.Ty Γ) : Γ ▹ A ⟶ Γ ▹ A ▹ A⦃𝐩 A⦄ :=
+def diag (A : ICatLax.{u, u}.Ty Γ) : Γ ▹ A ⟶ Γ ▹ A ▹ A⦃𝐩 A⦄ :=
   (var A).sec
 
 /-! ## Terms of constant types -/
 
 /-- The constant type at a category `K`: `γ ↦ K`, with identity transports. -/
-def constTy (Γ : Cat.{u, u}) (K : Cat.{u, u}) : ICatLax.{u}.Ty Γ where
+def constTy (Γ : Cat.{u, u}) (K : Cat.{u, u}) : ICatLax.{u, u}.Ty Γ where
   obj _ := K
   map _ := 𝟙 K
   map_id _ := rfl

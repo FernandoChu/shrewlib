@@ -13,7 +13,7 @@ It is an equivalence, with inverse taking fibres, in `CodCatEquiv/Equivalence`; 
 fully faithful (`DisplayedCat.totalFullyFaithful`).
 -/
 
-universe u
+universe v u
 
 open CategoryTheory
 
@@ -23,19 +23,19 @@ open scoped Displayed
 
 section Total
 
-variable {A B : Cat.{u, u}}
+variable {A B : Cat.{v, u}}
 
 /-- The total category of `D`, with its projection, as an object of `cod Cat`. -/
-def totalObj (D : Displayed.{u, u} A) : (cod Cat.{u, u}).Ob A :=
+def totalObj (D : Displayed.{v, u} A) : (cod Cat.{v, u}).Ob A :=
   ⟨Cat.of D.Total, D.π.toCatHom⟩
 
 /-- The functor between total categories induced by a displayed functor over `u`. -/
-def totalMap {u : A ⟶ B} {D : Displayed.{u, u} A} {E : Displayed.{u, u} B}
+def totalMap {u : A ⟶ B} {D : Displayed.{v, u} A} {E : Displayed.{v, u} B}
     (H : DispFunctor u.toFunctor D E) : totalObj D ⟶[u] totalObj E :=
   ⟨H.total.toCatHom, rfl⟩
 
 /-- **Taking total categories**, a vertical functor into `cod Cat`. -/
-def total : VertFunctor DisplayedCat.{u} (cod Cat.{u, u}) where
+def total : VertFunctor DisplayedCat.{v, u, v, u} (cod Cat.{v, u}) where
   obj D := totalObj D
   map H := totalMap H
 
