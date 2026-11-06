@@ -27,8 +27,8 @@ open scoped Displayed
 
 /-- The displayed categories, displayed over `Cat`: a morphism over `u` is a displayed functor
 over `u`. -/
-def DisplayedCat : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
-  Ob A := Displayed.{u, u, u, u} A
+def DisplayedCat : Displayed.{u, u + 1} Cat.{u, u} where
+  Ob A := Displayed.{u, u} A
   Hom u D E := DispFunctor u.toFunctor D E
   id D := DispFunctor.id D
   comp H K := H.comp K
@@ -39,11 +39,11 @@ namespace DisplayedCat
 
 section Pull
 
-variable {A B : Cat.{u, u}} (u : A ⟶ B) (E : Displayed.{u, u, u, u} B)
+variable {A B : Cat.{u, u}} (u : A ⟶ B) (E : Displayed.{u, u} B)
 
 /-- The reindexing `pull u E` of `E` along `u : A ⟶ B`: the objects of `E` over `u a`, and the
 morphisms of `E` over `u f`. -/
-def pull : Displayed.{u, u, u, u} A where
+def pull : Displayed.{u, u} A where
   Ob a := E.Ob (u.toFunctor.obj a)
   Hom f x y := x ⟶[u.toFunctor.map f] y
   id x := 𝟙ᵈ x

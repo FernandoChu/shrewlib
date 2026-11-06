@@ -34,7 +34,7 @@ variable {A : Type u₁} [Category.{v₁} A]
 
 /-- An equivalence of categories over `A`: vertical functors in both directions, with vertical
 natural isomorphisms `𝟭 ≅ F ⋙ᵥ G` and `G ⋙ᵥ F ≅ 𝟭`. -/
-structure VertEquivalence (D : Displayed.{v₁, u₁, v₂, u₂} A) (E : Displayed.{v₁, u₁, v₃, u₃} A) :
+structure VertEquivalence (D : Displayed.{v₂, u₂} A) (E : Displayed.{v₃, u₃} A) :
     Type _ where
   /-- The functor. -/
   functor : VertFunctor D E
@@ -47,7 +47,7 @@ structure VertEquivalence (D : Displayed.{v₁, u₁, v₂, u₂} A) (E : Displa
 
 section FullyFaithful
 
-variable {D : Displayed.{v₁, u₁, v₂, u₂} A} {E : Displayed.{v₁, u₁, v₃, u₃} A}
+variable {D : Displayed.{v₂, u₂} A} {E : Displayed.{v₃, u₃} A}
 
 /-- A fully faithful vertical functor: an inverse to its action on each displayed hom-type, in
 the style of Mathlib's `Functor.FullyFaithful`. -/
@@ -69,7 +69,7 @@ theorem map_injective (hF : F.FullyFaithful) {a a' : A} {f : a ⟶ a'} {x : D.Ob
   (hF.preimage_map φ).symm.trans ((congrArg hF.preimage h).trans (hF.preimage_map φ'))
 
 /-- The composite of fully faithful vertical functors is fully faithful. -/
-def comp {E' : Displayed.{v₁, u₁, v₄, u₄} A} {G : VertFunctor E E'} (hF : F.FullyFaithful)
+def comp {E' : Displayed.{v₄, u₄} A} {G : VertFunctor E E'} (hF : F.FullyFaithful)
     (hG : G.FullyFaithful) : (F ⋙ᵥ G).FullyFaithful where
   preimage ψ := hF.preimage (hG.preimage ψ)
   map_preimage ψ := (congrArg G.map (hF.map_preimage _)).trans (hG.map_preimage ψ)
@@ -81,7 +81,7 @@ end FullyFaithful
 
 namespace VertEquivalence
 
-variable {D : Displayed.{v₁, u₁, v₂, u₂} A} {E : Displayed.{v₁, u₁, v₃, u₃} A}
+variable {D : Displayed.{v₂, u₂} A} {E : Displayed.{v₃, u₃} A}
   (e : VertEquivalence D E)
 
 /-- The inverse equivalence. -/

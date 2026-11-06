@@ -33,15 +33,15 @@ open CategoryTheory Displayed DoubleDisplayed D2SFib
 
 open scoped Displayed DoubleDisplayed
 
-variable {A : Type u₁} [Category.{v₁} A] {B : Displayed.{v₁, u₁, v₂, u₂} A} [SplitOpfib B]
-  {A' : Type u₄} [Category.{v₄} A'] {B' : Displayed.{v₄, u₄, v₅, u₅} A'} [SplitOpfib B']
+variable {A : Type u₁} [Category.{v₁} A] {B : Displayed.{v₂, u₂} A} [SplitOpfib B]
+  {A' : Type u₄} [Category.{v₄} A'] {B' : Displayed.{v₅, u₅} A'} [SplitOpfib B']
   {u : A ⥤ A'}
 
 /-- A doubly displayed functor over `H` preserving the chosen pullbacks and pushforwards of
 objects. -/
 structure D2SFibMapObj (H : OpcartesianFunctor u B B')
-    (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B)
-    (C' : DoubleDisplayed.{v₄, u₄, v₅, u₅, v₆, u₆} B') [SplitD2SFib C] [SplitD2SFib C'] extends
+    (C : DoubleDisplayed.{v₃, u₃} B)
+    (C' : DoubleDisplayed.{v₆, u₆} B') [SplitD2SFib C] [SplitD2SFib C'] extends
     DDFunctor H.toDispFunctor C C' where
   /-- Preserves chosen pullbacks on objects. -/
   obj_pull : ∀ {a : A} {b b' : B.Ob a} (β : b ⟶[𝟙 a] b') (c : C.Ob b'),
@@ -55,8 +55,8 @@ attribute [rewrite_rule] D2SFibMapObj.obj_pull D2SFibMapObj.obj_push
 /-- **A map of D2SFibs over `H`**: a doubly displayed functor over `H` preserving the chosen
 cartesian and opcartesian lifts strictly. -/
 structure D2SFibMap (H : OpcartesianFunctor u B B')
-    (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B)
-    (C' : DoubleDisplayed.{v₄, u₄, v₅, u₅, v₆, u₆} B') [SplitD2SFib C] [SplitD2SFib C'] where
+    (C : DoubleDisplayed.{v₃, u₃} B)
+    (C' : DoubleDisplayed.{v₆, u₆} B') [SplitD2SFib C] [SplitD2SFib C'] where
   /-- The underlying doubly displayed functor, preserving the chosen objects. -/
   toObj : D2SFibMapObj H C C'
   /-- Preserves chosen cartesian lifts. -/
@@ -70,8 +70,8 @@ attribute [rewrite_rule] D2SFibMap.map_pullLift D2SFibMap.map_pushLift
 
 namespace D2SFibMap
 
-variable {H : OpcartesianFunctor u B B'} {C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B}
-  {C' : DoubleDisplayed.{v₄, u₄, v₅, u₅, v₆, u₆} B'} [SplitD2SFib C] [SplitD2SFib C']
+variable {H : OpcartesianFunctor u B B'} {C : DoubleDisplayed.{v₃, u₃} B}
+  {C' : DoubleDisplayed.{v₆, u₆} B'} [SplitD2SFib C] [SplitD2SFib C']
 
 /-- The underlying doubly displayed functor. -/
 abbrev toDDFunctor (Φ : D2SFibMap H C C') : DDFunctor H.toDispFunctor C C' := Φ.toObj.toDDFunctor
@@ -94,14 +94,14 @@ theorem hext {H' : OpcartesianFunctor u B B'} (hH : H = H') {Φ : D2SFibMap H C 
   exact heq_of_eq (ext (DDFunctor.ext (fun c => eq_of_heq (hobj c)) hmap))
 
 /-- The identity map of D2SFibs, over the identity opcartesian functor. -/
-protected def id (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) [SplitD2SFib C] :
+protected def id (C : DoubleDisplayed.{v₃, u₃} B) [SplitD2SFib C] :
     D2SFibMap (OpcartesianFunctor.id B) C C where
   toObj := { toDDFunctor := DDFunctor.id C }
 
 /-- Composition of maps of D2SFibs, over the composite opcartesian functor. -/
-def comp {A'' : Type u₇} [Category.{v₇} A''] {B'' : Displayed.{v₇, u₇, v₈, u₈} A''}
+def comp {A'' : Type u₇} [Category.{v₇} A''] {B'' : Displayed.{v₈, u₈} A''}
     [SplitOpfib B''] {u' : A' ⥤ A''} {H' : OpcartesianFunctor u' B' B''}
-    {C'' : DoubleDisplayed.{v₇, u₇, v₈, u₈, v₉, u₉} B''} [SplitD2SFib C'']
+    {C'' : DoubleDisplayed.{v₉, u₉} B''} [SplitD2SFib C'']
     (Φ : D2SFibMap H C C') (Ψ : D2SFibMap H' C' C'') : D2SFibMap (H.comp H') C C'' where
   toObj := { toDDFunctor := Φ.toDDFunctor.comp Ψ.toDDFunctor }
 
@@ -131,7 +131,7 @@ end D2SFibMap
 
 section Reindex
 
-variable (H : OpcartesianFunctor u B B') (C' : DoubleDisplayed.{v₄, u₄, v₅, u₅, v₆, u₆} B')
+variable (H : OpcartesianFunctor u B B') (C' : DoubleDisplayed.{v₆, u₆} B')
   [SplitD2SFib C']
 
 /-- The chosen lifts of the reindexing of `C'` along `H`: those of `C'` along `H β` and `u α`. -/
@@ -165,9 +165,9 @@ def D2SFibMap.reindexLift : D2SFibMap H (C'.reindex H.toDispFunctor) C' where
 
 /-- The factorization through `D2SFibMap.reindexLift` of a map of D2SFibs over a composite
 `H₀ ⋙ H`: the same doubly displayed functor, over `H₀`, into the reindexing of `C'` along `H`. -/
-def D2SFibMap.liftReindex {A₀ : Type u₇} [Category.{v₇} A₀] {B₀ : Displayed.{v₇, u₇, v₈, u₈} A₀}
+def D2SFibMap.liftReindex {A₀ : Type u₇} [Category.{v₇} A₀] {B₀ : Displayed.{v₈, u₈} A₀}
     [SplitOpfib B₀] {u₀ : A₀ ⥤ A} {H₀ : OpcartesianFunctor u₀ B₀ B}
-    {C₀ : DoubleDisplayed.{v₇, u₇, v₈, u₈, v₉, u₉} B₀} [SplitD2SFib C₀]
+    {C₀ : DoubleDisplayed.{v₉, u₉} B₀} [SplitD2SFib C₀]
     (χ : D2SFibMap (H₀.comp H) C₀ C') : D2SFibMap H₀ C₀ (C'.reindex H.toDispFunctor) where
   toObj :=
     { obj := fun c => χ.toObj.obj c

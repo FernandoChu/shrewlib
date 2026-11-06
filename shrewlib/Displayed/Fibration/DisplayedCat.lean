@@ -25,7 +25,7 @@ open scoped Displayed
 
 section Split
 
-variable {A B : Cat.{u, u}} (u : A ⟶ B) (E : Displayed.{u, u, u, u} B)
+variable {A B : Cat.{u, u}} (u : A ⟶ B) (E : Displayed.{u, u} B)
 
 /-- The chosen lift is cartesian: a displayed functor over `w ≫ u` is its own factorization. -/
 def isCartesianClift : IsCartesian (D := DisplayedCat) (clift u E) where

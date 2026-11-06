@@ -23,5 +23,5 @@ recall ComprehensionCategory.CodomainModel.fullComprehension {C : Type u} [Categ
 
 /-- The comprehension functor of a comprehension category over `C` is a strict map to `cod C`. -/
 recall ComprehensionCategory.CodomainModel.comprMap {C : Type u} [Category.{v} C]
-    [ChosenPullbacks C] (D : Displayed.{v, u, v₂, u₂} C) [Fib D] [Comprehension D] :
+    [ChosenPullbacks C] (D : Displayed.{v₂, u₂} C) [Fib D] [Comprehension D] :
     StrictComprehensionMap (𝟭 C) D (cod C)

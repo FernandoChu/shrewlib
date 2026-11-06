@@ -28,14 +28,14 @@ namespace DoubleDisplayed
 
 open scoped DoubleDisplayed
 
-variable {A : Type u₁} [Category.{v₁} A] {B : Displayed.{v₁, u₁, v₂, u₂} A}
-  {A' : Type u₄} [Category.{v₄} A'] {B' : Displayed.{v₄, u₄, v₅, u₅} A'}
+variable {A : Type u₁} [Category.{v₁} A] {B : Displayed.{v₂, u₂} A}
+  {A' : Type u₄} [Category.{v₄} A'] {B' : Displayed.{v₅, u₅} A'}
 
 /-- A doubly displayed functor over a displayed functor `H` from `B` to `B'`: objects over `b` go
 to objects over `H b`, and morphisms over `g` to morphisms over `H g`. -/
 structure DDFunctor {u : A ⥤ A'} (H : DispFunctor u B B')
-    (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B)
-    (C' : DoubleDisplayed.{v₄, u₄, v₅, u₅, v₆, u₆} B') where
+    (C : DoubleDisplayed.{v₃, u₃} B)
+    (C' : DoubleDisplayed.{v₆, u₆} B') where
   /-- The action on objects. -/
   obj : {a : A} → {b : B.Ob a} → C.Ob b → C'.Ob (H.obj b)
   /-- The action on morphisms, over the image of the `B`-morphism. -/
@@ -51,8 +51,8 @@ attribute [rewrite_rule] DDFunctor.map_id DDFunctor.map_comp
 
 namespace DDFunctor
 
-variable {u : A ⥤ A'} {H : DispFunctor u B B'} {C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B}
-  {C' : DoubleDisplayed.{v₄, u₄, v₅, u₅, v₆, u₆} B'}
+variable {u : A ⥤ A'} {H : DispFunctor u B B'} {C : DoubleDisplayed.{v₃, u₃} B}
+  {C' : DoubleDisplayed.{v₆, u₆} B'}
 
 /-- Doubly displayed functors are determined by their actions on objects and morphisms. -/
 theorem ext {F G : DDFunctor H C C'}
@@ -66,14 +66,14 @@ theorem ext {F G : DDFunctor H C C'}
   rfl
 
 /-- The identity doubly displayed functor, over the identity displayed functor. -/
-protected def id (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) :
+protected def id (C : DoubleDisplayed.{v₃, u₃} B) :
     DDFunctor (DispFunctor.id B) C C where
   obj c := c
   map θ := θ
 
 /-- Composition of doubly displayed functors, over the composite displayed functor. -/
-def comp {A'' : Type u₇} [Category.{v₇} A''] {B'' : Displayed.{v₇, u₇, v₈, u₈} A''} {u' : A' ⥤ A''}
-    {H' : DispFunctor u' B' B''} {C'' : DoubleDisplayed.{v₇, u₇, v₈, u₈, v₉, u₉} B''}
+def comp {A'' : Type u₇} [Category.{v₇} A''] {B'' : Displayed.{v₈, u₈} A''} {u' : A' ⥤ A''}
+    {H' : DispFunctor u' B' B''} {C'' : DoubleDisplayed.{v₉, u₉} B''}
     (F : DDFunctor H C C') (G : DDFunctor H' C' C'') : DDFunctor (H.comp H') C C'' where
   obj c := G.obj (F.obj c)
   map θ := G.map (F.map θ)
@@ -101,8 +101,8 @@ variable {u : A ⥤ A'}
 
 /-- **The reindexing of `C'` along `H`**: objects over `b` are the objects of `C'` over `H b`, and
 morphisms over `g` are the morphisms of `C'` over `H g`. -/
-def reindex (C' : DoubleDisplayed.{v₄, u₄, v₅, u₅, v₆, u₆} B') (H : DispFunctor u B B') :
-    DoubleDisplayed.{v₁, u₁, v₂, u₂, v₆, u₆} B where
+def reindex (C' : DoubleDisplayed.{v₆, u₆} B') (H : DispFunctor u B B') :
+    DoubleDisplayed.{v₆, u₆} B where
   Ob b := C'.Ob (H.obj b)
   Hom g c c' := C'.Hom (H.map g) c c'
   id c := C'.id c
@@ -110,7 +110,7 @@ def reindex (C' : DoubleDisplayed.{v₄, u₄, v₅, u₅, v₆, u₆} B') (H : 
 
 /-- The doubly displayed functor over `H` from the reindexing of `C'` along `H` to `C'`: the
 identity on objects and morphisms. -/
-def reindexLift (C' : DoubleDisplayed.{v₄, u₄, v₅, u₅, v₆, u₆} B') (H : DispFunctor u B B') :
+def reindexLift (C' : DoubleDisplayed.{v₆, u₆} B') (H : DispFunctor u B B') :
     DDFunctor H (C'.reindex H) C' where
   obj c := c
   map θ := θ

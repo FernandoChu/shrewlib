@@ -33,8 +33,8 @@ variable {A : Type u₁} [Category.{v₁} A] {B : Type u₂} [Category.{v₂} B]
 
 /-- A displayed functor over `u` preserving the chosen pullbacks on objects. This axiom is a
 rewrite rule. -/
-structure PreCartesianFunctor (u : A ⥤ B) (D : Displayed.{v₁, u₁, v₃, u₃} A)
-    (E : Displayed.{v₂, u₂, v₄, u₄} B) [Fib D] [Fib E] extends DispFunctor u D E where
+structure PreCartesianFunctor (u : A ⥤ B) (D : Displayed.{v₃, u₃} A)
+    (E : Displayed.{v₄, u₄} B) [Fib D] [Fib E] extends DispFunctor u D E where
   /-- Preserves the chosen pullbacks on objects. -/
   obj_pull : ∀ {a a' : A} (f : a ⟶ a') (y : D.Ob a'),
     obj (Fib.pull f y) = Fib.pull (u.map f) (obj y) := by intros; rfl
@@ -43,8 +43,8 @@ attribute [rewrite_rule] PreCartesianFunctor.obj_pull
 
 /-- **A cartesian functor**: a displayed functor over `u` preserving the chosen cartesian lifts
 strictly. -/
-structure CartesianFunctor (u : A ⥤ B) (D : Displayed.{v₁, u₁, v₃, u₃} A)
-    (E : Displayed.{v₂, u₂, v₄, u₄} B) [Fib D] [Fib E] where
+structure CartesianFunctor (u : A ⥤ B) (D : Displayed.{v₃, u₃} A)
+    (E : Displayed.{v₄, u₄} B) [Fib D] [Fib E] where
   /-- The underlying displayed functor, preserving the chosen pullbacks. -/
   toPre : PreCartesianFunctor u D E
   /-- Preserves the chosen cartesian lifts. -/
@@ -55,7 +55,7 @@ attribute [rewrite_rule] CartesianFunctor.map_clift
 
 namespace CartesianFunctor
 
-variable {u : A ⥤ B} {D : Displayed.{v₁, u₁, v₃, u₃} A} {E : Displayed.{v₂, u₂, v₄, u₄} B} [Fib D]
+variable {u : A ⥤ B} {D : Displayed.{v₃, u₃} A} {E : Displayed.{v₄, u₄} B} [Fib D]
   [Fib E]
 
 /-- The underlying displayed functor. -/
@@ -63,11 +63,11 @@ abbrev toDispFunctor (H : CartesianFunctor u D E) : DispFunctor u D E :=
   H.toPre.toDispFunctor
 
 /-- The identity cartesian functor. -/
-protected def id (D : Displayed.{v₁, u₁, v₃, u₃} A) [Fib D] : CartesianFunctor (𝟭 A) D D where
+protected def id (D : Displayed.{v₃, u₃} A) [Fib D] : CartesianFunctor (𝟭 A) D D where
   toPre := { toDispFunctor := DispFunctor.id D }
 
 /-- Composition of cartesian functors, over the composite functor. -/
-def comp {C : Type u₅} [Category.{v₅} C] {v : B ⥤ C} {E' : Displayed.{v₅, u₅, v₆, u₆} C} [Fib E']
+def comp {C : Type u₅} [Category.{v₅} C] {v : B ⥤ C} {E' : Displayed.{v₆, u₆} C} [Fib E']
     (H : CartesianFunctor u D E) (K : CartesianFunctor v E E') : CartesianFunctor (u ⋙ v) D E' where
   toPre := { toDispFunctor := H.toDispFunctor.comp K.toDispFunctor }
 
@@ -75,8 +75,8 @@ end CartesianFunctor
 
 /-- **A vertical cartesian functor preserves cartesian morphisms**: the chosen lifts go to chosen
 lifts, which are cartesian. -/
-def CartesianFunctor.isCartesianMap {D : Displayed.{v₁, u₁, v₃, u₃} A}
-    {E : Displayed.{v₁, u₁, v₄, u₄} A} [Fib D] [Fib E] (H : CartesianFunctor (𝟭 A) D E) :
+def CartesianFunctor.isCartesianMap {D : Displayed.{v₃, u₃} A}
+    {E : Displayed.{v₄, u₄} A} [Fib D] [Fib E] (H : CartesianFunctor (𝟭 A) D E) :
     H.toDispFunctor.PreservesCartesian :=
   VertFunctor.isCartesianMapOfClift H.toDispFunctor
     fun f y => by kernel_exact E.isCartesianClift f (H.toDispFunctor.obj y)

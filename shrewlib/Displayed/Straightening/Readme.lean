@@ -52,7 +52,7 @@ recall Displayed.Straightening.unstraighten_comp_straighten :
 
 /-- On objects. -/
 recall Displayed.Straightening.unstraightenObj_straightenObj {A : Cat.{u, u}}
-    (D : Displayed.{u, u, u, u} A) : unstraightenObj (straightenObj D) = D
+    (D : Displayed.{u, u} A) : unstraightenObj (straightenObj D) = D
 
 recall Displayed.Straightening.straightenObj_unstraightenObj {A : Cat.{u, u}} (F : LaxNormal A) :
     straightenObj (unstraightenObj F) = F

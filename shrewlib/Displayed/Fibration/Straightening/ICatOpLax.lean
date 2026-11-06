@@ -126,7 +126,7 @@ end LaxTrans
 over `A` is a functor `Aᵒᵖ ⥤ Cat`, and a morphism over `u : A ⟶ B` from `F` to `G` is a lax
 transformation `LaxTrans F (reindex u G)`. Composition restricts the second transformation along the
 first base functor. -/
-def ICatOpLax : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
+def ICatOpLax : Displayed.{u, u + 1} Cat.{u, u} where
   Ob A := Aᵒᵖ ⥤ Cat.{u, u}
   Hom u F G := LaxTrans F (reindex u.toFunctor G)
   id F := LaxTrans.id F

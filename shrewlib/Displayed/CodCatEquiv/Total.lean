@@ -26,11 +26,11 @@ section Total
 variable {A B : Cat.{u, u}}
 
 /-- The total category of `D`, with its projection, as an object of `cod Cat`. -/
-def totalObj (D : Displayed.{u, u, u, u} A) : (cod Cat.{u, u}).Ob A :=
+def totalObj (D : Displayed.{u, u} A) : (cod Cat.{u, u}).Ob A :=
   ⟨Cat.of D.Total, D.π.toCatHom⟩
 
 /-- The functor between total categories induced by a displayed functor over `u`. -/
-def totalMap {u : A ⟶ B} {D : Displayed.{u, u, u, u} A} {E : Displayed.{u, u, u, u} B}
+def totalMap {u : A ⟶ B} {D : Displayed.{u, u} A} {E : Displayed.{u, u} B}
     (H : DispFunctor u.toFunctor D E) : totalObj D ⟶[u] totalObj E :=
   ⟨H.total.toCatHom, rfl⟩
 

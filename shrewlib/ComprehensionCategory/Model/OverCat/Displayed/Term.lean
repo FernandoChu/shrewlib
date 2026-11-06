@@ -25,14 +25,14 @@ variable {Γ : Cat.{u, u}}
 
 /-- The substitution of the type `straightenObj E` along `u` is the type of the reindexing of `E`
 along `u`, by `rfl`. -/
-theorem straightenObj_pull {Δ : Cat.{u, u}} (σ : Δ ⟶ Γ) (E : Displayed.{u, u, u, u} Γ) :
+theorem straightenObj_pull {Δ : Cat.{u, u}} (σ : Δ ⟶ Γ) (E : Displayed.{u, u} Γ) :
     LaxNormalCat.pull σ (straightenObj E) = straightenObj (DisplayedCat.pull σ E) :=
   rfl
 
 /-- **The term of `straightenObj D` with values `obj γ`** over `γ` and transports
 `map f : obj γ ⟶[f] obj γ'`: the section `γ ↦ (γ, obj γ)` of the total category of `D`, which is a
 section by `rfl`. -/
-def tmMk {D : Displayed.{u, u, u, u} Γ} (obj : ∀ γ : Γ, D.Ob γ)
+def tmMk {D : Displayed.{u, u} Γ} (obj : ∀ γ : Γ, D.Ob γ)
     (map : ∀ {γ γ' : Γ} (f : γ ⟶ γ'), obj γ ⟶[f] obj γ')
     (map_id : ∀ γ : Γ, map (𝟙 γ) = 𝟙ᵈ (obj γ))
     (map_comp : ∀ {γ γ' γ'' : Γ} (f : γ ⟶ γ') (g : γ' ⟶ γ''), map (f ≫ g) = map f ≫ᵈ map g) :

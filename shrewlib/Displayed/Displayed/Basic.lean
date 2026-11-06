@@ -42,16 +42,13 @@ The total category is in `Displayed/Displayed/Total.lean`, and equivalences over
 Requires the `rewrite-rules` fork of Lean.
 -/
 
-universe v₁ u₁ v₂ u₂ v₃ u₃ v₄ u₄ v₅ u₅ v₆ u₆ v₇ u₇
-
 open CategoryTheory
-
-variable {A : Type u₁} [Category.{v₁} A]
 
 /-- A category displayed over `A`: objects over each `a : A`, and morphisms lying over each base
 morphism `f : a ⟶ a'`. The two sides of each law have definitionally equal types by the rewrite
-rules for the category laws of `A`. -/
-structure Displayed (A : Type u₁) [Category.{v₁} A] where
+rules for the category laws of `A`. As for `Category.{v}`, the universes of the fibers come first,
+since those of `A` are inferred: `Displayed.{v₂, u₂} A`. -/
+structure Displayed.{v₂, u₂, v₁, u₁} (A : Type u₁) [Category.{v₁} A] where
   /-- The type of objects lying over `a : A`. -/
   Ob : A → Type u₂
   /-- The type of displayed morphisms lying over `f : a ⟶ a'`. -/
@@ -71,6 +68,10 @@ structure Displayed (A : Type u₁) [Category.{v₁} A] where
 
 attribute [rewrite_rule] Displayed.id_comp Displayed.comp_id Displayed.assoc
 
+universe v₁ u₁ v₂ u₂ v₃ u₃ v₄ u₄ v₅ u₅ v₆ u₆ v₇ u₇
+
+variable {A : Type u₁} [Category.{v₁} A]
+
 namespace Displayed
 
 /-- Notation for the displayed identity morphism, mirroring `𝟙` for categories. -/
@@ -86,7 +87,7 @@ scoped notation:10 x " ⟶[" f "] " y => Displayed.Hom _ f x y
 /-- Displayed categories are determined by their objects, morphisms, identities and composition,
 compared heterogeneously since their types depend on the objects and morphisms. (The kernel can
 reject an `rfl` between two displayed categories that it accepts on each component.) -/
-theorem ext_heq {D E : Displayed.{v₁, u₁, v₂, u₂} A} (hOb : D.Ob = E.Ob) (hHom : @D.Hom ≍ @E.Hom)
+theorem ext_heq {D E : Displayed.{v₂, u₂} A} (hOb : D.Ob = E.Ob) (hHom : @D.Hom ≍ @E.Hom)
     (hid : @D.id ≍ @E.id) (hcomp : @D.comp ≍ @E.comp) : D = E := by
   obtain ⟨Ob, Hom, id, comp, _, _, _⟩ := D
   obtain ⟨Ob', Hom', id', comp', _, _, _⟩ := E
@@ -102,12 +103,12 @@ theorem ext_heq {D E : Displayed.{v₁, u₁, v₂, u₂} A} (hOb : D.Ob = E.Ob)
   obtain rfl := eq_of_heq hcomp
   rfl
 
-variable (D : Displayed.{v₁, u₁, v₂, u₂} A)
+variable (D : Displayed.{v₂, u₂} A)
 
 section Fiber
 
 /-- The fiber of `D` over `a`: objects lying over `a`, with vertical morphisms (over `𝟙 a`). -/
-abbrev Fiber (D : Displayed.{v₁, u₁, v₂, u₂} A) (a : A) : Type u₂ := D.Ob a
+abbrev Fiber (D : Displayed.{v₂, u₂} A) (a : A) : Type u₂ := D.Ob a
 
 /-- The fiber over `a` is a category: composition is displayed composition, which lies over
 `𝟙 a ≫ 𝟙 a`, that is over `𝟙 a`. -/
@@ -144,8 +145,8 @@ variable {B : Type u₄} [Category.{v₄} B]
 /-- A displayed functor over `u : A ⥤ B`: objects over `a` go to objects over `u a`, and
 morphisms over `f` to morphisms over `u f`. Its laws are stated with the functor laws of `u` as
 rules, so that `u (𝟙 a)` is `𝟙 (u a)` and `u (f ≫ g)` is `u f ≫ u g`. -/
-structure DispFunctor (u : A ⥤ B) (D : Displayed.{v₁, u₁, v₂, u₂} A)
-    (E : Displayed.{v₄, u₄, v₅, u₅} B) where
+structure DispFunctor (u : A ⥤ B) (D : Displayed.{v₂, u₂} A)
+    (E : Displayed.{v₅, u₅} B) where
   /-- The action on objects. -/
   obj : {a : A} → D.Ob a → E.Ob (u.obj a)
   /-- The action on morphisms, over the image of the base morphism. -/
@@ -159,7 +160,7 @@ attribute [rewrite_rule] DispFunctor.map_id DispFunctor.map_comp
 
 namespace DispFunctor
 
-variable {u : A ⥤ B} {D : Displayed.{v₁, u₁, v₂, u₂} A} {E : Displayed.{v₄, u₄, v₅, u₅} B}
+variable {u : A ⥤ B} {D : Displayed.{v₂, u₂} A} {E : Displayed.{v₅, u₅} B}
 
 /-- Displayed functors are determined by their actions on objects and morphisms. -/
 theorem ext {H K : DispFunctor u D E} (hobj : ∀ {a : A} (x : D.Ob a), H.obj x = K.obj x)
@@ -176,12 +177,12 @@ theorem ext {H K : DispFunctor u D E} (hobj : ∀ {a : A} (x : D.Ob a), H.obj x 
   rfl
 
 /-- The identity displayed functor, over the identity functor. -/
-protected def id (D : Displayed.{v₁, u₁, v₂, u₂} A) : DispFunctor (𝟭 A) D D where
+protected def id (D : Displayed.{v₂, u₂} A) : DispFunctor (𝟭 A) D D where
   obj x := x
   map φ := φ
 
 /-- Composition of displayed functors, over the composite functor. -/
-def comp {C : Type u₆} [Category.{v₆} C] {v : B ⥤ C} {E' : Displayed.{v₆, u₆, v₇, u₇} C}
+def comp {C : Type u₆} [Category.{v₆} C] {v : B ⥤ C} {E' : Displayed.{v₇, u₇} C}
     (H : DispFunctor u D E) (K : DispFunctor v E E') : DispFunctor (u ⋙ v) D E' where
   obj x := K.obj (H.obj x)
   map φ := K.map (H.map φ)
@@ -196,18 +197,18 @@ section VertFunctor
 
 /-- A vertical functor: a displayed functor over the identity of `A`, i.e. a functor over `A`
 between the total categories. -/
-abbrev VertFunctor (D : Displayed.{v₁, u₁, v₂, u₂} A) (E : Displayed.{v₁, u₁, v₃, u₃} A) :=
+abbrev VertFunctor (D : Displayed.{v₂, u₂} A) (E : Displayed.{v₃, u₃} A) :=
   DispFunctor (𝟭 A) D E
 
-variable {E : Displayed.{v₁, u₁, v₃, u₃} A} {E' : Displayed.{v₁, u₁, v₄, u₄} A}
+variable {E : Displayed.{v₃, u₃} A} {E' : Displayed.{v₄, u₄} A}
 
 /-- The identity vertical functor. -/
-abbrev VertFunctor.id (D : Displayed.{v₁, u₁, v₂, u₂} A) : VertFunctor D D :=
+abbrev VertFunctor.id (D : Displayed.{v₂, u₂} A) : VertFunctor D D :=
   DispFunctor.id D
 
 /-- Composition of vertical functors, their composite as displayed functors: it lies over
 `𝟭 A ⋙ 𝟭 A`, which is `𝟭 A` by the rule `Functor.id_comp`. -/
-abbrev VertFunctor.comp {D : Displayed.{v₁, u₁, v₂, u₂} A} (F : VertFunctor D E)
+abbrev VertFunctor.comp {D : Displayed.{v₂, u₂} A} (F : VertFunctor D E)
     (G : VertFunctor E E') : VertFunctor D E' :=
   DispFunctor.comp F G
 
@@ -221,7 +222,7 @@ end VertFunctor
 
 section VertNatTrans
 
-variable {D : Displayed.{v₁, u₁, v₂, u₂} A} {E : Displayed.{v₁, u₁, v₃, u₃} A}
+variable {D : Displayed.{v₂, u₂} A} {E : Displayed.{v₃, u₃} A}
 
 /-- A vertical natural transformation between vertical functors: its components lie over
 identities, and it is natural with respect to displayed morphisms over arbitrary base morphisms. -/

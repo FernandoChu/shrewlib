@@ -143,7 +143,7 @@ theorem straightenObj_unstraightenObj {A : Cat.{u, u}} (F : LaxNormal A) :
 
 section Counit
 
-variable {A : Cat.{u, u}} (D : Displayed.{u, u, u, u} A)
+variable {A : Cat.{u, u}} (D : Displayed.{u, u} A)
 
 /-- **Unstraightening the straightening of `D` gives back `D`**, on the nose. -/
 theorem unstraightenObj_straightenObj : unstraightenObj (straightenObj D) = D :=

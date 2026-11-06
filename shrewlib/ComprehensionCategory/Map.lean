@@ -42,8 +42,8 @@ variable {C : Type u₁} [Category.{v₁} C] {C' : Type u₂} [Category.{v₂} C
 
 /-! ## Maps -/
 
-variable (F : C ⥤ C') (D : Displayed.{v₁, u₁, v₃, u₃} C) [Fib D] [Comprehension D]
-  (E : Displayed.{v₂, u₂, v₄, u₄} C') [Fib E] [Comprehension E]
+variable (F : C ⥤ C') (D : Displayed.{v₃, u₃} C) [Fib D] [Comprehension D]
+  (E : Displayed.{v₄, u₄} C') [Fib E] [Comprehension E]
 
 /-- A map of comprehension categories over `F`: a displayed functor preserving cartesian
 morphisms, with natural comparisons `F.obj (Γ ▹ A) ⟶ F.obj Γ ▹ obj A` over `F.obj Γ`. -/
@@ -115,7 +115,7 @@ def StrictComprehensionMap.toPseudo (M : StrictComprehensionMap F D E) :
 
 section Comp
 
-variable {G : C' ⥤ C''} {E' : Displayed.{v₅, u₅, v₆, u₆} C''} [Fib E'] [Comprehension E']
+variable {G : C' ⥤ C''} {E' : Displayed.{v₆, u₆} C''} [Fib E'] [Comprehension E']
 
 variable (D) in
 /-- The identity map of comprehension categories. -/

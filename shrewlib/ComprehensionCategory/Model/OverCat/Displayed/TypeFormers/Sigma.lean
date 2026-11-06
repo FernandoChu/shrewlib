@@ -33,7 +33,7 @@ open scoped Displayed
 variable {Γ : Cat.{u, u}} (F : LaxNormalCat.{u}.Ty Γ) (G : LaxNormalCat.{u}.Ty (Γ ▹ F))
 
 /-- The composite of the unstraightenings of `F` and `G`, displayed over `Γ`. -/
-def sigmaOb : Displayed.{u, u, u, u} Γ :=
+def sigmaOb : Displayed.{u, u} Γ :=
   (unstraightenObj F).sigmaDisp (unstraightenObj G)
 
 /-- The Σ-type `sigma F G : LaxNormal Γ`, the straightening of `sigmaOb F G`. -/

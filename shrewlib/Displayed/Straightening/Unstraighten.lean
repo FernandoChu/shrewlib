@@ -45,7 +45,7 @@ namespace Displayed.Straightening
 `C`. -/
 def unstraightenObj {C : Type u₁} [Category.{v₁} C]
     (F : StrictlyUnitaryLaxFunctor (LocallyDiscrete C) ProfCat.{u}) :
-    Displayed.{v₁, u₁, u, u} C where
+    Displayed.{u, u} C where
   Ob c := F.obj ⟨c⟩
   Hom f x y := (prof F f).obj x y
   id x := 𝟙 x

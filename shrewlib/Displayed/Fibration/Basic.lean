@@ -50,7 +50,7 @@ open scoped Displayed
 
 section Cartesian
 
-variable {D : Displayed.{v₁, u₁, v₂, u₂} A}
+variable {D : Displayed.{v₂, u₂} A}
 
 /-- `φ : x ⟶[f] y` is *cartesian*: every displayed map into `y` over `g ≫ f` factors uniquely
 through `φ` by a displayed map over `g`. (This is the *strong* cartesian property.) The
@@ -108,13 +108,13 @@ cartesian morphisms; since `IsCartesian` is data, this is a function on the fact
 what is usually called a cartesian, or fibred, functor. `CartesianFunctor` is the strict notion,
 for cleavages: it preserves the chosen lifts on the nose. -/
 abbrev DispFunctor.PreservesCartesian {B : Type u₄} [Category.{v₄} B] {u : A ⥤ B}
-    {E : Displayed.{v₄, u₄, v₅, u₅} B} (F : DispFunctor u D E) : Type _ :=
+    {E : Displayed.{v₅, u₅} B} (F : DispFunctor u D E) : Type _ :=
   ∀ {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f] y},
     IsCartesian φ → IsCartesian (F.map φ)
 
 namespace VertEquivalence
 
-variable {E : Displayed.{v₁, u₁, v₃, u₃} A} (e : VertEquivalence D E)
+variable {E : Displayed.{v₃, u₃} A} (e : VertEquivalence D E)
 
 /-- **A vertical equivalence preserves cartesian morphisms.** The factorization of `χ` is the
 counit, followed by the image of the factorization of the preimage of `χ`. -/
@@ -147,7 +147,7 @@ end Cartesian
 
 /-- A (cloven) fibration structure on a displayed category: a chosen cartesian lift of every base
 morphism at every object over its codomain. -/
-class Fib (D : Displayed.{v₁, u₁, v₂, u₂} A) where
+class Fib (D : Displayed.{v₂, u₂} A) where
   /-- The chosen pullback of `y` along `f`. -/
   pull : {a a' : A} → (f : a ⟶ a') → D.Ob a' → D.Ob a
   /-- The chosen cartesian lift of `f` at `y`. -/
@@ -158,7 +158,7 @@ class Fib (D : Displayed.{v₁, u₁, v₂, u₂} A) where
 /-- A pre-split fibration: a fibration whose chosen pullbacks are strictly functorial on objects.
 These axioms are rewrite rules. Its axioms default to `by intros; rfl`, as they hold definitionally
 in most instances. -/
-class PreSplitFib (D : Displayed.{v₁, u₁, v₂, u₂} A) extends Fib D where
+class PreSplitFib (D : Displayed.{v₂, u₂} A) extends Fib D where
   pull_id : ∀ {a : A} (y : D.Ob a), pull (𝟙 a) y = y := by intros; rfl
   pull_comp : ∀ {a a' a'' : A} (f : a ⟶ a') (g : a' ⟶ a'') (y : D.Ob a''),
     pull (f ≫ g) y = pull f (pull g y) := by intros; rfl
@@ -169,7 +169,7 @@ attribute [rewrite_rule] PreSplitFib.pull_id PreSplitFib.pull_comp
 `SplitOpfib`, the pre-split structure is an instance field rather than a parent, so that the rules
 `pull_id` and `pull_comp` apply to the axioms on lifts. Its axioms default to `by intros; rfl`, as
 they hold definitionally in most instances. -/
-class SplitFib (D : Displayed.{v₁, u₁, v₂, u₂} A) where
+class SplitFib (D : Displayed.{v₂, u₂} A) where
   /-- The underlying pre-split fibration. -/
   [toPreSplitFib : PreSplitFib D]
   /-- The lift of the identity is the displayed identity. -/
@@ -186,7 +186,7 @@ attribute [rewrite_rule] SplitFib.clift_id SplitFib.clift_comp
 
 section Lift
 
-variable (D : Displayed.{v₁, u₁, v₂, u₂} A) [Fib D]
+variable (D : Displayed.{v₂, u₂} A) [Fib D]
 
 /-- The chosen pullback of `y` along `f`, viewed as an object of the fiber over `a`. -/
 @[reducible] def pull {a a' : A} (f : a ⟶ a') (y : D.Ob a') : D.Fiber a :=
@@ -203,7 +203,7 @@ end Lift
 
 section LiftPreSplit
 
-variable (D : Displayed.{v₁, u₁, v₂, u₂} A) [PreSplitFib D]
+variable (D : Displayed.{v₂, u₂} A) [PreSplitFib D]
 
 @[rewrite_rule]
 theorem pull_id {a : A} (y : D.Ob a) : D.pull (𝟙 a) y = y :=
@@ -218,7 +218,7 @@ end LiftPreSplit
 
 section LiftSplit
 
-variable (D : Displayed.{v₁, u₁, v₂, u₂} A) [SplitFib D]
+variable (D : Displayed.{v₂, u₂} A) [SplitFib D]
 
 @[rewrite_rule]
 theorem clift_id {a : A} (y : D.Ob a) : D.clift (𝟙 a) y = 𝟙ᵈ y := SplitFib.clift_id y
@@ -233,7 +233,7 @@ end LiftSplit
 
 section Factor
 
-variable (D : Displayed.{v₁, u₁, v₂, u₂} A) [Fib D] {a a' a'' : A}
+variable (D : Displayed.{v₂, u₂} A) [Fib D] {a a' a'' : A}
 
 /-- Vertical factorization: any `φ : x ⟶[f] y` factors through the chosen lift `clift f y` by a
 vertical morphism `x ⟶ pull f y`. -/
@@ -283,7 +283,7 @@ end Factor
 
 section FactorSplit
 
-variable (D : Displayed.{v₁, u₁, v₂, u₂} A) [SplitFib D] {a : A}
+variable (D : Displayed.{v₂, u₂} A) [SplitFib D] {a : A}
 
 /-- The factorization of a vertical morphism is the morphism itself. -/
 @[rewrite_rule]
@@ -296,7 +296,7 @@ end FactorSplit
 
 section PullMap
 
-variable (D : Displayed.{v₁, u₁, v₂, u₂} A) [Fib D] {a a' a'' : A}
+variable (D : Displayed.{v₂, u₂} A) [Fib D] {a a' a'' : A}
 
 /-- Transport of a vertical morphism along `f`. -/
 irreducible_def pullMap (f : a ⟶ a') {x y : D.Fiber a'} (β : x ⟶ y) :
@@ -340,7 +340,7 @@ end PullMap
 
 section PullMapSplit
 
-variable (D : Displayed.{v₁, u₁, v₂, u₂} A) [SplitFib D] {a a' a'' : A}
+variable (D : Displayed.{v₂, u₂} A) [SplitFib D] {a a' a'' : A}
 
 /-- Transport along the identity is the identity. -/
 theorem pullMap_id {x y : D.Fiber a} (β : x ⟶ y) : D.pullMap (𝟙 a) β = β :=
@@ -378,7 +378,7 @@ end PullMapSplit
 
 section Interchange
 
-variable (D : Displayed.{v₁, u₁, v₂, u₂} A) [Fib D] {a a' a'' : A}
+variable (D : Displayed.{v₂, u₂} A) [Fib D] {a a' a'' : A}
 
 /-- Interchange of a chosen lift with a vertical morphism, oriented so that the lift comes last. -/
 theorem clift_vert (f : a ⟶ a') {x y : D.Fiber a'} (β : x ⟶ y) :
@@ -413,7 +413,7 @@ end Interchange
 
 section Total
 
-variable (D : Displayed.{v₁, u₁, v₂, u₂} A) [Fib D] {a a' a'' : A}
+variable (D : Displayed.{v₂, u₂} A) [Fib D] {a a' a'' : A}
 
 /-- The chosen cartesian morphisms of the total category. -/
 def totalClift (f : a ⟶ a') (y : D.Ob a') : D.tot (D.pull f y) ⟶ D.tot y := ⟨f, D.clift f y⟩
@@ -439,7 +439,7 @@ end Total
 
 section TotalSplit
 
-variable (D : Displayed.{v₁, u₁, v₂, u₂} A) [SplitFib D] {a a' a'' : A}
+variable (D : Displayed.{v₂, u₂} A) [SplitFib D] {a a' a'' : A}
 
 /-! The chosen lifts of a split `D` in `D.Total` are split, as rules: rules keyed on the
 identities and composites of `D.Total` then apply to `totalClift (𝟙 a) y` and
@@ -458,7 +458,7 @@ end TotalSplit
 
 section Preservation
 
-variable {D : Displayed.{v₁, u₁, v₂, u₂} A} {E : Displayed.{v₁, u₁, v₃, u₃} A} [Fib D]
+variable {D : Displayed.{v₂, u₂} A} {E : Displayed.{v₃, u₃} A} [Fib D]
 
 /-- The factorization of a cartesian morphism through the chosen lift is a vertical isomorphism,
 with inverse the factorization of the chosen lift through it. -/
@@ -489,7 +489,7 @@ end Preservation
 
 section Transfer
 
-variable {D : Displayed.{v₁, u₁, v₂, u₂} A} {E : Displayed.{v₁, u₁, v₃, u₃} A}
+variable {D : Displayed.{v₂, u₂} A} {E : Displayed.{v₃, u₃} A}
 
 /-- A cleavage transfers along an equivalence over `A`: the chosen lift at `y` is the image of the
 chosen lift at `G y`, followed by the counit. -/

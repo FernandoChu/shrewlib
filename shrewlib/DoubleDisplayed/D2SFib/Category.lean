@@ -22,12 +22,12 @@ open CategoryTheory Displayed DoubleDisplayed D2SFib
 
 open scoped Displayed DoubleDisplayed
 
-variable {A : Type u₁} [Category.{v₁} A] {B : Displayed.{v₁, u₁, v₂, u₂} A} [SplitOpfib B]
+variable {A : Type u₁} [Category.{v₁} A] {B : Displayed.{v₂, u₂} A} [SplitOpfib B]
 
 /-- Bundled D2SFibs: the objects of the category `D2SFibCat B`. -/
-structure D2SFibCat (B : Displayed.{v₁, u₁, v₂, u₂} A) [SplitOpfib B] where
+structure D2SFibCat (B : Displayed.{v₂, u₂} A) [SplitOpfib B] where
   /-- The underlying doubly displayed category. -/
-  C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B
+  C : DoubleDisplayed.{v₃, u₃} B
   /-- Its D2SFib structure. -/
   [str : SplitD2SFib C]
 
@@ -35,7 +35,7 @@ attribute [instance] D2SFibCat.str
 
 /-- D2SFib structures on `C` are determined by their chosen pullbacks, pushforwards and lifts,
 the cartesian and opcartesian structures being subsingletons. -/
-theorem D2SFib.ext {C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B} {d d' : D2SFib C}
+theorem D2SFib.ext {C : DoubleDisplayed.{v₃, u₃} B} {d d' : D2SFib C}
     (hpull : @D2SFib.pull _ _ _ _ C d = @D2SFib.pull _ _ _ _ C d')
     (hpullLift : @D2SFib.pullLift _ _ _ _ C d ≍ @D2SFib.pullLift _ _ _ _ C d')
     (hpush : @D2SFib.push _ _ _ _ C d = @D2SFib.push _ _ _ _ C d')
@@ -60,7 +60,7 @@ theorem D2SFib.ext {C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B} 
 
 /-- Split D2SFib structures on `C` are determined by their chosen pullbacks, pushforwards and
 lifts. -/
-theorem SplitD2SFib.ext {C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B} {s s' : SplitD2SFib C}
+theorem SplitD2SFib.ext {C : DoubleDisplayed.{v₃, u₃} B} {s s' : SplitD2SFib C}
     (h : s.toPreSplitD2SFib.toD2SFib = s'.toPreSplitD2SFib.toD2SFib) : s = s' := by
   cases s with | mk =>
   cases s' with | mk =>
@@ -72,7 +72,7 @@ theorem SplitD2SFib.ext {C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃
 
 /-- Split D2SFib structures on equal doubly displayed categories with the same chosen pullbacks,
 pushforwards and lifts are equal, heterogeneously. -/
-theorem SplitD2SFib.hext {C C' : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B} (hC : C = C')
+theorem SplitD2SFib.hext {C C' : DoubleDisplayed.{v₃, u₃} B} (hC : C = C')
     {s : SplitD2SFib C} {s' : SplitD2SFib C'}
     (hpull : @D2SFib.pull _ _ _ _ C s.toPreSplitD2SFib.toD2SFib ≍
       @D2SFib.pull _ _ _ _ C' s'.toPreSplitD2SFib.toD2SFib)

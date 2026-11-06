@@ -26,7 +26,7 @@ open scoped Displayed
 /-- A split fibration over `A`: a displayed category over `A` with a split cleavage. -/
 structure SplitFibOb (A : Cat.{u, u}) where
   /-- The displayed category. -/
-  toDisplayed : Displayed.{u, u, u, u} A
+  toDisplayed : Displayed.{u, u} A
   /-- Its split cleavage. -/
   [splitFib : SplitFib toDisplayed]
 
@@ -35,7 +35,7 @@ attribute [instance] SplitFibOb.splitFib
 /-- The split fibrations, displayed over `Cat`: an object over `A` is a split fibration over
 `A`, and a morphism over `u` is a displayed functor over `u`, with no condition on the
 cleavages. -/
-def SplitFibLax : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
+def SplitFibLax : Displayed.{u, u + 1} Cat.{u, u} where
   Ob A := SplitFibOb A
   Hom u X Y := DispFunctor u.toFunctor X.toDisplayed Y.toDisplayed
   id X := DispFunctor.id X.toDisplayed

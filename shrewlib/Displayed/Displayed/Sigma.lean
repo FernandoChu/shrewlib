@@ -22,13 +22,13 @@ namespace Displayed
 
 open scoped Displayed
 
-variable {A : Type u₁} [Category.{v₁} A] (D : Displayed.{v₁, u₁, v₂, u₂} A)
-  (E : Displayed.{max v₁ v₂, max u₁ u₂, v₃, u₃} D.Total)
+variable {A : Type u₁} [Category.{v₁} A] (D : Displayed.{v₂, u₂} A)
+  (E : Displayed.{v₃, u₃} D.Total)
 
 /-- The composite of `D` and of `E` displayed over `D.Total`: objects over `a` are pairs of
 `x : D.Ob a` and `b : E.Ob ⟨a, x⟩`, and morphisms over `f` are pairs of `φ : x ⟶[f] y` and
 `ψ : b ⟶[(f, φ)] c`. -/
-def sigmaDisp : Displayed.{v₁, u₁, max v₂ v₃, max u₂ u₃} A where
+def sigmaDisp : Displayed.{max v₂ v₃, max u₂ u₃} A where
   Ob a := Σ x : D.Ob a, E.Ob (D.tot x)
   Hom f X Y := Σ φ : X.1 ⟶[f] Y.1, E.Hom (D.totalMk f φ) X.2 Y.2
   id X := ⟨𝟙ᵈ X.1, 𝟙ᵈ X.2⟩

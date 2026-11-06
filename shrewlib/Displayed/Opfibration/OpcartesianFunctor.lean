@@ -35,8 +35,8 @@ variable {A : Type u₁} [Category.{v₁} A] {B : Type u₂} [Category.{v₂} B]
 
 /-- A displayed functor over `u` preserving the chosen pushforwards on objects. This axiom is a
 rewrite rule. -/
-structure PreOpcartesianFunctor (u : A ⥤ B) (D : Displayed.{v₁, u₁, v₃, u₃} A)
-    (E : Displayed.{v₂, u₂, v₄, u₄} B) [Opfib D] [Opfib E] extends DispFunctor u D E where
+structure PreOpcartesianFunctor (u : A ⥤ B) (D : Displayed.{v₃, u₃} A)
+    (E : Displayed.{v₄, u₄} B) [Opfib D] [Opfib E] extends DispFunctor u D E where
   /-- Preserves the chosen pushforwards on objects. -/
   obj_push : ∀ {a a' : A} (f : a ⟶ a') (x : D.Ob a),
     obj (Opfib.push f x) = Opfib.push (u.map f) (obj x) := by intros; rfl
@@ -45,8 +45,8 @@ attribute [rewrite_rule] PreOpcartesianFunctor.obj_push
 
 /-- **An opcartesian functor**: a displayed functor over `u` preserving the chosen opcartesian
 lifts strictly. -/
-structure OpcartesianFunctor (u : A ⥤ B) (D : Displayed.{v₁, u₁, v₃, u₃} A)
-    (E : Displayed.{v₂, u₂, v₄, u₄} B) [Opfib D] [Opfib E] where
+structure OpcartesianFunctor (u : A ⥤ B) (D : Displayed.{v₃, u₃} A)
+    (E : Displayed.{v₄, u₄} B) [Opfib D] [Opfib E] where
   /-- The underlying displayed functor, preserving the chosen pushforwards. -/
   toPre : PreOpcartesianFunctor u D E
   /-- Preserves the chosen opcartesian lifts. The right-hand side is stated with `E.olift` rather
@@ -59,7 +59,7 @@ attribute [rewrite_rule] OpcartesianFunctor.map_olift
 
 namespace OpcartesianFunctor
 
-variable {u : A ⥤ B} {D : Displayed.{v₁, u₁, v₃, u₃} A} {E : Displayed.{v₂, u₂, v₄, u₄} B}
+variable {u : A ⥤ B} {D : Displayed.{v₃, u₃} A} {E : Displayed.{v₄, u₄} B}
 
 section
 
@@ -77,11 +77,11 @@ theorem ext {H K : OpcartesianFunctor u D E} (h : H.toDispFunctor = K.toDispFunc
   rfl
 
 /-- The identity opcartesian functor. -/
-protected def id (D : Displayed.{v₁, u₁, v₃, u₃} A) [Opfib D] : OpcartesianFunctor (𝟭 A) D D where
+protected def id (D : Displayed.{v₃, u₃} A) [Opfib D] : OpcartesianFunctor (𝟭 A) D D where
   toPre := { toDispFunctor := DispFunctor.id D }
 
 /-- Composition of opcartesian functors, over the composite functor. -/
-def comp {C : Type u₅} [Category.{v₅} C] {v : B ⥤ C} {E' : Displayed.{v₅, u₅, v₆, u₆} C}
+def comp {C : Type u₅} [Category.{v₅} C] {v : B ⥤ C} {E' : Displayed.{v₆, u₆} C}
     [Opfib E'] (H : OpcartesianFunctor u D E) (K : OpcartesianFunctor v E E') :
     OpcartesianFunctor (u ⋙ v) D E' where
   toPre := { toDispFunctor := H.toDispFunctor.comp K.toDispFunctor }
@@ -127,7 +127,7 @@ theorem dualOp_total_id : (OpcartesianFunctor.id D).dualOp.total = 𝟭 _ := rfl
 
 @[rewrite_rule]
 theorem dualOp_total_comp {C : Type u₅} [Category.{v₅} C] {v : B ⥤ C}
-    {E' : Displayed.{v₅, u₅, v₆, u₆} C} [SplitOpfib E'] (H : OpcartesianFunctor u D E)
+    {E' : Displayed.{v₆, u₆} C} [SplitOpfib E'] (H : OpcartesianFunctor u D E)
     (K : OpcartesianFunctor v E E') : (H.comp K).dualOp.total = H.dualOp.total ⋙ K.dualOp.total :=
   rfl
 

@@ -33,13 +33,13 @@ namespace DoubleDisplayed
 
 open scoped DoubleDisplayed
 
-variable {A : Type u₁} [Category.{v₁} A] {B : Displayed.{v₁, u₁, v₂, u₂} A}
+variable {A : Type u₁} [Category.{v₁} A] {B : Displayed.{v₂, u₂} A}
 
 /-! ## Cartesian morphisms -/
 
 section Cartesian
 
-variable {C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B}
+variable {C : DoubleDisplayed.{v₃, u₃} B}
 
 /-- `θ : c ⟶[[g]] c'` is *cartesian*: every morphism into `c'` over `g₀ ≫ᵈ g` factors uniquely
 through `θ` by a morphism over `g₀`, for an arbitrary morphism `g₀` of `B`. The factorization is
@@ -82,7 +82,7 @@ end Cartesian
 
 /-- A (cloven) fibration structure on a doubly displayed category: a chosen cartesian lift of
 every morphism of `B` at every object over its codomain. -/
-class DDFib (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) where
+class DDFib (C : DoubleDisplayed.{v₃, u₃} B) where
   /-- The chosen pullback of `c'` along `g`. -/
   pull : {a a' : A} → {f : a ⟶ a'} → {b : B.Ob a} → {b' : B.Ob a'} → (g : b ⟶[f] b') →
     C.Ob b' → C.Ob b
@@ -96,7 +96,7 @@ class DDFib (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) where
 /-- A pre-split fibration: the chosen pullbacks are strictly functorial on objects. These axioms
 are rewrite rules. Its axioms default to `by intros; rfl`, as they hold definitionally in most
 instances. -/
-class PreSplitDDFib (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) extends DDFib C where
+class PreSplitDDFib (C : DoubleDisplayed.{v₃, u₃} B) extends DDFib C where
   pull_id : ∀ {a : A} {b : B.Ob a} (c : C.Ob b), pull (B.id b) c = c := by intros; rfl
   pull_comp : ∀ {a a' a'' : A} {f : a ⟶ a'} {f' : a' ⟶ a''} {b : B.Ob a} {b' : B.Ob a'}
     {b'' : B.Ob a''} (g : b ⟶[f] b') (g' : b' ⟶[f'] b'') (c : C.Ob b''),
@@ -108,7 +108,7 @@ attribute [rewrite_rule] PreSplitDDFib.pull_id PreSplitDDFib.pull_comp
 `SplitFib`, the pre-split structure is an instance field rather than a parent, so that its rules
 apply to the axioms on lifts. Its axioms default to `by intros; rfl`, as they hold definitionally in
 most instances. -/
-class SplitDDFib (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) where
+class SplitDDFib (C : DoubleDisplayed.{v₃, u₃} B) where
   /-- The underlying pre-split fibration. -/
   [toPreSplitDDFib : PreSplitDDFib C]
   clift_id : ∀ {a : A} {b : B.Ob a} (c : C.Ob b), DDFib.clift (B.id b) c = C.id c := by intros; rfl
@@ -122,8 +122,8 @@ attribute [rewrite_rule] SplitDDFib.clift_id SplitDDFib.clift_comp
 
 /-! ## Cartesian functors -/
 
-variable (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B)
-  (D : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₆, u₆} B)
+variable (C : DoubleDisplayed.{v₃, u₃} B)
+  (D : DoubleDisplayed.{v₆, u₆} B)
 
 /-- A vertical functor preserving the chosen pullbacks on objects. This axiom is a rewrite
 rule. -/
@@ -149,8 +149,8 @@ attribute [rewrite_rule] DDCartesianFunctor.map_clift
 
 section Reindex
 
-variable {A' : Type u₄} [Category.{v₄} A'] {B' : Displayed.{v₄, u₄, v₅, u₅} A'} {u : A ⥤ A'}
-  (H : DispFunctor u B B') (C' : DoubleDisplayed.{v₄, u₄, v₅, u₅, v₃, u₃} B')
+variable {A' : Type u₄} [Category.{v₄} A'] {B' : Displayed.{v₅, u₅} A'} {u : A ⥤ A'}
+  (H : DispFunctor u B B') (C' : DoubleDisplayed.{v₃, u₃} B')
 
 /-- The chosen pullbacks of the reindexing of `C'` along `H`: those of `C'` along `H g`. -/
 instance reindexDDFib [DDFib C'] : DDFib (C'.reindex H) where
@@ -167,7 +167,7 @@ instance reindexPreSplitDDFib [PreSplitDDFib C'] : PreSplitDDFib (C'.reindex H) 
 /-- **The reindexing of a split fibration** is a split fibration. -/
 instance reindexSplitDDFib [SplitDDFib C'] : SplitDDFib (C'.reindex H) := {}
 
-variable {C'} {D' : DoubleDisplayed.{v₄, u₄, v₅, u₅, v₆, u₆} B'}
+variable {C'} {D' : DoubleDisplayed.{v₆, u₆} B'}
 
 /-- A cartesian functor over `B'`, reindexed along `H`. -/
 def DDCartesianFunctor.reindex [DDFib C'] [DDFib D'] (F : DDCartesianFunctor C' D') :

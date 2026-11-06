@@ -6,7 +6,7 @@ import Displayed.Opfibration.OpcartesianFunctor
 
 The split opfibrations form a category displayed over `Cat` with the opcartesian functors as
 morphisms (`SplitOpfibStr`): an object over `A : Cat.{v₁, u₁}` is a split opfibration over `A`
-whose displayed categories are in `Displayed.{v₁, u₁, v₂, u₂}` (`SplitOpfibOb`),
+whose displayed categories are in `Displayed.{v₂, u₂}` (`SplitOpfibOb`),
 and a morphism over `u : A ⟶ B` is a displayed functor over `u` sending the chosen lifts to the
 chosen lifts (`OpcartesianFunctor`). Its laws hold by `rfl`.
 

@@ -35,7 +35,7 @@ instance fullComprehension [ChosenPullbacks C] : FullComprehension (cod C) where
 
 /-- **The comprehension functor is a strict map** from `D` to the codomain comprehension category,
 over the identity: the comprehension functor of `cod C` is the identity. -/
-def comprMap [ChosenPullbacks C] (D : Displayed.{v, u, v₂, u₂} C) [Fib D] [Comprehension D] :
+def comprMap [ChosenPullbacks C] (D : Displayed.{v₂, u₂} C) [Fib D] [Comprehension D] :
     StrictComprehensionMap (𝟭 C) D (cod C) where
   toPre.obj A := D.compr.obj A
   toPre.map φ := D.compr.map φ

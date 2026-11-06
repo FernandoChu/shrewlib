@@ -25,7 +25,7 @@ open scoped Displayed
 
 /-- **Reindexing goes to pullbacks**: `(pull u E).Total` is the pullback of `E.Total` along `u`,
 since `total` is an equivalence and the chosen lift `clift u E` is cartesian. -/
-def isCartesianTotalMapClift {A B : Cat.{u, u}} {u : A ⟶ B} {E : Displayed.{u, u, u, u} B} :
+def isCartesianTotalMapClift {A B : Cat.{u, u}} {u : A ⟶ B} {E : Displayed.{u, u} B} :
     IsCartesian (total.map (clift u E)) :=
   codEquiv.isCartesianMap (isCartesianClift u E)
 

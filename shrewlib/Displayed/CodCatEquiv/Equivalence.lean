@@ -29,7 +29,7 @@ namespace CodEquiv
 
 section Unit
 
-variable {A : Cat.{u, u}} (D : Displayed.{u, u, u, u} A)
+variable {A : Cat.{u, u}} (D : Displayed.{u, u} A)
 
 /-- The unit at `D`: `x ↦ ⟨⟨a, x⟩, rfl⟩`. -/
 def unitHom : DisplayedCat.Hom (𝟙 A) D (fibres (totalObj D)) where

@@ -57,7 +57,7 @@ theorem FibreHom.heq_of_val {a a' : A} {f f' : a ⟶ a'} (h : f = f') {x : Fibre
 variable (X) in
 /-- The fibres of `p : E ⥤ A`, displayed over `A`: the objects over `a` are those of
 `Fibre X a`, and the morphisms over `f` are the morphisms of `E` over `f`. -/
-def fibres : Displayed.{u, u, u, u} A where
+def fibres : Displayed.{u, u} A where
   Ob a := Fibre X a
   Hom f x y := FibreHom X f x y
   id x := ⟨𝟙 x.1, rfl⟩

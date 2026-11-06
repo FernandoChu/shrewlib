@@ -26,12 +26,12 @@ namespace Displayed
 
 open scoped Displayed
 
-variable {A : Type u₁} [Category.{v₁} A] (D : Displayed.{v₁, u₁, v₂, u₂} A)
+variable {A : Type u₁} [Category.{v₁} A] (D : Displayed.{v₂, u₂} A)
 
 section Total
 
 /-- The total category of `D`: pairs `⟨a, x⟩` with `a : A` and `x : D.Ob a`. -/
-def Total (D : Displayed.{v₁, u₁, v₂, u₂} A) := Σ a : A, D.Ob a
+def Total (D : Displayed.{v₂, u₂} A) := Σ a : A, D.Ob a
 
 /-- An object of the total category. Its type is syntactically `D.Total`, so that `⟶`, `≫` and
 `𝟙` elaborate on it. -/
@@ -42,7 +42,7 @@ def tot {a : A} (x : D.Ob a) : D.Total := ⟨a, x⟩
 
 /-- A morphism in the total category of `D`: a base morphism together with a displayed morphism
 lying over it. -/
-structure Total.Hom {D : Displayed.{v₁, u₁, v₂, u₂} A} (x y : D.Total) where
+structure Total.Hom {D : Displayed.{v₂, u₂} A} (x y : D.Total) where
   /-- The base component. -/
   base : x.1 ⟶ y.1
   /-- The displayed component, lying over `base`. -/
@@ -137,7 +137,7 @@ end Total
 
 section DispFunctor
 
-variable {D} {B : Type u₃} [Category.{v₃} B] {u : A ⥤ B} {E : Displayed.{v₃, u₃, v₄, u₄} B}
+variable {D} {B : Type u₃} [Category.{v₃} B] {u : A ⥤ B} {E : Displayed.{v₄, u₄} B}
 
 /-- The functor between total categories induced by a displayed functor over `u`. -/
 def DispFunctor.total (H : DispFunctor u D E) : D.Total ⥤ E.Total where
@@ -154,7 +154,7 @@ end DispFunctor
 
 section Functors
 
-variable {D} {E : Displayed.{v₁, u₁, v₃, u₃} A}
+variable {D} {E : Displayed.{v₃, u₃} A}
 
 /-- The natural transformation between total functors induced by a vertical natural
 transformation. Its components lie over identities. -/

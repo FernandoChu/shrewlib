@@ -24,10 +24,10 @@ open scoped Displayed DoubleDisplayed
 
 namespace DoubleDisplayed
 
-variable {A : Type u₁} [Category.{v₁} A] {B : Displayed.{v₁, u₁, v₂, u₂} A}
+variable {A : Type u₁} [Category.{v₁} A] {B : Displayed.{v₂, u₂} A}
 
 /-- A morphism of the total construction: a `B`-morphism together with a `C`-morphism over it. -/
-structure Total.Hom (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) {a a' : A} (f : a ⟶ a')
+structure Total.Hom (C : DoubleDisplayed.{v₃, u₃} B) {a a' : A} (f : a ⟶ a')
     (x : Σ b : B.Ob a, C.Ob b) (y : Σ b : B.Ob a', C.Ob b) where
   /-- The `B`-component. -/
   base : x.1 ⟶[f] y.1
@@ -36,13 +36,13 @@ structure Total.Hom (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B)
 
 /-- The total construction: collapses the chain `C → B → A` to a single displayed category
 `C.total : Displayed A`. -/
-@[reducible] def total (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) : Displayed A where
+@[reducible] def total (C : DoubleDisplayed.{v₃, u₃} B) : Displayed A where
   Ob a := Σ b : B.Ob a, C.Ob b
   Hom f x y := Total.Hom C f x y
   id x := ⟨B.id x.1, C.id x.2⟩
   comp F G := ⟨F.base ≫ᵈ G.base, F.fiber ≫ᵈᵈ G.fiber⟩
 
-variable (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B)
+variable (C : DoubleDisplayed.{v₃, u₃} B)
 
 theorem total_Ob (a : A) : C.total.Ob a = Σ b : B.Ob a, C.Ob b := rfl
 
@@ -60,7 +60,7 @@ theorem total_Ob (a : A) : C.total.Ob a = Σ b : B.Ob a, C.Ob b := rfl
 
 /-- **`C` as a category displayed over the total category of `B`**: objects over `⟨a, b⟩` are the
 objects of `C` over `b`, and morphisms over `⟨f, g⟩` the morphisms of `C` over `g`. -/
-def uncurry : Displayed.{max v₁ v₂, max u₁ u₂, v₃, u₃} B.Total where
+def uncurry : Displayed.{v₃, u₃} B.Total where
   Ob x := C.Ob x.2
   Hom F c c' := C.Hom F.fiber c c'
   id c := C.id c

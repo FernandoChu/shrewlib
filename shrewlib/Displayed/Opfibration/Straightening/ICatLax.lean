@@ -109,7 +109,7 @@ end LaxTrans
 functor `A ⥤ Cat`, and a morphism over `u : A ⟶ B` from `F` to `G` is a lax transformation
 `LaxTrans F (u ⋙ G)`. Composition restricts the second transformation along the first base
 functor. -/
-def ICatLax : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
+def ICatLax : Displayed.{u, u + 1} Cat.{u, u} where
   Ob A := A ⥤ Cat.{u, u}
   Hom u F G := LaxTrans F (u.toFunctor ⋙ G)
   id F := LaxTrans.id F

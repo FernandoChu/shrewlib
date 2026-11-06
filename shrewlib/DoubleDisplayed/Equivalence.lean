@@ -40,8 +40,8 @@ namespace DoubleDisplayed
 
 open scoped DoubleDisplayed
 
-variable {A : Type u₁} [Category.{v₁} A] {B : Displayed.{v₁, u₁, v₂, u₂} A}
-  {C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B} {D : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₆, u₆} B}
+variable {A : Type u₁} [Category.{v₁} A] {B : Displayed.{v₂, u₂} A}
+  {C : DoubleDisplayed.{v₃, u₃} B} {D : DoubleDisplayed.{v₆, u₆} B}
 
 /-- A vertical natural transformation between vertical functors: its components lie over the
 identities of `B`, and it is natural with respect to morphisms over arbitrary morphisms of `B`. -/
@@ -127,8 +127,8 @@ end VertNatIso
 
 /-- **An equivalence over `B`** of doubly displayed categories: vertical functors both ways, with
 a unit and a counit that are vertical natural isomorphisms. -/
-structure VertEquivalence (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B)
-    (D : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₆, u₆} B) where
+structure VertEquivalence (C : DoubleDisplayed.{v₃, u₃} B)
+    (D : DoubleDisplayed.{v₆, u₆} B) where
   /-- The functor. -/
   functor : VertFunctor C D
   /-- The inverse functor. -/
@@ -142,9 +142,9 @@ structure VertEquivalence (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u�
 
 section Reindex
 
-variable {A' : Type u₄} [Category.{v₄} A'] {B' : Displayed.{v₄, u₄, v₅, u₅} A'} {u : A ⥤ A'}
-  (H : DispFunctor u B B') {C' : DoubleDisplayed.{v₄, u₄, v₅, u₅, v₃, u₃} B'}
-  {D' : DoubleDisplayed.{v₄, u₄, v₅, u₅, v₆, u₆} B'}
+variable {A' : Type u₄} [Category.{v₄} A'] {B' : Displayed.{v₅, u₅} A'} {u : A ⥤ A'}
+  (H : DispFunctor u B B') {C' : DoubleDisplayed.{v₃, u₃} B'}
+  {D' : DoubleDisplayed.{v₆, u₆} B'}
 
 /-- A vertical functor over `B'`, reindexed along `H`: the same actions on objects and
 morphisms. -/
@@ -152,7 +152,7 @@ def VertFunctor.reindex (F : VertFunctor C' D') : VertFunctor (C'.reindex H) (D'
   obj c := F.obj c
   map θ := F.map θ
 
-theorem VertFunctor.reindex_comp {E' : DoubleDisplayed.{v₄, u₄, v₅, u₅, v₃, u₃} B'}
+theorem VertFunctor.reindex_comp {E' : DoubleDisplayed.{v₃, u₃} B'}
     (F : VertFunctor C' D') (G : VertFunctor D' E') :
     (F.comp G).reindex H = (F.reindex H).comp (G.reindex H) := rfl
 
@@ -184,14 +184,14 @@ end Reindex
 
 section Over
 
-variable {B' : Displayed.{v₁, u₁, v₄, u₄} A} (e : Displayed.VertEquivalence B B')
+variable {B' : Displayed.{v₄, u₄} A} (e : Displayed.VertEquivalence B B')
 
 /-- **An equivalence over an equivalence `e : B ≃ B'`** between `C` over `B` and `D` over `B'`:
 doubly displayed functors over `e.functor` and `e.inverse`, a unit with components over those of
 the unit of `e`, and a counit with components over those of the counit of `e`, with inverses, both
 natural. -/
-structure EquivalenceOver (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B)
-    (D : DoubleDisplayed.{v₁, u₁, v₄, u₄, v₆, u₆} B') where
+structure EquivalenceOver (C : DoubleDisplayed.{v₃, u₃} B)
+    (D : DoubleDisplayed.{v₆, u₆} B') where
   /-- The functor. -/
   functor : DDFunctor e.functor C D
   /-- The inverse functor. -/

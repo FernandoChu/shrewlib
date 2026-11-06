@@ -32,7 +32,7 @@ variable {C : Type u} [Category.{v} C]
 
 /-- The terms of the type `A` in context `Γ`: the sections of its projection `𝐩 A`. -/
 @[ext]
-structure Tm (D : Displayed.{v, u, v₂, u₂} C) [Fib D] [Comprehension D] {Γ : C} (A : D.Ty Γ) where
+structure Tm (D : Displayed.{v₂, u₂} C) [Fib D] [Comprehension D] {Γ : C} (A : D.Ty Γ) where
   /-- The section. -/
   sec : Γ ⟶ Γ ▹ A
   /-- It is a section of the projection. -/
@@ -51,7 +51,7 @@ def delabTm : Delab := whenPPOption getPPNotation <| withOverApp 7 do
 
 namespace Tm
 
-variable {D : Displayed.{v, u, v₂, u₂} C} [Fib D] [Comprehension D] {Δ Γ : C} (σ : Δ ⟶ Γ)
+variable {D : Displayed.{v₂, u₂} C} [Fib D] [Comprehension D] {Δ Γ : C} (σ : Δ ⟶ Γ)
   {A : D.Ty Γ}
 
 /-- `σ ≫ t.sec`, as a morphism of `cod C` over `σ` from the identity of `Δ` to the projection of
@@ -89,7 +89,7 @@ end Tm
 
 namespace Tm
 
-variable {D : Displayed.{v, u, v₂, u₂} C} [SplitComprehension D] {Γ : C} {A : D.Ty Γ}
+variable {D : Displayed.{v₂, u₂} C} [SplitComprehension D] {Γ : C} {A : D.Ty Γ}
 
 /-- Substitution of terms along the identity is the identity. -/
 theorem pull_id (t : Tm(Γ, A)) : t⦃𝟙 Γ⦄ = t :=

@@ -55,33 +55,33 @@ open scoped Displayed
 /-! ## Examples -/
 
 /-- Substitution squares are pullbacks. -/
-recall Displayed.isPullback_q {C : Type u} [Category.{v} C] (D : Displayed.{v, u, v₂, u₂} C)
+recall Displayed.isPullback_q {C : Type u} [Category.{v} C] (D : Displayed.{v₂, u₂} C)
     [Fib D] [Comprehension D] {Δ Γ : C} (σ : Δ ⟶ Γ) (A : D.Ty Γ) :
     IsPullback 𝐪(σ, A) 𝐩 A⦃σ⦄ (𝐩 A) σ
 
 /-- Σ-types are stable under substitution. -/
-recall Displayed.pull_sigma {C : Type u} [Category.{v} C] (D : Displayed.{v, u, v₂, u₂} C)
+recall Displayed.pull_sigma {C : Type u} [Category.{v} C] (D : Displayed.{v₂, u₂} C)
     [Fib D] [Comprehension D] [PreSigma D] {Δ Γ : C} (σ : Δ ⟶ Γ) (A : D.Ty Γ)
     (B : D.Ty (Γ ▹ A)) : (Σ[A] B)⦃σ⦄ = Σ[A⦃σ⦄] B⦃𝐪(σ, A)⦄
 
 /-- Substitution of a term is the unique section over it along `𝐪(σ, A)`. -/
-recall Displayed.Tm.pull_unique {C : Type u} [Category.{v} C] {D : Displayed.{v, u, v₂, u₂} C}
+recall Displayed.Tm.pull_unique {C : Type u} [Category.{v} C] {D : Displayed.{v₂, u₂} C}
     [Fib D] [Comprehension D] {Δ Γ : C} (σ : Δ ⟶ Γ) {A : D.Ty Γ} (t : Tm(Γ, A))
     (s : Tm(Δ, A⦃σ⦄)) (h : s.sec ≫ 𝐪(σ, A) = σ ≫ t.sec) : s = t⦃σ⦄
 
 /-- Over a split fibration, substitution commutes with weakening. -/
-recall Displayed.pull_q_pull_proj {C : Type u} [Category.{v} C] (D : Displayed.{v, u, v₂, u₂} C)
+recall Displayed.pull_q_pull_proj {C : Type u} [Category.{v} C] (D : Displayed.{v₂, u₂} C)
     [PreSplitFib D] [Comprehension D] {Δ Γ : C} (σ : Δ ⟶ Γ) (B A : D.Ty Γ) :
     A⦃𝐩 B⦄⦃𝐪(σ, B)⦄ = A⦃σ⦄⦃𝐩 B⦃σ⦄⦄
 
 /-- Substitution of terms is written like that of types, and is functorial over a split
 comprehension category. -/
-recall Displayed.Tm.pull_comp {C : Type u} [Category.{v} C] {D : Displayed.{v, u, v₂, u₂} C}
+recall Displayed.Tm.pull_comp {C : Type u} [Category.{v} C] {D : Displayed.{v₂, u₂} C}
     [SplitComprehension D] {Γ : C} {A : D.Ty Γ} {Δ Θ : C} (τ : Θ ⟶ Δ) (σ : Δ ⟶ Γ)
     (t : Tm(Γ, A)) : t⦃τ ≫ σ⦄ = t⦃σ⦄⦃τ⦄
 
 /-- A universe classifies the types of `E`, naturally. -/
-recall Displayed.code_pull {C : Type u} [Category.{v} C] {D : Displayed.{v, u, v₂, u₂} C}
-    {E : Displayed.{v, u, v₂, u₂} C} [Fib D] [Comprehension D] [Fib E] [Comprehension E]
+recall Displayed.code_pull {C : Type u} [Category.{v} C] {D : Displayed.{v₂, u₂} C}
+    {E : Displayed.{v₂, u₂} C} [Fib D] [Comprehension D] [Fib E] [Comprehension E]
     (M : StrictComprehensionMap (𝟭 C) E D) [HasUniverse M] {Δ Γ : C} (σ : Δ ⟶ Γ)
     (A : E.Ty Γ) : (code M A)⦃σ⦄ = code M A⦃σ⦄

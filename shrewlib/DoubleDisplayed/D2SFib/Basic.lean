@@ -32,12 +32,12 @@ open CategoryTheory Displayed DoubleDisplayed
 
 open scoped Displayed DoubleDisplayed
 
-variable {A : Type u₁} [Category.{v₁} A] {B : Displayed.{v₁, u₁, v₂, u₂} A} [SplitOpfib B]
+variable {A : Type u₁} [Category.{v₁} A] {B : Displayed.{v₂, u₂} A} [SplitOpfib B]
 
 /-- A dependent 2-sided fibration structure (cloven) on a doubly displayed category `C` over a
 split opfibration `B`: chosen cartesian lifts along the vertical morphisms of `B`, and chosen
 opcartesian lifts over the chosen lifts of `B`. -/
-class D2SFib (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) where
+class D2SFib (C : DoubleDisplayed.{v₃, u₃} B) where
   /-- Chosen pullback along a vertical morphism `β : b ⟶ b'`. -/
   pull : {a : A} → {b b' : B.Ob a} → (β : b ⟶[𝟙 a] b') → C.Ob b' → C.Ob b
   /-- Chosen cartesian lift over `β`. -/
@@ -56,7 +56,7 @@ class D2SFib (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) where
 /-- A pre-split D2SFib: the chosen pullbacks and pushforwards are strictly functorial on objects
 and interchange. These axioms are rewrite rules. Its axioms default to `by intros; rfl`, as they
 hold definitionally in most instances. -/
-class PreSplitD2SFib (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) extends D2SFib C where
+class PreSplitD2SFib (C : DoubleDisplayed.{v₃, u₃} B) extends D2SFib C where
   pull_id : ∀ {a : A} {b : B.Ob a} (c : C.Ob b), pull (B.id b) c = c := by intros; rfl
   pull_comp : ∀ {a : A} {b b' b'' : B.Ob a} (β : b ⟶[𝟙 a] b') (γ : b' ⟶[𝟙 a] b'')
     (c : C.Ob b''), pull (β ≫ᵈ γ) c = pull β (pull γ c) := by intros; rfl
@@ -73,7 +73,7 @@ attribute [rewrite_rule] PreSplitD2SFib.pull_id PreSplitD2SFib.pull_comp PreSpli
 functorial and interchange. As for `SplitOpfib`, the pre-split structure is an instance field rather
 than a parent, so that its rules apply to the axioms on lifts. Its axioms default to
 `by intros; rfl`, as they hold definitionally in most instances. -/
-class SplitD2SFib (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B) where
+class SplitD2SFib (C : DoubleDisplayed.{v₃, u₃} B) where
   /-- The underlying pre-split D2SFib. -/
   [toPreSplitD2SFib : PreSplitD2SFib C]
   pullLift_id : ∀ {a : A} {b : B.Ob a} (c : C.Ob b), D2SFib.pullLift (B.id b) c = C.id c
@@ -103,7 +103,7 @@ attribute [rewrite_rule] SplitD2SFib.pullLift_id SplitD2SFib.pullLift_comp Split
 
 namespace D2SFib
 
-variable {C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B} [SplitD2SFib C]
+variable {C : DoubleDisplayed.{v₃, u₃} B} [SplitD2SFib C]
 
 section Interchange
 

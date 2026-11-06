@@ -20,8 +20,8 @@ namespace Displayed
 open scoped Displayed
 
 /-- **The fibres of the composite of displayed categories with discrete fibres are discrete.** -/
-theorem isDiscrete_sigmaDisp {A : Type u₁} [Category.{v₁} A] {D : Displayed.{v₁, u₁, v₂, u₂} A}
-    {E : Displayed.{max v₁ v₂, max u₁ u₂, v₃, u₃} D.Total} [∀ a, IsDiscrete (D.Fiber a)]
+theorem isDiscrete_sigmaDisp {A : Type u₁} [Category.{v₁} A] {D : Displayed.{v₂, u₂} A}
+    {E : Displayed.{v₃, u₃} D.Total} [∀ a, IsDiscrete (D.Fiber a)]
     [∀ p, IsDiscrete (E.Fiber p)] (a : A) : IsDiscrete ((D.sigmaDisp E).Fiber a) where
   subsingleton := by
     rintro ⟨x, b⟩ ⟨x', b'⟩

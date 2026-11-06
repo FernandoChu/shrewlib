@@ -62,7 +62,7 @@ variable {Γ : Cat.{u, u}}
 /-- The displayed category of the twist of `C`: the unstraightening of `C`, a dependent profunctor
 over `B`, displayed over the total category `Γ ▹ B` of `∫ B`. -/
 def twistDisp {B : ICatLax.{u}.Ty Γ} (C : ICatLax.{u}.Ty (Γ ▹ Bᵒᵖ)) :
-    Displayed.{u, u, u, u} ((Γ ▹ B : Cat.{u, u}) : Type u) :=
+    Displayed.{u, u} ((Γ ▹ B : Cat.{u, u}) : Type u) :=
   (DoubleDisplayed.D2SFib.Straightening.Unstraightening (F := (B : Γ ⥤ Cat.{u, u})) C).uncurry
 
 /-- **The twist of a type `C` in context `Γ ▹ Bᵒᵖ`** (Twist): the type of the displayed model of

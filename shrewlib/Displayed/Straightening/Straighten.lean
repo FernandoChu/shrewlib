@@ -23,7 +23,7 @@ open scoped Displayed Profunctor
 
 section Straighten
 
-variable {A : Cat.{u, u}} (D : Displayed.{u, u, u, u} A)
+variable {A : Cat.{u, u}} (D : Displayed.{u, u} A)
 
 /-- The profunctor `D.Fiber a ⇸ D.Fiber a'` of the morphisms over `f`, on which the vertical
 morphisms act by displayed composition. -/
@@ -85,7 +85,7 @@ variable {D}
 
 /-- The straightening of a displayed functor over `u`: the transformation with the same
 components. -/
-def straightenMap {B : Cat.{u, u}} {u : A ⟶ B} {E : Displayed.{u, u, u, u} B}
+def straightenMap {B : Cat.{u, u}} {u : A ⟶ B} {E : Displayed.{u, u} B}
     (H : DisplayedCat.Hom u D E) : ReprHom u (straightenObj D) (straightenObj E) where
   obj x := H.obj x
   map s := H.map s

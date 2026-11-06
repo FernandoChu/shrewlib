@@ -17,8 +17,8 @@ namespace DoubleDisplayed
 
 open scoped Displayed DoubleDisplayed
 
-variable {A : Type u₁} [Category.{v₁} A] {B : Displayed.{v₁, u₁, v₂, u₂} A}
-  (C : DoubleDisplayed.{v₁, u₁, v₂, u₂, v₃, u₃} B)
+variable {A : Type u₁} [Category.{v₁} A] {B : Displayed.{v₂, u₂} A}
+  (C : DoubleDisplayed.{v₃, u₃} B)
 
 section Opcartesian
 

@@ -63,13 +63,13 @@ open scoped Displayed
 variable {C : Type u} [Category.{v} C]
 
 /-- The types in context `Γ`: the objects of `D` over `Γ`. -/
-abbrev Ty (D : Displayed.{v, u, v₂, u₂} C) (Γ : C) : Type u₂ := D.Ob Γ
+abbrev Ty (D : Displayed.{v₂, u₂} C) (Γ : C) : Type u₂ := D.Ob Γ
 
 /-- A comprehension category structure on a cloven fibration `D` over `C`: a vertical functor to
 the codomain displayed category `cod C` that preserves cartesian morphisms, that is, sends them to
 pullback squares. It takes the cleavage as a parameter, so that the same class serves for split
 comprehension categories, over a `SplitFib D`. -/
-class Comprehension (D : Displayed.{v, u, v₂, u₂} C) [Fib D] where
+class Comprehension (D : Displayed.{v₂, u₂} C) [Fib D] where
   /-- The comprehension functor. -/
   compr : VertFunctor D (cod C)
   /-- The comprehension functor preserves cartesian morphisms. -/
@@ -78,7 +78,7 @@ class Comprehension (D : Displayed.{v, u, v₂, u₂} C) [Fib D] where
 /-- A comprehension category is *full* if its comprehension functor is fully faithful. This is
 the data of an inverse on each displayed hom-type (`VertFunctor.FullyFaithful`), over a
 `Comprehension D`, so that it combines with `SplitComprehension D`. -/
-class FullComprehension (D : Displayed.{v, u, v₂, u₂} C) [Fib D] [Comprehension D] where
+class FullComprehension (D : Displayed.{v₂, u₂} C) [Fib D] [Comprehension D] where
   /-- The comprehension functor is fully faithful. -/
   comprFullyFaithful : (Comprehension.compr (D := D)).FullyFaithful
 
@@ -86,7 +86,7 @@ class FullComprehension (D : Displayed.{v, u, v₂, u₂} C) [Fib D] [Comprehens
 `SplitFib`, the split fibration is an instance field, so that the comprehension structure is
 stated over it. A full split comprehension category is a `SplitComprehension D` with
 `FullComprehension D`. -/
-class SplitComprehension (D : Displayed.{v, u, v₂, u₂} C) where
+class SplitComprehension (D : Displayed.{v₂, u₂} C) where
   /-- The underlying split fibration. -/
   [toSplitFib : SplitFib D]
   /-- The comprehension structure. -/
@@ -98,7 +98,7 @@ attribute [instance_reducible, instance] SplitComprehension.toSplitFib
 /-- A comprehension structure from a vertical functor that sends the chosen lifts to cartesian
 morphisms. -/
 @[instance_reducible]
-def Comprehension.ofClift {D : Displayed.{v, u, v₂, u₂} C} [Fib D] (P : VertFunctor D (cod C))
+def Comprehension.ofClift {D : Displayed.{v₂, u₂} C} [Fib D] (P : VertFunctor D (cod C))
     (hP : ∀ {a a' : C} (f : a ⟶ a') (y : D.Ob a'), IsCartesian (P.map (D.clift f y))) :
     Comprehension D where
   compr := P
@@ -107,7 +107,7 @@ def Comprehension.ofClift {D : Displayed.{v, u, v₂, u₂} C} [Fib D] (P : Vert
 /-- The comprehension structure pulled back along a vertical functor `E : D ⟶ D'` that preserves
 cartesian morphisms: its comprehension functor is `E ⋙ᵥ compr`. -/
 @[instance_reducible]
-def Comprehension.comap {D : Displayed.{v, u, v₂, u₂} C} {D' : Displayed.{v, u, v₃, u₃} C} [Fib D]
+def Comprehension.comap {D : Displayed.{v₂, u₂} C} {D' : Displayed.{v₃, u₃} C} [Fib D]
     [Fib D'] [Comprehension D'] (E : VertFunctor D D') (hE : E.PreservesCartesian) :
     Comprehension D where
   compr := E ⋙ᵥ Comprehension.compr (D := D')
@@ -115,7 +115,7 @@ def Comprehension.comap {D : Displayed.{v, u, v₂, u₂} C} {D' : Displayed.{v,
 
 section Comprehension
 
-variable (D : Displayed.{v, u, v₂, u₂} C) [Fib D] [Comprehension D] {a a' : C}
+variable (D : Displayed.{v₂, u₂} C) [Fib D] [Comprehension D] {a a' : C}
 
 /-- The comprehension functor of `D`. -/
 def compr : VertFunctor D (cod C) := Comprehension.compr
@@ -224,7 +224,7 @@ def unexpandQ : Lean.PrettyPrinter.Unexpander
 
 section Substitution
 
-variable (D : Displayed.{v, u, v₂, u₂} C) [Fib D] [Comprehension D] {Δ Γ : C}
+variable (D : Displayed.{v₂, u₂} C) [Fib D] [Comprehension D] {Δ Γ : C}
 
 theorem q_proj (σ : Δ ⟶ Γ) (A : D.Ty Γ) : 𝐪(σ, A) ≫ 𝐩 A = 𝐩 A⦃σ⦄ ≫ σ :=
   D.extMap_proj (D.clift σ A)
@@ -237,7 +237,7 @@ end Substitution
 
 section Weakening
 
-variable (D : Displayed.{v, u, v₂, u₂} C) [PreSplitFib D] [Comprehension D] {Δ Γ : C}
+variable (D : Displayed.{v₂, u₂} C) [PreSplitFib D] [Comprehension D] {Δ Γ : C}
 
 /-- **Substitution commutes with weakening**: `A⦃𝐩 B⦄⦃𝐪(σ, B)⦄ = A⦃σ⦄⦃𝐩 B⦃σ⦄⦄`. Over a split
 fibration, both sides are the substitution along a side of the square `q_proj`. It is a rewrite
@@ -257,7 +257,7 @@ end Weakening
 
 section FullComprehension
 
-variable (D : Displayed.{v, u, v₂, u₂} C) [Fib D] [Comprehension D] [FullComprehension D]
+variable (D : Displayed.{v₂, u₂} C) [Fib D] [Comprehension D] [FullComprehension D]
   {a a' : C}
 
 /-- In a full comprehension category, morphisms over `f` are the morphisms between extended

@@ -39,7 +39,7 @@ variable {A : Type u₁} [Category.{v₁} A]
 
 /-- **The unstraightening of `F : Aᵒᵖ ⥤ Cat`**: objects over `a` are the objects of `F (op a)`,
 and morphisms `x ⟶[f] y` are the morphisms `x ⟶ F f y`. -/
-def unstraightenObj (F : Aᵒᵖ ⥤ Cat.{v, u}) : Displayed.{v₁, u₁, v, u} A where
+def unstraightenObj (F : Aᵒᵖ ⥤ Cat.{v, u}) : Displayed.{v, u} A where
   Ob a := F.obj (op a)
   Hom f x y := x ⟶ (F.map f.op).toFunctor.obj y
   id x := 𝟙 x

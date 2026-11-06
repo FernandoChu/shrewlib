@@ -37,8 +37,8 @@ namespace Displayed
 
 open scoped Displayed
 
-variable {C : Type u} [Category.{v} C] {D : Displayed.{v, u, v₂, u₂} C}
-  {E : Displayed.{v, u, v₃, u₃} C} [Fib D] [Comprehension D] [Fib E] [Comprehension E]
+variable {C : Type u} [Category.{v} C] {D : Displayed.{v₂, u₂} C}
+  {E : Displayed.{v₃, u₃} C} [Fib D] [Comprehension D] [Fib E] [Comprehension E]
 
 /-- A universe in `D` for the types of `E` along `M`: a type `univ Γ` of `D` in every context,
 stable under substitution on the nose. The stability is a rewrite rule, stated with `Fib.pull`, on

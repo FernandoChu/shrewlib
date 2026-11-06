@@ -40,7 +40,7 @@ recall Displayed.DisplayedCat.totalFullyFaithful : DisplayedCat.total.{u}.FullyF
 
 /-- Taking total categories sends the chosen lifts of `DisplayedCat` to pullback squares. -/
 recall Displayed.DisplayedCat.isCartesianTotalMapClift {A B : Cat.{u, u}} {u : A ⟶ B}
-    {E : Displayed.{u, u, u, u} B} :
+    {E : Displayed.{u, u} B} :
     IsCartesian (DisplayedCat.total.map (DisplayedCat.clift u E))
 
 /-- `cod Cat` is a fibration, by transfer along `DisplayedCat.codEquiv`. It is not split. -/

@@ -40,7 +40,9 @@ it up to date when a folder's content changes.
   says what the file defines and why: which equations are rules, how they are oriented, and what
   holds by `rfl` as a result. Read it before editing the file. Every declaration has a docstring.
 - Lines are at most 100 characters. Proofs follow Mathlib's style. Universes are named
-  `v₁ u₁ v₂ u₂ …`, and notation such as `⟶[f]`, `≫ᵈ`, `𝟙ᵈ` is used through
+  `v₁ u₁ v₂ u₂ …`. `Displayed` and `DoubleDisplayed` take their own universes first, as
+  `Category.{v}`: write `Displayed.{v₂, u₂} A` and `DoubleDisplayed.{v₃, u₃} B`, leaving those of
+  the base to be inferred. Notation such as `⟶[f]`, `≫ᵈ`, `𝟙ᵈ` is used through
   `open scoped Displayed` (or `DoubleDisplayed`).
 - No `sorry`, no new axioms, no `noncomputable`. Factorizations are data (as in `IsOpcartesian`)
   rather than `∃!` so that constructions from them compute and reduce.

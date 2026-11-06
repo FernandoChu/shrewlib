@@ -233,7 +233,7 @@ end ReprHom
 
 /-- `LaxNormalCat`, displayed over `Cat`: the lax normal functors from `A` into profunctors over
 `A`, and the transformations with representable components over `u : A ⟶ B`. -/
-def LaxNormalCat : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
+def LaxNormalCat : Displayed.{u, u + 1} Cat.{u, u} where
   Ob := LaxNormal
   Hom := ReprHom
   id _ :=

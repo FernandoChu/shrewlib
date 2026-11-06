@@ -24,8 +24,8 @@ namespace Displayed
 
 open scoped Displayed
 
-variable {A : Type u₁} [Category.{v₁} A] {D : Displayed.{v₁, u₁, v₂, u₂} A}
-  {E : Displayed.{max v₁ v₂, max u₁ u₂, v₃, u₃} D.Total}
+variable {A : Type u₁} [Category.{v₁} A] {D : Displayed.{v₂, u₂} A}
+  {E : Displayed.{v₃, u₃} D.Total}
 
 section Opfib
 

@@ -51,7 +51,7 @@ theorem IDiscOb.ext {A : Cat.{w, w}} {X Y : IDiscOb.{u} A} (h : X.toFunctor = Y.
 
 /-- The indexed discrete categories, displayed over `Cat`: the full subcategory of `ICatLax` on the
 functors into discrete categories. -/
-def IDisc : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
+def IDisc : Displayed.{u, u + 1} Cat.{u, u} where
   Ob A := IDiscOb.{u} A
   Hom u X Y := ICatLax.Hom u X.toFunctor Y.toFunctor
   id X := ICatLax.id X.toFunctor

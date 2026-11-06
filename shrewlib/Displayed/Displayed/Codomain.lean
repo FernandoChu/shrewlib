@@ -45,7 +45,7 @@ variable (C)
 
 /-- The codomain displayed category: the arrow category of `C`, displayed over `C` by the
 codomain. -/
-def cod : Displayed.{v, u, v, max u v} C where
+def cod : Displayed.{v, max u v} C where
   Ob := CodOb C
   Hom := CodHom
   id x := ⟨𝟙 x.dom, rfl⟩

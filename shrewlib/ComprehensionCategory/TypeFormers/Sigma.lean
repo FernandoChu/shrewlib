@@ -49,7 +49,7 @@ variable {C : Type u} [Category.{v} C]
 /-- Σ-type formers on a comprehension category, stable under substitution on the nose. The
 stability is a rewrite rule. It is stated with `Fib.pull`, on which the rules for substitution are
 keyed, rather than with `D.pull`, for which `pull_sigma` below is the rule. -/
-class PreSigma (D : Displayed.{v, u, v₂, u₂} C) [Fib D] [Comprehension D] where
+class PreSigma (D : Displayed.{v₂, u₂} C) [Fib D] [Comprehension D] where
   /-- The Σ-type `Σ[A] B` in context `Γ` of `B` in context `Γ ▹ A`. -/
   sigma : ∀ {Γ : C} (A : D.Ty Γ), D.Ty (Γ ▹ A) → D.Ty Γ
   /-- Stability under substitution: `(Σ[A] B)⦃σ⦄ = Σ[A⦃σ⦄] B⦃𝐪(σ, A)⦄`. -/
@@ -60,7 +60,7 @@ attribute [rewrite_rule] PreSigma.pull_sigma
 
 section
 
-variable (D : Displayed.{v, u, v₂, u₂} C) [Fib D] [Comprehension D] [PreSigma D]
+variable (D : Displayed.{v₂, u₂} C) [Fib D] [Comprehension D] [PreSigma D]
 
 /-- The Σ-type `Σ[A] B` of `B` in context `Γ ▹ A`. -/
 @[reducible] def sigma {Γ : C} (A : D.Ty Γ) (B : D.Ty (Γ ▹ A)) : D.Ty Γ :=
@@ -84,7 +84,7 @@ end
 
 /-- Σ-types on a comprehension category: Σ-type formers with isomorphisms of contexts
 `Γ ▹ A ▹ B ≅ Γ ▹ Σ[A] B` over `Γ`, stable under substitution. -/
-class HasSigma (D : Displayed.{v, u, v₂, u₂} C) [Fib D] [Comprehension D] where
+class HasSigma (D : Displayed.{v₂, u₂} C) [Fib D] [Comprehension D] where
   /-- The underlying Σ-type formers. -/
   [toPreSigma : PreSigma D]
   /-- The pairing isomorphism `Γ ▹ A ▹ B ⟶ Γ ▹ Σ[A] B`. -/
@@ -103,7 +103,7 @@ attribute [instance_reducible, instance] HasSigma.toPreSigma
 
 section
 
-variable (D : Displayed.{v, u, v₂, u₂} C) [Fib D] [Comprehension D] [HasSigma D] {Γ : C}
+variable (D : Displayed.{v₂, u₂} C) [Fib D] [Comprehension D] [HasSigma D] {Γ : C}
   (A : D.Ty Γ) (B : D.Ty (Γ ▹ A))
 
 /-- The isomorphism of contexts `Γ ▹ A ▹ B ≅ Γ ▹ Σ[A] B`. -/
@@ -127,8 +127,8 @@ end
 
 section Preservation
 
-variable {C' : Type u₃} [Category.{v₃} C'] {F : C ⥤ C'} {D : Displayed.{v, u, v₂, u₂} C}
-  {E : Displayed.{v₃, u₃, v₄, u₄} C'} [Fib D] [Comprehension D] [HasSigma D] [Fib E]
+variable {C' : Type u₃} [Category.{v₃} C'] {F : C ⥤ C'} {D : Displayed.{v₂, u₂} C}
+  {E : Displayed.{v₄, u₄} C'} [Fib D] [Comprehension D] [HasSigma D] [Fib E]
   [Comprehension E] [HasSigma E]
 
 /-- A strict map of comprehension categories *preserves Σ-types strictly* if it sends Σ-types to

@@ -26,7 +26,7 @@ open scoped Displayed
 fibres are discrete. -/
 structure DiscOpfibOb (A : Cat.{u, u}) where
   /-- The displayed category. -/
-  toDisplayed : Displayed.{u, u, u, u} A
+  toDisplayed : Displayed.{u, u} A
   /-- Its split opcleavage. -/
   [splitOpfib : SplitOpfib toDisplayed]
   /-- Its fibres are discrete. -/
@@ -36,7 +36,7 @@ attribute [instance] DiscOpfibOb.splitOpfib DiscOpfibOb.isDiscrete
 
 /-- The discrete opfibrations, displayed over `Cat`: an object over `A` is a discrete opfibration
 over `A`, and a morphism over `u` is a displayed functor over `u`. -/
-def DiscOpfibCat : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
+def DiscOpfibCat : Displayed.{u, u + 1} Cat.{u, u} where
   Ob A := DiscOpfibOb A
   Hom u X Y := DispFunctor u.toFunctor X.toDisplayed Y.toDisplayed
   id X := DispFunctor.id X.toDisplayed

@@ -50,8 +50,8 @@ recall Displayed.VertEquivalence.fib {A : Type u₁} [Category.{v₁} A] {D E : 
 
 /-- Split fibrations compose: for `D` over `A` and `E` over `D.Total`, the composite is a split
 fibration over `A`. -/
-recall Displayed.sigmaSplitFib {A : Type u₁} [Category.{v₁} A] {D : Displayed.{v₁, u₁, v₂, u₂} A}
-    {E : Displayed.{max v₁ v₂, max u₁ u₂, v₃, u₃} D.Total} [SplitFib D] [SplitFib E] :
+recall Displayed.sigmaSplitFib {A : Type u₁} [Category.{v₁} A] {D : Displayed.{v₂, u₂} A}
+    {E : Displayed.{v₃, u₃} D.Total} [SplitFib D] [SplitFib E] :
     SplitFib (D.sigmaDisp E)
 
 /-- The cartesian morphisms of `cod C` are the pullback squares. -/

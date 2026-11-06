@@ -25,7 +25,7 @@ open scoped Displayed
 /-- A split opfibration over `A`: a displayed category over `A` with a split opcleavage. -/
 structure SplitOpfibOb (A : Cat.{v₁, u₁}) where
   /-- The displayed category. -/
-  toDisplayed : Displayed.{v₁, u₁, v₂, u₂} A
+  toDisplayed : Displayed.{v₂, u₂} A
   /-- Its split opcleavage. -/
   [splitOpfib : SplitOpfib toDisplayed]
 
@@ -34,7 +34,7 @@ attribute [instance] SplitOpfibOb.splitOpfib
 /-- The split opfibrations, displayed over `Cat`: an object over `A` is a split opfibration over
 `A`, and a morphism over `u` is a displayed functor over `u`, with no condition on the
 opcleavages. -/
-def SplitOpfibLax : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
+def SplitOpfibLax : Displayed.{u, u + 1} Cat.{u, u} where
   Ob A := SplitOpfibOb.{u, u, u, u} A
   Hom u X Y := DispFunctor u.toFunctor X.toDisplayed Y.toDisplayed
   id X := DispFunctor.id X.toDisplayed

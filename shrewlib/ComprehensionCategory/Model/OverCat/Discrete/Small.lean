@@ -53,7 +53,7 @@ theorem liftDisc_pull (σ : Δ ⟶ Γ) (A : IDiscOb.{v} Γ) :
 /-- **The discrete types of level `v`** over the contexts of level `v + 1`, displayed over
 `Cat.{v + 1, v + 1}`: the functors `Γ ⥤ Cat.{v, v}` into discrete categories, with the morphisms of
 the category model between their lifts. -/
-def SmallIDisc : Displayed.{v + 1, v + 2, v + 1, v + 1} Cat.{v + 1, v + 1} where
+def SmallIDisc : Displayed.{v + 1, v + 1} Cat.{v + 1, v + 1} where
   Ob Γ := IDiscOb.{v} Γ
   Hom u A B := ICatLax.Hom u (CatModel.lift A.toFunctor) (CatModel.lift B.toFunctor)
   id A := ICatLax.id (CatModel.lift A.toFunctor)

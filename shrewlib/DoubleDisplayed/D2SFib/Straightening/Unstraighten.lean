@@ -236,7 +236,7 @@ morphisms over `g : (∫ F).Hom α b b'` are those of `P(a', F(α)b)` from `P(α
 for `β` the opcartesian factorization of `g`, and the composite of `θ` and `θ'` over `g` and `g'` is
 `P(α',id)θ ≫ P(id, F(α')β)θ'`. -/
 def Unstraightening (P : (∫ (F ⋙ opFunctor')).Total ⥤ Cat.{v₃, u₃}) :
-    DoubleDisplayed.{v₁, u₁, u, u, v₃, u₃} (∫ F) where
+    DoubleDisplayed.{v₃, u₃} (∫ F) where
   Ob b := P.obj ((∫ (F ⋙ opFunctor')).tot b)
   Hom {_ _ α b _} g c c' := hobj P α b c ⟶ vobj P ((∫ F).opcartesianFactor g) c'
   id c := 𝟙 c

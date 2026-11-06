@@ -56,7 +56,7 @@ open scoped Displayed
 
 section Opcartesian
 
-variable {D : Displayed.{v₁, u₁, v₂, u₂} A}
+variable {D : Displayed.{v₂, u₂} A}
 
 /-- `φ : x ⟶[f] y` is *opcartesian*: every displayed map out of `x` over `f ≫ g` factors uniquely
 through `φ` by a displayed map over `g`. (This is the *strong* opcartesian property.) The
@@ -105,13 +105,13 @@ end IsOpcartesian
 /-- A displayed functor *preserves opcartesian morphisms* if it sends opcartesian morphisms to
 opcartesian morphisms; since `IsOpcartesian` is data, this is a function on the factorizations. -/
 abbrev DispFunctor.PreservesOpcartesian {B : Type u₄} [Category.{v₄} B] {u : A ⥤ B}
-    {E : Displayed.{v₄, u₄, v₅, u₅} B} (F : DispFunctor u D E) : Type _ :=
+    {E : Displayed.{v₅, u₅} B} (F : DispFunctor u D E) : Type _ :=
   ∀ {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f] y},
     IsOpcartesian φ → IsOpcartesian (F.map φ)
 
 namespace VertEquivalence
 
-variable {E : Displayed.{v₁, u₁, v₃, u₃} A} (e : VertEquivalence D E)
+variable {E : Displayed.{v₃, u₃} A} (e : VertEquivalence D E)
 
 /-- **A vertical equivalence preserves opcartesian morphisms.** The factorization of `χ` is the
 image of the factorization of the preimage of `χ`, followed by the counit. -/
@@ -144,7 +144,7 @@ end Opcartesian
 
 /-- A (cloven) opfibration structure on a displayed category: a chosen opcartesian lift of every
 base morphism at every object over its domain. -/
-class Opfib (D : Displayed.{v₁, u₁, v₂, u₂} A) where
+class Opfib (D : Displayed.{v₂, u₂} A) where
   /-- The chosen pushforward of `x` along `f`. -/
   push : {a a' : A} → (f : a ⟶ a') → D.Ob a → D.Ob a'
   /-- The chosen opcartesian lift of `f` at `x`. -/
@@ -155,7 +155,7 @@ class Opfib (D : Displayed.{v₁, u₁, v₂, u₂} A) where
 /-- A pre-split opfibration: an opfibration whose chosen pushforwards are strictly functorial on
 objects. These axioms are rewrite rules. Its axioms default to `by intros; rfl`, as they hold
 definitionally in most instances. -/
-class PreSplitOpfib (D : Displayed.{v₁, u₁, v₂, u₂} A) extends Opfib D where
+class PreSplitOpfib (D : Displayed.{v₂, u₂} A) extends Opfib D where
   push_id : ∀ {a : A} (x : D.Ob a), push (𝟙 a) x = x := by intros; rfl
   push_comp : ∀ {a a' a'' : A} (f : a ⟶ a') (g : a' ⟶ a'') (x : D.Ob a),
     push (f ≫ g) x = push g (push f x) := by intros; rfl
@@ -169,7 +169,7 @@ local variables while the later fields are elaborated, so the rules `push_id` an
 would not apply to them. As a field, `push` is `Opfib.push` of an instance, the axioms on objects
 hold definitionally, and the axioms on lifts are plain equations. Its axioms default to
 `by intros; rfl`, as they hold definitionally in most instances. -/
-class SplitOpfib (D : Displayed.{v₁, u₁, v₂, u₂} A) where
+class SplitOpfib (D : Displayed.{v₂, u₂} A) where
   /-- The underlying pre-split opfibration. -/
   [toPreSplitOpfib : PreSplitOpfib D]
   /-- The lift of the identity is the displayed identity. -/
@@ -186,7 +186,7 @@ attribute [rewrite_rule] SplitOpfib.olift_id SplitOpfib.olift_comp
 
 section Lift
 
-variable (D : Displayed.{v₁, u₁, v₂, u₂} A) [Opfib D]
+variable (D : Displayed.{v₂, u₂} A) [Opfib D]
 
 /-- The chosen pushforward of `x` along `f`, viewed as an object of the fiber over `a'`. -/
 @[reducible] def push {a a' : A} (f : a ⟶ a') (x : D.Ob a) : D.Fiber a' :=
@@ -203,7 +203,7 @@ end Lift
 
 section LiftPreSplit
 
-variable (D : Displayed.{v₁, u₁, v₂, u₂} A) [PreSplitOpfib D]
+variable (D : Displayed.{v₂, u₂} A) [PreSplitOpfib D]
 
 @[rewrite_rule]
 theorem push_id {a : A} (x : D.Ob a) : D.push (𝟙 a) x = x :=
@@ -218,7 +218,7 @@ end LiftPreSplit
 
 section LiftSplit
 
-variable (D : Displayed.{v₁, u₁, v₂, u₂} A) [SplitOpfib D]
+variable (D : Displayed.{v₂, u₂} A) [SplitOpfib D]
 
 @[rewrite_rule]
 theorem olift_id {a : A} (x : D.Ob a) : D.olift (𝟙 a) x = 𝟙ᵈ x := SplitOpfib.olift_id x
@@ -233,7 +233,7 @@ end LiftSplit
 
 section Factor
 
-variable (D : Displayed.{v₁, u₁, v₂, u₂} A) [Opfib D] {a a' a'' : A}
+variable (D : Displayed.{v₂, u₂} A) [Opfib D] {a a' a'' : A}
 
 /-- Vertical factorization: any `φ : x ⟶[f] y` factors through the chosen lift `olift f x` by a
 vertical morphism `push f x ⟶ y`. -/
@@ -292,7 +292,7 @@ end Factor
 
 section FactorSplit
 
-variable (D : Displayed.{v₁, u₁, v₂, u₂} A) [SplitOpfib D] {a : A}
+variable (D : Displayed.{v₂, u₂} A) [SplitOpfib D] {a : A}
 
 /-- The factorization of a vertical morphism is the morphism itself. -/
 @[rewrite_rule]
@@ -305,7 +305,7 @@ end FactorSplit
 
 section PushMap
 
-variable (D : Displayed.{v₁, u₁, v₂, u₂} A) [Opfib D] {a a' a'' : A}
+variable (D : Displayed.{v₂, u₂} A) [Opfib D] {a a' a'' : A}
 
 /-- Transport of a vertical morphism along `f`. -/
 irreducible_def pushMap (f : a ⟶ a') {x y : D.Fiber a} (β : x ⟶ y) :
@@ -350,7 +350,7 @@ end PushMap
 
 section PushMapSplit
 
-variable (D : Displayed.{v₁, u₁, v₂, u₂} A) [SplitOpfib D] {a a' a'' : A}
+variable (D : Displayed.{v₂, u₂} A) [SplitOpfib D] {a a' a'' : A}
 
 /-- Transport along the identity is the identity. -/
 theorem pushMap_id {x y : D.Fiber a} (β : x ⟶ y) : D.pushMap (𝟙 a) β = β :=
@@ -388,7 +388,7 @@ end PushMapSplit
 
 section Interchange
 
-variable (D : Displayed.{v₁, u₁, v₂, u₂} A) [Opfib D] {a a' a'' : A}
+variable (D : Displayed.{v₂, u₂} A) [Opfib D] {a a' a'' : A}
 
 /-- Interchange of a vertical morphism with a chosen lift, oriented so that the lift comes first. -/
 theorem vert_olift (f : a ⟶ a') {x y : D.Fiber a} (β : x ⟶ y) :
@@ -423,7 +423,7 @@ end Interchange
 
 section Total
 
-variable (D : Displayed.{v₁, u₁, v₂, u₂} A) [Opfib D] {a a' a'' : A}
+variable (D : Displayed.{v₂, u₂} A) [Opfib D] {a a' a'' : A}
 
 /-- The chosen opcartesian morphisms of the total category. -/
 def totalOlift (f : a ⟶ a') (x : D.Ob a) : D.tot x ⟶ D.tot (D.push f x) := ⟨f, D.olift f x⟩
@@ -449,7 +449,7 @@ end Total
 
 section TotalSplit
 
-variable (D : Displayed.{v₁, u₁, v₂, u₂} A) [SplitOpfib D] {a a' a'' : A}
+variable (D : Displayed.{v₂, u₂} A) [SplitOpfib D] {a a' a'' : A}
 
 /-! The chosen lifts of a split `D` in `D.Total` are split, as rules: rules keyed on the
 identities and composites of `D.Total` then apply to `totalOlift (𝟙 a) x` and
@@ -468,7 +468,7 @@ end TotalSplit
 
 section Transfer
 
-variable {D : Displayed.{v₁, u₁, v₂, u₂} A} {E : Displayed.{v₁, u₁, v₃, u₃} A}
+variable {D : Displayed.{v₂, u₂} A} {E : Displayed.{v₃, u₃} A}
 
 /-- An opcleavage transfers along an equivalence over `A`: the chosen lift at `x` is the inverse
 of the counit, followed by the image of the chosen lift at `G x`. -/

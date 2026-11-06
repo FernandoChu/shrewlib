@@ -26,11 +26,11 @@ namespace Displayed
 
 open scoped Displayed
 
-variable {A : Type u₁} [Category.{v₁} A] (B : Displayed.{v₁, u₁, v₂, u₂} A) [SplitOpfib B]
+variable {A : Type u₁} [Category.{v₁} A] (B : Displayed.{v₂, u₂} A) [SplitOpfib B]
 
 /-- The fiberwise opposite of a split opfibration `B`: same objects; a morphism over `f : a ⟶ a'`
 from `x` to `y` is a vertical morphism `y ⟶ B.push f x`. -/
-@[reducible] def dualOp : Displayed.{v₁, u₁, v₂, u₂} A where
+@[reducible] def dualOp : Displayed.{v₂, u₂} A where
   Ob := B.Ob
   Hom {_ a'} f x y := @Quiver.Hom (B.Fiber a') _ y (B.push f x)
   id {a} x := 𝟙 (show B.Fiber a from x)

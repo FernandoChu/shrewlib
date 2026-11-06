@@ -41,7 +41,7 @@ theorem lift_pull (σ : Δ ⟶ Γ) (A : Γ ⥤ Cat.{v, v}) : lift (σ.toFunctor 
 /-- **The types of level `v`** over the contexts of level `v + 1`, displayed over
 `Cat.{v + 1, v + 1}`: the functors `Γ ⥤ Cat.{v, v}`, with the morphisms of the category model
 between their lifts. -/
-def SmallICat : Displayed.{v + 1, v + 2, v + 1, v + 1} Cat.{v + 1, v + 1} where
+def SmallICat : Displayed.{v + 1, v + 1} Cat.{v + 1, v + 1} where
   Ob Γ := Γ ⥤ Cat.{v, v}
   Hom u A B := ICatLax.Hom u (lift A) (lift B)
   id A := ICatLax.id (lift A)

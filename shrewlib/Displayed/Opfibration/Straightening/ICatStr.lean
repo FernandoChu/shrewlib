@@ -117,7 +117,7 @@ end StrictTrans
 `Cat`. An object over `A` is a functor `A ⥤ Cat`, and a morphism over `u : A ⟶ A'` from `F` to `G`
 is a strict transformation `StrictTrans F (u ⋙ G)`. Composition restricts the second
 transformation along the first base functor. -/
-def ICatStr : Displayed.{u, u + 1, u, u + 1} Cat.{u, u} where
+def ICatStr : Displayed.{u, u + 1} Cat.{u, u} where
   Ob A := A ⥤ Cat.{u, u}
   Hom u F G := StrictTrans F (u.toFunctor ⋙ G)
   id F := StrictTrans.id F
