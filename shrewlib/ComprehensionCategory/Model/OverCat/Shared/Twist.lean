@@ -25,8 +25,8 @@ So `C` is, as it is, a dependent profunctor over `B`: a functor
 The unstraightening `Unstraightening C` is a split D2SFib over `∫ B`
 (`DoubleDisplayed/D2SFib/Straightening/Unstraighten.lean`), a category doubly displayed over
 `∫ B`, which is a category displayed over the total category of `∫ B`, the context `Γ ▹ B`
-(`DoubleDisplayed.uncurry`). The twist is the type of the displayed model of this displayed category
-(`twistDisp`), its straightening.
+(`DoubleDisplayed.overTotal`). The twist is the type of the displayed model of this displayed
+category (`twistDisp`), its straightening.
 
 Concretely, the objects of `twistDisp C` over `(γ, b)` are the objects of `C (γ, b)`, and its
 morphisms over `(f, β) : (γ, b) ⟶ (γ', b')`, with `β : B f b ⟶ b'`, from `c` to `c'` are the
@@ -63,7 +63,7 @@ variable {Γ : Cat.{u, u}}
 over `B`, displayed over the total category `Γ ▹ B` of `∫ B`. -/
 def twistDisp {B : ICatLax.{u, u}.Ty Γ} (C : ICatLax.{u, u}.Ty (Γ ▹ Bᵒᵖ)) :
     Displayed.{u, u} (Γ ▹ B : Cat.{u, u}) :=
-  (DoubleDisplayed.D2SFib.Straightening.Unstraightening (F := B) C).uncurry
+  (DoubleDisplayed.D2SFib.Straightening.Unstraightening (F := B) C).overTotal
 
 /-- **The twist of a type `C` in context `Γ ▹ Bᵒᵖ`** (Twist): the type of the displayed model of
 `twistDisp C`, in context `Γ ▹ B`. -/

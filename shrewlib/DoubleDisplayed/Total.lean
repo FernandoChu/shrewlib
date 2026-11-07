@@ -11,7 +11,7 @@ dependent pairs of a `B`-morphism and a `C`-morphism over it. Its laws are compo
 `B` and `C`, which hold definitionally. Its total category is the "associated category" of the
 chain.
 
-Conversely, `C.uncurry : Displayed B.Total` is `C` as a category displayed over the total category
+Conversely, `C.overTotal : Displayed B.Total` is `C` as a category displayed over the total category
 of `B`, the uncurried form of the chain: its objects over `⟨a, b⟩` are those of `C` over `b`, and
 its morphisms over `⟨f, g⟩` those of `C` over `g`. Its laws are those of `C`.
 -/
@@ -60,7 +60,7 @@ theorem total_Ob (a : A) : C.total.Ob a = Σ b : B.Ob a, C.Ob b := rfl
 
 /-- **`C` as a category displayed over the total category of `B`**: objects over `⟨a, b⟩` are the
 objects of `C` over `b`, and morphisms over `⟨f, g⟩` the morphisms of `C` over `g`. -/
-def uncurry : Displayed.{v₃, u₃} B.Total where
+def overTotal : Displayed.{v₃, u₃} B.Total where
   Ob x := C.Ob x.2
   Hom F c c' := C.Hom F.fiber c c'
   id c := C.id c
