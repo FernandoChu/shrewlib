@@ -1,6 +1,7 @@
 import ComprehensionCategory.Basic
 import ComprehensionCategory.Map
 import ComprehensionCategory.Term
+import ComprehensionCategory.TypeFormers.Pi
 import ComprehensionCategory.TypeFormers.Sigma
 import ComprehensionCategory.TypeFormers.Unit
 import ComprehensionCategory.TypeFormers.Universe
@@ -23,6 +24,9 @@ Comprehension categories as displayed categories, their type formers, and models
   `F.obj (Γ ▹ A) ⟶ F.obj Γ ▹ M.obj A`, and their pseudo and strict versions. Strict maps send terms
   to terms, and over the identity, the terms of `A` are those of `M.obj A` (`tmEquiv`).
 * `TypeFormers/`: what it means to have a (strict) type former.
+  * `Pi`: Π-types `Π[A] B` of `E` over `D`, for `A` a type of `D` and `B` one of `E` in context
+    `Γ ▹ A`, with abstraction and application `Tm(Γ ▹ A, B) ≃ Tm(Γ, Π[A] B)`, stable under
+    substitution.
   * `Sigma`: Σ-types `Σ[A] B`, with `Γ ▹ A ▹ B ≅ Γ ▹ Σ[A] B`, and their strict preservation by
     strict maps (`StrictComprehensionMap.PreservesSigma`).
   * `Unit`: unit types `D.unit Γ`, with a term `D.star Γ` that is η, so that
@@ -78,6 +82,17 @@ recall Displayed.isPullback_q {C : Type u} [Category.{v} C] (D : Displayed.{v₂
 recall Displayed.pull_sigma {C : Type u} [Category.{v} C] (D : Displayed.{v₂, u₂} C)
     [Fib D] [Comprehension D] [PreSigma D] {Δ Γ : C} (σ : Δ ⟶ Γ) (A : D.Ty Γ)
     (B : D.Ty (Γ ▹ A)) : (Σ[A] B)⦃σ⦄ = Σ[A⦃σ⦄] B⦃𝐪(σ, A)⦄
+
+/-- Π-types are stable under substitution, and so is application. -/
+recall Displayed.pull_pi {C : Type u} [Category.{v} C] {D : Displayed.{v₂, u₂} C}
+    {E : Displayed.{v₂, u₂} C} [Fib D] [Comprehension D] [Fib E] [Comprehension E] [PrePi D E]
+    {Δ Γ : C} (σ : Δ ⟶ Γ) (A : D.Ty Γ) (B : E.Ty (Γ ▹ A)) :
+    (Π[A] B)⦃σ⦄ = Π[A⦃σ⦄] B⦃𝐪(σ, A)⦄
+
+recall Displayed.app_pull {C : Type u} [Category.{v} C] {D : Displayed.{v₂, u₂} C}
+    {E : Displayed.{v₂, u₂} C} [Fib D] [Comprehension D] [Fib E] [Comprehension E] [HasPi D E]
+    {Δ Γ : C} {A : D.Ty Γ} {B : E.Ty (Γ ▹ A)} (σ : Δ ⟶ Γ) (t : Tm(Γ, Π[A] B)) :
+    app t⦃σ⦄ = (app t)⦃𝐪(σ, A)⦄
 
 /-- Unit types are closed. -/
 recall Displayed.pull_unit {C : Type u} [Category.{v} C] (D : Displayed.{v₂, u₂} C) [Fib D]
