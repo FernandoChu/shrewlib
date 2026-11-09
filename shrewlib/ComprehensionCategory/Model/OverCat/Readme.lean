@@ -1,4 +1,5 @@
 import ComprehensionCategory.Model.OverCat.Cat.Readme
+import ComprehensionCategory.Model.OverCat.CatOp.Readme
 import ComprehensionCategory.Model.OverCat.Discrete.Readme
 import ComprehensionCategory.Model.OverCat.Displayed.Readme
 import ComprehensionCategory.Model.OverCat.Maps.Readme
@@ -7,12 +8,16 @@ import ComprehensionCategory.Model.OverCat.Shared.Readme
 /-!
 # Models over `Cat`
 
-Three full split comprehension categories over `Cat`, one folder each, with a `Readme.lean`:
+Four full split comprehension categories over `Cat`, one folder each, with a `Readme.lean`:
 
 * `Cat/`: the category model `ICatLax`, whose types in context `Γ` are the functors `Γ ⥤ Cat`, and
   whose context extension `Γ ▹ A` is the total category of the unstraightening of `A`. It has
   Σ-types, opposite types, and a Coquand-style universe of the types of a lower level, the
   functors into smaller categories, which form a comprehension category `SmallICat`.
+* `CatOp/`: the contravariant category model `ICatOpLax`, whose types in context `Γ` are the
+  functors `Γᵒᵖ ⥤ Cat`, and whose context extension is the total category of the unstraightening,
+  a split fibration. It mirrors `Cat/`: it has Σ-types and opposite types, and its types of a lower
+  level form a comprehension category `SmallICatOp`.
 * `Discrete/`: the discrete model `IDisc`, the full sub-comprehension category of the category
   model on the functors into discrete categories. It has Σ-types and opposite types, those of the
   category model.
