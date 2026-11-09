@@ -53,6 +53,46 @@ def fibreIncl (γ : Γ) : A.obj (op γ) ⟶ Cat.of (∫⁻ A).Total :=
 abbrev fibreDisp (γ : Γ) : Displayed.{u, u} (A.obj (op γ)) :=
   DisplayedCat.pull (fibreIncl A γ) E
 
+/-! ## Functors out of the total category
+
+A functor `B` out of the total category of `∫⁻ A` sends the two factorizations
+`(𝟙, A g φ') ≫ (g, 𝟙)` and `(g, 𝟙) ≫ (𝟙, φ')` of `(g, A g φ')` to the same functor, but its rules
+split `B` of each composite into a different composite of `B`'s, which the checker does not
+identify. These rules send the first to the second, with the chosen lift first: the transport
+along `(𝟙, A g φ')` and then `(g, 𝟙)` is that along `(g, 𝟙)` and then `(𝟙, φ')`. They are keyed on
+`Functor.obj` and `Functor.map`, so they are tried on every functor application of the files that
+import this one, which only the Π-types of the category model need. -/
+
+/-- `B` of `(𝟙, A g φ')` then `(g, 𝟙)` is `B` of `(g, 𝟙)` then `(𝟙, φ')`, on objects. -/
+@[rewrite_rule]
+theorem obj_totalClift_fibreIncl (B : (∫⁻ A).Total ⥤ Cat.{u, u}) {γ γ' : Γ} (g : γ ⟶ γ')
+    {x' y' : A.obj (op γ')} (φ' : x' ⟶ y')
+    (b : B.obj ((∫⁻ A).tot ((A.map g.op).toFunctor.obj x'))) :
+    (B.map ((∫⁻ A).totalClift g y')).toFunctor.obj
+        ((B.map ((fibreIncl A γ).toFunctor.map ((A.map g.op).toFunctor.map φ'))).toFunctor.obj b) =
+      (B.map ((fibreIncl A γ').toFunctor.map φ')).toFunctor.obj
+        ((B.map ((∫⁻ A).totalClift g x')).toFunctor.obj b) :=
+  congrArg (fun F : (∫⁻ A).tot ((A.map g.op).toFunctor.obj x') ⟶ (∫⁻ A).tot y' =>
+    (B.map F).toFunctor.obj b) (by kernel_rfl' :
+      (fibreIncl A γ).toFunctor.map ((A.map g.op).toFunctor.map φ') ≫ (∫⁻ A).totalClift g y' =
+        (∫⁻ A).totalClift g x' ≫ (fibreIncl A γ').toFunctor.map φ')
+
+/-- `B` of `(𝟙, A g φ')` then `(g, 𝟙)` is `B` of `(g, 𝟙)` then `(𝟙, φ')`, on morphisms. Its
+statement is well typed by the rule `obj_totalClift_fibreIncl`. -/
+@[rewrite_rule]
+theorem map_totalClift_fibreIncl (B : (∫⁻ A).Total ⥤ Cat.{u, u}) {γ γ' : Γ} (g : γ ⟶ γ')
+    {x' y' : A.obj (op γ')} (φ' : x' ⟶ y')
+    {b c : B.obj ((∫⁻ A).tot ((A.map g.op).toFunctor.obj x'))} (α : b ⟶ c) :
+    (B.map ((∫⁻ A).totalClift g y')).toFunctor.map
+        ((B.map ((fibreIncl A γ).toFunctor.map ((A.map g.op).toFunctor.map φ'))).toFunctor.map α) =
+      (B.map ((fibreIncl A γ').toFunctor.map φ')).toFunctor.map
+        ((B.map ((∫⁻ A).totalClift g x')).toFunctor.map α) := by
+  have h := congrArg (fun F : (∫⁻ A).tot ((A.map g.op).toFunctor.obj x') ⟶ (∫⁻ A).tot y' =>
+    (B.map F).toFunctor) (by kernel_rfl' :
+      (fibreIncl A γ).toFunctor.map ((A.map g.op).toFunctor.map φ') ≫ (∫⁻ A).totalClift g y' =
+        (∫⁻ A).totalClift g x' ≫ (fibreIncl A γ').toFunctor.map φ')
+  kernel_exact eq_of_heq (Functor.hcongr_hom h α)
+
 variable {A E}
 
 /-- A morphism over `g : γ ⟶ γ'` from a section `s` over `A γ` to a section `t` over `A γ'`: a

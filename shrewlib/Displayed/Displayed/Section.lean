@@ -116,6 +116,14 @@ theorem comp_hcongr {a a' a'' b b' b'' : A} (ha : a = b) (ha' : a' = b') (ha'' :
   obtain rfl := eq_of_heq hψ
   rfl
 
+/-- The fibre components of heterogeneously equal morphisms of the total category, between equal
+objects, are heterogeneously equal. -/
+theorem fiber_hcongr {x y x' y' : D.Total} (hx : x = x') (hy : y = y') {F : x ⟶ y}
+    {G : x' ⟶ y'} (h : F ≍ G) : F.fiber ≍ G.fiber := by
+  subst hx hy
+  obtain rfl := eq_of_heq h
+  rfl
+
 /-- The fibre components of equal morphisms of the total category are heterogeneously equal. -/
 theorem fiber_heq_of_eq {x y : D.Total} {F G : x ⟶ y} (h : F = G) : F.fiber ≍ G.fiber := by
   subst h
@@ -192,6 +200,34 @@ theorem Section.Hom.hext {D : Displayed.{v₂, u₂} A} {S S' T T' : D.Section} 
     α ≍ β := by
   subst hS hT
   exact heq_of_eq (Section.Hom.ext fun a => eq_of_heq (h a))
+
+/-- Sections of equal displayed categories are heterogeneously equal if their components are. -/
+theorem Section.hext {D D' : Displayed.{v₂, u₂} A} (hD : D = D') {S : D.Section}
+    {S' : D'.Section} (hobj : ∀ a, S.obj a ≍ S'.obj a)
+    (hmap : ∀ {a a' : A} (f : a ⟶ a'), S.map f ≍ S'.map f) : S ≍ S' := by
+  subst hD
+  exact heq_of_eq (Section.ext (fun a => eq_of_heq (hobj a)) hmap)
+
+/-- Vertical natural transformations between sections of equal displayed categories are
+heterogeneously equal if their components are. -/
+theorem Section.Hom.hext' {D D' : Displayed.{v₂, u₂} A} (hD : D = D') {S T : D.Section}
+    {S' T' : D'.Section} (hS : S ≍ S') (hT : T ≍ T') {α : Section.Hom S T}
+    {β : Section.Hom S' T'} (h : ∀ a, α.app a ≍ β.app a) : α ≍ β := by
+  subst hD
+  obtain rfl := eq_of_heq hS
+  obtain rfl := eq_of_heq hT
+  exact Section.Hom.hext rfl rfl h
+
+/-- A version of `Section.Hom.hext'` for terms of types equal to those of vertical natural
+transformations, such as the fibres of morphisms of total categories, whose types the elaborator
+can be slow to compute: the equalities of types are then checked separately, for instance in the
+kernel. -/
+theorem Section.Hom.hext_of_eq {D D' : Displayed.{v₂, u₂} A} (hD : D = D') {S T : D.Section}
+    {S' T' : D'.Section} (hS : S ≍ S') (hT : T ≍ T') {X Y : Type (max u₁ v₂)} {α : X} {β : Y}
+    (hX : X = Section.Hom S T) (hY : Y = Section.Hom S' T')
+    (h : ∀ a, (cast hX α).app a ≍ (cast hY β).app a) : α ≍ β := by
+  subst hX hY
+  exact Section.Hom.hext' hD hS hT h
 
 /-- **The category of sections**, with the vertical natural transformations. -/
 instance Section.category (D : Displayed.{v₂, u₂} A) : Category D.Section where

@@ -3,6 +3,7 @@ import ComprehensionCategory.Model.OverCat.Shared.HomDisc
 import ComprehensionCategory.Model.OverCat.Shared.Universe
 import ComprehensionCategory.Model.OverCat.Shared.Twist
 import ComprehensionCategory.Model.OverCat.Shared.HomIntro
+import ComprehensionCategory.Model.OverCat.Shared.Pi
 
 /-!
 # Shared type formers
@@ -38,6 +39,12 @@ their conclusion a type of another, in a context of the first.
   type of the displayed model whose objects over `(γ, a)` are the endomorphisms of `a`, derived from
   `Hom[A]` by twist and substitution along the diagonal, and its term `refl A`, the
   identities (Hom-Intro).
+* `Pi`: the Π-types `Π[A] B` of the category model over the contravariant one, for `A` a
+  functor `Γᵒᵖ ⥤ Cat` and `B` a functor `Γ ⋉ A ⥤ Cat`: the functor sending `γ` to the category of
+  sections of `∫ B` over the fibre `A γ`, stable under substitution by `rfl`. Abstraction and
+  application are the bijections between the terms of `B`, the sections of `∫ B`, those of the
+  dependent product `piDisp A (∫ B)` and those of the unstraightening of `Π[A] B`, and abstraction
+  is stable under substitution: `HasPi ICatOpLax ICatLax`.
 -/
 
 universe u
@@ -165,3 +172,19 @@ recall ComprehensionCategory.OverCat.twistedHom_eq {Γ : Cat.{u, u}} (A : ICatLa
 /-- **Hom-Intro**: the identities are a term of the twisted Hom-type. -/
 recall ComprehensionCategory.OverCat.refl {Γ : Cat.{u, u}} (A : ICatLax.{u, u}.Ty Γ) :
     Tm(Γ ▹ A, twistedHom A)
+
+/-- **The category model has Π-types over the contravariant model.** -/
+recall ComprehensionCategory.OverCat.hasPi :
+    HasPi Fibration.Straightening.ICatOpLax.{u, u, u, u} ICatLax.{u, u, u, u}
+
+/-- The Π-type of `A` and `B` sends `γ` to the category of sections of `∫ B` over `A γ`. -/
+example {Γ : Cat.{u, u}} (A : Fibration.Straightening.ICatOpLax.{u, u}.Ty Γ)
+    (B : ICatLax.{u, u}.Ty (Γ ▹ A)) (γ : Γ) :
+    ((Π[A] B : ICatLax.{u, u}.Ty Γ).obj γ : Type u) = PiFib A B γ :=
+  rfl
+
+/-- Π-types are stable under substitution by `rfl`. -/
+example {Γ Δ : Cat.{u, u}} (σ : Δ ⟶ Γ) (A : Fibration.Straightening.ICatOpLax.{u, u}.Ty Γ)
+    (B : ICatLax.{u, u}.Ty (Γ ▹ A)) :
+    (Π[A] B : ICatLax.{u, u}.Ty Γ)⦃σ⦄ = Π[A⦃σ⦄] B⦃𝐪(σ, A)⦄ :=
+  rfl

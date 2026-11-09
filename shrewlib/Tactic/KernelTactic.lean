@@ -22,7 +22,7 @@ elab "kernel_exact " e:term : tactic => withMainContext do
   let vty ← instantiateMVars (← inferType v)
   let v ← if ty.heq?.isSome && vty.eq?.isSome then mkAppM ``heq_of_eq #[v] else pure v
   let vty ← instantiateMVars (← inferType v)
-  match Kernel.isDefEq (← getEnv) (← getLCtx) ty vty with
+  match Kernel.isDefEq (← getEnv) (← instantiateLCtxMVars (← getLCtx)) ty vty with
   | .ok true => goal.assign (← mkExpectedTypeHint v ty)
   | .ok false => throwError "kernel_exact: the type{indentExpr vty}\nis not{indentExpr ty}"
   | .error _ => throwError "kernel_exact: the kernel failed to compare the types"
@@ -33,7 +33,7 @@ elab "kernel_rfl'" : tactic => withMainContext do
   let goal ← getMainGoal
   let ty ← instantiateMVars (← goal.getType)
   let defEq (a b : Expr) : MetaM Bool := do
-    match Kernel.isDefEq (← getEnv) (← getLCtx) a b with
+    match Kernel.isDefEq (← getEnv) (← instantiateLCtxMVars (← getLCtx)) a b with
     | .ok r => pure r
     | .error _ => throwError "kernel_rfl': the kernel failed to check the equation"
   if let some (_, lhs, rhs) := ty.eq? then

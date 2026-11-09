@@ -1,6 +1,7 @@
 import ComprehensionCategory.Model.OverCat.Cat.Basic
 import ComprehensionCategory.Term
 import Displayed.Displayed.Section
+import Tactic.KernelTactic
 
 /-!
 # Terms in the category model
@@ -148,6 +149,35 @@ def Tm.toSection {A : ICatLax.{u, u}.Ty Γ} (t : Tm(Γ, A)) : (∫ A).Section :=
 def Tm.ofSection {A : ICatLax.{u, u}.Ty Γ} (S : (∫ A).Section) : Tm(Γ, A) where
   sec := S.total.toCatHom
   sec_proj := rfl
+
+/-- The values of the section of a substituted term are those of the section of the term, at the
+images along `σ`. -/
+theorem Tm.toSection_pull_obj {A : ICatLax.{u, u}.Ty Γ} (σ : Δ ⟶ Γ) (t : Tm(Γ, A)) (δ : Δ) :
+    (Tm.toSection t⦃σ⦄).obj δ ≍ (Tm.toSection t).obj (σ.toFunctor.obj δ) := by
+  have h := Functor.congr_obj (congrArg Cat.Hom.toFunctor (Displayed.Tm.pull_sec_q σ t)) δ
+  kernel_exact (Section.cast_ob_heq (Section.fst_obj t⦃σ⦄.sec.toFunctor
+    (congrArg Cat.Hom.toFunctor t⦃σ⦄.sec_proj) δ) (t⦃σ⦄.sec.toFunctor.obj δ).2).trans
+    ((congr_arg_heq Sigma.snd h).trans (Section.cast_ob_heq (Section.fst_obj t.sec.toFunctor
+      (congrArg Cat.Hom.toFunctor t.sec_proj) (σ.toFunctor.obj δ))
+      (t.sec.toFunctor.obj (σ.toFunctor.obj δ)).2).symm)
+
+/-- The transports of the section of a substituted term are those of the section of the term, along
+the images along `σ`. -/
+theorem Tm.toSection_pull_map {A : ICatLax.{u, u}.Ty Γ} (σ : Δ ⟶ Γ) (t : Tm(Γ, A)) {δ δ' : Δ}
+    (f : δ ⟶ δ') :
+    (Tm.toSection t⦃σ⦄).map f ≍ (Tm.toSection t).map (σ.toFunctor.map f) := by
+  have h := congrArg Cat.Hom.toFunctor (Displayed.Tm.pull_sec_q σ t)
+  have h₁ := congrArg Cat.Hom.toFunctor t⦃σ⦄.sec_proj
+  have h₂ := congrArg Cat.Hom.toFunctor t.sec_proj
+  kernel_exact (Section.castHom_heq (Section.fst_obj t⦃σ⦄.sec.toFunctor h₁ δ)
+    (Section.fst_obj t⦃σ⦄.sec.toFunctor h₁ δ') (t⦃σ⦄.sec.toFunctor.map f)
+    (Section.base_map t⦃σ⦄.sec.toFunctor h₁ f)).trans
+    ((Section.fiber_hcongr (Functor.congr_obj h δ) (Functor.congr_obj h δ')
+      (Functor.hcongr_hom h f)).trans
+      (Section.castHom_heq (Section.fst_obj t.sec.toFunctor h₂ (σ.toFunctor.obj δ))
+        (Section.fst_obj t.sec.toFunctor h₂ (σ.toFunctor.obj δ'))
+        (t.sec.toFunctor.map (σ.toFunctor.map f))
+        (Section.base_map t.sec.toFunctor h₂ (σ.toFunctor.map f))).symm)
 
 /-- **The terms of `A` are the sections of its unstraightening.** -/
 def Tm.sectionEquiv {A : ICatLax.{u, u}.Ty Γ} : Tm(Γ, A) ≃ (∫ A).Section where

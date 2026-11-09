@@ -60,18 +60,19 @@ files, (op)cartesian morphisms (in `Displayed/{Opfibration,Fibration}/Basic` and
 - `ComprehensionCategory/`: comprehension categories, their type formers, and models: the
   codomain model, and four models over `Cat` (`Model/OverCat/`), all with Σ-types and unit types:
   the category model, with opposite types and Coquand-style universes of its types, of the
-  discrete types and of the contravariant types, the contravariant category model of functors `Γᵒᵖ ⥤ Cat`, with opposite types,
-  its discrete submodel of functors into discrete categories, whose type formers the inclusion
-  preserves strictly, and the displayed category model of lax normal functors into profunctors,
-  into which the category model and the contravariant one are included by strict maps preserving
-  Σ-types and unit types; with the type formers relating them, such as the Hom-types of the
-  category model in the discrete model, of two terms or in context form, with Hom-Disc for
-  discrete types under the uniqueness of empty types, the twist of types of the category model into
-  types of the displayed model, and the twisted Hom-types and their term `refl`. The models of
-  fibrations, the displayed categories, split (op)fibrations and discrete opfibrations with their
-  total categories as comprehension, are full split comprehension categories, and the
-  unstraightenings from the four category models to them are strict maps preserving the chosen
-  lifts.
+  discrete types and of the contravariant types, the contravariant category model of functors
+  `Γᵒᵖ ⥤ Cat`, with opposite types, its discrete submodel of functors into discrete categories,
+  whose type formers the inclusion preserves strictly, and the displayed category model of lax
+  normal functors into profunctors, into which the category model and the contravariant one are
+  included by strict maps preserving Σ-types and unit types; with the type formers relating them,
+  such as the Hom-types of the category model in the discrete model, of two terms or in context
+  form, with Hom-Disc for discrete types under the uniqueness of empty types, the twist of types
+  of the category model into types of the displayed model, the twisted Hom-types and their term
+  `refl`, and the Π-types of the category model over the contravariant one, whose values are the
+  categories of sections over the fibres. The models of fibrations, the displayed categories,
+  split (op)fibrations and discrete opfibrations with their total categories as comprehension, are
+  full split comprehension categories, and the unstraightenings from the four category models to
+  them are strict maps preserving the chosen lifts.
 - `DoubleDisplayed/`: categories doubly displayed over a displayed category, their functors,
   equivalences and fibrations, and dependent 2-sided fibrations with their straightening: an
   equivalence between dependent profunctors over `ICatStr` and D2SFibs over `SplitOpfibStr`, over

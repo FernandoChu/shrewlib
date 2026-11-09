@@ -37,6 +37,9 @@ The files give its ingredients:
 * `Pi`: the dependent product `piDisp A E` along `∫⁻ A` of a displayed category `E` over its total
   category, whose objects over `γ` are the sections of `E` over the fibre `A γ`, and whose
   sections are those of `E` (`piSectionEquiv`). It has no dual in `Opfibration/Straightening/`.
+  Its rules `obj_totalClift_fibreIncl` and `map_totalClift_fibreIncl` identify, for a functor `B`
+  out of the total category, `B` of the two factorizations `(𝟙, A g φ') ≫ (g, 𝟙)` and
+  `(g, 𝟙) ≫ (𝟙, φ')` of `(g, A g φ')`, oriented towards the chosen lift first.
 -/
 
 universe v u v₁ u₁
