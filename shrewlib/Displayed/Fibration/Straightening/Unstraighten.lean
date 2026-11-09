@@ -19,6 +19,10 @@ the functor laws as rules, including those on opposites, `F (𝟙 a) y` is `y` a
   over `u` sending `φ : x ⟶ F f y` to `α φ ≫ α.naturality f y` (`unstraightenMap`).
 * `unstraighten : VertFunctor ICatOpLax SplitFibLax`, whose functor laws hold by `rfl`.
 
+The chosen lifts of `∫⁻ F` in its total category are split as rules (`unstraighten_totalClift_id`,
+`unstraighten_totalClift_comp`), stated with the cleavage inferred for `∫⁻ F`, so that functors out
+of the total category send them to identities and composites.
+
 It is an equivalence over `Cat`, with inverse the straightening (`Equivalence.lean`), hence fully
 faithful (`unstraightenFullyFaithful`).
 
@@ -77,6 +81,23 @@ theorem unstraightenPullMap (F : Aᵒᵖ ⥤ Cat.{v, u}) {a a' : A} (f : a ⟶ a
     (∫⁻ F).pullMap f β = (F.map f.op).toFunctor.map (β : x ⟶ y) := by
   refine (pullMap_eq_lift _ f β).trans ?_
   kernel_rfl'
+
+/-- The chosen lift of an identity in the total category of `∫⁻ F` is the identity, as a rule.
+`totalClift_id` says this for any split fibration, but is stated with the cleavage of a
+`SplitFib`, which does not match the one inferred for `∫⁻ F`: without this rule, a functor `B` out
+of the total category does not send the chosen lift of `𝟙 a` to an identity by its rules. -/
+@[rewrite_rule]
+theorem unstraighten_totalClift_id (F : Aᵒᵖ ⥤ Cat.{v, u}) {a : A} (y : (∫⁻ F).Ob a) :
+    (∫⁻ F).totalClift (𝟙 a) y = 𝟙 ((∫⁻ F).tot y) :=
+  rfl
+
+/-- The chosen lift of a composite in the total category of `∫⁻ F` is the composite of the chosen
+lifts, as a rule, for the same reason as `unstraighten_totalClift_id`. -/
+@[rewrite_rule]
+theorem unstraighten_totalClift_comp (F : Aᵒᵖ ⥤ Cat.{v, u}) {a a' a'' : A} (f : a ⟶ a')
+    (g : a' ⟶ a'') (y : (∫⁻ F).Ob a'') :
+    (∫⁻ F).totalClift (f ≫ g) y = (∫⁻ F).totalClift f ((∫⁻ F).pull g y) ≫ (∫⁻ F).totalClift g y :=
+  rfl
 
 end UnstraightenObj
 

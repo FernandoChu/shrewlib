@@ -185,6 +185,14 @@ theorem Section.Hom.ext {D : Displayed.{v₂, u₂} A} {S T : D.Section} {α β 
   obtain rfl : app = app' := funext h
   rfl
 
+/-- Vertical natural transformations between equal sections are heterogeneously equal if their
+components are. -/
+theorem Section.Hom.hext {D : Displayed.{v₂, u₂} A} {S S' T T' : D.Section} (hS : S = S')
+    (hT : T = T') {α : Section.Hom S T} {β : Section.Hom S' T'} (h : ∀ a, α.app a ≍ β.app a) :
+    α ≍ β := by
+  subst hS hT
+  exact heq_of_eq (Section.Hom.ext fun a => eq_of_heq (h a))
+
 /-- **The category of sections**, with the vertical natural transformations. -/
 instance Section.category (D : Displayed.{v₂, u₂} A) : Category D.Section where
   Hom S T := Section.Hom S T
