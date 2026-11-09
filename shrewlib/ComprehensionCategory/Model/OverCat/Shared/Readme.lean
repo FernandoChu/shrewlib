@@ -16,9 +16,11 @@ their conclusion a type of another, in a context of the first.
   own opposite in the discrete model, as a rewrite rule, since these discrete categories are, by
   `propext`. The Hom-type of two terms `a : Tm(Γ, Aᵒᵖ)` and `b : Tm(Γ, A)`, in context `Γ`, as in
   the paper, is its substitution along their pairing (`homAt`), stable under substitution.
-* `HomDisc`: the Hom-types of the types of the discrete model, those of the category model, which
-  forgetting the discreteness preserves strictly, and Hom-Disc: if empty types are unique, terms
-  `a b` of a discrete type with a term of the Hom-type from `a` to `b` are equal.
+* `HomDisc`: the Hom-types of the types of the discrete model, defined there, with an action on
+  morphisms given by discreteness. Forgetting the discreteness preserves them strictly: they are
+  those of the category model, since the morphisms of discrete categories are unique. Hom-Disc:
+  if empty types are unique, terms `a b` of a discrete type with a term of the Hom-type from `a`
+  to `b` are equal.
 * `Universe`: the Coquand-style universe `UDisc Γ` of the discrete types of level `v`, a type of
   the category model at level `v + 1`, the constant functor at the category of small discrete
   categories. Its terms are exactly the functors `Γ ⥤ Cat.{v, v}` into discrete categories, by
@@ -86,7 +88,11 @@ recall ComprehensionCategory.OverCat.pull_homAt {Γ Δ : Cat.{u, u}} (σ : Δ �
 recall ComprehensionCategory.OverCat.op_homAt {Γ : Cat.{u, u}} {A : ICatLax.{u, u}.Ty Γ}
     (a : Tm(Γ, CatModel.op A)) (b : Tm(Γ, A)) : DiscreteModel.op (homAt a b) = homAt a b
 
-/-- **Forgetting the discreteness preserves the Hom-types of two terms**, by `rfl`. -/
+/-- **Forgetting the discreteness preserves the Hom-types strictly**, in context form and for two
+terms. -/
+recall ComprehensionCategory.OverCat.homDisc_eq {Γ : Cat.{u, u}} (A : IDisc.{u, u}.Ty Γ) :
+    homDisc A = Hom[forgetComprehensionMap.toPre.obj A]
+
 recall ComprehensionCategory.OverCat.homDiscAt_eq {Γ : Cat.{u, u}} {A : IDisc.{u, u}.Ty Γ}
     (a : Tm(Γ, DiscreteModel.op A)) (b : Tm(Γ, A)) :
     homDiscAt a b = homAt (A := forgetComprehensionMap.toPre.obj A)
