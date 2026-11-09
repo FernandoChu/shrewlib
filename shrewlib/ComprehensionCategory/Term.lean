@@ -22,13 +22,20 @@ comprehension category, extension commutes with precomposition (`comp_consSec`) 
 morphisms `𝐪` (`consSec_comp_q`), and it respects heterogeneously equal terms over equal morphisms
 (`consSec_congr`).
 
+Conversely, the terms of `A⦃σ⦄` are the morphisms `Δ ⟶ Γ ▹ A` over `σ`, by extension and
+factorization through the pullback square of `𝐪(σ, A)` (`Tm.liftEquiv`), so that two terms are
+equal if their extensions are (`Tm.sec_heq_of_consSec`). Hence the sections of the projection
+`Γ ▹ A ▹ T ⟶ Γ`, for types `A` and `T` of two comprehension categories, are the pairs of a term `x`
+of `A` and a term of `T⦃x⦄` (`Tm.sigmaEquiv`), and the sections of a context isomorphic to
+`Γ ▹ A` over `Γ` are the terms of `A` (`Tm.equivOfIso`).
+
 The notation `Tm(Γ, A)` for `D.Tm A`, for `A` over `Γ`, is scoped in `Displayed`, with that of
 `ComprehensionCategory/Basic`. As there, the comprehension category `D` is inferred from the type
 of `A`. The notation `t⦃σ⦄` for `t.pull σ` is that of the substitution of types, `A⦃σ⦄`, whose
 elaborator tells them apart by the type of `t`.
 -/
 
-universe v u v₂ u₂
+universe v u v₂ u₂ v₃ u₃
 
 open CategoryTheory
 
@@ -84,6 +91,11 @@ def unexpandPull : Lean.PrettyPrinter.Unexpander
 theorem pull_sec_q (t : Tm(Γ, A)) : t⦃σ⦄.sec ≫ 𝐪(σ, A) = σ ≫ t.sec :=
   congrArg Subtype.val ((D.isCartesianComprMap (D.isCartesianClift σ A)).lift_fac (𝟙 Δ)
     (pullCone σ t))
+
+/-- `Tm.pull_sec_q`, followed by a morphism. -/
+theorem pull_sec_q_assoc (t : Tm(Γ, A)) {X : C} (h : Γ ▹ A ⟶ X) :
+    t⦃σ⦄.sec ≫ 𝐪(σ, A) ≫ h = σ ≫ t.sec ≫ h := by
+  rw [← Category.assoc, pull_sec_q, Category.assoc]
 
 /-- **The substituted term is the unique section over `t` along `𝐪(σ, A)`.** -/
 theorem pull_unique (t : Tm(Γ, A)) (s : Tm(Δ, A⦃σ⦄)) (h : s.sec ≫ 𝐪(σ, A) = σ ≫ t.sec) :
@@ -169,5 +181,80 @@ theorem consSec_comp_q (τ : Θ ⟶ Δ) (σ : Δ ⟶ Γ) {A : D.Ty Γ} (t : Tm(�
   rfl
 
 end ConsSplit
+
+/-! ## Terms as morphisms -/
+
+section Lift
+
+variable {D : Displayed.{v₂, u₂} C} [Fib D] [Comprehension D] {Δ Γ : C}
+
+/-- A morphism `s : Δ ⟶ Γ ▹ A` over `σ`, as a morphism of `cod C` over `σ` from the identity of
+`Δ` to the projection of `A`. -/
+def Tm.liftCone (σ : Δ ⟶ Γ) {A : D.Ty Γ} (s : Δ ⟶ Γ ▹ A) (h : s ≫ 𝐩 A = σ) :
+    (⟨Δ, 𝟙 Δ⟩ : (cod C).Ob Δ) ⟶[𝟙 Δ ≫ σ] (D.compr).obj A :=
+  ⟨s, h⟩
+
+/-- The term of `A⦃σ⦄` of a morphism `s : Δ ⟶ Γ ▹ A` over `σ`: its factorization through the
+pullback square of `𝐪(σ, A)`. -/
+def Tm.ofLift (σ : Δ ⟶ Γ) {A : D.Ty Γ} (s : Δ ⟶ Γ ▹ A) (h : s ≫ 𝐩 A = σ) : Tm(Δ, A⦃σ⦄) where
+  sec := ((D.isCartesianComprMap (D.isCartesianClift σ A)).lift (𝟙 Δ) (Tm.liftCone σ s h)).1
+  sec_proj := ((D.isCartesianComprMap (D.isCartesianClift σ A)).lift (𝟙 Δ) (Tm.liftCone σ s h)).2
+
+/-- **The terms of `A⦃σ⦄` are the morphisms `Δ ⟶ Γ ▹ A` over `σ`**, by extension (`consSec`) and
+factorization through the pullback square of `𝐪(σ, A)`. -/
+def Tm.liftEquiv (σ : Δ ⟶ Γ) (A : D.Ty Γ) :
+    Tm(Δ, A⦃σ⦄) ≃ {s : Δ ⟶ Γ ▹ A // s ≫ 𝐩 A = σ} where
+  toFun t := ⟨consSec σ t, consSec_proj σ t⟩
+  invFun s := Tm.ofLift σ s.1 s.2
+  left_inv t := (Tm.ext (congrArg Subtype.val
+    ((D.isCartesianComprMap (D.isCartesianClift σ A)).lift_uniq
+      (χ := Tm.liftCone σ (consSec σ t) (consSec_proj σ t))
+      (⟨t.sec, t.sec_proj⟩ : CodHom (𝟙 Δ) ⟨Δ, 𝟙 Δ⟩ ((D.compr).obj (D.pull σ A)))
+      (CodHom.ext rfl)))).symm
+  right_inv s := Subtype.ext (congrArg Subtype.val
+    ((D.isCartesianComprMap (D.isCartesianClift σ A)).lift_fac (𝟙 Δ) (Tm.liftCone σ s.1 s.2)))
+
+/-- The terms of `A` are the sections of its projection. -/
+def Tm.secEquiv (A : D.Ty Γ) : Tm(Γ, A) ≃ {s : Γ ⟶ Γ ▹ A // s ≫ 𝐩 A = 𝟙 Γ} where
+  toFun t := ⟨t.sec, t.sec_proj⟩
+  invFun s := ⟨s.1, s.2⟩
+  left_inv _ := rfl
+  right_inv _ := rfl
+
+/-- **Terms across an isomorphism of contexts**: for `e : X ≅ Γ ▹ A` over `Γ`, the sections of the
+projection `p : X ⟶ Γ` are the terms of `A`. -/
+def Tm.equivOfIso {X : C} {p : X ⟶ Γ} {A : D.Ty Γ} (e : X ≅ Γ ▹ A) (he : e.hom ≫ 𝐩 A = p) :
+    {s : Γ ⟶ X // s ≫ p = 𝟙 Γ} ≃ Tm(Γ, A) where
+  toFun s := ⟨s.1 ≫ e.hom, (congrArg (s.1 ≫ ·) he).trans s.2⟩
+  invFun t := ⟨t.sec ≫ e.inv, (congrArg (fun q => t.sec ≫ e.inv ≫ q) he.symm).trans
+    ((congrArg (fun q => t.sec ≫ q ≫ 𝐩 A) e.inv_hom_id).trans t.sec_proj)⟩
+  left_inv s := Subtype.ext (congrArg (s.1 ≫ ·) e.hom_inv_id)
+  right_inv t := Tm.ext (congrArg (t.sec ≫ ·) e.inv_hom_id)
+
+/-- Terms of `A` at equal morphisms are heterogeneously equal if their extensions are equal. -/
+theorem Tm.sec_heq_of_consSec {A : D.Ty Γ} {r r' : Δ ⟶ Γ} (hr : r = r') {y : Tm(Δ, A⦃r⦄)}
+    {y' : Tm(Δ, A⦃r'⦄)} (h : consSec r y = consSec r' y') : y.sec ≍ y'.sec := by
+  subst hr
+  obtain rfl := (Tm.liftEquiv r A).injective (Subtype.ext h)
+  rfl
+
+variable {E : Displayed.{v₃, u₃} C} [Fib E] [Comprehension E]
+
+/-- **The pairs of a term `x` of `A` and a term of `T` at `x`**, for `T` a type of another
+comprehension category in context `Γ ▹ A`, are the sections of the projection
+`Γ ▹ A ▹ T ⟶ Γ`. -/
+def Tm.sigmaEquiv (A : D.Ty Γ) (T : E.Ty (Γ ▹ A)) :
+    (Σ x : Tm(Γ, A), Tm(Γ, T⦃x.sec⦄)) ≃ {s : Γ ⟶ Γ ▹ A ▹ T // s ≫ 𝐩 T ≫ 𝐩 A = 𝟙 Γ} :=
+  (Equiv.sigmaCongrRight fun x : Tm(Γ, A) => Tm.liftEquiv x.sec T).trans
+    { toFun p := ⟨p.2.1, (congrArg (· ≫ 𝐩 A) p.2.2).trans p.1.sec_proj⟩
+      invFun s := ⟨⟨s.1 ≫ 𝐩 T, s.2⟩, ⟨s.1, rfl⟩⟩
+      left_inv := by
+        rintro ⟨⟨x, _⟩, s, h⟩
+        dsimp only at h
+        subst h
+        rfl
+      right_inv _ := rfl }
+
+end Lift
 
 end Displayed

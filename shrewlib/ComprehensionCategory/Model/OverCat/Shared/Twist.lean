@@ -48,6 +48,11 @@ weakening `C⦃𝐩 Bᵒᵖ⦄` is the weakening of `catToDisp C` along `𝐩 B`
 `(f, β)`, the morphisms `C(f, 𝟙) c ⟶ C(𝟙, β) c'` of the twist are the morphisms `C f c ⟶ c'` of
 `∫ C` over `f`, since `C(𝟙, β)` is `C 𝟙`, the identity. The two displayed categories agree on
 their hom-types, identities and composites by `rfl`, checked in the kernel (`twistDisp_weak`).
+
+The twist is stable under substitution: `(Tw C)⦃𝐪(σ, B)⦄ = Tw(C⦃𝐪(σ, Bᵒᵖ)⦄)` holds by `rfl`, checked
+in the kernel, and is a rule (`pull_twist`), so that the elaborator sees it at once: with the rule
+`CatModel.pull_op`, the substitution of the twist of `Bᵒᵖ` along `𝐪(σ, Aᵒᵖ)` is the twist of
+`B⦃𝐪(σ, A)⦄ᵒᵖ`.
 -/
 
 universe u
@@ -88,5 +93,12 @@ theorem twistDisp_weak (B C : ICatLax.{u, u}.Ty Γ) :
 displayed model, weakened to `Γ ▹ B`. -/
 theorem twist_weak (B C : ICatLax.{u, u}.Ty Γ) : twist (C⦃𝐩 (Bᵒᵖ)⦄) = (catToDisp C)⦃𝐩 B⦄ :=
   congrArg Straightening.straightenObj (twistDisp_weak B C)
+
+/-- **The twist is stable under substitution**, by `rfl` in the kernel: twisting commutes with the
+substitution along `𝐪(σ, B)`. It is a rule, as for the other type formers. -/
+@[rewrite_rule]
+theorem pull_twist {Δ : Cat.{u, u}} (σ : Δ ⟶ Γ) {B : ICatLax.{u, u}.Ty Γ}
+    (C : ICatLax.{u, u}.Ty (Γ ▹ Bᵒᵖ)) : (twist C)⦃𝐪(σ, B)⦄ = twist (C⦃𝐪(σ, Bᵒᵖ)⦄) := by
+  kernel_rfl'
 
 end ComprehensionCategory.OverCat

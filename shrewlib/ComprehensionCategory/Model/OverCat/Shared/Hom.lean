@@ -167,11 +167,11 @@ theorem pull_q_op_weak {Δ : Cat.{u, u}} (σ : Δ ⟶ Γ) {A : ICatLax.{u, u}.Ty
 theorem pull_homAt {Δ : Cat.{u, u}} (σ : Δ ⟶ Γ) {A : ICatLax.{u, u}.Ty Γ} (a : Tm(Γ, Aᵒᵖ))
     (b : Tm(Γ, A)) : (homAt a b)⦃σ⦄ = homAt (A := A⦃σ⦄) a⦃σ⦄ b⦃σ⦄ := by
   have h := pull_sec_op_weak (A := A⦃σ⦄) b⦃σ⦄
+  have hsec := (Tm.pull_castTy_sec_heq σ (pull_sec_op_weak b).symm a).trans
+    ((Tm.castTy_sec_heq (pull_q_op_weak σ b) (a⦃σ⦄.castTy h.symm)).trans
+      (Tm.castTy_sec_heq h.symm a⦃σ⦄)).symm
   have E := (comp_consSec σ b.sec (a.castTy (pull_sec_op_weak b).symm)).trans
-    ((consSec_congr (Tm.pull_sec_q σ b).symm
-      ((Tm.pull_castTy_sec_heq σ _ a).trans
-        ((Tm.castTy_sec_heq (pull_q_op_weak σ b) (a⦃σ⦄.castTy h.symm)).trans
-          (Tm.castTy_sec_heq h.symm a⦃σ⦄)).symm)).trans
+    ((consSec_congr (Tm.pull_sec_q σ b).symm hsec).trans
       (consSec_comp_q b⦃σ⦄.sec 𝐪(σ, A)
         ((a⦃σ⦄.castTy h.symm).castTy (pull_q_op_weak σ b))).symm)
   kernel_exact congrArg (fun ρ => Hom[A]⦃ρ⦄) E

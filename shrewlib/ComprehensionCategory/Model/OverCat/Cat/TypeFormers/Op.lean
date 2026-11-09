@@ -8,7 +8,9 @@ The opposite of a type `A : Γ ⥤ Cat` is the pointwise opposite, `Aᵒᵖ = A 
 `opFunctor' : Cat ⥤ Cat` is the strictly involutive opposite functor of `OpFunctor`. It is
 involutive and stable under substitution by `rfl`: `(A ⋙ opFunctor') ⋙ opFunctor'` is `A`, since
 `opFunctor' ⋙ opFunctor'` is the identity on the nose (`op_op`), and the substitution
-`σ ⋙ (A ⋙ opFunctor')` is `(σ ⋙ A) ⋙ opFunctor'` (`pull_op`).
+`σ ⋙ (A ⋙ opFunctor')` is `(σ ⋙ A) ⋙ opFunctor'` (`pull_op`). Stability is a rule, oriented
+towards the opposite of the substitution, so that the substitution of `Aᵒᵖ` reaches the rules
+for the substitution of `A`.
 
 The notation `Aᵒᵖ` for `CatModel.op A` is scoped in `ComprehensionCategory.CatModel`. It overloads
 Mathlib's `Cᵒᵖ` for opposite categories, and the opposite types of the discrete model, which are
@@ -40,7 +42,11 @@ def unexpandOp : Lean.PrettyPrinter.Unexpander
 theorem op_op {Γ : Cat.{u, u}} (A : ICatLax.{u, u}.Ty Γ) : (Aᵒᵖ)ᵒᵖ = A :=
   rfl
 
-/-- **The opposite is stable under substitution**, by `rfl`. -/
+/-- **The opposite is stable under substitution**, by `rfl`. It is a rule, so that the substitution
+of the opposite of a type former reaches the rule of the type former, as for
+`((Σ[A] B)ᵒᵖ)⦃σ⦄ = (Σ[A⦃σ⦄] B⦃𝐪(σ, A)⦄)ᵒᵖ`: unfolded, `σ ⋙ Σ[A] B` is not `Σ[A⦃σ⦄] B⦃𝐪(σ, A)⦄`
+by `rfl`. -/
+@[rewrite_rule]
 theorem pull_op {Δ Γ : Cat.{u, u}} (σ : Δ ⟶ Γ) (A : ICatLax.{u, u}.Ty Γ) :
     (Aᵒᵖ)⦃σ⦄ = A⦃σ⦄ᵒᵖ :=
   rfl

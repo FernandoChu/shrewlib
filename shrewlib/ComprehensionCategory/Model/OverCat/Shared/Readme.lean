@@ -4,6 +4,7 @@ import ComprehensionCategory.Model.OverCat.Shared.Universe
 import ComprehensionCategory.Model.OverCat.Shared.Twist
 import ComprehensionCategory.Model.OverCat.Shared.HomIntro
 import ComprehensionCategory.Model.OverCat.Shared.Pi
+import ComprehensionCategory.Model.OverCat.Shared.OpSigma
 
 /-!
 # Shared type formers
@@ -34,7 +35,8 @@ their conclusion a type of another, in a context of the first.
   displayed model in context `Γ ▹ B`: seeing the type as a dependent profunctor over `B`, the
   straightening of its unstraightening, a D2SFib over the unstraightening of `B`, displayed over
   `Γ ▹ B`. The twist of a type weakened from `Γ` is that type, seen in the displayed model,
-  weakened (Twist-Weak).
+  weakened (Twist-Weak). The twist is stable under substitution, by `rfl`, as a
+  rule.
 * `HomIntro`: the twisted Hom-type `Γ ▹ a : A ⊢ Homₐ(ā, a)` of a type `A` of the category model, a
   type of the displayed model whose objects over `(γ, a)` are the endomorphisms of `a`, derived from
   `Hom[A]` by twist and substitution along the diagonal, and its term `refl A`, the
@@ -45,6 +47,10 @@ their conclusion a type of another, in a context of the first.
   application are the bijections between the terms of `B`, the sections of `∫ B`, those of the
   dependent product `piDisp A (∫ B)` and those of the unstraightening of `Π[A] B`, and abstraction
   is stable under substitution: `HasPi ICatOpLax ICatLax`.
+* `OpSigma`: the opposite of a Σ-type. For `B` in context `Γ ▹ A`, the context extension by the
+  twist of `Bᵒᵖ`, written `Bᵒᵖ[ā/a]` in the paper, is that by `(Σ[A] B)ᵒᵖ`, over `Γ`, so the terms
+  of `(Σ[A] B)ᵒᵖ` are the pairs of a term `x` of `Aᵒᵖ` and a term of the twist of `Bᵒᵖ` at `x`,
+  naturally in `Γ`.
 -/
 
 universe u
@@ -188,3 +194,34 @@ example {Γ Δ : Cat.{u, u}} (σ : Δ ⟶ Γ) (A : Fibration.Straightening.ICatO
     (B : ICatLax.{u, u}.Ty (Γ ▹ A)) :
     (Π[A] B : ICatLax.{u, u}.Ty Γ)⦃σ⦄ = Π[A⦃σ⦄] B⦃𝐪(σ, A)⦄ :=
   rfl
+
+section OpSigma
+
+variable {Γ : Cat.{u, u}}
+
+/-- **The terms of the opposite of a Σ-type** are pairs of a term of `Aᵒᵖ` and a term of the twist
+of `Bᵒᵖ` at it. -/
+recall ComprehensionCategory.OverCat.opSigmaEquiv (A : ICatLax.{u, u}.Ty Γ)
+    (B : ICatLax.{u, u}.Ty (Γ ▹ A)) :
+    Tm(Γ, (Σ[A] B)ᵒᵖ) ≃ Σ x : Tm(Γ, Aᵒᵖ), Tm(Γ, (twist (B := Aᵒᵖ) (Bᵒᵖ))⦃x.sec⦄)
+
+/-- It comes from an isomorphism of contexts over `Γ`. -/
+recall ComprehensionCategory.OverCat.opSigmaIso (A : ICatLax.{u, u}.Ty Γ)
+    (B : ICatLax.{u, u}.Ty (Γ ▹ A)) :
+    (Γ ▹ Aᵒᵖ ▹ twist (B := Aᵒᵖ) (Bᵒᵖ) : Cat.{u, u}) ≅ Γ ▹ (Σ[A] B)ᵒᵖ
+
+/-- The bijection is natural in `Γ`. -/
+recall ComprehensionCategory.OverCat.opFst_pull {A : ICatLax.{u, u}.Ty Γ}
+    {B : ICatLax.{u, u}.Ty (Γ ▹ A)} {Δ : Cat.{u, u}} (σ : Δ ⟶ Γ) (t : Tm(Γ, (Σ[A] B)ᵒᵖ)) :
+    opFst (A := A⦃σ⦄) (B := B⦃𝐪(σ, A)⦄) t⦃σ⦄ = (opFst t)⦃σ⦄
+
+recall ComprehensionCategory.OverCat.opSnd_pull {A : ICatLax.{u, u}.Ty Γ}
+    {B : ICatLax.{u, u}.Ty (Γ ▹ A)} {Δ : Cat.{u, u}} (σ : Δ ⟶ Γ) (t : Tm(Γ, (Σ[A] B)ᵒᵖ)) :
+    (opSnd (A := A⦃σ⦄) (B := B⦃𝐪(σ, A)⦄) t⦃σ⦄).sec ≍ ((opSnd t)⦃σ⦄).sec
+
+/-- The twist is stable under substitution, by a rule. -/
+example {Δ : Cat.{u, u}} (σ : Δ ⟶ Γ) {B : ICatLax.{u, u}.Ty Γ} (C : ICatLax.{u, u}.Ty (Γ ▹ Bᵒᵖ)) :
+    (twist C)⦃𝐪(σ, B)⦄ = twist (C⦃𝐪(σ, Bᵒᵖ)⦄) :=
+  rfl
+
+end OpSigma

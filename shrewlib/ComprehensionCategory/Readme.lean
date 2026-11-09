@@ -19,7 +19,10 @@ Comprehension categories as displayed categories, their type formers, and models
 * `Term`: the terms `Tm(Γ, A)` of a type, the sections of its projection, and their
   substitution `t⦃σ⦄ : Tm(Δ, A⦃σ⦄)`, the unique section over `t` along `𝐪(σ, A)`, functorial
   over a split comprehension category; the transport of terms along equalities of types, and the
-  extension `consSec σ t : Δ ⟶ Γ ▹ A` of a morphism `σ` by a term of `A⦃σ⦄`.
+  extension `consSec σ t : Δ ⟶ Γ ▹ A` of a morphism `σ` by a term of `A⦃σ⦄`. The terms of `A⦃σ⦄`
+  are the morphisms into `Γ ▹ A` over `σ` (`Tm.liftEquiv`), terms transport along isomorphisms of
+  contexts over `Γ` (`Tm.equivOfIso`), and the sections of `Γ ▹ A ▹ T ⟶ Γ` are the pairs of a term
+  `x` of `A` and a term of `T⦃x⦄` (`Tm.sigmaEquiv`).
 * `Map`: maps of comprehension categories over a functor of the bases, with a comparison
   `F.obj (Γ ▹ A) ⟶ F.obj Γ ▹ M.obj A`, and their pseudo and strict versions. Strict maps send terms
   to terms, and over the identity, the terms of `A` are those of `M.obj A` (`tmEquiv`).
@@ -57,7 +60,8 @@ Comprehension categories as displayed categories, their type formers, and models
       uniqueness of empty types; the universes of discrete and of contravariant types in the
       category model, the twist of a type of the category model, a type of the displayed model,
       and the twisted Hom-types with their introduction rule (Hom-Intro); the Π-types of the
-      category model over the contravariant one, of sections over the fibres.
+      category model over the contravariant one, of sections over the fibres; the terms of the
+      opposite of a Σ-type, through twists.
     * `Maps/`: maps between the models: forgetting the discreteness, a strict map preserving
       Σ-types, unit types and opposite types, the inclusions of the category model and the
       contravariant one into the displayed model, strict maps preserving Σ-types and unit types,
