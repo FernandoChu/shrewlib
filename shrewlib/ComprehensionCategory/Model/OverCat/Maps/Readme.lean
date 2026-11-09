@@ -8,7 +8,8 @@ Maps of comprehension categories between the models over `Cat`, and their preser
 formers, one file per pair of models.
 
 * `DiscreteToCat`: forgetting the discreteness is a strict map from the discrete model to the
-  category model, which preserves the Σ-types and the opposite types strictly, by `rfl`.
+  category model, which preserves the Σ-types, the unit types and the opposite types strictly,
+  by `rfl`.
 * `SmallToCat`: the lifts of the types and of the discrete types of level `v` into the category
   model at level `v + 1` are strict maps, along which it has universes of them.
 -/
@@ -28,6 +29,10 @@ recall ComprehensionCategory.OverCat.forgetComprehensionMap :
 /-- **It preserves Σ-types strictly.** -/
 recall ComprehensionCategory.OverCat.forgetComprehensionMap_preservesSigma :
     forgetComprehensionMap.{u}.PreservesSigma
+
+/-- **It preserves unit types strictly.** -/
+recall ComprehensionCategory.OverCat.forgetComprehensionMap_preservesUnit :
+    forgetComprehensionMap.{u}.PreservesUnit
 
 /-- **It preserves opposite types strictly.** -/
 recall ComprehensionCategory.OverCat.forgetComprehensionMap_obj_op {Γ : Cat.{u, u}}

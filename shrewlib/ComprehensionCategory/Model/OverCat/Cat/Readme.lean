@@ -3,6 +3,7 @@ import ComprehensionCategory.Model.OverCat.Cat.Small
 import ComprehensionCategory.Model.OverCat.Cat.Term
 import ComprehensionCategory.Model.OverCat.Cat.TypeFormers.Sigma
 import ComprehensionCategory.Model.OverCat.Cat.TypeFormers.Op
+import ComprehensionCategory.Model.OverCat.Cat.TypeFormers.Unit
 import ComprehensionCategory.Model.OverCat.Cat.TypeFormers.Universe
 
 /-!
@@ -12,8 +13,9 @@ In this folder we define the category model: the comprehension category `ICatLax
 types in context `Γ` are the functors `Γ ⥤ Cat`, and whose context extension `Γ ▹ A` is the
 total category `Γ ⋉ A` of the unstraightening of `A`. It is full and split, and it has Σ-types:
 `Σ[A] B` is the straightening of the composite of the split opfibrations `∫ A` over
-`Γ` and `∫ B` over `Γ ⋉ A`. It has opposite types: `Aᵒᵖ` is the pointwise opposite of `A`. The
-terms `Tm(Γ, A)` of a constant type at a category `K` are the functors `Γ ⥤ K`. At level `v + 1`,
+`Γ` and `∫ B` over `Γ ⋉ A`. It has unit types, the constant types at the terminal category. It
+has opposite types: `Aᵒᵖ` is the pointwise opposite of `A`. The terms `Tm(Γ, A)` of a constant
+type at a category `K` are the functors `Γ ⥤ K`. At level `v + 1`,
 it has a Coquand-style universe `U Γ`, the constant type at the category of small categories,
 whose terms are exactly the functors `Γ ⥤ Cat.{v, v}`. Its Hom-types are types of the discrete
 model, and it has a universe of the discrete types too (`OverCat/Shared`).
@@ -31,6 +33,8 @@ The files give its ingredients:
   straightening–unstraightening at the composite.
 * `TypeFormers/Op`: opposite types, `A ⋙ opFunctor'`, whose rules hold by `rfl`, with the
   opposite functor `opFunctor' : Cat ⥤ Cat` of `CategoryTheory/Opposite`, involutive on the nose.
+* `TypeFormers/Unit`: unit types, the constant types at the terminal category `discrete' PUnit`,
+  whose η holds by `rfl`.
 * `Small`: at level `v + 1`, the types of level `v`, the functors `Γ ⥤ Cat.{v, v}`, as a full
   split comprehension category `SmallICat`, along their lift into the category model.
 * `TypeFormers/Universe`: the universe `U Γ` of the types of level `v`, with inverse maps `El` and
@@ -62,6 +66,9 @@ recall ComprehensionCategory.CatModel.comprFullyFaithful : CatModel.compr.{u}.Fu
 
 /-- **The category model has Σ-types.** -/
 recall ComprehensionCategory.CatModel.hasSigma : HasSigma ICatLax.{u, u, u, u}
+
+/-- **The category model has unit types.** -/
+recall ComprehensionCategory.CatModel.hasUnit : HasUnit ICatLax.{u, u, u, u}
 
 /-- **The category model has opposite types**, involutive by `rfl`. -/
 recall ComprehensionCategory.CatModel.op_op {Γ : Cat.{u, u}} (A : ICatLax.{u, u}.Ty Γ) :

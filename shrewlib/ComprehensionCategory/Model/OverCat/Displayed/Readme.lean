@@ -1,6 +1,7 @@
 import ComprehensionCategory.Model.OverCat.Displayed.Basic
 import ComprehensionCategory.Model.OverCat.Displayed.Term
 import ComprehensionCategory.Model.OverCat.Displayed.TypeFormers.Sigma
+import ComprehensionCategory.Model.OverCat.Displayed.TypeFormers.Unit
 
 /-!
 # The displayed category model
@@ -11,7 +12,8 @@ categories displayed over `Γ` in Bénabou's sense. Its comprehension functor is
 equivalence `LaxNormalCat ≃ DisplayedCat ≃ cod Cat` over `Cat`, so the context extension `Γ ▹ F` is
 the total category of the unstraightening of `F`. It is full and split: a split replacement of the
 codomain comprehension category `cod Cat`. It has Σ-types: `Σ[F] G` is the straightening of the
-composite of the unstraightenings of `F` and `G`.
+composite of the unstraightenings of `F` and `G`. It has unit types, the straightenings of the
+terminal displayed categories.
 
 * `Basic`: the comprehension functor `unstraighten ⋙ᵥ DisplayedCat.total`, which preserves cartesian
   morphisms and is fully faithful, as a composite of equivalences.
@@ -20,6 +22,8 @@ composite of the unstraightenings of `F` and `G`.
   of the reindexing of `D`, by `rfl`.
 * `TypeFormers/Sigma`: Σ-types, whose pairing reassociates the pairs, since unstraightening undoes
   straightening on the nose.
+* `TypeFormers/Unit`: unit types, the straightenings of the terminal displayed categories
+  `unitDisp Γ`, whose η holds by `rfl`.
 -/
 
 universe u
@@ -42,3 +46,6 @@ recall ComprehensionCategory.DisplayedModel.compr :
 
 /-- **The displayed category model has Σ-types.** -/
 recall ComprehensionCategory.DisplayedModel.hasSigma : HasSigma LaxNormalCat.{u, u, u}
+
+/-- **The displayed category model has unit types.** -/
+recall ComprehensionCategory.DisplayedModel.hasUnit : HasUnit LaxNormalCat.{u, u, u}

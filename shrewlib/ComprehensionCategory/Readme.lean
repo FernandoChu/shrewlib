@@ -33,22 +33,22 @@ Comprehension categories as displayed categories, their type formers, and models
   * `Codomain/`: `cod C`, for a category with chosen pullbacks.
   * `OverCat/`: the models over `Cat`, one folder each, whose `TypeFormers/` folders mirror the one
     above, with type formers specific to them:
-    * `Cat/`: the category model `ICatLax`, with Σ-types, opposite types and a Coquand-style
-      universe of the types of a lower level (`SmallICat`).
+    * `Cat/`: the category model `ICatLax`, with Σ-types, unit types, opposite types and a
+      Coquand-style universe of the types of a lower level (`SmallICat`).
     * `CatOp/`: the contravariant category model `ICatOpLax`, of the functors `Γᵒᵖ ⥤ Cat`, with
-      Σ-types and opposite types, and its types of a lower level (`SmallICatOp`).
+      Σ-types, unit types and opposite types, and its types of a lower level (`SmallICatOp`).
     * `Discrete/`: the discrete model `IDisc`, the full sub-comprehension category of the category
-      model on the functors into discrete categories, with Σ-types and opposite types, and its
-      types of a lower level (`SmallIDisc`).
+      model on the functors into discrete categories, with Σ-types, unit types and opposite
+      types, and its types of a lower level (`SmallIDisc`).
     * `Displayed/`: the displayed category model `LaxNormalCat`, whose types are the lax normal
       functors into profunctors, with the equivalence `LaxNormalCat ≃ cod Cat` as comprehension
-      functor: a split replacement of `cod Cat`, with Σ-types.
+      functor: a split replacement of `cod Cat`, with Σ-types and unit types.
     * `Shared/`: type formers relating the models: the Hom-types of the category model, types of
       the discrete model, the universe of discrete types in the category model, the twist of a
       type of the category model, a type of the displayed model, and the twisted Hom-types with
       their introduction rule (Hom-Intro).
     * `Maps/`: maps between the models: forgetting the discreteness, a strict map preserving
-      Σ-types and opposite types, and the lifts of the types of a lower level.
+      Σ-types, unit types and opposite types, and the lifts of the types of a lower level.
 
 -/
 

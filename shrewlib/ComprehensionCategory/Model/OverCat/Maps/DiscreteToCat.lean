@@ -1,6 +1,7 @@
 import ComprehensionCategory.Map
 import ComprehensionCategory.Model.OverCat.Discrete.TypeFormers.Op
 import ComprehensionCategory.Model.OverCat.Discrete.TypeFormers.Sigma
+import ComprehensionCategory.Model.OverCat.Discrete.TypeFormers.Unit
 
 /-!
 # From the discrete model to the category model
@@ -13,7 +14,8 @@ It preserves the type formers strictly, by `rfl`, since those of the discrete mo
 the category model with a proof of discreteness:
 
 * the Σ-types and the pairings (`forgetComprehensionMap_preservesSigma`);
-* the opposite types (`forgetComprehensionMap_obj_op`).
+* the opposite types (`forgetComprehensionMap_obj_op`);
+* the unit types (`forgetComprehensionMap_preservesUnit`), and so the stars.
 -/
 
 universe u
@@ -44,5 +46,10 @@ theorem forgetComprehensionMap_preservesSigma : forgetComprehensionMap.{u}.Prese
 theorem forgetComprehensionMap_obj_op {Γ : Cat.{u, u}} (A : IDisc.{u, u}.Ty Γ) :
     forgetComprehensionMap.toPre.obj Aᵒᵖ = (forgetComprehensionMap.toPre.obj A)ᵒᵖ :=
   rfl
+
+/-- **Forgetting the discreteness preserves unit types strictly**: the unit types of the discrete
+model are those of the category model. -/
+theorem forgetComprehensionMap_preservesUnit : forgetComprehensionMap.{u}.PreservesUnit where
+  obj_unit _ := rfl
 
 end ComprehensionCategory.OverCat

@@ -3,6 +3,7 @@ import ComprehensionCategory.Model.OverCat.Discrete.OpFunctor
 import ComprehensionCategory.Model.OverCat.Discrete.Small
 import ComprehensionCategory.Model.OverCat.Discrete.TypeFormers.Op
 import ComprehensionCategory.Model.OverCat.Discrete.TypeFormers.Sigma
+import ComprehensionCategory.Model.OverCat.Discrete.TypeFormers.Unit
 
 /-!
 # The discrete model
@@ -26,6 +27,8 @@ The Hom-types of the category model are types of the discrete model (`OverCat/Sh
 
 * `Basic`: the comprehension structure pulled back along `IDisc.forget` (`Comprehension.comap`).
 * `TypeFormers/Sigma`: Σ-types, those of the category model.
+* `TypeFormers/Unit`: unit types, those of the category model, at the discrete category
+  `discrete' PUnit`.
 * `OpFunctor`: the opposite of a discrete category is discrete, and the discrete categories
   `discrete' S` are their own opposites, by `propext`. It imports no rewrite rules.
 * `TypeFormers/Op`: opposite types, those of the category model, involutive and stable under
@@ -50,6 +53,9 @@ recall ComprehensionCategory.DiscreteModel.fullComprehension : FullComprehension
 
 /-- **The discrete model has Σ-types.** -/
 recall ComprehensionCategory.DiscreteModel.hasSigma : HasSigma IDisc.{u, u, u, u}
+
+/-- **The discrete model has unit types**, those of the category model. -/
+recall ComprehensionCategory.DiscreteModel.hasUnit : HasUnit IDisc.{u, u, u, u}
 
 /-- The Σ-types of the discrete model are those of the category model, on the nose. -/
 example {Γ : Cat.{u, u}} (A : IDisc.{u, u}.Ty Γ) (B : IDisc.{u, u}.Ty (Γ ▹ A)) :

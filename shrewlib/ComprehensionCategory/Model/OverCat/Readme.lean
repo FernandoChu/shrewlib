@@ -12,18 +12,18 @@ Four full split comprehension categories over `Cat`, one folder each, with a `Re
 
 * `Cat/`: the category model `ICatLax`, whose types in context `Γ` are the functors `Γ ⥤ Cat`, and
   whose context extension `Γ ▹ A` is the total category of the unstraightening of `A`. It has
-  Σ-types, opposite types, and a Coquand-style universe of the types of a lower level, the
-  functors into smaller categories, which form a comprehension category `SmallICat`.
+  Σ-types, unit types, opposite types, and a Coquand-style universe of the types of a lower
+  level, the functors into smaller categories, which form a comprehension category `SmallICat`.
 * `CatOp/`: the contravariant category model `ICatOpLax`, whose types in context `Γ` are the
   functors `Γᵒᵖ ⥤ Cat`, and whose context extension is the total category of the unstraightening,
-  a split fibration. It mirrors `Cat/`: it has Σ-types and opposite types, and its types of a lower
-  level form a comprehension category `SmallICatOp`.
+  a split fibration. It mirrors `Cat/`: it has Σ-types, unit types and opposite types, and its
+  types of a lower level form a comprehension category `SmallICatOp`.
 * `Discrete/`: the discrete model `IDisc`, the full sub-comprehension category of the category
-  model on the functors into discrete categories. It has Σ-types and opposite types, those of the
-  category model.
+  model on the functors into discrete categories. It has Σ-types, unit types and opposite types,
+  those of the category model.
 * `Displayed/`: the displayed category model `LaxNormalCat`, whose types are the lax normal functors
   into profunctors, with the equivalence `LaxNormalCat ≃ cod Cat` as comprehension functor. It has
-  Σ-types.
+  Σ-types and unit types.
 
 Two more folders relate them:
 
@@ -33,8 +33,8 @@ Two more folders relate them:
   displayed model, covariant in it, which gives the twisted Hom-types and their term `refl`.
 * `Maps/`: maps of comprehension categories between the models, and their preservation of type
   formers: forgetting the discreteness is a strict map from the discrete model to the category
-  model, preserving Σ-types and opposite types, and the lifts of the types of a lower level into the
-  category model are strict maps, along which it has universes of them.
+  model, preserving Σ-types, unit types and opposite types, and the lifts of the types of a lower
+  level into the category model are strict maps, along which it has universes of them.
 
 A result about a single model goes in its folder, a type former in the `TypeFormers/` folder of the
 model of its types, or in `Shared/` if its premises are types of another model, and a result
