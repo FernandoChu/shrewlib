@@ -11,11 +11,12 @@ category is (`isDiscrete_opFunctor'_obj`). They are involutive and stable under 
 `rfl`, as in the category model.
 
 A discrete type is its own opposite (op-Disc, `op_eq_self`) if empty types are unique
-(`EmptyUnique`, in `OpFunctor`), a hypothesis of the theorem: the morphisms `y ⟶ x` and `x ⟶ y`
-of a discrete category are then equal, being empty types when `x ≠ y`. This is a propositional
-equality, which cannot be a rewrite rule since it has a hypothesis. For the Hom-types, whose values
-are the discrete categories `discrete' S`, it holds without the hypothesis and is a rule
-(`OverCat.op_hom`, in `OverCat/Shared/Hom`).
+(`EmptyUnique`, in `Logic/EmptyUnique`), a hypothesis of the theorem: the morphisms `y ⟶ x` and
+`x ⟶ y` of a discrete category are then equal, being empty types when `x ≠ y`
+(`CategoryTheory/Opposite/Discrete`). This is a propositional equality, which cannot be a rewrite
+rule since it has a hypothesis. For the Hom-types, whose values are the discrete categories
+`discrete' S`, it holds without the hypothesis and is a rule (`OverCat.op_hom`, in
+`OverCat/Shared/Hom`).
 
 The notation `Aᵒᵖ` for `DiscreteModel.op A` is scoped in `ComprehensionCategory.DiscreteModel`. It
 overloads Mathlib's `Cᵒᵖ` and the opposite types of the category model, which are told apart by

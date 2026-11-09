@@ -1,3 +1,4 @@
+import CategoryTheory.Opposite.Discrete
 import CategoryTheory.Opposite.OpFunctor
 
 /-!
@@ -9,6 +10,9 @@ In this folder we define the opposite of a category that is involutive on the no
 * `OpFunctor`: the opposite category structure `opCategory'` on the objects of a category, and the
   opposite functor `opFunctor' : Cat ⥤ Cat`, with `opFunctor' ⋙ opFunctor' = 𝟭 Cat` by `rfl`. It
   is Mathlib's `Cat.opFunctor` up to a natural isomorphism. The file imports no rewrite rules.
+* `Discrete`: the opposite of a discrete category is discrete, and, if empty types are unique
+  (`EmptyUnique`, in `Logic/EmptyUnique`), it is the category itself, and the opposite of a functor
+  into discrete categories is that functor. The file imports no rewrite rules.
 -/
 
 universe v u
@@ -22,3 +26,7 @@ isomorphism. -/
 recall CategoryTheory.opFunctor'_comp_opFunctor' : opFunctor'.{v, u} ⋙ opFunctor' = 𝟭 _
 
 recall CategoryTheory.opFunctor'Iso : opFunctor'.{v, u} ≅ Cat.opFunctor
+
+/-- If empty types are unique, a discrete category is its own opposite. -/
+recall CategoryTheory.opFunctor'_obj_of_isDiscrete (hE : EmptyUnique.{v}) (C : Cat.{v, u})
+    [IsDiscrete C] : opFunctor'.obj C = C

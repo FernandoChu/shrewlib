@@ -31,9 +31,13 @@ files, (op)cartesian morphisms (in `Displayed/{Opfibration,Fibration}/Basic` and
   the kernel. `kernel_rfl` first makes the implicit arguments of whiskerings canonical and, if
   needed, goes through weak head normal forms.
 - `Examples/`: small examples of the rules.
+- `Logic/`: principles about Lean's types that are independent of its axioms, used as
+  hypotheses rather than axioms: uniqueness of empty types (`EmptyUnique`), which holds in the
+  set-theoretic model of Lean.
 - `CategoryTheory/`: constructions on plain categories. `Opposite/` has the opposite functor
   `opFunctor' : Cat ⥤ Cat`, which takes the opposite structure on the same objects, so that
-  `opFunctor' ⋙ opFunctor' = 𝟭 Cat` by `rfl`.
+  `opFunctor' ⋙ opFunctor' = 𝟭 Cat` by `rfl`, and the opposite of a discrete category, which is
+  the category itself if empty types are unique.
 - `Profunctor.lean`: profunctors as a structure with actions `lmap`/`rmap`; composition as a
   coend quotient; the bicategory `ProfCat`. The action laws and the naturality of 2-cells are
   rules, so most coherence laws hold by `rfl`.
