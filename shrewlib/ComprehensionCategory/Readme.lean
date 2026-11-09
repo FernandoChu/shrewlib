@@ -28,9 +28,9 @@ Comprehension categories as displayed categories, their type formers, and models
   * `Unit`: unit types `D.unit Γ`, with a term `D.star Γ` that is η, so that
     `Γ ▹ D.unit Γ ≅ Γ`: every term is the star, which is stable under substitution, and strict
     maps that preserve unit types (`StrictComprehensionMap.PreservesUnit`) preserve it.
-  * `Universe`: Coquand-style universes `univ M Γ` in `D` of the types of `E`, along a strict map
-    `M : E ⟶ D` over the identity: inverse maps `El M : Tm(Γ, univ M Γ) → E.Ty Γ` and `code M`,
-    natural in `Γ`.
+  * `Universe`: Coquand-style universes `univ D E Γ` in `D` of the types of `E`: inverse maps
+    `El D E : Tm(Γ, univ D E Γ) → E.Ty Γ` and `code D E`, natural in `Γ`. A term decodes to a type
+    of any comprehension category that `E` maps to strictly (`decode`).
 * `Model/`: comprehension categories, with a `Readme.lean` in each folder.
   * `Codomain/`: `cod C`, for a category with chosen pullbacks.
   * `OverCat/`: the models over `Cat`, one folder each, whose `TypeFormers/` folders mirror the one
@@ -50,9 +50,9 @@ Comprehension categories as displayed categories, their type formers, and models
       of the four models above, with their total categories as comprehension.
     * `Shared/`: type formers relating the models: the Hom-types of the category model, types of
       the discrete model, also of two terms, and those of discrete types with Hom-Disc, under the
-      uniqueness of empty types; the universe of discrete types in the category model, the twist
-      of a type of the category model, a type of the displayed model, and the twisted Hom-types
-      with their introduction rule (Hom-Intro).
+      uniqueness of empty types; the universes of discrete and of contravariant types in the
+      category model, the twist of a type of the category model, a type of the displayed model,
+      and the twisted Hom-types with their introduction rule (Hom-Intro).
     * `Maps/`: maps between the models: forgetting the discreteness, a strict map preserving
       Σ-types, unit types and opposite types, the inclusions of the category model and the
       contravariant one into the displayed model, strict maps preserving Σ-types and unit types,
@@ -106,5 +106,4 @@ recall Displayed.Tm.pull_comp {C : Type u} [Category.{v} C] {D : Displayed.{v₂
 /-- A universe classifies the types of `E`, naturally. -/
 recall Displayed.code_pull {C : Type u} [Category.{v} C] {D : Displayed.{v₂, u₂} C}
     {E : Displayed.{v₂, u₂} C} [Fib D] [Comprehension D] [Fib E] [Comprehension E]
-    (M : StrictComprehensionMap (𝟭 C) E D) [HasUniverse M] {Δ Γ : C} (σ : Δ ⟶ Γ)
-    (A : E.Ty Γ) : (code M A)⦃σ⦄ = code M A⦃σ⦄
+    [HasUniverse D E] {Δ Γ : C} (σ : Δ ⟶ Γ) (A : E.Ty Γ) : (code D E A)⦃σ⦄ = code D E A⦃σ⦄

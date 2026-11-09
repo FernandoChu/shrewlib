@@ -21,7 +21,8 @@ formers, one file per pair of models.
   the functoriality of `B`, and so is the identity.
 * `CatOpToDisplayed`: the same for the contravariant category model, `catOpToDisp C`.
 * `SmallToCat`: the lifts of the types and of the discrete types of level `v` into the category
-  model at level `v + 1` are strict maps, along which it has universes of them.
+  model at level `v + 1`, and of the contravariant types into the contravariant category model,
+  are strict maps, along which the terms of the universes of these types decode.
 * `Unstraighten`: the unstraightenings, from the category, contravariant, discrete and displayed
   category models to the models of fibrations (`OverCat/Fibred`), preserve the chosen lifts on the
   nose, so that the straightening–unstraightening equivalences are fibred, and are strict maps of
@@ -125,5 +126,9 @@ recall ComprehensionCategory.OverCat.liftComprehensionMap :
 recall ComprehensionCategory.OverCat.liftDiscComprehensionMap :
     StrictComprehensionMap (𝟭 Cat.{v + 1, v + 1}) DiscreteModel.SmallIDisc.{v}
     ICatLax.{v + 1, v + 1, v + 1, v + 1}
+
+recall ComprehensionCategory.OverCat.liftOpComprehensionMap :
+    StrictComprehensionMap (𝟭 Cat.{v + 1, v + 1}) CatOpModel.SmallICatOp.{v}
+    Fibration.Straightening.ICatOpLax.{v + 1, v + 1, v + 1, v + 1}
 
 end Small

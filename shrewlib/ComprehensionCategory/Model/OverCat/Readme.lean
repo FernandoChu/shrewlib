@@ -38,13 +38,14 @@ Two more folders relate them:
 * `Shared/`: type formers relating the models: the Hom-types of the category model are types of
   the discrete model, in context form and for two terms, those of the discrete types are their
   Hom-types in the category model, with Hom-Disc if empty types are unique, the category model has
-  a Coquand-style universe of the discrete types, and
+  Coquand-style universes of the discrete types and of the contravariant types, and
   the twist of a type of the category model, contravariant in its last variable, is a type of the
   displayed model, covariant in it, which gives the twisted Hom-types and their term `refl`.
 * `Maps/`: maps of comprehension categories between the models, and their preservation of type
   formers: forgetting the discreteness is a strict map from the discrete model to the category
   model, preserving Σ-types, unit types and opposite types, and the lifts of the types of a lower
-  level into the category model are strict maps, along which it has universes of them. The
+  level into the category model, and of the contravariant types into the contravariant one, are
+  strict maps, along which the terms of the universes decode. The
   category model and the contravariant one are included into the displayed model by strict maps
   preserving Σ-types and unit types. The unstraightenings are strict maps from the four category
   models to the models of fibrations, preserving the chosen lifts.

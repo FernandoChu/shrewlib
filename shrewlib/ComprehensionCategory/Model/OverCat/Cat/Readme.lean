@@ -38,8 +38,8 @@ The files give its ingredients:
 * `Small`: at level `v + 1`, the types of level `v`, the functors `Γ ⥤ Cat.{v, v}`, as a full
   split comprehension category `SmallICat`, along their lift into the category model.
 * `TypeFormers/Universe`: the universe `U Γ` of the types of level `v`, with inverse maps `El` and
-  `code` between its terms and the functors `Γ ⥤ Cat.{v, v}`, stable under substitution: a
-  universe along the lift, `HasUniverse liftComprehensionMap`.
+  `code` between its terms and the functors `Γ ⥤ Cat.{v, v}`, stable under substitution:
+  `HasUniverse ICatLax SmallICat`, decoding along the lift.
 -/
 
 universe u
@@ -99,14 +99,15 @@ recall ComprehensionCategory.CatModel.El_pull {Γ Δ : Cat.{v + 1, v + 1}} (σ :
 
 /-- **The category model has a universe of the types of level `v`**, along their lift. -/
 recall ComprehensionCategory.CatModel.hasUniverse :
-    HasUniverse OverCat.liftComprehensionMap.{v}
+    HasUniverse ICatLax.{v + 1, v + 1, v + 1, v + 1} CatModel.SmallICat.{v}
 
 /-- The universe and its maps are those of the category model. -/
-example {Γ : Cat.{v + 1, v + 1}} : univ OverCat.liftComprehensionMap.{v} Γ = CatModel.U Γ :=
+example {Γ : Cat.{v + 1, v + 1}} :
+    univ ICatLax.{v + 1, v + 1, v + 1, v + 1} CatModel.SmallICat.{v} Γ = CatModel.U Γ :=
   rfl
 
 example {Γ : Cat.{v + 1, v + 1}} (t : Tm(Γ, CatModel.U Γ)) :
-    El OverCat.liftComprehensionMap.{v} t = CatModel.El t :=
+    El ICatLax.{v + 1, v + 1, v + 1, v + 1} CatModel.SmallICat.{v} t = CatModel.El t :=
   rfl
 
 end Universe

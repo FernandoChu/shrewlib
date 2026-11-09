@@ -1,16 +1,19 @@
 import ComprehensionCategory.Map
 import ComprehensionCategory.Model.OverCat.Discrete.Small
+import ComprehensionCategory.Model.OverCat.CatOp.Small
 
 /-!
-# From the types of a lower level to the category model
+# From the types of a lower level to the category models
 
 The lifts of the types of level `v`, `SmallICat.lift : SmallICat ⟶ ICatLax`, and of the discrete
 types of level `v`, `SmallIDisc.lift : SmallIDisc ⟶ ICatLax`, into the category model at level
 `v + 1` are strict maps of comprehension categories over the identity of `Cat.{v + 1, v + 1}`
 (`liftComprehensionMap`, `liftDiscComprehensionMap`): the comprehension functors of `SmallICat` and
 `SmallIDisc` are the lifts followed by that of the category model by definition, so both axioms
-hold by `rfl`. These are the maps along which the category model has universes of these types
-(`Cat/TypeFormers/Universe`, `Shared/Universe`).
+hold by `rfl`. So is the lift of the contravariant types of level `v`,
+`SmallICatOp.lift : SmallICatOp ⟶ ICatOpLax`, into the contravariant category model
+(`liftOpComprehensionMap`). These are the maps along which the terms of the universes of these
+types in the category model decode (`Cat/TypeFormers/Universe`, `Shared/Universe`).
 -/
 
 universe v
@@ -35,6 +38,15 @@ def liftDiscComprehensionMap :
     ICatLax.{v + 1, v + 1, v + 1, v + 1} where
   toPre.toDispFunctor := SmallIDisc.lift.toDispFunctor
   toPre.isCartesianMap := SmallIDisc.lift.isCartesianMap
+  toPre.compr_obj _ := rfl
+
+/-- **The lift of the contravariant types of level `v` is a strict map of comprehension
+categories** into the contravariant category model. -/
+def liftOpComprehensionMap :
+    StrictComprehensionMap (𝟭 Cat.{v + 1, v + 1}) CatOpModel.SmallICatOp.{v}
+    Fibration.Straightening.ICatOpLax.{v + 1, v + 1, v + 1, v + 1} where
+  toPre.toDispFunctor := CatOpModel.SmallICatOp.lift.toDispFunctor
+  toPre.isCartesianMap := CatOpModel.SmallICatOp.lift.isCartesianMap
   toPre.compr_obj _ := rfl
 
 end ComprehensionCategory.OverCat

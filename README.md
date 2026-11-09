@@ -59,8 +59,8 @@ files, (op)cartesian morphisms (in `Displayed/{Opfibration,Fibration}/Basic` and
   opfibrations, equivalent over `Cat` to the functors into discrete categories).
 - `ComprehensionCategory/`: comprehension categories, their type formers, and models: the
   codomain model, and four models over `Cat` (`Model/OverCat/`), all with Σ-types and unit types:
-  the category model, with opposite types and Coquand-style universes of its types and of the
-  discrete types, the contravariant category model of functors `Γᵒᵖ ⥤ Cat`, with opposite types,
+  the category model, with opposite types and Coquand-style universes of its types, of the
+  discrete types and of the contravariant types, the contravariant category model of functors `Γᵒᵖ ⥤ Cat`, with opposite types,
   its discrete submodel of functors into discrete categories, whose type formers the inclusion
   preserves strictly, and the displayed category model of lax normal functors into profunctors,
   into which the category model and the contravariant one are included by strict maps preserving

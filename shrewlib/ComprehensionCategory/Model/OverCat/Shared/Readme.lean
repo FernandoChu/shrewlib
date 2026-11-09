@@ -24,8 +24,11 @@ their conclusion a type of another, in a context of the first.
 * `Universe`: the Coquand-style universe `UDisc Γ` of the discrete types of level `v`, a type of
   the category model at level `v + 1`, the constant functor at the category of small discrete
   categories. Its terms are exactly the functors `Γ ⥤ Cat.{v, v}` into discrete categories, by
-  inverse maps `ElDisc` and `codeDisc`, stable under substitution: a universe along the lift of
-  the discrete types of level `v`, `HasUniverse liftDiscComprehensionMap`.
+  inverse maps `ElDisc` and `codeDisc`, stable under substitution: `HasUniverse ICatLax
+  SmallIDisc`. And the universe `Uop Γ` of the contravariant types of level `v`, the opposite of
+  the universe `U Γ`, whose terms are exactly the functors `Γᵒᵖ ⥤ Cat.{v, v}`, by `ElOp` and
+  `codeOp`: `HasUniverse ICatLax SmallICatOp`. Its terms decode to types of the contravariant
+  category model.
 * `Twist`: the twist of a type of the category model in context `Γ ▹ Bᵒᵖ`, a type of the
   displayed model in context `Γ ▹ B`: seeing the type as a dependent profunctor over `B`, the
   straightening of its unstraightening, a D2SFib over the unstraightening of `B`, displayed over
@@ -123,7 +126,29 @@ recall ComprehensionCategory.OverCat.pull_UDisc {Γ Δ : Cat.{v + 1, v + 1}} (σ
     (UDisc Γ)⦃σ⦄ = UDisc Δ
 
 /-- **The category model has a universe of the discrete types of level `v`**, along their lift. -/
-recall ComprehensionCategory.OverCat.hasUniverseDisc : HasUniverse liftDiscComprehensionMap.{v}
+recall ComprehensionCategory.OverCat.hasUniverseDisc :
+    HasUniverse ICatLax.{v + 1, v + 1, v + 1, v + 1} SmallIDisc.{v}
+
+/-- **The universe of contravariant types is Coquand-style**: its terms are the functors
+`Γᵒᵖ ⥤ Cat.{v, v}`. It is the opposite of the universe of types. -/
+recall ComprehensionCategory.OverCat.ElOp_codeOp {Γ : Cat.{v + 1, v + 1}}
+    (A : (↑Γ)ᵒᵖ ⥤ Cat.{v, v}) : ElOp (codeOp A) = A
+
+recall ComprehensionCategory.OverCat.codeOp_ElOp {Γ : Cat.{v + 1, v + 1}}
+    (t : Tm(Γ, Uop Γ)) : codeOp (ElOp t) = t
+
+recall ComprehensionCategory.OverCat.Uop_eq_op (Γ : Cat.{v + 1, v + 1}) :
+    Uop Γ = CatModel.op (CatModel.U Γ)
+
+/-- **The category model has a universe of the contravariant types of level `v`.** -/
+recall ComprehensionCategory.OverCat.hasUniverseOp :
+    HasUniverse ICatLax.{v + 1, v + 1, v + 1, v + 1} CatOpModel.SmallICatOp.{v}
+
+/-- A term of the universe of contravariant types decodes to a type of the contravariant category
+model. -/
+example {Γ : Cat.{v + 1, v + 1}} (t : Tm(Γ, Uop Γ)) :
+    Fibration.Straightening.ICatOpLax.{v + 1, v + 1}.Ty Γ :=
+  decode liftOpComprehensionMap t
 
 end Universe
 

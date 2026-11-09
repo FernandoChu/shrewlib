@@ -8,9 +8,8 @@ import ComprehensionCategory.TypeFormers.Universe
 The category model at level `v + 1`, with contexts in `Cat.{v + 1, v + 1}`, has a Coquand-style
 universe `U Γ` of the types of level `v`, the functors `Γ ⥤ Cat.{v, v}` (`SmallICat`, `Cat/Small`):
 its terms `Tm(Γ, U Γ)` are exactly these functors, by inverse maps `El` and `code`, all stable under
-substitution. This is a universe in the sense of `ComprehensionCategory/TypeFormers/Universe`,
-along the lift of the types of level `v` into the category model, a strict map of comprehension
-categories (`liftComprehensionMap`): `HasUniverse liftComprehensionMap`.
+substitution. This is a universe in the sense of `ComprehensionCategory/TypeFormers/Universe`:
+`HasUniverse ICatLax SmallICat`.
 
 `U Γ` is the constant type at `smallCat`, the category `Cat.{v, v}` of small categories made a
 category of `Cat.{v + 1, v + 1}` by `AsSmall`, which wraps its objects and morphisms in `ULift`. So
@@ -22,8 +21,9 @@ is closed by `rfl` (`pull_U`), and `El` and `code` commute with substitution (`E
 `code_pull`).
 
 A term `t` of the universe decodes to the type `lift (El t)` of the category model, which replaces
-each category by the equivalent category `AsSmall` of `Cat.{v + 1, v + 1}`
-(`Displayed.decode`).
+each category by the equivalent category `AsSmall` of `Cat.{v + 1, v + 1}`, along the lift of the
+types of level `v` into the category model, a strict map of comprehension categories
+(`Displayed.decode liftComprehensionMap`).
 -/
 
 universe v
@@ -75,14 +75,13 @@ theorem code_pull (σ : Δ ⟶ Γ) (A : Γ ⥤ Cat.{v, v}) :
     (code A)⦃σ⦄ = code (σ.toFunctor ⋙ A) :=
   (Tm.ofConst_pull σ _).trans (congrArg Tm.ofConst (Functor.assoc _ _ _).symm)
 
-/-- The universe of the types of level `v`, along their lift into the category model. -/
-instance preUniverse : PreUniverse OverCat.liftComprehensionMap.{v} where
+/-- The universe of the types of level `v` in the category model. -/
+instance preUniverse : PreUniverse ICatLax.{v + 1, v + 1, v + 1, v + 1} SmallICat.{v} where
   univ Γ := U Γ
   pull_univ σ := pull_U σ
 
-/-- **The category model has a Coquand-style universe of the types of level `v`**, along their lift
-into the category model. -/
-instance hasUniverse : HasUniverse OverCat.liftComprehensionMap.{v} where
+/-- **The category model has a Coquand-style universe of the types of level `v`.** -/
+instance hasUniverse : HasUniverse ICatLax.{v + 1, v + 1, v + 1, v + 1} SmallICat.{v} where
   El t := El t
   code A := code A
   El_code A := El_code A
