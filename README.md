@@ -59,10 +59,10 @@ files, (op)cartesian morphisms (in `Displayed/{Opfibration,Fibration}/Basic` and
   discrete types, the contravariant category model of functors `Γᵒᵖ ⥤ Cat`, with opposite types,
   its discrete submodel of functors into discrete categories, whose type formers the inclusion
   preserves strictly, and the displayed category model of lax normal functors into profunctors,
-  into which the category model and the contravariant one are included by strict maps; with the
-  type formers relating them, such as the Hom-types of the category model in the discrete model,
-  the twist of types of the category model into types of the displayed model, and the twisted
-  Hom-types and their term `refl`.
+  into which the category model and the contravariant one are included by strict maps preserving
+  Σ-types and unit types; with the type formers relating them, such as the Hom-types of the
+  category model in the discrete model, the twist of types of the category model into types of
+  the displayed model, and the twisted Hom-types and their term `refl`.
 - `DoubleDisplayed/`: categories doubly displayed over a displayed category, their functors,
   equivalences and fibrations, and dependent 2-sided fibrations with their straightening: an
   equivalence between dependent profunctors over `ICatStr` and D2SFibs over `SplitOpfibStr`, over

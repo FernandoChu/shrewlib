@@ -29,6 +29,11 @@ We provide:
   `VertNatIso` namespace has their components (`VertNatIso.app`, `VertNatIso.hom_inv_id_app`, …)
   and `VertNatIso.ofComponents`.
 
+Two displayed categories are equal if their components are, compared heterogeneously
+(`ext_heq`), or if a vertical functor between them is the identity on objects and a cast on
+morphisms (`VertFunctor.eq_of_map_cast`), which only needs their hom-types to be propositionally
+equal.
+
 A vertical functor sends a morphism over `f` to one over `(𝟭 A).map f`, which is `f` by unfolding
 `𝟭 A`. The composite of two vertical functors lies over `𝟭 A ⋙ 𝟭 A`, which is `𝟭 A` by the rule
 `Functor.id_comp`, so it is again a vertical functor.
@@ -215,6 +220,36 @@ abbrev VertFunctor.comp {D : Displayed.{v₂, u₂} A} (F : VertFunctor D E)
 /-- Notation for composition of vertical functors, mirroring `⋙` for functors: `F ⋙ᵥ G` is `F`
 followed by `G`. -/
 scoped infixr:80 " ⋙ᵥ " => Displayed.VertFunctor.comp
+
+/-- **A vertical functor that is the identity on objects and a cast on morphisms witnesses an
+equality of displayed categories**, and is then the identity. The hom-types of `D` and `E` need
+only be propositionally equal, and the functor is the cast along these equalities. -/
+theorem VertFunctor.eq_of_map_cast {D : Displayed.{v₂, u₂} A} {E : Displayed.{v₂, u₂} A}
+    (H : VertFunctor D E) (hOb : D.Ob = E.Ob)
+    (hobj : ∀ {a : A} (x : D.Ob a), H.obj x = cast (congrFun hOb a) x)
+    (hHom : ∀ {a a' : A} (f : a ⟶ a') (x : D.Ob a) (y : D.Ob a'),
+      (x ⟶[f] y) = (H.obj x ⟶[f] H.obj y))
+    (hmap : ∀ {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} (φ : x ⟶[f] y),
+      H.map φ = cast (hHom f x y) φ) :
+    D = E ∧ H ≍ VertFunctor.id D := by
+  obtain ⟨Ob, Hom, id, comp, _, _, _⟩ := D
+  obtain ⟨Ob', Hom', id', comp', _, _, _⟩ := E
+  -- Restated on the fields, as in `ext_heq`, before each substitution.
+  change Ob = Ob' at hOb
+  subst hOb
+  obtain ⟨obj, map, map_id, map_comp⟩ := H
+  change ∀ {a : A} (x : Ob a), obj x = x at hobj
+  obtain rfl : @obj = fun _ x => x := by funext a x; exact hobj x
+  change ∀ {a a' : A} (f : a ⟶ a') (x : Ob a) (y : Ob a'), Hom f x y = Hom' f x y at hHom
+  obtain rfl : @Hom = @Hom' := by funext a a' f x y; exact hHom f x y
+  change ∀ {a a' : A} {f : a ⟶ a'} {x : Ob a} {y : Ob a'} (φ : Hom f x y), map φ = φ at hmap
+  obtain rfl : @map = fun _ _ _ _ _ φ => φ := by funext a a' f x y φ; exact hmap φ
+  change ∀ {a : A} (x : Ob a), id x = id' x at map_id
+  obtain rfl : @id = @id' := by funext a x; exact map_id x
+  change ∀ {a a' a'' : A} {f : a ⟶ a'} {g : a' ⟶ a''} {x : Ob a} {y : Ob a'} {z : Ob a''}
+    (φ : Hom f x y) (ψ : Hom g y z), comp φ ψ = comp' φ ψ at map_comp
+  obtain rfl : @comp = @comp' := by funext a a' a'' f g x y z φ ψ; exact map_comp φ ψ
+  exact ⟨rfl, HEq.rfl⟩
 
 end VertFunctor
 

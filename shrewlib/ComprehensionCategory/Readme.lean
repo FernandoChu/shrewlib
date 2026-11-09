@@ -50,8 +50,8 @@ Comprehension categories as displayed categories, their type formers, and models
       their introduction rule (Hom-Intro).
     * `Maps/`: maps between the models: forgetting the discreteness, a strict map preserving
       Σ-types, unit types and opposite types, the inclusions of the category model and the
-      contravariant one into the displayed model, strict maps preserving unit types, and the lifts
-      of the types of a lower level.
+      contravariant one into the displayed model, strict maps preserving Σ-types and unit types,
+      and the lifts of the types of a lower level.
 
 -/
 

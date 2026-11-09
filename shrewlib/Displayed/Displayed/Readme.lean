@@ -10,7 +10,9 @@ import Displayed.Displayed.Codomain
 
 * `Basic`: displayed categories `Displayed A` over `A`, their fibers `Fiber`, displayed functors
   `DispFunctor u` over a functor `u` between the bases, vertical functors `VertFunctor`, the
-  displayed functors over `𝟭 A`, and vertical natural transformations `VertNatTrans`.
+  displayed functors over `𝟭 A`, and vertical natural transformations `VertNatTrans`. Two displayed
+  categories are equal if a vertical functor between them is the identity on objects and a cast on
+  morphisms (`VertFunctor.eq_of_map_cast`).
 * `DisplayedCat`: the displayed categories and displayed functors, displayed over `Cat`, and
   reindexing. Its equivalence with `cod Cat` is in `CodCatEquiv/`.
 * `Equivalence`: equivalences over the base (`VertEquivalence`), which are fully faithful.

@@ -15,8 +15,9 @@ formers, one file per pair of models.
 * `CatToDisplayed`: a type `C` of the category model is a type `catToDisp C` of the displayed
   model, the straightening of `∫ C`, and this is a strict map, since unstraightening undoes
   straightening on the nose. Its terms are those of `C` (Lift-Intro and Lift-Elim, `tmEquiv`), and
-  it preserves unit types strictly, by `rfl`. It preserves Σ-types only up to the functoriality of
-  the second component, not on the nose.
+  it preserves unit types strictly, by `rfl`. It preserves Σ-types strictly, but propositionally:
+  the counit of straightening–unstraightening at the composite of `∫ A` and `∫ B` casts along
+  the functoriality of `B`, and so is the identity.
 * `CatOpToDisplayed`: the same for the contravariant category model, `catOpToDisp C`.
 * `SmallToCat`: the lifts of the types and of the discrete types of level `v` into the category
   model at level `v + 1` are strict maps, along which it has universes of them.
@@ -62,14 +63,21 @@ recall ComprehensionCategory.OverCat.tmEquivCatToDisp {Γ : Cat.{u, u}}
 recall ComprehensionCategory.OverCat.catToDispComprehensionMap_preservesUnit :
     catToDispComprehensionMap.{u}.PreservesUnit
 
+/-- **It preserves Σ-types strictly**, propositionally. -/
+recall ComprehensionCategory.OverCat.catToDispComprehensionMap_preservesSigma :
+    catToDispComprehensionMap.{u}.PreservesSigma
+
 /-- **The inclusion of the contravariant category model into the displayed model is a strict map of
-comprehension categories**, preserving unit types strictly. -/
+comprehension categories**, preserving unit types and Σ-types strictly. -/
 recall ComprehensionCategory.OverCat.catOpToDispComprehensionMap :
     StrictComprehensionMap (𝟭 Cat.{u, u}) Fibration.Straightening.ICatOpLax.{u, u, u, u}
       Straightening.LaxNormalCat.{u, u, u}
 
 recall ComprehensionCategory.OverCat.catOpToDispComprehensionMap_preservesUnit :
     catOpToDispComprehensionMap.{u}.PreservesUnit
+
+recall ComprehensionCategory.OverCat.catOpToDispComprehensionMap_preservesSigma :
+    catOpToDispComprehensionMap.{u}.PreservesSigma
 
 section Small
 

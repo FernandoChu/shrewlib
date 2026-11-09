@@ -67,4 +67,13 @@ instance hasSigma : HasSigma LaxNormalCat.{u, u, u} where
   pair_proj _ _ := rfl
   pair_q _ _ _ := rfl
 
+omit F G in
+/-- The pairing of the straightenings of displayed categories `D₁` over `Γ` and `D₂` over its total
+category is the reassociation of the pairs of `D₁` and `D₂`. This holds by `rfl`, but is stated for
+variables `D₁` and `D₂`: for given displayed categories, the kernel may fail to identify the
+codomain `Γ ▹ sigma F G` of the pairing with the total category of the composite. -/
+theorem pairHom_straightenObj (D₁ : Displayed.{u, u} Γ) (D₂ : Displayed.{u, u} (Cat.of D₁.Total)) :
+    pairHom (straightenObj D₁) (straightenObj D₂) ≍ (D₁.sigmaUnassoc D₂).toCatHom :=
+  HEq.rfl
+
 end ComprehensionCategory.DisplayedModel
