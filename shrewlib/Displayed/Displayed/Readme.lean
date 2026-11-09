@@ -2,6 +2,7 @@ import Displayed.Displayed.Basic
 import Displayed.Displayed.DisplayedCat
 import Displayed.Displayed.Equivalence
 import Displayed.Displayed.Total
+import Displayed.Displayed.Section
 import Displayed.Displayed.Sigma
 import Displayed.Displayed.Codomain
 
@@ -19,19 +20,25 @@ import Displayed.Displayed.Codomain
 * `Total`: the total category `D.Total`, `π`, `ι`, and the functors that displayed functors induce
   between total categories, as well as the natural transformations and equivalences that vertical
   ones induce.
+* `Section`: sections `D.Section` of a displayed category, the functors into its total category
+  over the base (`Section.equivFunctor`), and their reindexing.
 * `Sigma`: the composite `D.sigmaDisp E` over `A` of `D` over `A` and `E` over `D.Total`, whose
   total category is that of `E`, up to reassociation.
 * `Codomain`: the codomain displayed category `cod C`, and the action `codMap F` of a functor on
   it. Its cartesian morphisms are in `Fibration/Codomain`.
 -/
 
-universe v₁ u₁
+universe v₁ u₁ v₂ u₂
 
 open CategoryTheory Displayed
 
 open scoped Displayed
 
 /-! ## Main results -/
+
+/-- The sections of `D` are the functors into its total category over `A`. -/
+recall Displayed.Section.equivFunctor {A : Type u₁} [Category.{v₁} A] (D : Displayed.{v₂, u₂} A) :
+    D.Section ≃ {s : A ⥤ D.Total // s ⋙ D.π = 𝟭 A}
 
 /-- A vertical equivalence is fully faithful on the morphisms over each base morphism. -/
 recall Displayed.VertEquivalence.map_injective {A : Type u₁} [Category.{v₁} A] {D E : Displayed A}

@@ -1,5 +1,6 @@
 import ComprehensionCategory.Model.OverCat.CatOp.Basic
 import ComprehensionCategory.Term
+import Displayed.Displayed.Section
 
 /-!
 # Terms in the contravariant category model
@@ -14,6 +15,11 @@ For the constant type `constTy Γ K` at a category `K`, whose transports are ide
 are the functors `Γ ⥤ K` (`Tm.constEquiv`), naturally in `Γ`, as in the category model.
 
 This is the dual of `OverCat/Cat/Term.lean`.
+
+More generally, the terms of any type `A` are the sections of its unstraightening
+(`Tm.sectionEquiv`, `Displayed/Displayed/Section`): the term of a section `S` is `S.total`, and the
+section of a term transports its values along the equalities of their first components with the
+points of `Γ`.
 -/
 
 universe u
@@ -126,5 +132,25 @@ theorem ofConst_pull (σ : Δ ⟶ Γ) (F : Γ ⥤ K) :
     ((toConst_pull σ (ofConst F)).trans (congrArg (σ.toFunctor ⋙ ·) (toConst_ofConst F))))
 
 end Tm
+
+/-! ## Terms as sections -/
+
+/-- The section of the unstraightening of `A` given by a term: its values, transported along the
+equalities of their first components with the points of `Γ`. -/
+def Tm.toSection {A : ICatOpLax.{u, u}.Ty Γ} (t : Tm(Γ, A)) : (∫⁻ A).Section :=
+  Section.ofFunctor t.sec.toFunctor (congrArg Cat.Hom.toFunctor t.sec_proj)
+
+/-- The term of a section of the unstraightening of `A`. -/
+def Tm.ofSection {A : ICatOpLax.{u, u}.Ty Γ} (S : (∫⁻ A).Section) : Tm(Γ, A) where
+  sec := S.total.toCatHom
+  sec_proj := rfl
+
+/-- **The terms of `A` are the sections of its unstraightening.** -/
+def Tm.sectionEquiv {A : ICatOpLax.{u, u}.Ty Γ} : Tm(Γ, A) ≃ (∫⁻ A).Section where
+  toFun := Tm.toSection
+  invFun := Tm.ofSection
+  left_inv _ := Tm.ext (Cat.Hom.ext (Section.total_ofFunctor _ _))
+  right_inv S := Section.ofFunctor_total S
+
 
 end ComprehensionCategory.CatOpModel
