@@ -69,8 +69,9 @@ files, (op)cartesian morphisms (in `Displayed/{Opfibration,Fibration}/Basic` and
   form, with Hom-Disc for discrete types under the uniqueness of empty types, the twist of types
   of the category model into types of the displayed model, the twisted Hom-types and their term
   `refl`, the Π-types of the category model over the contravariant one, whose values are the
-  categories of sections over the fibres, and the terms of the opposite of a Σ-type, pairs of a
-  term and a term of a twist. The models of fibrations, the displayed categories,
+  categories of sections over the fibres, the terms of the opposite of a Σ-type, pairs of a term
+  and a term of a twist, and those of the twisted function type `Ā → B`, the terms of `B` in
+  context `Γ ▹ a : A`. The models of fibrations, the displayed categories,
   split (op)fibrations and discrete opfibrations with their total categories as comprehension, are
   full split comprehension categories, and the unstraightenings from the four category models to
   them are strict maps preserving the chosen lifts.

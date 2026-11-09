@@ -1,5 +1,6 @@
 import ComprehensionCategory.Model.OverCat.Displayed.Basic
 import ComprehensionCategory.Term
+import Displayed.Displayed.Section
 
 /-!
 # Terms in the displayed category model
@@ -7,7 +8,8 @@ import ComprehensionCategory.Term
 A term `t : Tm(Γ, F)` of a type `F` of the displayed category model is a section of the projection
 of the context extension `Γ ▹ F`, the total category of the unstraightening of `F`. For the type
 `straightenObj D` of a displayed category `D` over `Γ`, the context extension is the total
-category of `D` itself, by `rfl`, and the term `tmMk obj map _ _` is the section `γ ↦ (γ, obj γ)`,
+category of `D` itself, by `rfl`, so that the terms are the sections of `D` (`Tm.sectionEquiv`),
+and the term `tmMk obj map _ _` is the section `γ ↦ (γ, obj γ)`,
 from objects `obj γ` of `D` over `γ` and morphisms `map f : obj γ ⟶[f] obj γ'` of `D`, compatible
 with identities and composites. Its equation `sec ≫ 𝐩 F = 𝟙 Γ` holds by `rfl`. The substitution
 of `straightenObj E` is the straightening of the reindexing of `E`, by `rfl` (`straightenObj_pull`).
@@ -43,5 +45,25 @@ def tmMk {D : Displayed.{u, u} Γ} (obj : ∀ γ : Γ, D.Ob γ)
       map_id γ := congrArg (D.totalMk (𝟙 γ)) (map_id γ)
       map_comp f g := congrArg (D.totalMk (f ≫ g)) (map_comp f g) }).toCatHom
   sec_proj := rfl
+
+/-- The section of `D` given by a term of `straightenObj D`: its values, transported along the
+equalities of their first components with the points of `Γ`. -/
+def Tm.toSection {D : Displayed.{u, u} Γ} (t : LaxNormalCat.Tm (Γ := Γ) (straightenObj D)) :
+    D.Section :=
+  Section.ofFunctor t.sec.toFunctor (congrArg Cat.Hom.toFunctor t.sec_proj)
+
+/-- The term of `straightenObj D` of a section of `D`. -/
+def Tm.ofSection {D : Displayed.{u, u} Γ} (S : D.Section) :
+    LaxNormalCat.Tm (Γ := Γ) (straightenObj D) where
+  sec := S.total.toCatHom
+  sec_proj := rfl
+
+/-- **The terms of `straightenObj D` are the sections of `D`.** -/
+def Tm.sectionEquiv {D : Displayed.{u, u} Γ} :
+    LaxNormalCat.Tm (Γ := Γ) (straightenObj D) ≃ D.Section where
+  toFun := Tm.toSection
+  invFun := Tm.ofSection
+  left_inv _ := Displayed.Tm.ext (Cat.Hom.ext (Section.total_ofFunctor _ _))
+  right_inv S := Section.ofFunctor_total S
 
 end ComprehensionCategory.DisplayedModel

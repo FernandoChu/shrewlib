@@ -5,6 +5,7 @@ import ComprehensionCategory.Model.OverCat.Shared.Twist
 import ComprehensionCategory.Model.OverCat.Shared.HomIntro
 import ComprehensionCategory.Model.OverCat.Shared.Pi
 import ComprehensionCategory.Model.OverCat.Shared.OpSigma
+import ComprehensionCategory.Model.OverCat.Shared.FunTwist
 
 /-!
 # Shared type formers
@@ -51,6 +52,11 @@ their conclusion a type of another, in a context of the first.
   twist of `Bᵒᵖ`, written `Bᵒᵖ[ā/a]` in the paper, is that by `(Σ[A] B)ᵒᵖ`, over `Γ`, so the terms
   of `(Σ[A] B)ᵒᵖ` are the pairs of a term `x` of `Aᵒᵖ` and a term of the twist of `Bᵒᵖ` at `x`,
   naturally in `Γ`.
+* `FunTwist`: the twist `Γ ▹ X : U ▹ Y : U ⊢ Ȳ → X` of the function type
+  `Γ ▹ X : U ▹ Y : Uᵒᵖ ⊢ Y → X`, a Π-type, at level `v + 1`. Substituted by the codes of two types
+  `A` and `B` of level `v`, its terms are those of `B` in context `Γ ▹ a : A`: a section over `γ`
+  is a functor `A γ ⥤ B γ`, and over `g` a natural transformation `B g ∘ T γ ⇒ T γ' ∘ A g`, and
+  these are the sections of `∫ B` over `Γ ▹ A`.
 -/
 
 universe u
@@ -225,3 +231,21 @@ example {Δ : Cat.{u, u}} (σ : Δ ⟶ Γ) {B : ICatLax.{u, u}.Ty Γ} (C : ICatL
   rfl
 
 end OpSigma
+
+section FunTwist
+
+universe v
+
+/-- **The terms of the twisted function type `Ā → B`** are those of `B` in context `Γ ▹ a : A`. -/
+recall ComprehensionCategory.OverCat.funTwistEquiv {Γ : Cat.{v + 1, v + 1}}
+    (A B : Γ ⥤ Cat.{v, v}) :
+    Tm(Γ, funTwist A B) ≃ Tm(Γ ▹ CatModel.lift A, (CatModel.lift B)⦃𝐩 (CatModel.lift A)⦄)
+
+/-- `Ā → B` is the twist of the function type over the universes, substituted by the codes. -/
+example {Γ : Cat.{v + 1, v + 1}} (A B : Γ ⥤ Cat.{v, v}) :
+    funTwist A B =
+      (twist (B := CatModel.U (funCtx₀ Γ)) (Π[funDom Γ] (funCod Γ)⦃𝐩 (funDom Γ)⦄))⦃consSec
+        (CatModel.code B).sec (CatModel.code A)⦄ :=
+  rfl
+
+end FunTwist

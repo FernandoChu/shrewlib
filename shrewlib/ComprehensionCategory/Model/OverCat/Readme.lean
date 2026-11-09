@@ -43,7 +43,8 @@ Two more folders relate them:
   displayed model, covariant in it, which gives the twisted Hom-types and their term `refl`. The
   category model has Π-types over the contravariant one: `Π[A] B` sends `γ` to the sections of
   `∫ B` over the fibre `A γ`. The terms of the opposite of a Σ-type are pairs of a term of `Aᵒᵖ`
-  and a term of the twist of `Bᵒᵖ`.
+  and a term of the twist of `Bᵒᵖ`, and those of the twist `Ā → B` of the function type are the
+  terms of `B` in context `Γ ▹ a : A`.
 * `Maps/`: maps of comprehension categories between the models, and their preservation of type
   formers: forgetting the discreteness is a strict map from the discrete model to the category
   model, preserving Σ-types, unit types and opposite types, and the lifts of the types of a lower
