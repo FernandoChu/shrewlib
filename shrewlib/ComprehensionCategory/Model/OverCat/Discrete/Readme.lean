@@ -30,9 +30,12 @@ The Hom-types of the category model are types of the discrete model (`OverCat/Sh
 * `TypeFormers/Unit`: unit types, those of the category model, at the discrete category
   `discrete' PUnit`.
 * `OpFunctor`: the opposite of a discrete category is discrete, and the discrete categories
-  `discrete' S` are their own opposites, by `propext`. It imports no rewrite rules.
+  `discrete' S` are their own opposites, by `propext`. Every discrete category is its own opposite
+  if empty types are unique (`EmptyUnique`), which is independent of Lean's axioms and is a
+  hypothesis of these results. It imports no rewrite rules.
 * `TypeFormers/Op`: opposite types, those of the category model, involutive and stable under
-  substitution by `rfl`.
+  substitution by `rfl`. If empty types are unique, a discrete type is its own opposite (op-Disc,
+  `op_eq_self`), propositionally.
 * `Small`: at level `v + 1`, the discrete types of level `v`, the functors `Γ ⥤ Cat.{v, v}` into
   discrete categories, as a full split comprehension category `SmallIDisc`, along their lift into
   the category model; they lift into the discrete model too (`liftDisc`).
@@ -65,6 +68,10 @@ example {Γ : Cat.{u, u}} (A : IDisc.{u, u}.Ty Γ) (B : IDisc.{u, u}.Ty (Γ ▹ 
 /-- **The discrete model has opposite types**, involutive by `rfl`. -/
 recall ComprehensionCategory.DiscreteModel.op_op {Γ : Cat.{u, u}} (A : IDisc.{u, u}.Ty Γ) :
     DiscreteModel.op (DiscreteModel.op A) = A
+
+/-- **op-Disc**: if empty types are unique, a discrete type is its own opposite. -/
+recall ComprehensionCategory.DiscreteModel.op_eq_self (hE : DiscreteModel.EmptyUnique.{u})
+    {Γ : Cat.{u, u}} (A : IDisc.{u, u}.Ty Γ) : DiscreteModel.op A = A
 
 /-- A discrete category is its own opposite. -/
 recall ComprehensionCategory.DiscreteModel.opFunctor'_obj_discrete' (S : Type u) :

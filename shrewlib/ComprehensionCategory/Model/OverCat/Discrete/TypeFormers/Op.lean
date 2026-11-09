@@ -10,6 +10,13 @@ The opposite types of the discrete model are those of the category model, the po
 category is (`isDiscrete_opFunctor'_obj`). They are involutive and stable under substitution by
 `rfl`, as in the category model.
 
+A discrete type is its own opposite (op-Disc, `op_eq_self`) if empty types are unique
+(`EmptyUnique`, in `OpFunctor`), a hypothesis of the theorem: the morphisms `y ⟶ x` and `x ⟶ y`
+of a discrete category are then equal, being empty types when `x ≠ y`. This is a propositional
+equality, which cannot be a rewrite rule since it has a hypothesis. For the Hom-types, whose values
+are the discrete categories `discrete' S`, it holds without the hypothesis and is a rule
+(`OverCat.op_hom`, in `OverCat/Shared/Hom`).
+
 The notation `Aᵒᵖ` for `DiscreteModel.op A` is scoped in `ComprehensionCategory.DiscreteModel`. It
 overloads Mathlib's `Cᵒᵖ` and the opposite types of the category model, which are told apart by
 the type of `A`.
@@ -44,5 +51,9 @@ theorem op_op {Γ : Cat.{u, u}} (A : IDisc.{u, u}.Ty Γ) : (Aᵒᵖ)ᵒᵖ = A :
 /-- **The opposite is stable under substitution**, by `rfl`. -/
 theorem pull_op {Δ Γ : Cat.{u, u}} (σ : Δ ⟶ Γ) (A : IDisc.{u, u}.Ty Γ) : (Aᵒᵖ)⦃σ⦄ = A⦃σ⦄ᵒᵖ :=
   rfl
+
+/-- **op-Disc**: if empty types are unique, a discrete type is its own opposite. -/
+theorem op_eq_self (hE : EmptyUnique.{u}) {Γ : Cat.{u, u}} (A : IDisc.{u, u}.Ty Γ) : Aᵒᵖ = A :=
+  IDiscOb.ext (comp_opFunctor'_of_isDiscrete hE A.toFunctor A.isDiscrete)
 
 end ComprehensionCategory.DiscreteModel

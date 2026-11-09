@@ -13,7 +13,13 @@ opposites, by `propext` (`opFunctor'_obj_discrete'`): `t = s` and `s = t` are di
 but equivalent propositions. This gives Hom-op for the Hom-types, whose values are such discrete
 categories. It is not the case for every discrete category: the morphisms `x ⟶ y` and `y ⟶ x` of
 a discrete category are subsingletons inhabited exactly when `x = y`, so equivalent types, but not
-equal in general.
+equal in general. When `x ≠ y`, both are empty, and two empty types are not provably equal.
+
+They are if empty types are unique (`EmptyUnique`), which holds in the set-theoretic model of
+Lean, where every empty type is the empty set, but is neither provable nor refutable. Under this
+hypothesis, every discrete category is its own opposite (`opFunctor'_obj_of_isDiscrete`), and so is
+every functor into discrete categories (`comp_opFunctor'_of_isDiscrete`). It is a hypothesis of
+these theorems rather than an axiom, so that the results that need it say so in their statements.
 
 This file imports no rewrite rules, and must not, for the reason given in
 `CategoryTheory/Opposite/OpFunctor`: it compares category structures given as
@@ -71,5 +77,36 @@ theorem opFunctor'_map_discreteMap' {S T : Type u} (k : S → T) :
     opFunctor'.map (discreteMap' k) ≍ discreteMap' k :=
   catHom_heq_of_obj (opCategory'_discreteCategory' S) (opCategory'_discreteCategory' T) _ _
     fun _ => rfl
+
+/-! ## Discrete categories are self-opposite if empty types are unique -/
+
+/-- **Uniqueness of empty types**: any two empty types of `Type u` are equal. It holds in the
+set-theoretic model of Lean, but is independent of its axioms. -/
+def EmptyUnique : Prop :=
+  ∀ α β : Type u, IsEmpty α → IsEmpty β → α = β
+
+/-- **If empty types are unique, a discrete category is its own opposite**: its morphisms `y ⟶ x`
+and `x ⟶ y` are those of `x` if `x = y`, and empty types otherwise. -/
+theorem opCategory'_eq_of_isDiscrete (hE : EmptyUnique.{u}) (C : Cat.{u, u}) [IsDiscrete C] :
+    opCategory' (Cat.str C) = Cat.str C :=
+  category_eq_of_hom_eq _ _ fun x y => by
+    by_cases h : x = y
+    · subst h
+      rfl
+    · exact hE _ _ ⟨fun f => h (IsDiscrete.eq_of_hom (C := C) f).symm⟩
+        ⟨fun f => h (IsDiscrete.eq_of_hom (C := C) f)⟩
+
+theorem opFunctor'_obj_of_isDiscrete (hE : EmptyUnique.{u}) (C : Cat.{u, u}) [IsDiscrete C] :
+    opFunctor'.obj C = C :=
+  congrArg (@Cat.of C) (opCategory'_eq_of_isDiscrete hE C)
+
+/-- **If empty types are unique, a functor into discrete categories is its own opposite**: the
+opposite of each functor between discrete categories is that functor, as they agree on objects. -/
+theorem comp_opFunctor'_of_isDiscrete (hE : EmptyUnique.{u}) {Γ : Type u} [Category.{u} Γ]
+    (A : Γ ⥤ Cat.{u, u}) (hA : ∀ γ, IsDiscrete (A.obj γ)) : A ⋙ opFunctor' = A :=
+  Functor.hext (fun γ => @opFunctor'_obj_of_isDiscrete hE (A.obj γ) (hA γ)) fun γ γ' f =>
+    @catHom_heq_of_obj _ _ _ _ _ _ (@opCategory'_eq_of_isDiscrete hE (A.obj γ) (hA γ))
+      (@opCategory'_eq_of_isDiscrete hE (A.obj γ') (hA γ'))
+      (fun x y => (hA γ').subsingleton x y) (opFunctor'.map (A.map f)) (A.map f) fun _ => rfl
 
 end ComprehensionCategory.DiscreteModel
