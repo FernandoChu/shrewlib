@@ -7,10 +7,11 @@ import Mathlib.Tactic.IrreducibleDef
 
 The file starts with opcartesian morphisms (`IsOpcartesian`: the strong opcartesian property and
 its universal-property API), which vertical equivalences preserve
-(`VertEquivalence.isOpcartesianMap`). `IsOpcartesian φ` carries the factorization through `φ` as
-data, with its uniqueness: Lean has no computable unique choice, so a `Prop` stating unique
-existence would make every construction from the factorizations, such as `pushMap`,
-noncomputable. By uniqueness it is a subsingleton.
+(`VertEquivalence.isOpcartesianMap`) and fully faithful vertical functors reflect
+(`VertFunctor.FullyFaithful.isOpcartesianOfMap`). `IsOpcartesian φ` carries the factorization
+through `φ` as data, with its uniqueness: Lean has no computable unique choice, so a `Prop`
+stating unique existence would make every construction from the factorizations, such as
+`pushMap`, noncomputable. By uniqueness it is a subsingleton.
 
 An `Opfib` structure on a displayed category `D` is a cloven opfibration: a chosen pushforward
 `push f x` for every base morphism `f : a ⟶ a'` and object `x` over `a`, and a chosen opcartesian
@@ -137,6 +138,22 @@ def isOpcartesianMap : e.functor.PreservesOpcartesian := fun {_ _ _ _ _ φ} H =>
       (congrArg (· ≫ᵈ ε.hom.app z) ((e.map_preimage _).symm.trans (congrArg e.functor.map h₂))) :) }
 
 end VertEquivalence
+
+namespace VertFunctor.FullyFaithful
+
+variable {E : Displayed.{v₃, u₃} A} {F : VertFunctor D E} (hF : F.FullyFaithful)
+
+/-- **A fully faithful vertical functor reflects opcartesian morphisms.** The factorization of `χ`
+is the preimage of the factorization of its image. -/
+def isOpcartesianOfMap {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f] y}
+    (H : IsOpcartesian (F.map φ)) : IsOpcartesian φ where
+  desc g _ χ := hF.preimage (H.desc g (F.map χ))
+  desc_fac g _ χ := hF.map_injective
+    ((congrArg (F.map φ ≫ᵈ ·) (hF.map_preimage _)).trans (H.desc_fac g (F.map χ)))
+  desc_uniq ψ hψ := hF.map_injective
+    ((H.desc_uniq (F.map ψ) (congrArg F.map hψ)).trans (hF.map_preimage _).symm)
+
+end VertFunctor.FullyFaithful
 
 end Opcartesian
 

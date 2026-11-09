@@ -1,5 +1,6 @@
 import ComprehensionCategory.Model.OverCat.Cat.TypeFormers.Op
 import ComprehensionCategory.Model.OverCat.Displayed.Basic
+import ComprehensionCategory.Model.OverCat.Maps.CatToDisplayed
 import DoubleDisplayed.D2SFib.Straightening.Unstraighten
 import DoubleDisplayed.Total
 import Tactic.KernelTactic
@@ -41,12 +42,12 @@ The twist of a type that does not depend on `b` is that type, weakened:
     Γ ▹ b : B ⊢ Tw_b(C) ≡ C type_d
 ```
 
-Here a type `C` of the category model is seen as a type of the displayed model (`catToDisp C`),
-the straightening of its unstraightening `∫ C`. The twist of the weakening `C⦃𝐩 Bᵒᵖ⦄` is the
-weakening of `catToDisp C` along `𝐩 B` (`twist_weak`): over `(f, β)`, the morphisms
-`C(f, 𝟙) c ⟶ C(𝟙, β) c'` of the twist are the morphisms `C f c ⟶ c'` of `∫ C` over `f`, since
-`C(𝟙, β)` is `C 𝟙`, the identity. The two displayed categories agree on their hom-types,
-identities and composites by `rfl`, checked in the kernel (`twistDisp_weak`).
+Here a type `C` of the category model is seen as a type of the displayed model (`catToDisp C`,
+`OverCat/Maps/CatToDisplayed`), the straightening of its unstraightening `∫ C`. The twist of the
+weakening `C⦃𝐩 Bᵒᵖ⦄` is the weakening of `catToDisp C` along `𝐩 B` (`twist_weak`): over
+`(f, β)`, the morphisms `C(f, 𝟙) c ⟶ C(𝟙, β) c'` of the twist are the morphisms `C f c ⟶ c'` of
+`∫ C` over `f`, since `C(𝟙, β)` is `C 𝟙`, the identity. The two displayed categories agree on
+their hom-types, identities and composites by `rfl`, checked in the kernel (`twistDisp_weak`).
 -/
 
 universe u
@@ -76,11 +77,6 @@ def twist {B : ICatLax.{u, u}.Ty Γ} (C : ICatLax.{u, u}.Ty (Γ ▹ Bᵒᵖ)) :
 theorem ext_twist {B : ICatLax.{u, u}.Ty Γ} (C : ICatLax.{u, u}.Ty (Γ ▹ Bᵒᵖ)) :
     (Γ ▹ B) ▹ twist C = Cat.of (twistDisp C).Total :=
   rfl
-
-/-- A type `C` of the category model as a type of the displayed model: the straightening of its
-unstraightening `∫ C`. -/
-def catToDisp (C : ICatLax.{u, u}.Ty Γ) : Straightening.LaxNormalCat.{u, u, u}.Ty Γ :=
-  Straightening.straightenObj (∫ C)
 
 /-- The displayed category of the twist of a weakened type `C⦃𝐩 Bᵒᵖ⦄` is the reindexing of `∫ C`
 along `𝐩 B`. -/

@@ -1,3 +1,5 @@
+import ComprehensionCategory.Model.OverCat.Maps.CatOpToDisplayed
+import ComprehensionCategory.Model.OverCat.Maps.CatToDisplayed
 import ComprehensionCategory.Model.OverCat.Maps.DiscreteToCat
 import ComprehensionCategory.Model.OverCat.Maps.SmallToCat
 
@@ -10,6 +12,12 @@ formers, one file per pair of models.
 * `DiscreteToCat`: forgetting the discreteness is a strict map from the discrete model to the
   category model, which preserves the Σ-types, the unit types and the opposite types strictly,
   by `rfl`.
+* `CatToDisplayed`: a type `C` of the category model is a type `catToDisp C` of the displayed
+  model, the straightening of `∫ C`, and this is a strict map, since unstraightening undoes
+  straightening on the nose. Its terms are those of `C` (Lift-Intro and Lift-Elim, `tmEquiv`), and
+  it preserves unit types strictly, by `rfl`. It preserves Σ-types only up to the functoriality of
+  the second component, not on the nose.
+* `CatOpToDisplayed`: the same for the contravariant category model, `catOpToDisp C`.
 * `SmallToCat`: the lifts of the types and of the discrete types of level `v` into the category
   model at level `v + 1` are strict maps, along which it has universes of them.
 -/
@@ -39,6 +47,29 @@ recall ComprehensionCategory.OverCat.forgetComprehensionMap_obj_op {Γ : Cat.{u,
     (A : IDisc.{u, u}.Ty Γ) :
     forgetComprehensionMap.toPre.obj (DiscreteModel.op A) =
       CatModel.op (forgetComprehensionMap.toPre.obj A)
+
+/-- **The inclusion of the category model into the displayed model is a strict map of
+comprehension categories.** -/
+recall ComprehensionCategory.OverCat.catToDispComprehensionMap :
+    StrictComprehensionMap (𝟭 Cat.{u, u}) ICatLax.{u, u, u, u}
+      Straightening.LaxNormalCat.{u, u, u}
+
+/-- **Lift-Intro and Lift-Elim**: the terms of `C` are those of `catToDisp C`. -/
+recall ComprehensionCategory.OverCat.tmEquivCatToDisp {Γ : Cat.{u, u}}
+    (C : ICatLax.{u, u}.Ty Γ) : Tm(Γ, C) ≃ Tm(Γ, catToDisp C)
+
+/-- **It preserves unit types strictly.** -/
+recall ComprehensionCategory.OverCat.catToDispComprehensionMap_preservesUnit :
+    catToDispComprehensionMap.{u}.PreservesUnit
+
+/-- **The inclusion of the contravariant category model into the displayed model is a strict map of
+comprehension categories**, preserving unit types strictly. -/
+recall ComprehensionCategory.OverCat.catOpToDispComprehensionMap :
+    StrictComprehensionMap (𝟭 Cat.{u, u}) Fibration.Straightening.ICatOpLax.{u, u, u, u}
+      Straightening.LaxNormalCat.{u, u, u}
+
+recall ComprehensionCategory.OverCat.catOpToDispComprehensionMap_preservesUnit :
+    catOpToDispComprehensionMap.{u}.PreservesUnit
 
 section Small
 

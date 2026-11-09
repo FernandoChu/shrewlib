@@ -34,7 +34,9 @@ Two more folders relate them:
 * `Maps/`: maps of comprehension categories between the models, and their preservation of type
   formers: forgetting the discreteness is a strict map from the discrete model to the category
   model, preserving Σ-types, unit types and opposite types, and the lifts of the types of a lower
-  level into the category model are strict maps, along which it has universes of them.
+  level into the category model are strict maps, along which it has universes of them. The
+  category model and the contravariant one are included into the displayed model by strict maps
+  preserving unit types.
 
 A result about a single model goes in its folder, a type former in the `TypeFormers/` folder of the
 model of its types, or in `Shared/` if its premises are types of another model, and a result

@@ -8,7 +8,8 @@ import Mathlib.Tactic.IrreducibleDef
 The exact dual of `Opfibration/Basic.lean`, whose sections this file mirrors. It starts with
 cartesian morphisms (`IsCartesian`, whose factorizations are data), and displayed functors that
 preserve them (`DispFunctor.PreservesCartesian`), such as vertical equivalences
-(`VertEquivalence.isCartesianMap`).
+(`VertEquivalence.isCartesianMap`). Fully faithful vertical functors reflect them
+(`VertFunctor.FullyFaithful.isCartesianOfMap`).
 
 A `Fib` structure on a displayed category `D` is a cloven fibration: a chosen pullback `pull f y`
 for every base morphism `f : a ⟶ a'` and object `y` over `a'`, and a chosen cartesian lift
@@ -140,6 +141,22 @@ def isCartesianMap : e.functor.PreservesCartesian := fun {_ _ _ _ _ φ} H => {
       (congrArg (ε.inv.app z ≫ᵈ ·) ((e.map_preimage _).symm.trans (congrArg e.functor.map h₂))) :) }
 
 end VertEquivalence
+
+namespace VertFunctor.FullyFaithful
+
+variable {E : Displayed.{v₃, u₃} A} {F : VertFunctor D E} (hF : F.FullyFaithful)
+
+/-- **A fully faithful vertical functor reflects cartesian morphisms.** The factorization of `χ`
+is the preimage of the factorization of its image. -/
+def isCartesianOfMap {a a' : A} {f : a ⟶ a'} {x : D.Ob a} {y : D.Ob a'} {φ : x ⟶[f] y}
+    (H : IsCartesian (F.map φ)) : IsCartesian φ where
+  lift g _ χ := hF.preimage (H.lift g (F.map χ))
+  lift_fac g _ χ := hF.map_injective
+    ((congrArg (· ≫ᵈ F.map φ) (hF.map_preimage _)).trans (H.lift_fac g (F.map χ)))
+  lift_uniq ψ hψ := hF.map_injective
+    ((H.lift_uniq (F.map ψ) (congrArg F.map hψ)).trans (hF.map_preimage _).symm)
+
+end VertFunctor.FullyFaithful
 
 end Cartesian
 

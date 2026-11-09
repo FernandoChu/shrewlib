@@ -19,7 +19,8 @@ Comprehension categories as displayed categories, their type formers, and models
   substitution `t⦃σ⦄ : Tm(Δ, A⦃σ⦄)`, the unique section over `t` along `𝐪(σ, A)`, functorial
   over a split comprehension category.
 * `Map`: maps of comprehension categories over a functor of the bases, with a comparison
-  `F.obj (Γ ▹ A) ⟶ F.obj Γ ▹ M.obj A`, and their pseudo and strict versions.
+  `F.obj (Γ ▹ A) ⟶ F.obj Γ ▹ M.obj A`, and their pseudo and strict versions. Strict maps send terms
+  to terms, and over the identity, the terms of `A` are those of `M.obj A` (`tmEquiv`).
 * `TypeFormers/`: what it means to have a (strict) type former.
   * `Sigma`: Σ-types `Σ[A] B`, with `Γ ▹ A ▹ B ≅ Γ ▹ Σ[A] B`, and their strict preservation by
     strict maps (`StrictComprehensionMap.PreservesSigma`).
@@ -48,7 +49,9 @@ Comprehension categories as displayed categories, their type formers, and models
       type of the category model, a type of the displayed model, and the twisted Hom-types with
       their introduction rule (Hom-Intro).
     * `Maps/`: maps between the models: forgetting the discreteness, a strict map preserving
-      Σ-types, unit types and opposite types, and the lifts of the types of a lower level.
+      Σ-types, unit types and opposite types, the inclusions of the category model and the
+      contravariant one into the displayed model, strict maps preserving unit types, and the lifts
+      of the types of a lower level.
 
 -/
 

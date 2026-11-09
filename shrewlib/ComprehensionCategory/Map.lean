@@ -1,4 +1,5 @@
 import ComprehensionCategory.Basic
+import ComprehensionCategory.Term
 
 /-!
 # Maps of comprehension categories
@@ -27,6 +28,12 @@ comparisons (`StrictComprehensionMap.toPseudo`), whose laws hold by `rfl`.
 
 All three kinds have identities and compose, over the identity and composite functors; for strict
 maps, the axioms of the identity and the composite hold by `rfl`.
+
+A strict map sends the terms of `A` to terms of `obj A` (`StrictComprehensionMap.mapTm`): the
+image of a section of `𝐩 A` is a section of `F.map (𝐩 A)`, which is `𝐩 (obj A)`. Over the identity,
+this is a bijection `Tm(Γ, A) ≃ Tm(Γ, obj A)` (`StrictComprehensionMap.tmEquiv`), with the same
+sections, whose laws hold by `rfl`. These are the rules of Kovács' strict family inclusions,
+Lift-Intro and Lift-Elim, while Lift-Ext, `Γ ▹ obj A = Γ ▹ A`, is the rule `compr_obj`.
 -/
 
 universe v₁ u₁ v₂ u₂ v₃ u₃ v₄ u₄ v₅ u₅ v₆ u₆
@@ -172,5 +179,28 @@ def StrictComprehensionMap.comp (M : StrictComprehensionMap F D E)
   toPre.compr_obj _ := rfl
 
 end Comp
+
+/-! ## Terms -/
+
+section Tm
+
+/-- **A strict map sends terms to terms** (Lift-Intro): `F.map t.sec` is a section of
+`F.map (𝐩 A)`, which is `𝐩 (obj A)` by the rule `compr_obj`. -/
+def StrictComprehensionMap.mapTm (M : StrictComprehensionMap F D E) {Γ : C} {A : D.Ty Γ}
+    (t : Tm(Γ, A)) : Tm(F.obj Γ, M.toPre.obj A) where
+  sec := F.map t.sec
+  sec_proj := (F.map_comp _ _).symm.trans ((congrArg F.map t.sec_proj).trans (F.map_id _))
+
+/-- **Over the identity, the terms of `A` are those of `obj A`** (Lift-Intro and Lift-Elim): they
+have the same sections, since `Γ ▹ obj A` is `Γ ▹ A` with the same projection. -/
+def StrictComprehensionMap.tmEquiv {D : Displayed.{v₃, u₃} C} [Fib D] [Comprehension D]
+    {E : Displayed.{v₄, u₄} C} [Fib E] [Comprehension E] (M : StrictComprehensionMap (𝟭 C) D E)
+    {Γ : C} {A : D.Ty Γ} : Tm(Γ, A) ≃ Tm(Γ, M.toPre.obj A) where
+  toFun := M.mapTm
+  invFun s := ⟨s.sec, s.sec_proj⟩
+  left_inv _ := rfl
+  right_inv _ := rfl
+
+end Tm
 
 end Displayed
