@@ -15,7 +15,9 @@ component, and those of the images of morphisms, are transported along these equ
 (`Section.castHom`). These are inverse (`Section.equivFunctor`): a section is recovered with the
 same components, since the transports are then along `rfl`, and a functor up to the transports.
 
-The sections of `D` reindex along `u : A ⟶ B` to sections of `DisplayedCat.pull u D`
+The sections of `D` form a category (`Section.category`), whose morphisms are the vertical natural
+transformations (`Section.Hom`): a vertical morphism `S.obj a ⟶[𝟙 a] T.obj a` over each `a`,
+natural in `a`. They reindex along `u : A ⟶ B` to sections of `DisplayedCat.pull u D`
 (`Section.pull`).
 -/
 
@@ -166,6 +168,32 @@ def Section.equivFunctor (D : Displayed.{v₂, u₂} A) :
   invFun s := Section.ofFunctor s.1 s.2
   left_inv S := Section.ofFunctor_total S
   right_inv s := Subtype.ext (Section.total_ofFunctor s.1 s.2)
+
+/-! ## The category of sections -/
+
+/-- A vertical natural transformation between sections: a vertical morphism over each object,
+natural in it. -/
+structure Section.Hom {D : Displayed.{v₂, u₂} A} (S T : D.Section) where
+  /-- The component over `a`. -/
+  app : ∀ a : A, S.obj a ⟶[𝟙 a] T.obj a
+  naturality : ∀ {a a' : A} (f : a ⟶ a'), S.map f ≫ᵈ app a' = app a ≫ᵈ T.map f
+
+theorem Section.Hom.ext {D : Displayed.{v₂, u₂} A} {S T : D.Section} {α β : Section.Hom S T}
+    (h : ∀ a, α.app a = β.app a) : α = β := by
+  obtain ⟨app, _⟩ := α
+  obtain ⟨app', _⟩ := β
+  obtain rfl : app = app' := funext h
+  rfl
+
+/-- **The category of sections**, with the vertical natural transformations. -/
+instance Section.category (D : Displayed.{v₂, u₂} A) : Category D.Section where
+  Hom S T := Section.Hom S T
+  id S := ⟨fun a => 𝟙ᵈ (S.obj a), fun _ => rfl⟩
+  comp α β := ⟨fun a => α.app a ≫ᵈ β.app a, fun f =>
+    (congrArg (· ≫ᵈ β.app _) (α.naturality f)).trans (congrArg (α.app _ ≫ᵈ ·) (β.naturality f))⟩
+  id_comp _ := Section.Hom.ext fun _ => rfl
+  comp_id _ := Section.Hom.ext fun _ => rfl
+  assoc _ _ _ := Section.Hom.ext fun _ => rfl
 
 /-! ## Reindexing -/
 

@@ -1,4 +1,5 @@
 import Displayed.Fibration.Straightening.Equivalence
+import Displayed.Fibration.Straightening.Pi
 
 /-!
 # Straightening for fibrations
@@ -33,6 +34,9 @@ The files give its ingredients:
   `H` and 2-cells the cartesian factorizations of the images of the chosen lifts.
 * `Equivalence`: the unit, which is the identity, the counit, and the equivalence
   `straighteningEquivLax`.
+* `Pi`: the dependent product `piDisp A E` along `∫⁻ A` of a displayed category `E` over its total
+  category, whose objects over `γ` are the sections of `E` over the fibre `A γ`, and whose
+  sections are those of `E` (`piSectionEquiv`). It has no dual in `Opfibration/Straightening/`.
 -/
 
 universe v u v₁ u₁
@@ -55,3 +59,7 @@ recall Displayed.Fibration.Straightening.unstraightenSplitFib {A : Type u₁}
 lax transformations `LaxTrans F (reindex u G)`. -/
 recall Displayed.Fibration.Straightening.unstraightenFullyFaithful :
     unstraighten.{v, u, v₁, u₁}.FullyFaithful
+
+/-- The sections of the dependent product along `∫⁻ A` are those of `E`. -/
+recall Displayed.Fibration.Straightening.piSectionEquiv {Γ : Cat.{u, u}} {A : Γᵒᵖ ⥤ Cat.{u, u}}
+    {E : Displayed.{u, u} (∫⁻ A).Total} : (piDisp A E).Section ≃ E.Section
