@@ -14,6 +14,14 @@ the chosen lift of `σ` at `A` to, as data, so that it computes. Over a split co
 category, substitution of terms is functorial (`Tm.pull_id`, `Tm.pull_comp`), as `𝐪(𝟙 Γ, A)` and
 `𝐪(τ ≫ σ, A)` are `𝟙` and `𝐪(τ, A⦃σ⦄) ≫ 𝐪(σ, A)` by the rules for the chosen lifts.
 
+A term can be transported along an equality of types (`Tm.castTy`), with the same section up to
+heterogeneous equality. A morphism `σ : Δ ⟶ Γ` extends by a term `t : Tm(Δ, A⦃σ⦄)` to the morphism
+`consSec σ t = t.sec ≫ 𝐪(σ, A) : Δ ⟶ Γ ▹ A` over `σ` (`consSec_proj`): with `σ` the section of a
+term `b : Tm(Γ, A)`, this pairs `b` with a term of a type in context `Γ ▹ A`. Over a split
+comprehension category, extension commutes with precomposition (`comp_consSec`) and with the
+morphisms `𝐪` (`consSec_comp_q`), and it respects heterogeneously equal terms over equal morphisms
+(`consSec_congr`).
+
 The notation `Tm(Γ, A)` for `D.Tm A`, for `A` over `Γ`, is scoped in `Displayed`, with that of
 `ComprehensionCategory/Basic`. As there, the comprehension category `D` is inferred from the type
 of `A`. The notation `t⦃σ⦄` for `t.pull σ` is that of the substitution of types, `A⦃σ⦄`, whose
@@ -103,5 +111,63 @@ theorem pull_comp {Δ Θ : C} (τ : Θ ⟶ Δ) (σ : Δ ⟶ Γ) (t : Tm(Γ, A)) 
       (congrArg (τ ≫ ·) (pull_sec_q σ t)) :))).symm
 
 end Tm
+
+/-! ## Transport and extension -/
+
+section Cons
+
+variable {D : Displayed.{v₂, u₂} C} [Fib D] [Comprehension D] {Δ Γ : C}
+
+/-- The transport of a term along an equality of types. -/
+def Tm.castTy {A B : D.Ty Γ} (h : A = B) (t : Tm(Γ, A)) : Tm(Γ, B) :=
+  h ▸ t
+
+/-- The transported term has the same section, up to heterogeneous equality. -/
+theorem Tm.castTy_sec_heq {A B : D.Ty Γ} (h : A = B) (t : Tm(Γ, A)) :
+    (t.castTy h).sec ≍ t.sec := by
+  subst h
+  rfl
+
+/-- **The extension of `σ : Δ ⟶ Γ` by a term `t : Tm(Δ, A⦃σ⦄)`**, the morphism
+`Δ ⟶ Γ ▹ A` over `σ` whose second component is `t`. -/
+def consSec (σ : Δ ⟶ Γ) {A : D.Ty Γ} (t : Tm(Δ, A⦃σ⦄)) : Δ ⟶ Γ ▹ A :=
+  t.sec ≫ 𝐪(σ, A)
+
+/-- The extension of `σ` lies over `σ`. -/
+theorem consSec_proj (σ : Δ ⟶ Γ) {A : D.Ty Γ} (t : Tm(Δ, A⦃σ⦄)) : consSec σ t ≫ 𝐩 A = σ := by
+  rw [consSec, Category.assoc, D.q_proj σ A, ← Category.assoc, t.sec_proj, Category.id_comp]
+
+/-- Extensions along equal morphisms by terms with heterogeneously equal sections are equal. -/
+theorem consSec_congr {σ σ' : Δ ⟶ Γ} (hσ : σ = σ') {A : D.Ty Γ} {t : Tm(Δ, A⦃σ⦄)}
+    {t' : Tm(Δ, A⦃σ'⦄)} (ht : t.sec ≍ t'.sec) : consSec σ t = consSec σ' t' := by
+  subst hσ
+  obtain rfl := Tm.ext (eq_of_heq ht)
+  rfl
+
+/-- The substitution of a transported term has the same section as that of the term, up to
+heterogeneous equality. -/
+theorem Tm.pull_castTy_sec_heq (σ : Δ ⟶ Γ) {A B : D.Ty Γ} (h : A = B) (t : Tm(Γ, A)) :
+    (t.castTy h)⦃σ⦄.sec ≍ t⦃σ⦄.sec := by
+  subst h
+  rfl
+
+end Cons
+
+section ConsSplit
+
+variable {D : Displayed.{v₂, u₂} C} [SplitComprehension D] {Θ Δ Γ : C}
+
+/-- **Extension commutes with precomposition**: `τ ≫ consSec σ t = consSec (τ ≫ σ) t⦃τ⦄`. -/
+theorem comp_consSec (τ : Θ ⟶ Δ) (σ : Δ ⟶ Γ) {A : D.Ty Γ} (t : Tm(Δ, A⦃σ⦄)) :
+    τ ≫ consSec σ t = consSec (τ ≫ σ) t⦃τ⦄ :=
+  (congrArg (· ≫ 𝐪(σ, A)) (Tm.pull_sec_q τ t)).symm
+
+/-- **Extension commutes with the morphisms `𝐪`**: `consSec τ t ≫ 𝐪(σ, A) = consSec (τ ≫ σ) t`,
+where `t` is a term of `A⦃σ⦄⦃τ⦄`, that is of `A⦃τ ≫ σ⦄`. -/
+theorem consSec_comp_q (τ : Θ ⟶ Δ) (σ : Δ ⟶ Γ) {A : D.Ty Γ} (t : Tm(Θ, A⦃σ⦄⦃τ⦄)) :
+    consSec τ t ≫ 𝐪(σ, A) = consSec (τ ≫ σ) t :=
+  rfl
+
+end ConsSplit
 
 end Displayed

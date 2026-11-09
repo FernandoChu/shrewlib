@@ -1,4 +1,5 @@
 import ComprehensionCategory.Model.OverCat.Shared.Hom
+import ComprehensionCategory.Model.OverCat.Shared.HomDisc
 import ComprehensionCategory.Model.OverCat.Shared.Universe
 import ComprehensionCategory.Model.OverCat.Shared.Twist
 import ComprehensionCategory.Model.OverCat.Shared.HomIntro
@@ -12,8 +13,12 @@ their conclusion a type of another, in a context of the first.
 * `Hom`: the Hom-types of the category model, types of the discrete model. For a type `A` of the
   category model, `Hom[A]`, in context `Γ ▹ b : A ▹ a : Aᵒᵖ`, sends `((γ, b), a)` to the discrete
   category on the morphisms `a ⟶ b` of `A γ`. It is stable under substitution by `rfl`, and its
-  own opposite in the discrete model,
-  as a rewrite rule, since these discrete categories are, by `propext`.
+  own opposite in the discrete model, as a rewrite rule, since these discrete categories are, by
+  `propext`. The Hom-type of two terms `a : Tm(Γ, Aᵒᵖ)` and `b : Tm(Γ, A)`, in context `Γ`, as in
+  the paper, is its substitution along their pairing (`homAt`), stable under substitution.
+* `HomDisc`: the Hom-types of the types of the discrete model, those of the category model, which
+  forgetting the discreteness preserves strictly, and Hom-Disc: if empty types are unique, terms
+  `a b` of a discrete type with a term of the Hom-type from `a` to `b` are equal.
 * `Universe`: the Coquand-style universe `UDisc Γ` of the discrete types of level `v`, a type of
   the category model at level `v + 1`, the constant functor at the category of small discrete
   categories. Its terms are exactly the functors `Γ ⥤ Cat.{v, v}` into discrete categories, by
@@ -64,6 +69,36 @@ example (B : IDisc.{u, u}.Ty Γ) : (Bᵒᵖ)ᵒᵖ = B := rfl
 example (B : IDisc.{u, u}.Ty Γ) : (Bᵒᵖ).toFunctor = B.toFunctorᵒᵖ := rfl
 
 end
+
+section HomAt
+
+/-- **Hom-Form**, as in the paper: the Hom-type of two terms, a type of the discrete model. -/
+example {Γ : Cat.{u, u}} {A : ICatLax.{u, u}.Ty Γ} (a : Tm(Γ, CatModel.op A)) (b : Tm(Γ, A)) :
+    IDisc.{u, u}.Ty Γ :=
+  homAt a b
+
+/-- The Hom-type of two terms is stable under substitution. -/
+recall ComprehensionCategory.OverCat.pull_homAt {Γ Δ : Cat.{u, u}} (σ : Δ ⟶ Γ)
+    {A : ICatLax.{u, u}.Ty Γ} (a : Tm(Γ, CatModel.op A)) (b : Tm(Γ, A)) :
+    (homAt a b)⦃σ⦄ = homAt (A := A⦃σ⦄) a⦃σ⦄ b⦃σ⦄
+
+/-- Hom-op for the Hom-type of two terms. -/
+recall ComprehensionCategory.OverCat.op_homAt {Γ : Cat.{u, u}} {A : ICatLax.{u, u}.Ty Γ}
+    (a : Tm(Γ, CatModel.op A)) (b : Tm(Γ, A)) : DiscreteModel.op (homAt a b) = homAt a b
+
+/-- **Forgetting the discreteness preserves the Hom-types of two terms**, by `rfl`. -/
+recall ComprehensionCategory.OverCat.homDiscAt_eq {Γ : Cat.{u, u}} {A : IDisc.{u, u}.Ty Γ}
+    (a : Tm(Γ, DiscreteModel.op A)) (b : Tm(Γ, A)) :
+    homDiscAt a b = homAt (A := forgetComprehensionMap.toPre.obj A)
+      (forgetComprehensionMap.tmEquiv a) (forgetComprehensionMap.tmEquiv b)
+
+/-- **Hom-Disc**: if empty types are unique, terms of a discrete type with a term of the Hom-type
+from one to the other are equal. -/
+recall ComprehensionCategory.OverCat.eq_of_homDiscAt {Γ : Cat.{u, u}} (hE : EmptyUnique.{u})
+    {A : IDisc.{u, u}.Ty Γ} (a b : Tm(Γ, A)) (f : Tm(Γ, homDiscAt (OverCat.Tm.toOp hE a) b)) :
+    a = b
+
+end HomAt
 
 section Universe
 

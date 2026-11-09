@@ -17,7 +17,8 @@ Comprehension categories as displayed categories, their type formers, and models
   `D.Ty Γ`, `Γ ▹ A`, `A⦃σ⦄`, `𝐩 A`, `𝐪(σ, A)`.
 * `Term`: the terms `Tm(Γ, A)` of a type, the sections of its projection, and their
   substitution `t⦃σ⦄ : Tm(Δ, A⦃σ⦄)`, the unique section over `t` along `𝐪(σ, A)`, functorial
-  over a split comprehension category.
+  over a split comprehension category; the transport of terms along equalities of types, and the
+  extension `consSec σ t : Δ ⟶ Γ ▹ A` of a morphism `σ` by a term of `A⦃σ⦄`.
 * `Map`: maps of comprehension categories over a functor of the bases, with a comparison
   `F.obj (Γ ▹ A) ⟶ F.obj Γ ▹ M.obj A`, and their pseudo and strict versions. Strict maps send terms
   to terms, and over the identity, the terms of `A` are those of `M.obj A` (`tmEquiv`).
@@ -45,9 +46,10 @@ Comprehension categories as displayed categories, their type formers, and models
       functors into profunctors, with the equivalence `LaxNormalCat ≃ cod Cat` as comprehension
       functor: a split replacement of `cod Cat`, with Σ-types and unit types.
     * `Shared/`: type formers relating the models: the Hom-types of the category model, types of
-      the discrete model, the universe of discrete types in the category model, the twist of a
-      type of the category model, a type of the displayed model, and the twisted Hom-types with
-      their introduction rule (Hom-Intro).
+      the discrete model, also of two terms, and those of discrete types with Hom-Disc, under the
+      uniqueness of empty types; the universe of discrete types in the category model, the twist
+      of a type of the category model, a type of the displayed model, and the twisted Hom-types
+      with their introduction rule (Hom-Intro).
     * `Maps/`: maps between the models: forgetting the discreteness, a strict map preserving
       Σ-types, unit types and opposite types, the inclusions of the category model and the
       contravariant one into the displayed model, strict maps preserving Σ-types and unit types,
