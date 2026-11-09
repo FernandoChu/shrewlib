@@ -12,6 +12,11 @@ chosen lift `olift f x`, followed by a vertical morphism, that is, an equality `
 The discrete opfibrations form a category displayed over `Cat` (`DiscOpfibCat`), with all displayed
 functors as morphisms, like the split opfibrations (`SplitOpfibLax`): forgetting the discreteness is
 a fully faithful vertical functor `DiscOpfibCat.forget : DiscOpfibCat ⟶ SplitOpfibLax`.
+
+The reindexing of a discrete opfibration is a discrete opfibration: its fibres are those of the
+discrete opfibration. So `DiscOpfibCat` is a split fibration over `Cat`, with the reindexing and the
+chosen lifts of `DisplayedCat` (`DiscOpfibCat.splitFibCat`), and forgetting the discreteness
+preserves the chosen lifts (`DiscOpfibCat.forgetCartesian`).
 -/
 
 universe v₂ u₂ v₁ u₁
@@ -60,5 +65,44 @@ def DiscOpfibCat.forget :
 /-- Forgetting the discreteness is fully faithful, since the morphisms are the same. -/
 def DiscOpfibCat.forgetFullyFaithful : DiscOpfibCat.forget.{v₂, u₂, v₁, u₁}.FullyFaithful where
   preimage H := H
+
+/-! ## Reindexing -/
+
+namespace DiscOpfibCat
+
+variable {A B : Cat.{v₁, u₁}} (u : A ⟶ B) (X : DiscOpfibOb.{v₂, u₂} B)
+
+/-- The reindexing of a discrete opfibration along `u`, whose fibres are those of `X`. -/
+def pull : DiscOpfibOb.{v₂, u₂} A where
+  toDisplayed := DisplayedCat.pull u X.toDisplayed
+  isDiscrete a := X.isDiscrete (u.toFunctor.obj a)
+
+/-- The chosen lift `pull u X ⟶[u] X`: that of `DisplayedCat`. -/
+def clift : DiscOpfibCat.Hom u (pull u X) X := DisplayedCat.clift u X.toDisplayed
+
+/-- The chosen lift is cartesian, since it is in `DisplayedCat` and the morphisms are the same. -/
+def isCartesianClift : IsCartesian (D := DiscOpfibCat) (clift u X) :=
+  let H := DisplayedCat.isCartesianClift u X.toDisplayed
+  { lift := fun g _ χ => H.lift g χ
+    lift_fac := fun g _ χ => H.lift_fac g χ
+    lift_uniq := fun ψ hψ => H.lift_uniq ψ hψ }
+
+end DiscOpfibCat
+
+/-- **`DiscOpfibCat` is a split fibration over `Cat`**, with the reindexing and the chosen lifts of
+`DisplayedCat`. -/
+instance DiscOpfibCat.preSplitFibCat : PreSplitFib DiscOpfibCat.{v₂, u₂, v₁, u₁} where
+  pull u X := DiscOpfibCat.pull u X
+  clift u X := DiscOpfibCat.clift u X
+  isCartesianClift u X := DiscOpfibCat.isCartesianClift u X
+
+instance DiscOpfibCat.splitFibCat : SplitFib DiscOpfibCat.{v₂, u₂, v₁, u₁} := {}
+
+/-- **Forgetting the discreteness preserves the chosen lifts**: it is a cartesian functor into
+`SplitOpfibLax`. -/
+def DiscOpfibCat.forgetCartesian :
+    CartesianFunctor (𝟭 Cat.{v₁, u₁}) DiscOpfibCat.{v₂, u₂, v₁, u₁}
+      SplitOpfibLax.{v₂, u₂, v₁, u₁} where
+  toPre := { toDispFunctor := DiscOpfibCat.forget }
 
 end Displayed

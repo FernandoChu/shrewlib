@@ -2,6 +2,7 @@ import ComprehensionCategory.Model.OverCat.Maps.CatOpToDisplayed
 import ComprehensionCategory.Model.OverCat.Maps.CatToDisplayed
 import ComprehensionCategory.Model.OverCat.Maps.DiscreteToCat
 import ComprehensionCategory.Model.OverCat.Maps.SmallToCat
+import ComprehensionCategory.Model.OverCat.Maps.Unstraighten
 
 /-!
 # Maps between the models over `Cat`
@@ -21,6 +22,11 @@ formers, one file per pair of models.
 * `CatOpToDisplayed`: the same for the contravariant category model, `catOpToDisp C`.
 * `SmallToCat`: the lifts of the types and of the discrete types of level `v` into the category
   model at level `v + 1` are strict maps, along which it has universes of them.
+* `Unstraighten`: the unstraightenings, from the category, contravariant, discrete and displayed
+  category models to the models of fibrations (`OverCat/Fibred`), preserve the chosen lifts on the
+  nose, so that the straightening–unstraightening equivalences are fibred, and are strict maps of
+  comprehension categories: each category model is a model of fibrations along its
+  unstraightening.
 -/
 
 universe u
@@ -78,6 +84,34 @@ recall ComprehensionCategory.OverCat.catOpToDispComprehensionMap_preservesUnit :
 
 recall ComprehensionCategory.OverCat.catOpToDispComprehensionMap_preservesSigma :
     catOpToDispComprehensionMap.{u}.PreservesSigma
+
+/-- **The unstraightenings preserve the chosen lifts**: the straightening–unstraightening
+equivalences are fibred. -/
+recall ComprehensionCategory.OverCat.unstraightenCatCartesian :
+    CartesianFunctor (𝟭 Cat.{u, u}) ICatLax.{u, u, u, u} SplitOpfibLax.{u, u, u, u}
+
+recall ComprehensionCategory.OverCat.unstraightenCatOpCartesian :
+    CartesianFunctor (𝟭 Cat.{u, u}) Fibration.Straightening.ICatOpLax.{u, u, u, u}
+      SplitFibLax.{u, u, u, u}
+
+recall ComprehensionCategory.OverCat.unstraightenDiscCartesian :
+    CartesianFunctor (𝟭 Cat.{u, u}) IDisc.{u, u, u, u} DiscOpfibCat.{u, u, u, u}
+
+/-- **The category models are the models of fibrations along the unstraightenings**, strict maps
+of comprehension categories. -/
+recall ComprehensionCategory.OverCat.unstraightenCatComprehensionMap :
+    StrictComprehensionMap (𝟭 Cat.{u, u}) ICatLax.{u, u, u, u} SplitOpfibLax.{u, u, u, u}
+
+recall ComprehensionCategory.OverCat.unstraightenCatOpComprehensionMap :
+    StrictComprehensionMap (𝟭 Cat.{u, u}) Fibration.Straightening.ICatOpLax.{u, u, u, u}
+      SplitFibLax.{u, u, u, u}
+
+recall ComprehensionCategory.OverCat.unstraightenDiscComprehensionMap :
+    StrictComprehensionMap (𝟭 Cat.{u, u}) IDisc.{u, u, u, u} DiscOpfibCat.{u, u, u, u}
+
+recall ComprehensionCategory.OverCat.unstraightenDisplayedComprehensionMap :
+    StrictComprehensionMap (𝟭 Cat.{u, u}) Straightening.LaxNormalCat.{u, u, u}
+      DisplayedCat.{u, u, u, u}
 
 section Small
 

@@ -2,6 +2,7 @@ import ComprehensionCategory.Model.OverCat.Cat.Readme
 import ComprehensionCategory.Model.OverCat.CatOp.Readme
 import ComprehensionCategory.Model.OverCat.Discrete.Readme
 import ComprehensionCategory.Model.OverCat.Displayed.Readme
+import ComprehensionCategory.Model.OverCat.Fibred.Readme
 import ComprehensionCategory.Model.OverCat.Maps.Readme
 import ComprehensionCategory.Model.OverCat.Shared.Readme
 
@@ -25,6 +26,13 @@ Four full split comprehension categories over `Cat`, one folder each, with a `Re
   into profunctors, with the equivalence `LaxNormalCat ≃ cod Cat` as comprehension functor. It has
   Σ-types and unit types.
 
+Their types are indexed categories. Those of the four models of fibrations are their
+unstraightenings:
+
+* `Fibred/`: the displayed categories, split opfibrations, split fibrations and discrete
+  opfibrations, with their total categories as comprehension: full split comprehension
+  categories, which the paper takes as non-split subcategories of `Cat^→`.
+
 Two more folders relate them:
 
 * `Shared/`: type formers relating the models: the Hom-types of the category model are types of
@@ -38,7 +46,8 @@ Two more folders relate them:
   model, preserving Σ-types, unit types and opposite types, and the lifts of the types of a lower
   level into the category model are strict maps, along which it has universes of them. The
   category model and the contravariant one are included into the displayed model by strict maps
-  preserving Σ-types and unit types.
+  preserving Σ-types and unit types. The unstraightenings are strict maps from the four category
+  models to the models of fibrations, preserving the chosen lifts.
 
 A result about a single model goes in its folder, a type former in the `TypeFormers/` folder of the
 model of its types, or in `Shared/` if its premises are types of another model, and a result

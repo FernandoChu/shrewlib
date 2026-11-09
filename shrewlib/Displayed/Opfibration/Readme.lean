@@ -17,7 +17,8 @@ import Displayed.Opfibration.Straightening.Readme
   functors they induce between the dual opfibrations.
 * `Sigma`: opfibrations compose, and so do split opfibrations.
 * `SplitOpfibLax` and `SplitOpfibStr`: the split opfibrations, with the displayed functors and with
-  the opcartesian functors between them, two categories displayed over `Cat`.
+  the opcartesian functors between them, two categories displayed over `Cat`. The reindexing of a
+  split opfibration is a split opfibration, so `SplitOpfibLax` is a split fibration over `Cat`.
 * `Straightening/`: functors `A ⥤ Cat` and their unstraightenings, equivalences with the split
   opfibrations over `Cat`, with lax and with strict morphisms (see its `Readme.lean`).
 

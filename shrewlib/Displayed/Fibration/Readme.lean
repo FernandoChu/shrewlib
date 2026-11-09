@@ -27,7 +27,8 @@ The exact dual of `Opfibration/`, whose `Readme.lean` explains the design.
 * `DualFib`: the dual fibration of a split fibration.
 * `Sigma`: fibrations compose, and so do split fibrations.
 * `SplitFibLax`: the split fibrations and displayed functors between them, a category displayed
-  over `Cat`.
+  over `Cat`. The reindexing of a split fibration is a split fibration, so `SplitFibLax` is a
+  split fibration over `Cat`.
 * `Straightening/`: functors `Aᵒᵖ ⥤ Cat` and their unstraightenings, an equivalence with the split
   fibrations over `Cat` (see its `Readme.lean`).
 -/

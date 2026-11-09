@@ -45,6 +45,9 @@ Comprehension categories as displayed categories, their type formers, and models
     * `Displayed/`: the displayed category model `LaxNormalCat`, whose types are the lax normal
       functors into profunctors, with the equivalence `LaxNormalCat ≃ cod Cat` as comprehension
       functor: a split replacement of `cod Cat`, with Σ-types and unit types.
+    * `Fibred/`: the models of fibrations, whose types are the displayed categories, split
+      opfibrations, split fibrations and discrete opfibrations, the unstraightenings of the types
+      of the four models above, with their total categories as comprehension.
     * `Shared/`: type formers relating the models: the Hom-types of the category model, types of
       the discrete model, also of two terms, and those of discrete types with Hom-Disc, under the
       uniqueness of empty types; the universe of discrete types in the category model, the twist
@@ -53,7 +56,8 @@ Comprehension categories as displayed categories, their type formers, and models
     * `Maps/`: maps between the models: forgetting the discreteness, a strict map preserving
       Σ-types, unit types and opposite types, the inclusions of the category model and the
       contravariant one into the displayed model, strict maps preserving Σ-types and unit types,
-      and the lifts of the types of a lower level.
+      the lifts of the types of a lower level, and the unstraightenings into the models of
+      fibrations.
 
 -/
 
