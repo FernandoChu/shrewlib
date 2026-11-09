@@ -2,6 +2,7 @@ import ComprehensionCategory.Basic
 import ComprehensionCategory.Map
 import ComprehensionCategory.Term
 import ComprehensionCategory.TypeFormers.Sigma
+import ComprehensionCategory.TypeFormers.Unit
 import ComprehensionCategory.TypeFormers.Universe
 import ComprehensionCategory.Model.Codomain.Readme
 import ComprehensionCategory.Model.OverCat.Readme
@@ -22,6 +23,9 @@ Comprehension categories as displayed categories, their type formers, and models
 * `TypeFormers/`: what it means to have a (strict) type former.
   * `Sigma`: Σ-types `Σ[A] B`, with `Γ ▹ A ▹ B ≅ Γ ▹ Σ[A] B`, and their strict preservation by
     strict maps (`StrictComprehensionMap.PreservesSigma`).
+  * `Unit`: unit types `D.unit Γ`, with a term `D.star Γ` that is η, so that
+    `Γ ▹ D.unit Γ ≅ Γ`: every term is the star, which is stable under substitution, and strict
+    maps that preserve unit types (`StrictComprehensionMap.PreservesUnit`) preserve it.
   * `Universe`: Coquand-style universes `univ M Γ` in `D` of the types of `E`, along a strict map
     `M : E ⟶ D` over the identity: inverse maps `El M : Tm(Γ, univ M Γ) → E.Ty Γ` and `code M`,
     natural in `Γ`.
@@ -63,6 +67,14 @@ recall Displayed.isPullback_q {C : Type u} [Category.{v} C] (D : Displayed.{v₂
 recall Displayed.pull_sigma {C : Type u} [Category.{v} C] (D : Displayed.{v₂, u₂} C)
     [Fib D] [Comprehension D] [PreSigma D] {Δ Γ : C} (σ : Δ ⟶ Γ) (A : D.Ty Γ)
     (B : D.Ty (Γ ▹ A)) : (Σ[A] B)⦃σ⦄ = Σ[A⦃σ⦄] B⦃𝐪(σ, A)⦄
+
+/-- Unit types are closed. -/
+recall Displayed.pull_unit {C : Type u} [Category.{v} C] (D : Displayed.{v₂, u₂} C) [Fib D]
+    [Comprehension D] [PreUnit D] {Δ Γ : C} (σ : Δ ⟶ Γ) : (D.unit Γ)⦃σ⦄ = D.unit Δ
+
+/-- Every term of the unit type is the star. -/
+recall Displayed.Tm.eq_star {C : Type u} [Category.{v} C] (D : Displayed.{v₂, u₂} C) [Fib D]
+    [Comprehension D] [HasUnit D] {Γ : C} (t : Tm(Γ, D.unit Γ)) : t = D.star Γ
 
 /-- Substitution of a term is the unique section over it along `𝐪(σ, A)`. -/
 recall Displayed.Tm.pull_unique {C : Type u} [Category.{v} C] {D : Displayed.{v₂, u₂} C}
