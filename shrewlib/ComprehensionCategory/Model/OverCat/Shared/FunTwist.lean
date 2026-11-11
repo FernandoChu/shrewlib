@@ -94,13 +94,13 @@ def funTy : ICatLax.{v + 1, v + 1}.Ty (funCtx Γ) :=
 
 /-- Its twist `Γ ▹ X : U ▹ Y : U ⊢ Ȳ → X`. -/
 def funTwistGen :
-    Straightening.LaxNormalCat.{v + 1, v + 1, v + 1}.Ty (funCtx₀ Γ ▹ U (funCtx₀ Γ)) :=
+    Straightening.IProf.{v + 1, v + 1, v + 1}.Ty (funCtx₀ Γ ▹ U (funCtx₀ Γ)) :=
   twist (B := U (funCtx₀ Γ)) (funTy Γ)
 
 variable {Γ}
 
 /-- `Ā → B`, for types `A` and `B` of level `v`. -/
-def funTwist (A B : Γ ⥤ Cat.{v, v}) : Straightening.LaxNormalCat.{v + 1, v + 1, v + 1}.Ty Γ :=
+def funTwist (A B : Γ ⥤ Cat.{v, v}) : Straightening.IProf.{v + 1, v + 1, v + 1}.Ty Γ :=
   (funTwistGen Γ)⦃consSec (code B).sec (code A)⦄
 
 variable (A B : Γ ⥤ Cat.{v, v})

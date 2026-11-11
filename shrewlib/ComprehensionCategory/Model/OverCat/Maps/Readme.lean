@@ -60,7 +60,7 @@ recall ComprehensionCategory.OverCat.forgetComprehensionMap_obj_op {Γ : Cat.{u,
 comprehension categories.** -/
 recall ComprehensionCategory.OverCat.catToDispComprehensionMap :
     StrictComprehensionMap (𝟭 Cat.{u, u}) ICatLax.{u, u, u, u}
-      Straightening.LaxNormalCat.{u, u, u}
+      Straightening.IProf.{u, u, u}
 
 /-- **Lift-Intro and Lift-Elim**: the terms of `C` are those of `catToDisp C`. -/
 recall ComprehensionCategory.OverCat.tmEquivCatToDisp {Γ : Cat.{u, u}}
@@ -78,7 +78,7 @@ recall ComprehensionCategory.OverCat.catToDispComprehensionMap_preservesSigma :
 comprehension categories**, preserving unit types and Σ-types strictly. -/
 recall ComprehensionCategory.OverCat.catOpToDispComprehensionMap :
     StrictComprehensionMap (𝟭 Cat.{u, u}) Fibration.Straightening.ICatOpLax.{u, u, u, u}
-      Straightening.LaxNormalCat.{u, u, u}
+      Straightening.IProf.{u, u, u}
 
 recall ComprehensionCategory.OverCat.catOpToDispComprehensionMap_preservesUnit :
     catOpToDispComprehensionMap.{u}.PreservesUnit
@@ -111,7 +111,7 @@ recall ComprehensionCategory.OverCat.unstraightenDiscComprehensionMap :
     StrictComprehensionMap (𝟭 Cat.{u, u}) IDisc.{u, u, u, u} DiscOpfibCat.{u, u, u, u}
 
 recall ComprehensionCategory.OverCat.unstraightenDisplayedComprehensionMap :
-    StrictComprehensionMap (𝟭 Cat.{u, u}) Straightening.LaxNormalCat.{u, u, u}
+    StrictComprehensionMap (𝟭 Cat.{u, u}) Straightening.IProf.{u, u, u}
       DisplayedCat.{u, u, u, u}
 
 section Small

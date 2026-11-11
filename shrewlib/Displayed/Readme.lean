@@ -21,7 +21,7 @@ folder has a `Readme.lean`.
   `Straightening/` is the equivalence over `Cat` between functors `Aᵒᵖ ⥤ Cat` and split fibrations.
   It is the dual of `Opfibration/`.
 * `Straightening/`: straightening–unstraightening for displayed categories, the isomorphism
-  `LaxNormalCat ≅ DisplayedCat` over `Cat`, and the fibrations over `Cat` it gives.
+  `IProf ≅ DisplayedCat` over `Cat`, and the fibrations over `Cat` it gives.
 * `CodCatEquiv/`: the equivalence `DisplayedCat ≃ cod Cat` over `Cat` taking total categories:
   displayed categories over `A` are the functors into `A`.
 * `Discrete/`: discrete opfibrations; `Straightening/` is the equivalence over `Cat` between

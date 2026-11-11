@@ -5,12 +5,12 @@ import Rules.Functor
 import Displayed.Fibration.Basic
 
 /-!
-# Lax normal functors into profunctors, `LaxNormalCat`
+# Lax normal functors into profunctors, `IProf`
 
-`LaxNormalCat` is the straightened counterpart of `DisplayedCat`
+`IProf` (indexed profunctors) is the straightened counterpart of `DisplayedCat`
 (`Displayed/Displayed/DisplayedCat.lean`): by Bénabou's correspondence, a category displayed over
 `A` is a lax normal functor from `A` to the bicategory of profunctors, and the straightening
-equivalence `LaxNormalCat ≃ DisplayedCat` of this folder makes this precise. It plays the role that
+equivalence `IProf ≃ DisplayedCat` of this folder makes this precise. It plays the role that
 `ICatLax`, the functors into `Cat`, plays for (op)fibrations.
 
 A lax normal functor `F : StrictlyUnitaryLaxFunctor (LocallyDiscrete C) ProfCat` gives, for each
@@ -22,7 +22,7 @@ composition of the fibers (`mul_eq_comp`) and their actions on the profunctors (
 `rmap_eq_mul`). So a lax normal functor is determined by its categories, its elements and `mul`
 (`LaxNormal.ext`).
 
-Over a small category `A`, the objects of `LaxNormalCat` are the lax normal functors
+Over a small category `A`, the objects of `IProf` are the lax normal functors
 `F : StrictlyUnitaryLaxFunctor (LocallyDiscrete A) ProfCat` (`LaxNormal A`). A morphism over
 `u : A ⟶ B` from `F` to `G : LaxNormal B` is a lax transformation from `F` to `G` restricted along
 `u`, whose components are the representable profunctors of functors
@@ -37,11 +37,11 @@ this is also the action of the component functors on morphisms) and the composit
 (`map_mul`). Naturality of `map` in `x` and `y` follows from `map_mul`, since the actions of
 `prof F (𝟙 a)` on `prof F f` are instances of the composition constraint.
 
-`LaxNormalCat` is a category displayed over `Cat`, with laws holding by `rfl` (`map_id` and
+`IProf` is a category displayed over `Cat`, with laws holding by `rfl` (`map_id` and
 `map_mul` are rewrite rules). Mathlib's `Functor.map_id` and `Functor.map_comp` are rules too, so
 the pullback `pullback u G` of `G` along `u` satisfies
 `pullback (v ⋙ u) G = pullback v (pullback u G)` by `rfl`. The morphism `pullback u G ⟶[u] G` given
-by identities is cartesian, and these lifts make `LaxNormalCat` a split fibration (a `SplitFib`
+by identities is cartesian, and these lifts make `IProf` a split fibration (a `SplitFib`
 instance).
 -/
 
@@ -231,9 +231,9 @@ theorem hext {F' : LaxNormal A} {G' : LaxNormal B} (hF : F = F') (hG : G = G') {
 
 end ReprHom
 
-/-- `LaxNormalCat`, displayed over `Cat`: the lax normal functors from `A` into profunctors over
-`A`, and the transformations with representable components over `u : A ⟶ B`. -/
-def LaxNormalCat : Displayed Cat.{v₁, u₁} where
+/-- `IProf` (indexed profunctors), displayed over `Cat`: the lax normal functors from `A` into
+profunctors over `A`, and the transformations with representable components over `u : A ⟶ B`. -/
+def IProf : Displayed Cat.{v₁, u₁} where
   Ob := LaxNormal.{u}
   Hom := ReprHom
   id _ :=
@@ -273,26 +273,26 @@ def pullback {A B : Cat.{v₁, u₁}} (u : A ⟶ B) (G : LaxNormal B) : LaxNorma
 
 /-- The cartesian lift of `G` along `u`: identities `pullback u G ⟶[u] G`. -/
 def pullbackLift {A B : Cat.{v₁, u₁}} (u : A ⟶ B) (G : LaxNormal B) :
-    LaxNormalCat.Hom u (pullback u G) G where
+    IProf.Hom u (pullback u G) G where
   obj x := x
   map s := s
 
 /-- The chosen lift is cartesian: a transformation over `v ≫ u` is its own factorization. -/
 def isCartesianPullbackLift {A B : Cat.{v₁, u₁}} (u : A ⟶ B) (G : LaxNormal B) :
-    IsCartesian (D := LaxNormalCat) (pullbackLift u G) where
+    IsCartesian (D := IProf) (pullbackLift u G) where
   lift _ _ χ := ⟨χ.obj, χ.map, χ.map_id, χ.map_mul⟩
   lift_fac _ _ _ := rfl
   lift_uniq _ hψ := by
     subst hψ
     rfl
 
-/-- **`LaxNormalCat` is a split fibration over `Cat`**, cloven by the pullbacks. Pullback along the
+/-- **`IProf` is a split fibration over `Cat`**, cloven by the pullbacks. Pullback along the
 identity and along composites holds on the nose. -/
-instance preSplitFibLaxNormalCat : PreSplitFib LaxNormalCat.{u, v₁, u₁} where
+instance preSplitFibIProf : PreSplitFib IProf.{u, v₁, u₁} where
   pull u G := pullback u G
   clift u G := pullbackLift u G
   isCartesianClift u G := isCartesianPullbackLift u G
 
-instance splitFibLaxNormalCat : SplitFib LaxNormalCat.{u, v₁, u₁} := {}
+instance splitFibIProf : SplitFib IProf.{u, v₁, u₁} := {}
 
 end Displayed.Straightening

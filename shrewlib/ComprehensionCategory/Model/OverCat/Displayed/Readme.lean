@@ -6,10 +6,10 @@ import ComprehensionCategory.Model.OverCat.Displayed.TypeFormers.Unit
 /-!
 # The displayed category model
 
-In this folder we define the displayed category model: the comprehension category `LaxNormalCat`
+In this folder we define the displayed category model: the comprehension category `IProf`
 over `Cat`, whose types in context `Γ` are the lax normal functors from `Γ` to profunctors, the
 categories displayed over `Γ` in Bénabou's sense. Its comprehension functor is the composite
-equivalence `LaxNormalCat ≃ DisplayedCat ≃ cod Cat` over `Cat`, so the context extension `Γ ▹ F` is
+equivalence `IProf ≃ DisplayedCat ≃ cod Cat` over `Cat`, so the context extension `Γ ▹ F` is
 the total category of the unstraightening of `F`. It is full and split: a split replacement of the
 codomain comprehension category `cod Cat`. It has Σ-types: `Σ[F] G` is the straightening of the
 composite of the unstraightenings of `F` and `G`. It has unit types, the straightenings of the
@@ -34,18 +34,18 @@ open CategoryTheory Displayed ComprehensionCategory Straightening
 
 /-- **The displayed category model** is a full split comprehension category over `Cat`. -/
 recall ComprehensionCategory.DisplayedModel.splitComprehension :
-    SplitComprehension LaxNormalCat.{u, u, u}
+    SplitComprehension IProf.{u, u, u}
 
 recall ComprehensionCategory.DisplayedModel.fullComprehension :
-    FullComprehension LaxNormalCat.{u, u, u}
+    FullComprehension IProf.{u, u, u}
 
-/-- Its comprehension functor is the composite equivalence `LaxNormalCat ≃ DisplayedCat ≃ cod Cat`.
+/-- Its comprehension functor is the composite equivalence `IProf ≃ DisplayedCat ≃ cod Cat`.
 -/
 recall ComprehensionCategory.DisplayedModel.compr :
-    VertFunctor LaxNormalCat.{u, u, u} (cod Cat.{u, u})
+    VertFunctor IProf.{u, u, u} (cod Cat.{u, u})
 
 /-- **The displayed category model has Σ-types.** -/
-recall ComprehensionCategory.DisplayedModel.hasSigma : HasSigma LaxNormalCat.{u, u, u}
+recall ComprehensionCategory.DisplayedModel.hasSigma : HasSigma IProf.{u, u, u}
 
 /-- **The displayed category model has unit types.** -/
-recall ComprehensionCategory.DisplayedModel.hasUnit : HasUnit LaxNormalCat.{u, u, u}
+recall ComprehensionCategory.DisplayedModel.hasUnit : HasUnit IProf.{u, u, u}

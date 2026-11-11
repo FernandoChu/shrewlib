@@ -49,8 +49,8 @@ Comprehension categories as displayed categories, their type formers, and models
     * `Discrete/`: the discrete model `IDisc`, the full sub-comprehension category of the category
       model on the functors into discrete categories, with Σ-types, unit types and opposite
       types, and its types of a lower level (`SmallIDisc`).
-    * `Displayed/`: the displayed category model `LaxNormalCat`, whose types are the lax normal
-      functors into profunctors, with the equivalence `LaxNormalCat ≃ cod Cat` as comprehension
+    * `Displayed/`: the displayed category model `IProf`, whose types are the lax normal
+      functors into profunctors, with the equivalence `IProf ≃ cod Cat` as comprehension
       functor: a split replacement of `cod Cat`, with Σ-types and unit types.
     * `Fibred/`: the models of fibrations, whose types are the displayed categories, split
       opfibrations, split fibrations and discrete opfibrations, the unstraightenings of the types

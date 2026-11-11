@@ -74,7 +74,7 @@ def twistDisp {B : ICatLax.{u, u}.Ty Γ} (C : ICatLax.{u, u}.Ty (Γ ▹ Bᵒᵖ)
 /-- **The twist of a type `C` in context `Γ ▹ Bᵒᵖ`** (Twist): the type of the displayed model of
 `twistDisp C`, in context `Γ ▹ B`. -/
 def twist {B : ICatLax.{u, u}.Ty Γ} (C : ICatLax.{u, u}.Ty (Γ ▹ Bᵒᵖ)) :
-    Straightening.LaxNormalCat.{u, u, u}.Ty (Γ ▹ B) :=
+    Straightening.IProf.{u, u, u}.Ty (Γ ▹ B) :=
   Straightening.straightenObj (twistDisp C)
 
 /-- The context extension of the displayed model by the twist of `C` is the total category of

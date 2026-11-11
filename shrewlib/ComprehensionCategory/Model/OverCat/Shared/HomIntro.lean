@@ -54,7 +54,7 @@ def twistedHomDisp (A : ICatLax.{u, u}.Ty Γ) :
   DisplayedCat.pull (diag A) (twistDisp (homFunctor A))
 
 /-- **The twisted Hom-type of `A`**, `Γ ▹ a : A ⊢ Homₐ(ā, a)`, a type of the displayed model. -/
-def twistedHom (A : ICatLax.{u, u}.Ty Γ) : Straightening.LaxNormalCat.{u, u, u}.Ty (Γ ▹ A) :=
+def twistedHom (A : ICatLax.{u, u}.Ty Γ) : Straightening.IProf.{u, u, u}.Ty (Γ ▹ A) :=
   Straightening.straightenObj (twistedHomDisp A)
 
 /-- **The twisted Hom-type is derivable**: it is the twist of the Hom-type of `A`, substituted along

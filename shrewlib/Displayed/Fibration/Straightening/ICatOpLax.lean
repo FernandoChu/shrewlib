@@ -23,6 +23,11 @@ to `G` is a lax transformation `LaxTrans F (reindex u G)`, where `reindex u G` i
 out. Its laws hold by `rfl`. Reindexing `ICatOpLax.pull u G = reindex u G` and the identity
 transformations make it a split fibration over `Cat`, whose splitting laws hold by `rfl`.
 
+`Op` in `ICatOp` means contravariant (functors `Aᵒᵖ ⥤ Cat`), not the pointwise opposite
+`F ⋙ opFunctor'` of an indexed category. `Lax` matches `SplitFibLax` (any displayed functor), to
+which these transformations unstraighten: relative to the morphisms `f.op` of `Aᵒᵖ`, they are the
+oplax transformations of `[Aᵒᵖ, Cat]`, in the direction of Mathlib's `Oplax.OplaxTrans`.
+
 Some of these definitional equalities are checked in the kernel (`kernel_exact`, `kernel_rfl'`):
 the elaborator is slow on them, as it tries the rules on opposites at every `Functor.map`.
 -/

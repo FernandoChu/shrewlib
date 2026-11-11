@@ -36,11 +36,11 @@ def unitDisp (Γ : Cat.{u, u}) : Displayed.{u, u} Γ where
   comp φ ψ := ⟨⟨φ.down.down.trans ψ.down.down⟩⟩
 
 /-- The unit type in context `Γ`: the straightening of the terminal displayed category. -/
-def unit (Γ : Cat.{u, u}) : LaxNormalCat.{u, u, u}.Ty Γ :=
+def unit (Γ : Cat.{u, u}) : IProf.{u, u, u}.Ty Γ :=
   straightenObj (unitDisp Γ)
 
 /-- The unit types of the displayed category model, closed by `rfl`. -/
-instance preUnit : PreUnit LaxNormalCat.{u, u, u} where
+instance preUnit : PreUnit IProf.{u, u, u} where
   unit Γ := DisplayedModel.unit Γ
   pull_unit _ := rfl
 
@@ -50,7 +50,7 @@ def star (Γ : Cat.{u, u}) : Tm(Γ, DisplayedModel.unit Γ) :=
     fun _ _ => rfl
 
 /-- **The displayed category model has unit types**, whose η holds by `rfl`. -/
-instance hasUnit : HasUnit LaxNormalCat.{u, u, u} where
+instance hasUnit : HasUnit IProf.{u, u, u} where
   star Γ := DisplayedModel.star Γ
   proj_star _ := rfl
 

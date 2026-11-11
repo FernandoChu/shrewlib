@@ -15,7 +15,7 @@ unstraightening, an equivalence over `Cat` (straightening–unstraightening):
 * the category model `ICatLax` and the split opfibrations `SplitOpfibLax`;
 * the contravariant category model `ICatOpLax` and the split fibrations `SplitFibLax`;
 * the discrete model `IDisc` and the discrete opfibrations `DiscOpfibCat`;
-* the displayed category model `LaxNormalCat` and the displayed categories `DisplayedCat`.
+* the displayed category model `IProf` and the displayed categories `DisplayedCat`.
 
 **The equivalences are fibred**: each unstraightening sends the chosen lifts to the chosen lifts, on
 the nose (`unstraightenCatCartesian`, …), since the unstraightening of the reindexing `u ⋙ G` is
@@ -88,7 +88,7 @@ def unstraightenDiscComprehensionMap :
 /-- **The displayed category model is the model of displayed categories**, along the
 unstraightening, a strict map of comprehension categories. -/
 def unstraightenDisplayedComprehensionMap :
-    StrictComprehensionMap (𝟭 Cat.{u, u}) Straightening.LaxNormalCat.{u, u, u}
+    StrictComprehensionMap (𝟭 Cat.{u, u}) Straightening.IProf.{u, u, u}
       DisplayedCat.{u, u, u, u} where
   toPre.toDispFunctor := Straightening.unstraighten
   toPre.isCartesianMap := Straightening.isCartesianUnstraightenMap

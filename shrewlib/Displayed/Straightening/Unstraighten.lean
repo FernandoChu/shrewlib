@@ -1,4 +1,4 @@
-import Displayed.Straightening.LaxNormalCat
+import Displayed.Straightening.IProf
 import Displayed.Displayed.DisplayedCat
 
 /-!
@@ -28,7 +28,7 @@ As a result the laws of the displayed category are exactly the unit and associat
 evaluated at elements, with no `eqToHom` or `cast` anywhere. Its total category is the
 Grothendieck construction of `F` on profunctors.
 
-Finally, `unstraighten : VertFunctor LaxNormalCat DisplayedCat` sends `F : LaxNormal A` to
+Finally, `unstraighten : VertFunctor IProf DisplayedCat` sends `F : LaxNormal A` to
 `unstraightenObj F`, and a transformation with representable components over `u` to the displayed
 functor over `u` with the same components. Its laws hold by `rfl`.
 -/
@@ -63,8 +63,8 @@ def unstraightenMap {A B : Cat.{v₁, u₁}} {u : A ⟶ B} {F : LaxNormal A} {G 
   map_id x := φ.map_id x
   map_comp s t := φ.map_mul s t
 
-/-- **The unstraightening functor `unstraighten : VertFunctor LaxNormalCat DisplayedCat`.** -/
-def unstraighten : VertFunctor LaxNormalCat.{u, v₁, u₁} DisplayedCat.{u, u, v₁, u₁} where
+/-- **The unstraightening functor `unstraighten : VertFunctor IProf DisplayedCat`.** -/
+def unstraighten : VertFunctor IProf.{u, v₁, u₁} DisplayedCat.{u, u, v₁, u₁} where
   obj F := unstraightenObj F
   map φ := unstraightenMap φ
 

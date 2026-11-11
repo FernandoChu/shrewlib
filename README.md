@@ -54,7 +54,7 @@ files, (op)cartesian morphisms (in `Displayed/{Opfibration,Fibration}/Basic` and
   categories in general), `Opfibration/` (including the unstraightening of functors `A ⥤ Cat`),
   `Fibration/` (including the codomain fibration), `Straightening/`
   (straightening–unstraightening for displayed categories, an isomorphism
-  `LaxNormalCat ≅ DisplayedCat` over `Cat`), `CodCatEquiv/` (the equivalence
+  `IProf ≅ DisplayedCat` over `Cat`), `CodCatEquiv/` (the equivalence
   `DisplayedCat ≃ cod Cat` over `Cat`, taking total categories), and `Discrete/` (discrete
   opfibrations, equivalent over `Cat` to the functors into discrete categories).
 - `ComprehensionCategory/`: comprehension categories, their type formers, and models: the

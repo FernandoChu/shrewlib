@@ -61,19 +61,45 @@ it up to date when a folder's content changes.
 The categories displayed over `Cat` of indexed categories and of (op)fibrations are named
 `⟨objects⟩⟨morphisms⟩`:
 
-- Objects: `ICat` (functors `A ⥤ Cat`), `ICatOp` (functors `Aᵒᵖ ⥤ Cat`), and `SplitOpfib`,
-  `SplitFib`, `Opfib`, `Fib` after the class of the displayed categories (split or only cloven).
-- Morphisms: `Lax` (any displayed functor; lax transformations), `Ps` (displayed functors
-  preserving (op)cartesian morphisms; pseudonatural transformations) or `Str` (displayed functors
-  sending chosen lifts to chosen lifts, `OpcartesianFunctor` and `CartesianFunctor`; strict
-  transformations). The two sides of a straightening theorem have the same suffix, as in
-  `straighteningEquivLax : VertEquivalence ICatLax SplitOpfibLax`.
+- Objects: on the fibred side, `SplitOpfib`, `SplitFib`, `Opfib`, `Fib` after the class of the
+  displayed categories (split or only cloven). On the indexed side, `I⟨target⟩`: `ICat` (functors
+  `A ⥤ Cat`), `ICatOp` (contravariant ones, `Aᵒᵖ ⥤ Cat`; `Op` is not the pointwise opposite
+  `F ⋙ opFunctor'`), `IDisc` (functors into discrete categories) and `IProf` (lax normal functors
+  into profunctors).
+- Morphisms: the fibred side defines the suffix, `Lax` (any displayed functor), `Ps` (displayed
+  functors preserving (op)cartesian morphisms) or `Str` (displayed functors sending chosen lifts
+  to chosen lifts, `OpcartesianFunctor` and `CartesianFunctor`). The indexed side takes the suffix
+  of the fibred side it straightens to, so the two sides of a straightening theorem have the same
+  suffix, as in `straighteningEquivLax : VertEquivalence ICatLax SplitOpfibLax`. On `ICat` these
+  are the lax, pseudonatural and strict transformations. On `ICatOp`, `Lax` follows `SplitFibLax`:
+  its transformations are the oplax ones of `[Aᵒᵖ, Cat]` (Mathlib's `Oplax.OplaxTrans`).
 
-`DisplayedCat`/`LaxNormalCat` and `DiscOpfibCat`/`IDisc` have no suffix: their objects have no
-chosen lifts, or all functors between them preserve them. Construct the functors of an
-equivalence both ways, with an explicit unit and counit, rather than through
-`VertEquivalence.ofFullyFaithful`, so that its inverse is the expected construction and compares
-with others by `rfl`, as the strict straightening with the lax one (`straightenStr_comp_forget`).
+A morphism suffix appears exactly when there is a choice of morphisms. `DisplayedCat`, `IProf`,
+`DiscOpfibCat` and `IDisc` have one class of morphisms and no suffix: their objects have no chosen
+lifts, or all functors between them preserve them. Such a name ends in `Cat` when the bare name is,
+or would read as, the class or structure of its objects: `Displayed` is a structure, and
+`DiscOpfib` would read as a class like `SplitOpfib` (the objects are the structure `DiscOpfibOb`,
+as those of `SplitOpfibLax` are `SplitOpfibOb`). `D2SFibCat B`, the category of D2SFibs over `B`
+(the fiber of `D2SFibStr`), ends in `Cat` too, since `D2SFib` is a class.
+
+The straightenings:
+
+| Indexed     | Fibred          | Morphisms              |
+| ----------- | --------------- | ---------------------- |
+| `IProf`     | `DisplayedCat`  | only one class         |
+| `ICatLax`   | `SplitOpfibLax` | any displayed functor  |
+| `ICatStr`   | `SplitOpfibStr` | chosen lifts preserved |
+| `ICatOpLax` | `SplitFibLax`   | any displayed functor  |
+| `IDisc`     | `DiscOpfibCat`  | only one class         |
+| `DProf`     | `D2SFibStr`     | chosen lifts preserved |
+
+`DProf` (dependent profunctors) and `D2SFibStr` are doubly displayed, over `ICatStr` and
+`SplitOpfibStr` respectively.
+
+Construct the functors of an equivalence both ways, with an explicit unit and counit, rather than
+through `VertEquivalence.ofFullyFaithful`, so that its inverse is the expected construction and
+compares with others by `rfl`, as the strict straightening with the lax one
+(`straightenStr_comp_forget`).
 
 These categories are displayed over `Cat.{v₁, u₁}`, with fibers in other universes, `Cat.{v₂, u₂}`
 or `Displayed.{v₂, u₂}`. Their universe parameters are those of the fibers, then those of the
@@ -83,7 +109,7 @@ these categories (hence `set_option linter.checkUnivs false` on them) and are ne
 statements give all four, or the first two when an argument fixes the base
 (`ICatLax.{u, u}.Ty Γ`). Categories doubly displayed over them put their own universes before
 these: `DProf.{v₃, u₃, v₂, u₂, v₁, u₁}` over `ICatStr.{v₂, u₂, v₁, u₁}`, and `D2SFibCat.{v₃, u₃} B`
-as `DoubleDisplayed.{v₃, u₃} B`. `LaxNormalCat.{u, v₁, u₁}` has one fiber universe, since
+as `DoubleDisplayed.{v₃, u₃} B`. `IProf.{u, v₁, u₁}` has one fiber universe, since
 profunctors are between small categories. `DisplayedCat.{v, u, v, u} ≃ cod Cat.{v, u}` needs the
 total categories in the base, as do the comprehension models, which use these categories at
 `u, u, u, u`.

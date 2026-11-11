@@ -1,10 +1,10 @@
-import Displayed.Straightening.LaxNormalCat
+import Displayed.Straightening.IProf
 import Displayed.Displayed.DisplayedCat
 
 /-!
 # Straightening of a displayed category
 
-`straighten : VertFunctor DisplayedCat LaxNormalCat` sends `D` over `A` to the lax normal functor of
+`straighten : VertFunctor DisplayedCat IProf` sends `D` over `A` to the lax normal functor of
 its fibres, `a ↦ D.Fiber a`, with `dispProf D f` the profunctor of the morphisms of `D` over `f` and
 the displayed composition as the composition constraint (`dispMul`). A displayed functor over `u`
 is sent to the transformation with the same components.
@@ -92,8 +92,8 @@ def straightenMap {B : Cat.{v₁, u₁}} {u : A ⟶ B} {E : Displayed.{u, u} B}
 
 end Straighten
 
-/-- **The straightening functor `straighten : VertFunctor DisplayedCat LaxNormalCat`.** -/
-def straighten : VertFunctor DisplayedCat.{u, u, v₁, u₁} LaxNormalCat.{u, v₁, u₁} where
+/-- **The straightening functor `straighten : VertFunctor DisplayedCat IProf`.** -/
+def straighten : VertFunctor DisplayedCat.{u, u, v₁, u₁} IProf.{u, v₁, u₁} where
   obj D := straightenObj D
   map H := straightenMap H
 

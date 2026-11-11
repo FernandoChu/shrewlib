@@ -29,7 +29,7 @@ variable {Γ : Cat.{u, u}}
 /-- The substitution of the type `straightenObj E` along `u` is the type of the reindexing of `E`
 along `u`, by `rfl`. -/
 theorem straightenObj_pull {Δ : Cat.{u, u}} (σ : Δ ⟶ Γ) (E : Displayed.{u, u} Γ) :
-    LaxNormalCat.pull σ (straightenObj E) = straightenObj (DisplayedCat.pull σ E) :=
+    IProf.pull σ (straightenObj E) = straightenObj (DisplayedCat.pull σ E) :=
   rfl
 
 /-- **The term of `straightenObj D` with values `obj γ`** over `γ` and transports
@@ -39,7 +39,7 @@ def tmMk {D : Displayed.{u, u} Γ} (obj : ∀ γ : Γ, D.Ob γ)
     (map : ∀ {γ γ' : Γ} (f : γ ⟶ γ'), obj γ ⟶[f] obj γ')
     (map_id : ∀ γ : Γ, map (𝟙 γ) = 𝟙ᵈ (obj γ))
     (map_comp : ∀ {γ γ' γ'' : Γ} (f : γ ⟶ γ') (g : γ' ⟶ γ''), map (f ≫ g) = map f ≫ᵈ map g) :
-    LaxNormalCat.Tm (Γ := Γ) (straightenObj D) where
+    IProf.Tm (Γ := Γ) (straightenObj D) where
   sec := (show Γ ⥤ D.Total from
     { obj γ := D.tot (obj γ)
       map f := D.totalMk f (map f)
@@ -49,19 +49,19 @@ def tmMk {D : Displayed.{u, u} Γ} (obj : ∀ γ : Γ, D.Ob γ)
 
 /-- The section of `D` given by a term of `straightenObj D`: its values, transported along the
 equalities of their first components with the points of `Γ`. -/
-def Tm.toSection {D : Displayed.{u, u} Γ} (t : LaxNormalCat.Tm (Γ := Γ) (straightenObj D)) :
+def Tm.toSection {D : Displayed.{u, u} Γ} (t : IProf.Tm (Γ := Γ) (straightenObj D)) :
     D.Section :=
   Section.ofFunctor t.sec.toFunctor (congrArg Cat.Hom.toFunctor t.sec_proj)
 
 /-- The term of `straightenObj D` of a section of `D`. -/
 def Tm.ofSection {D : Displayed.{u, u} Γ} (S : D.Section) :
-    LaxNormalCat.Tm (Γ := Γ) (straightenObj D) where
+    IProf.Tm (Γ := Γ) (straightenObj D) where
   sec := S.total.toCatHom
   sec_proj := rfl
 
 /-- **The terms of `straightenObj D` are the sections of `D`.** -/
 def Tm.sectionEquiv {D : Displayed.{u, u} Γ} :
-    LaxNormalCat.Tm (Γ := Γ) (straightenObj D) ≃ D.Section where
+    IProf.Tm (Γ := Γ) (straightenObj D) ≃ D.Section where
   toFun := Tm.toSection
   invFun := Tm.ofSection
   left_inv _ := Displayed.Tm.ext (Cat.Hom.ext (Section.total_ofFunctor _ _))

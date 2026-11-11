@@ -6,12 +6,12 @@ import Displayed.Fibration.DisplayedCat
 /-!
 # Straightening–unstraightening for displayed categories
 
-`unstraighten : VertFunctor LaxNormalCat DisplayedCat` is an isomorphism of categories over `Cat`,
+`unstraighten : VertFunctor IProf DisplayedCat` is an isomorphism of categories over `Cat`,
 with inverse `straighten`: `straighten ⋙ᵥ unstraighten` is the identity by `rfl`
 (`straighten_comp_unstraighten`), and `unstraighten ⋙ᵥ straighten` is the identity
 propositionally (`unstraighten_comp_straighten`). In particular the functors between the total
 categories are inverse to each other. As an equivalence over `Cat`, in the displayed sense, it is
-`straighteningEquiv : VertEquivalence LaxNormalCat DisplayedCat`, whose unit and counit are
+`straighteningEquiv : VertEquivalence IProf DisplayedCat`, whose unit and counit are
 vertical, i.e. their components lie over identities of `Cat`.
 
 Both have identity components, and their laws and naturality hold by `rfl`. The counit is the
@@ -24,9 +24,9 @@ in `F c`, and they act on the elements by it too. These agree with `F` by `mul_e
 `LaxNormal.ext`, which compares the data on heterogeneously equal arguments. On morphisms, a
 transformation is sent to one with the same components (`ReprHom.hext`). Consequently:
 
-* the equivalence of total categories `LaxNormalCat.Total ≌ DisplayedCat.Total` commutes with the
+* the equivalence of total categories `IProf.Total ≌ DisplayedCat.Total` commutes with the
   projections to `Cat` (`straighteningEquivTotal_functor_comp_π`);
-* `LaxNormalCat` and `DisplayedCat` are split fibrations over `Cat`, by restriction along `u`
+* `IProf` and `DisplayedCat` are split fibrations over `Cat`, by restriction along `u`
   (`Displayed/Fibration/DisplayedCat` for `DisplayedCat`), and both functors are cartesian
   functors, preserving the chosen lifts strictly (`unstraightenCartesian`, `straightenCartesian`).
   `straightenObj (DisplayedCat.pull u E)` is `pullback u (straightenObj E)` by `rfl`, and
@@ -62,18 +62,18 @@ def unitInv : ReprHom (𝟙 A) (straightenObj (unstraightenObj F)) F where
   map s := s
 
 theorem unitHom_unitInv :
-    LaxNormalCat.comp (unitHom F) (unitInv F) = LaxNormalCat.id F :=
+    IProf.comp (unitHom F) (unitInv F) = IProf.id F :=
   rfl
 
 theorem unitInv_unitHom :
-    LaxNormalCat.comp (unitInv F) (unitHom F) =
-      LaxNormalCat.id (straightenObj (unstraightenObj F)) :=
+    IProf.comp (unitInv F) (unitHom F) =
+      IProf.id (straightenObj (unstraightenObj F)) :=
   rfl
 
 end Unit
 
-/-- **The unit** `VertFunctor.id LaxNormalCat ≅ unstraighten ⋙ᵥ straighten`, vertical over `Cat`. -/
-def unitIso : VertFunctor.id LaxNormalCat.{u, v₁, u₁} ≅ unstraighten ⋙ᵥ straighten :=
+/-- **The unit** `VertFunctor.id IProf ≅ unstraighten ⋙ᵥ straighten`, vertical over `Cat`. -/
+def unitIso : VertFunctor.id IProf.{u, v₁, u₁} ≅ unstraighten ⋙ᵥ straighten :=
   VertNatIso.ofComponents
     (fun F => ⟨unitHom F, unitInv F, unitHom_unitInv F, unitInv_unitHom F⟩) (fun _ => rfl)
 
@@ -166,21 +166,21 @@ def counitIso : straighten ⋙ᵥ unstraighten ≅ VertFunctor.id DisplayedCat.{
 
 /-! ## Straightening–unstraightening -/
 
-/-- **Straightening–unstraightening**: `unstraighten : VertFunctor LaxNormalCat DisplayedCat` is an
+/-- **Straightening–unstraightening**: `unstraighten : VertFunctor IProf DisplayedCat` is an
 equivalence over `Cat`, with inverse the straightening. -/
-def straighteningEquiv : VertEquivalence LaxNormalCat.{u, v₁, u₁} DisplayedCat.{u, u, v₁, u₁} where
+def straighteningEquiv : VertEquivalence IProf.{u, v₁, u₁} DisplayedCat.{u, u, v₁, u₁} where
   functor := unstraighten
   inverse := straighten
   unitIso := unitIso
   counitIso := counitIso
 
-/-- The induced equivalence `LaxNormalCat.Total ≌ DisplayedCat.Total` of total categories. It
+/-- The induced equivalence `IProf.Total ≌ DisplayedCat.Total` of total categories. It
 commutes with the projections to `Cat` (`straighteningEquivTotal_functor_comp_π`). -/
-def straighteningEquivTotal : LaxNormalCat.{u, v₁, u₁}.Total ≌ DisplayedCat.{u, u, v₁, u₁}.Total :=
+def straighteningEquivTotal : IProf.{u, v₁, u₁}.Total ≌ DisplayedCat.{u, u, v₁, u₁}.Total :=
   straighteningEquiv.total
 
 theorem straighteningEquivTotal_functor_comp_π :
-    straighteningEquivTotal.{u, v₁, u₁}.functor ⋙ DisplayedCat.{u, u, v₁, u₁}.π = LaxNormalCat.π :=
+    straighteningEquivTotal.{u, v₁, u₁}.functor ⋙ DisplayedCat.{u, u, v₁, u₁}.π = IProf.π :=
   rfl
 
 /-! ## An isomorphism of categories over `Cat` -/
@@ -193,7 +193,7 @@ theorem straighten_comp_unstraighten :
 /-- **Unstraightening, then straightening, is the identity**, propositionally: on objects by
 `straightenObj_unstraightenObj`, and a transformation is sent to one with the same components. -/
 theorem unstraighten_comp_straighten :
-    unstraighten ⋙ᵥ straighten = VertFunctor.id LaxNormalCat.{u, v₁, u₁} :=
+    unstraighten ⋙ᵥ straighten = VertFunctor.id IProf.{u, v₁, u₁} :=
   DispFunctor.ext (fun F => straightenObj_unstraightenObj F) fun _ =>
     ReprHom.hext (straightenObj_unstraightenObj _) (straightenObj_unstraightenObj _)
       (fun x x' hx => by
@@ -226,17 +226,17 @@ theorem unstraightenObj_pullback {A B : Cat.{v₁, u₁}} (u : A ⟶ B) (G : Lax
   Displayed.ext_heq rfl HEq.rfl HEq.rfl HEq.rfl
 
 /-- **`unstraighten` is a cartesian functor**: it sends the chosen pullbacks and lifts of
-`LaxNormalCat` to those of `DisplayedCat`. On lifts, both are identities, compared pointwise so
+`IProf` to those of `DisplayedCat`. On lifts, both are identities, compared pointwise so
 that the kernel does not compare their domains as wholes. -/
 def unstraightenCartesian :
-    CartesianFunctor (𝟭 Cat.{v₁, u₁}) LaxNormalCat.{u, v₁, u₁} DisplayedCat.{u, u, v₁, u₁} where
+    CartesianFunctor (𝟭 Cat.{v₁, u₁}) IProf.{u, v₁, u₁} DisplayedCat.{u, u, v₁, u₁} where
   toPre := { toDispFunctor := unstraighten, obj_pull := unstraightenObj_pullback }
   map_clift _ _ := DispFunctor.ext (fun _ => rfl) fun _ => HEq.rfl
 
 /-- **`straighten` is a cartesian functor**: it sends the chosen pullbacks and lifts of
-`DisplayedCat` to those of `LaxNormalCat`, on the nose. -/
+`DisplayedCat` to those of `IProf`, on the nose. -/
 def straightenCartesian :
-    CartesianFunctor (𝟭 Cat.{v₁, u₁}) DisplayedCat.{u, u, v₁, u₁} LaxNormalCat.{u, v₁, u₁} where
+    CartesianFunctor (𝟭 Cat.{v₁, u₁}) DisplayedCat.{u, u, v₁, u₁} IProf.{u, v₁, u₁} where
   toPre := { toDispFunctor := straighten }
 
 /-- **`unstraighten` preserves cartesian morphisms.** -/

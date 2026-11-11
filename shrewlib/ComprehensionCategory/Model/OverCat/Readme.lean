@@ -22,8 +22,8 @@ Four full split comprehension categories over `Cat`, one folder each, with a `Re
 * `Discrete/`: the discrete model `IDisc`, the full sub-comprehension category of the category
   model on the functors into discrete categories. It has Σ-types, unit types and opposite types,
   those of the category model. A discrete type is its own opposite if empty types are unique.
-* `Displayed/`: the displayed category model `LaxNormalCat`, whose types are the lax normal functors
-  into profunctors, with the equivalence `LaxNormalCat ≃ cod Cat` as comprehension functor. It has
+* `Displayed/`: the displayed category model `IProf`, whose types are the lax normal functors
+  into profunctors, with the equivalence `IProf ≃ cod Cat` as comprehension functor. It has
   Σ-types and unit types.
 
 Their types are indexed categories. Those of the four models of fibrations are their

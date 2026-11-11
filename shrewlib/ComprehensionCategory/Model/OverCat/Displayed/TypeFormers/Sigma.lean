@@ -30,14 +30,14 @@ open CategoryTheory Displayed Displayed.Straightening
 
 open scoped Displayed
 
-variable {Γ : Cat.{u, u}} (F : LaxNormalCat.{u, u, u}.Ty Γ) (G : LaxNormalCat.{u, u, u}.Ty (Γ ▹ F))
+variable {Γ : Cat.{u, u}} (F : IProf.{u, u, u}.Ty Γ) (G : IProf.{u, u, u}.Ty (Γ ▹ F))
 
 /-- The composite of the unstraightenings of `F` and `G`, displayed over `Γ`. -/
 def sigmaOb : Displayed.{u, u} Γ :=
   (unstraightenObj F).sigmaDisp (unstraightenObj G)
 
 /-- The Σ-type `sigma F G : LaxNormal Γ`, the straightening of `sigmaOb F G`. -/
-def sigma : LaxNormalCat.{u, u, u}.Ty Γ :=
+def sigma : IProf.{u, u, u}.Ty Γ :=
   straightenObj (sigmaOb F G)
 
 /-- `Γ ▹ F ▹ G ⟶ Γ ▹ sigma F G`: reassociate the pairs. -/
@@ -54,12 +54,12 @@ theorem pull_sigma' {Δ : Cat.{u, u}} (σ : Δ ⟶ Γ) :
   kernel_rfl'
 
 /-- The Σ-types of the displayed category model, stable under substitution. -/
-instance preSigma : PreSigma LaxNormalCat.{u, u, u} where
+instance preSigma : PreSigma IProf.{u, u, u} where
   sigma F G := DisplayedModel.sigma F G
   pull_sigma σ F G := pull_sigma' F G σ
 
 /-- **The displayed category model has Σ-types**, whose pairing reassociates the pairs. -/
-instance hasSigma : HasSigma LaxNormalCat.{u, u, u} where
+instance hasSigma : HasSigma IProf.{u, u, u} where
   pair F G := pairHom F G
   unpair F G := unpairHom F G
   pair_unpair _ _ := rfl

@@ -14,7 +14,7 @@ A type `C : Γ ⥤ Cat` of the category model is a type of the displayed categor
 `Γ`. On morphisms, a lax transformation goes to the straightening of its unstraightening: this is
 the vertical functor `catToDispFunctor`, the composite of the unstraightening
 `ICatLax ⟶ SplitOpfibLax`, forgetting the opcleavage, and the straightening
-`DisplayedCat ⟶ LaxNormalCat`.
+`DisplayedCat ⟶ IProf`.
 
 It is a strict map of comprehension categories over the identity of `Cat`
 (`catToDispComprehensionMap`): since unstraightening undoes straightening on the nose
@@ -61,13 +61,13 @@ open scoped Displayed
 
 /-- The vertical functor from the category model to the displayed category model: unstraighten,
 forget the opcleavage, and straighten. -/
-def catToDispFunctor : VertFunctor ICatLax.{u, u, u, u} Straightening.LaxNormalCat.{u, u, u} :=
+def catToDispFunctor : VertFunctor ICatLax.{u, u, u, u} Straightening.IProf.{u, u, u} :=
   unstraighten ⋙ᵥ SplitOpfibLax.forget ⋙ᵥ Straightening.straighten
 
 /-- A type `C` of the category model as a type of the displayed model: the straightening of its
 unstraightening `∫ C`. -/
 def catToDisp {Γ : Cat.{u, u}} (C : ICatLax.{u, u}.Ty Γ) :
-    Straightening.LaxNormalCat.{u, u, u}.Ty Γ :=
+    Straightening.IProf.{u, u, u}.Ty Γ :=
   Straightening.straightenObj (∫ C)
 
 /-- `catToDisp` is the action of `catToDispFunctor` on objects. -/
@@ -79,7 +79,7 @@ theorem catToDispFunctor_obj {Γ : Cat.{u, u}} (C : ICatLax.{u, u}.Ty Γ) :
 comprehension categories**: the comprehension functors commute on the nose. -/
 def catToDispComprehensionMap :
     StrictComprehensionMap (𝟭 Cat.{u, u}) ICatLax.{u, u, u, u}
-      Straightening.LaxNormalCat.{u, u, u} where
+      Straightening.IProf.{u, u, u} where
   toPre.toDispFunctor := catToDispFunctor
   toPre.isCartesianMap H :=
     DisplayedModel.comprFullyFaithful.isCartesianOfMap (isCartesianComprMap ICatLax H)
