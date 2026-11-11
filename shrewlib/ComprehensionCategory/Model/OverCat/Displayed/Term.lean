@@ -12,7 +12,8 @@ category of `D` itself, by `rfl`, so that the terms are the sections of `D` (`Tm
 and the term `tmMk obj map _ _` is the section `γ ↦ (γ, obj γ)`,
 from objects `obj γ` of `D` over `γ` and morphisms `map f : obj γ ⟶[f] obj γ'` of `D`, compatible
 with identities and composites. Its equation `sec ≫ 𝐩 F = 𝟙 Γ` holds by `rfl`. The substitution
-of `straightenObj E` is the straightening of the reindexing of `E`, by `rfl` (`straightenObj_pull`).
+of `straightenObj E` is the straightening of the reindexing of `E`, by `rfl` (`straightenObj_pull`),
+and the substitution of the term of a section is the term of its reindexing (`Tm.ofSection_pull`).
 -/
 
 universe u
@@ -65,5 +66,19 @@ def Tm.sectionEquiv {D : Displayed.{u, u} Γ} :
   invFun := Tm.ofSection
   left_inv _ := Displayed.Tm.ext (Cat.Hom.ext (Section.total_ofFunctor _ _))
   right_inv S := Section.ofFunctor_total S
+
+/-- **The substitution of the term of a section is the term of its reindexing**, of type
+`straightenObj (DisplayedCat.pull σ D)`, which is that of the substitution by `rfl`. -/
+theorem Tm.ofSection_pull {Δ : Cat.{u, u}} (σ : Δ ⟶ Γ) {D : Displayed.{u, u} Γ} (S : D.Section) :
+    (Tm.ofSection S)⦃σ⦄ ≍ Tm.ofSection (S.pull σ) :=
+  heq_of_eq (Displayed.Tm.pull_unique σ (Tm.ofSection S) (Tm.ofSection (S.pull σ)) rfl).symm
+
+/-- The terms of heterogeneously equal sections of equal displayed categories are heterogeneously
+equal. -/
+theorem Tm.ofSection_hext {D D' : Displayed.{u, u} Γ} (hD : D = D') {S : D.Section}
+    {S' : D'.Section} (h : S ≍ S') : Tm.ofSection S ≍ Tm.ofSection S' := by
+  subst hD
+  cases h
+  rfl
 
 end ComprehensionCategory.DisplayedModel

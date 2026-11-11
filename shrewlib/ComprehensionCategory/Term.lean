@@ -15,12 +15,13 @@ category, substitution of terms is functorial (`Tm.pull_id`, `Tm.pull_comp`), as
 `𝐪(τ ≫ σ, A)` are `𝟙` and `𝐪(τ, A⦃σ⦄) ≫ 𝐪(σ, A)` by the rules for the chosen lifts.
 
 A term can be transported along an equality of types (`Tm.castTy`), with the same section up to
-heterogeneous equality. A morphism `σ : Δ ⟶ Γ` extends by a term `t : Tm(Δ, A⦃σ⦄)` to the morphism
-`consSec σ t = t.sec ≫ 𝐪(σ, A) : Δ ⟶ Γ ▹ A` over `σ` (`consSec_proj`): with `σ` the section of a
-term `b : Tm(Γ, A)`, this pairs `b` with a term of a type in context `Γ ▹ A`. Over a split
-comprehension category, extension commutes with precomposition (`comp_consSec`) and with the
-morphisms `𝐪` (`consSec_comp_q`), and it respects heterogeneously equal terms over equal morphisms
-(`consSec_congr`).
+heterogeneous equality, and heterogeneously equal terms of equal types have heterogeneously equal
+substitutions (`Tm.pull_hcongr`). A morphism `σ : Δ ⟶ Γ` extends by a term `t : Tm(Δ, A⦃σ⦄)`
+to the morphism `consSec σ t = t.sec ≫ 𝐪(σ, A) : Δ ⟶ Γ ▹ A` over `σ` (`consSec_proj`): with `σ`
+the section of a term `b : Tm(Γ, A)`, this pairs `b` with a term of a type in context `Γ ▹ A`.
+Over a split comprehension category, extension commutes with precomposition (`comp_consSec`) and
+with the morphisms `𝐪` (`consSec_comp_q`), and it respects heterogeneously equal terms over equal
+morphisms (`consSec_congr`).
 
 Conversely, the terms of `A⦃σ⦄` are the morphisms `Δ ⟶ Γ ▹ A` over `σ`, by extension and
 factorization through the pullback square of `𝐪(σ, A)` (`Tm.liftEquiv`), so that two terms are
@@ -140,6 +141,11 @@ theorem Tm.castTy_sec_heq {A B : D.Ty Γ} (h : A = B) (t : Tm(Γ, A)) :
   subst h
   rfl
 
+/-- The transported term is heterogeneously equal to the term. -/
+theorem Tm.castTy_heq {A B : D.Ty Γ} (h : A = B) (t : Tm(Γ, A)) : t.castTy h ≍ t := by
+  subst h
+  rfl
+
 /-- **The extension of `σ : Δ ⟶ Γ` by a term `t : Tm(Δ, A⦃σ⦄)`**, the morphism
 `Δ ⟶ Γ ▹ A` over `σ` whose second component is `t`. -/
 def consSec (σ : Δ ⟶ Γ) {A : D.Ty Γ} (t : Tm(Δ, A⦃σ⦄)) : Δ ⟶ Γ ▹ A :=
@@ -161,6 +167,13 @@ heterogeneous equality. -/
 theorem Tm.pull_castTy_sec_heq (σ : Δ ⟶ Γ) {A B : D.Ty Γ} (h : A = B) (t : Tm(Γ, A)) :
     (t.castTy h)⦃σ⦄.sec ≍ t⦃σ⦄.sec := by
   subst h
+  rfl
+
+/-- Heterogeneously equal terms of equal types have heterogeneously equal substitutions. -/
+theorem Tm.pull_hcongr (σ : Δ ⟶ Γ) {A B : D.Ty Γ} (h : A = B) {t : Tm(Γ, A)} {t' : Tm(Γ, B)}
+    (ht : t ≍ t') : t⦃σ⦄ ≍ t'⦃σ⦄ := by
+  subst h
+  cases ht
   rfl
 
 end Cons

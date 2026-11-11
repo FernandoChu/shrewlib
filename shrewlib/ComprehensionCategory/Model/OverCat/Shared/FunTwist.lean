@@ -46,6 +46,22 @@ stated in terms of `∫ B⦃𝐩 A⦄` (`funFib`, `funFibMap`, `funAppOf`), chec
 stated over explicit variables (`funMap_comp`) and checked in the kernel. The codomain `X⦃𝐩 Y⦄`
 is the substitution of the type `El X`, rather than `El` of the substituted variable: substitution
 of types is precomposition, by `rfl`, while that of terms is a pullback factorization.
+
+**`Ā → B` and its bijection are stable under substitution** along `σ : Δ ⟶ Γ`:
+
+```
+  (Ā → B)⦃σ⦄ = (σ ⋙ A)‾ → σ ⋙ B                                  (funTwist_pull)
+  app (t⦃σ⦄) = (app t)⦃𝐪(σ, A)⦄                                  (funTwistEquiv_pull)
+```
+
+The reindexing of `funDisp A B` along `σ` is `funDisp (σ ⋙ A) (σ ⋙ B)`, in the kernel
+(`funDisp_pull`): `Ā → B` at `σ δ` only depends on `A (σ δ)` and `B (σ δ)`. The equality of the
+straightened types follows through `funTwist_eq`, since comparing them directly in the kernel
+unfolds the twist and does not finish. Abstraction `funLam` is the term of the section of `Ā → B`
+of `t` (`funLam_heq`), and the section of `t⦃𝐪(σ, A)⦄` is the reindexing of that of `t`
+(`funSection_pull`), as for `piLam_pull`, by `CatModel.Tm.toSection_pull_obj` and `_map`. So
+abstraction is stable under substitution (`funLam_pull`), up to `funTwist_pull`, and so is its
+inverse, application.
 -/
 
 universe v
@@ -300,5 +316,144 @@ def funTwistEquiv :
     Tm(Γ, funTwist A B) ≃ Tm(Γ ▹ CatModel.lift A, (CatModel.lift B)⦃𝐩 (CatModel.lift A)⦄) :=
   (Equiv.cast (congrArg (fun X => Tm(Γ, X)) (funTwist_eq A B))).trans
     (DisplayedModel.Tm.sectionEquiv.trans (funSectionEquiv.trans CatModel.Tm.sectionEquiv.symm))
+
+
+variable (A B) in
+/-- **Abstraction**, the inverse of `funTwistEquiv`. -/
+def funLam : Tm(Γ ▹ CatModel.lift A, (CatModel.lift B)⦃𝐩 (CatModel.lift A)⦄) →
+    Tm(Γ, funTwist A B) :=
+  (funTwistEquiv A B).symm
+
+/-! ## Stability under substitution -/
+
+section Pull
+
+/- `A` and `B` are declared again after `σ`: with `σ` after them, the elaborator times out on
+these statements. -/
+variable {Δ : Cat.{v + 1, v + 1}} (σ : Δ ⟶ Γ) (A B : Γ ⥤ Cat.{v, v})
+
+/-- The reindexing of `funDisp A B` along `σ` is `funDisp (σ ⋙ A) (σ ⋙ B)`. -/
+theorem funDisp_pull :
+    DisplayedCat.pull σ (funDisp A B) = funDisp (σ.toFunctor ⋙ A) (σ.toFunctor ⋙ B) := by
+  kernel_rfl'
+
+/-- **`Ā → B` is stable under substitution.** -/
+theorem funTwist_pull : (funTwist A B)⦃σ⦄ = funTwist (σ.toFunctor ⋙ A) (σ.toFunctor ⋙ B) :=
+  ((congrArg (fun X => X⦃σ⦄) (funTwist_eq A B)).trans (DisplayedModel.straightenObj_pull _ _)).trans
+    ((congrArg Straightening.straightenObj (funDisp_pull σ A B)).trans (funTwist_eq _ _).symm)
+
+/-- The fibre over `A (σ δ)` of the sections in the value of `Ā → B` at `σ δ`, for `A` and `B`
+and for `σ ⋙ A` and `σ ⋙ B` at `δ`. -/
+theorem funFibreDisp_pull (δ : Δ) :
+    Fibration.Straightening.fibreDisp (funDom Δ) (piE (funDom Δ) ((funCod Δ)⦃𝐩 (funDom Δ)⦄))
+        (funPt (σ.toFunctor ⋙ A) (σ.toFunctor ⋙ B) δ) =
+      Fibration.Straightening.fibreDisp (funDom Γ) (piE (funDom Γ) ((funCod Γ)⦃𝐩 (funDom Γ)⦄))
+        (funPt A B (σ.toFunctor.obj δ)) := by
+  kernel_rfl'
+
+/-- The values of `Ā → B` at `σ δ`, for `A` and `B` and for `σ ⋙ A` and `σ ⋙ B` at `δ`. -/
+theorem funPiFib_pull (δ : Δ) :
+    PiFib (funDom Δ) ((funCod Δ)⦃𝐩 (funDom Δ)⦄) (funPt (σ.toFunctor ⋙ A) (σ.toFunctor ⋙ B) δ) =
+      PiFib (funDom Γ) ((funCod Γ)⦃𝐩 (funDom Γ)⦄) (funPt A B (σ.toFunctor.obj δ)) := by
+  kernel_rfl'
+
+/-- The fibre of the morphisms of `Ā → B` over `σ f`, for `A` and `B` and for `σ ⋙ A` and
+`σ ⋙ B` over `f`. -/
+theorem funHomDisp_pull {δ δ' : Δ} (f : δ ⟶ δ') :
+    funHomDisp (σ.toFunctor ⋙ A) (σ.toFunctor ⋙ B) f = funHomDisp A B (σ.toFunctor.map f) := by
+  kernel_rfl'
+
+/-- The sections of the fibre of `funHomDisp_pull`. -/
+theorem funHomSection_pull {δ δ' : Δ} (f : δ ⟶ δ') :
+    (funHomDisp (σ.toFunctor ⋙ A) (σ.toFunctor ⋙ B) f).Section =
+      (funHomDisp A B (σ.toFunctor.map f)).Section := by
+  kernel_rfl'
+
+/-- The sources of the morphisms of `Ā → B` over `σ f`. -/
+theorem funHomSrc_pull {δ δ' : Δ} (f : δ ⟶ δ') :
+    funHomSrc (σ.toFunctor ⋙ A) (σ.toFunctor ⋙ B) f ≍ funHomSrc A B (σ.toFunctor.map f) := by
+  kernel_rfl'
+
+/-- The targets of the morphisms of `Ā → B` over `σ f`. -/
+theorem funHomTgt_pull {δ δ' : Δ} (f : δ ⟶ δ') :
+    funHomTgt (σ.toFunctor ⋙ A) (σ.toFunctor ⋙ B) f ≍ funHomTgt A B (σ.toFunctor.map f) := by
+  kernel_rfl'
+
+variable {A B}
+
+/-- The restrictions to the fibres of the section of `t⦃𝐪(σ, A)⦄` are those of `t`, at the images
+along `σ`. -/
+theorem funObj_pull (t : Tm(Γ ▹ CatModel.lift A, (CatModel.lift B)⦃𝐩 (CatModel.lift A)⦄))
+    (δ : Δ) :
+    funObj (A := σ.toFunctor ⋙ A) (B := σ.toFunctor ⋙ B)
+        (CatModel.Tm.toSection t⦃𝐪(σ, CatModel.lift A)⦄) δ ≍
+      funObj (CatModel.Tm.toSection t) (σ.toFunctor.obj δ) :=
+  Section.hext (funFibreDisp_pull σ A B δ) (fun x => by
+    kernel_exact CatModel.Tm.toSection_pull_obj 𝐪(σ, CatModel.lift A) t
+      ((∫ (CatModel.lift (σ.toFunctor ⋙ A))).tot (a := δ) x))
+    fun {_ _} φ => by
+      kernel_exact CatModel.Tm.toSection_pull_map 𝐪(σ, CatModel.lift A) t
+        ((∫ (CatModel.lift (σ.toFunctor ⋙ A))).totalMk (𝟙 δ) φ)
+
+/-- The section of `Ā → B` of `t⦃𝐪(σ, A)⦄` is the reindexing of that of `t` along `σ`: their
+restrictions to the fibres and their components along the chosen lifts `(f, 𝟙)` are those of `t`
+at the images along `σ`. -/
+theorem funSection_pull (t : Tm(Γ ▹ CatModel.lift A, (CatModel.lift B)⦃𝐩 (CatModel.lift A)⦄)) :
+    funSection (A := σ.toFunctor ⋙ A) (B := σ.toFunctor ⋙ B)
+        (CatModel.Tm.toSection t⦃𝐪(σ, CatModel.lift A)⦄) ≍
+      (funSection (CatModel.Tm.toSection t)).pull σ :=
+  Section.hext (funDisp_pull σ A B).symm (funObj_pull σ t) fun {δ δ'} f => by
+    refine Section.Hom.hext_of_eq (funHomDisp_pull σ A B f)
+      (apply_heq (funPiFib_pull σ A B δ) (funHomSection_pull σ A B f) (funHomSrc_pull σ A B f)
+        (funObj_pull σ t δ))
+      (apply_heq (funPiFib_pull σ A B δ') (funHomSection_pull σ A B f) (funHomTgt_pull σ A B f)
+        (funObj_pull σ t δ')) ?hX ?hY fun x => ?_
+    case hX => kernel_rfl'
+    case hY => kernel_rfl'
+    kernel_exact CatModel.Tm.toSection_pull_map 𝐪(σ, CatModel.lift A) t
+      ((∫ (CatModel.lift (σ.toFunctor ⋙ A))).totalOlift f x)
+
+/-- The inverse of `Equiv.cast` sends a term to a heterogeneously equal one. -/
+theorem equivCast_symm_heq {α β : Sort _} (h : α = β) (y : β) : (Equiv.cast h).symm y ≍ y := by
+  cases h
+  rfl
+
+/-- Abstraction is the term of the section of `Ā → B` of the section of `t`. The elaborator
+reduces the cast of `funTwistEquiv` slowly, so this is stated up to heterogeneous equality. -/
+theorem funLam_heq (t : Tm(Γ ▹ CatModel.lift A, (CatModel.lift B)⦃𝐩 (CatModel.lift A)⦄)) :
+    funLam A B t ≍ DisplayedModel.Tm.ofSection (funSection (CatModel.Tm.toSection t)) := by
+  unfold funLam funTwistEquiv
+  rw [Equiv.symm_trans_apply]
+  exact (equivCast_symm_heq _ _).trans HEq.rfl
+
+/-- **Abstraction is stable under substitution**, up to the equality of the types
+`funTwist_pull`. -/
+theorem funLam_pull (t : Tm(Γ ▹ CatModel.lift A, (CatModel.lift B)⦃𝐩 (CatModel.lift A)⦄)) :
+    (funLam A B t)⦃σ⦄ ≍ funLam (σ.toFunctor ⋙ A) (σ.toFunctor ⋙ B) t⦃𝐪(σ, CatModel.lift A)⦄ :=
+  (Tm.pull_hcongr σ (funTwist_eq A B) (funLam_heq t)).trans
+    ((DisplayedModel.Tm.ofSection_pull σ _).trans
+      ((DisplayedModel.Tm.ofSection_hext (funDisp_pull σ A B) (funSection_pull σ t).symm).trans
+        (funLam_heq _).symm))
+
+/-- Application sends a term over `t⦃σ⦄` to the substitution of the application of `t` along
+`𝐪(σ, A)`. -/
+theorem funTwistEquiv_pull_of (t : Tm(Γ, funTwist A B))
+    (t' : Tm(Δ, funTwist (σ.toFunctor ⋙ A) (σ.toFunctor ⋙ B))) (h : t' ≍ t⦃σ⦄) :
+    funTwistEquiv (σ.toFunctor ⋙ A) (σ.toFunctor ⋙ B) t' =
+      (funTwistEquiv A B t)⦃𝐪(σ, CatModel.lift A)⦄ := by
+  have ht : t = funLam A B (funTwistEquiv A B t) := ((funTwistEquiv A B).symm_apply_apply t).symm
+  have h' := funLam_pull σ (funTwistEquiv A B t)
+  rw [← ht] at h'
+  rw [eq_of_heq (h.trans h')]
+  exact (funTwistEquiv _ _).apply_symm_apply _
+
+/-- **Application is stable under substitution**: the bijection `funTwistEquiv` is natural in
+`Γ`. -/
+theorem funTwistEquiv_pull (t : Tm(Γ, funTwist A B)) :
+    funTwistEquiv (σ.toFunctor ⋙ A) (σ.toFunctor ⋙ B) (t⦃σ⦄.castTy (funTwist_pull σ A B)) =
+      (funTwistEquiv A B t)⦃𝐪(σ, CatModel.lift A)⦄ :=
+  funTwistEquiv_pull_of σ t _ (Tm.castTy_heq _ _)
+
+end Pull
 
 end ComprehensionCategory.OverCat

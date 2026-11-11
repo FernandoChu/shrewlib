@@ -56,7 +56,8 @@ their conclusion a type of another, in a context of the first.
   `Γ ▹ X : U ▹ Y : Uᵒᵖ ⊢ Y → X`, a Π-type, at level `v + 1`. Substituted by the codes of two types
   `A` and `B` of level `v`, its terms are those of `B` in context `Γ ▹ a : A`: a section over `γ`
   is a functor `A γ ⥤ B γ`, and over `g` a natural transformation `B g ∘ T γ ⇒ T γ' ∘ A g`, and
-  these are the sections of `∫ B` over `Γ ▹ A`.
+  these are the sections of `∫ B` over `Γ ▹ A`. Both `Ā → B` and this bijection are stable under
+  substitution.
 -/
 
 universe u
@@ -247,5 +248,16 @@ example {Γ : Cat.{v + 1, v + 1}} (A B : Γ ⥤ Cat.{v, v}) :
       (twist (B := CatModel.U (funCtx₀ Γ)) (Π[funDom Γ] (funCod Γ)⦃𝐩 (funDom Γ)⦄))⦃consSec
         (CatModel.code B).sec (CatModel.code A)⦄ :=
   rfl
+
+/-- `Ā → B` is stable under substitution. -/
+recall ComprehensionCategory.OverCat.funTwist_pull {Γ Δ : Cat.{v + 1, v + 1}} (σ : Δ ⟶ Γ)
+    (A B : Γ ⥤ Cat.{v, v}) :
+    (funTwist A B)⦃σ⦄ = funTwist (σ.toFunctor ⋙ A) (σ.toFunctor ⋙ B)
+
+/-- **The bijection is natural in `Γ`**: application is stable under substitution. -/
+recall ComprehensionCategory.OverCat.funTwistEquiv_pull {Γ Δ : Cat.{v + 1, v + 1}} (σ : Δ ⟶ Γ)
+    {A B : Γ ⥤ Cat.{v, v}} (t : Tm(Γ, funTwist A B)) :
+    funTwistEquiv (σ.toFunctor ⋙ A) (σ.toFunctor ⋙ B) (t⦃σ⦄.castTy (funTwist_pull σ A B)) =
+      (funTwistEquiv A B t)⦃𝐪(σ, CatModel.lift A)⦄
 
 end FunTwist
