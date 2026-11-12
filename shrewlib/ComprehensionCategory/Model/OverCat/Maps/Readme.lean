@@ -12,7 +12,7 @@ formers, one file per pair of models.
 
 * `DiscreteToCat`: forgetting the discreteness is a strict map from the discrete model to the
   category model, which preserves the Σ-types, the unit types and the opposite types strictly,
-  by `rfl`.
+  by `rfl`, and keeps the sections of terms, commuting with their substitution.
 * `CatToDisplayed`: a type `C` of the category model is a type `catToDisp C` of the displayed
   model, the straightening of `∫ C`, and this is a strict map, since unstraightening undoes
   straightening on the nose. Its terms are those of `C` (Lift-Intro and Lift-Elim, `tmEquiv`), and

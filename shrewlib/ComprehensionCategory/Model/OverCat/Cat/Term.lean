@@ -24,7 +24,9 @@ over `t` along it (`Tm.pull_sec_q`).
 More generally, the terms of any type `A` are the sections of its unstraightening
 (`Tm.sectionEquiv`, `Displayed/Displayed/Section`): the term of a section `S` is `S.total`, and the
 section of a term transports its values along the equalities of their first components with the
-points of `Γ`.
+points of `Γ`. Substitution of terms is reindexing of sections (`Tm.toSection_pull`,
+`Tm.ofSection_pull`), and the variable substituted along the section of a term is the term
+(`var_pull_sec`).
 -/
 
 universe u
@@ -186,5 +188,36 @@ def Tm.sectionEquiv {A : ICatLax.{u, u}.Ty Γ} : Tm(Γ, A) ≃ (∫ A).Section w
   left_inv _ := Tm.ext (Cat.Hom.ext (Section.total_ofFunctor _ _))
   right_inv S := Section.ofFunctor_total S
 
+/-- The section of the term of a section is that section. -/
+theorem Tm.toSection_ofSection {A : ICatLax.{u, u}.Ty Γ} (S : (∫ A).Section) :
+    Tm.toSection (Tm.ofSection S) = S :=
+  Section.ofFunctor_total S
+
+/-- **The section of a substituted term is the reindexing of the section of the term.** -/
+theorem Tm.toSection_pull {A : ICatLax.{u, u}.Ty Γ} (σ : Δ ⟶ Γ) (t : Tm(Γ, A)) :
+    Tm.toSection t⦃σ⦄ = (Tm.toSection t).pull σ :=
+  Section.ext (fun δ => eq_of_heq (Tm.toSection_pull_obj σ t δ)) fun f =>
+    Tm.toSection_pull_map σ t f
+
+/-- **The substitution of the term of a section is the term of its reindexing.** -/
+theorem Tm.ofSection_pull {A : ICatLax.{u, u}.Ty Γ} (σ : Δ ⟶ Γ) (S : (∫ A).Section) :
+    (Tm.ofSection S)⦃σ⦄ = Tm.ofSection (A := A⦃σ⦄) (S.pull σ) :=
+  (Displayed.Tm.pull_unique σ _ _ rfl).symm
+
+/-! ## The variable -/
+
+/-- The variable substituted along the section of the term of a section is that term. The
+extension `(γ, S γ) ↦ ((γ, S γ), S γ)` of the comprehension structure is the diagonal after the
+section, componentwise by `rfl`. -/
+theorem var_pull_ofSection {A : ICatLax.{u, u}.Ty Γ} (S : (∫ A).Section) :
+    (var A)⦃(Tm.ofSection S).sec⦄ = (Tm.ofSection S : Tm(Γ, A)) := by
+  refine (Displayed.Tm.pull_unique _ (var A) _ ?_).symm
+  exact Cat.Hom.ext (Functor.hext (fun _ => by kernel_rfl') fun _ _ _ => by kernel_rfl')
+
+/-- **The variable substituted along the section of a term `t` is `t`**, whose type
+`A⦃𝐩 A⦄⦃t.sec⦄` is `A` only propositionally. -/
+theorem var_pull_sec {A : ICatLax.{u, u}.Ty Γ} (t : Tm(Γ, A)) : (var A)⦃t.sec⦄ ≍ t := by
+  obtain ⟨S, rfl⟩ : ∃ S, Tm.ofSection S = t := ⟨_, Tm.sectionEquiv.left_inv t⟩
+  exact heq_of_eq (var_pull_ofSection S)
 
 end ComprehensionCategory.CatModel

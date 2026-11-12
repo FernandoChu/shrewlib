@@ -76,10 +76,14 @@ files, (op)cartesian morphisms (in `Displayed/{Opfibration,Fibration}/Basic` and
   of the comma AWFS on `Cat`, the Π-types of the category model over the contravariant one, whose
   values are the categories of sections over the fibres, the terms of the opposite of a Σ-type,
   pairs of a term and a term of a twist, and those of the twisted function type `Ā → B`, the terms
-  of `B` in context `Γ ▹ a : A`, both naturally in `Γ`. The models of fibrations, the displayed
-  categories, split (op)fibrations and discrete opfibrations with their total categories as
-  comprehension, are full split comprehension categories, and the unstraightenings from the four
-  category models to them are strict maps preserving the chosen lifts.
+  of `B` in context `Γ ▹ a : A`, both naturally in `Γ`. The paper's applications use them
+  (`Model/OverCat/Applications/`): directed univalence, a natural isomorphism between the function
+  type into a discrete type and the Hom-type of the universe, the natural transformations as the
+  terms of twisted Hom-types and of discrete types in an extended context, and transport by
+  Hom-Elim, with the bijection of the lemma before the Yoneda corollary. The models of fibrations,
+  the displayed categories, split (op)fibrations and discrete opfibrations with their total
+  categories as comprehension, are full split comprehension categories, and the unstraightenings
+  from the four category models to them are strict maps preserving the chosen lifts.
 - `DoubleDisplayed/`: categories doubly displayed over a displayed category, their functors,
   equivalences and fibrations, and dependent 2-sided fibrations with their straightening: an
   equivalence between dependent profunctors over `ICatStr` and D2SFibs over `SplitOpfibStr`, over

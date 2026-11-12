@@ -2,6 +2,7 @@ import ComprehensionCategory.Map
 import ComprehensionCategory.Model.OverCat.Discrete.TypeFormers.Op
 import ComprehensionCategory.Model.OverCat.Discrete.TypeFormers.Sigma
 import ComprehensionCategory.Model.OverCat.Discrete.TypeFormers.Unit
+import Tactic.KernelTactic
 
 /-!
 # From the discrete model to the category model
@@ -16,6 +17,9 @@ the category model with a proof of discreteness:
 * the Σ-types and the pairings (`forgetComprehensionMap_preservesSigma`);
 * the opposite types (`forgetComprehensionMap_obj_op`);
 * the unit types (`forgetComprehensionMap_preservesUnit`), and so the stars.
+
+It sends a term to the term with the same section, which commutes with substitution by `rfl`
+(`forgetComprehensionMap_tmEquiv_pull`).
 -/
 
 universe u
@@ -51,5 +55,12 @@ theorem forgetComprehensionMap_obj_op {Γ : Cat.{u, u}} (A : IDisc.{u, u}.Ty Γ)
 model are those of the category model. -/
 theorem forgetComprehensionMap_preservesUnit : forgetComprehensionMap.{u}.PreservesUnit where
   obj_unit _ := rfl
+
+/-- **Forgetting the discreteness commutes with the substitution of terms**, by `rfl`, checked in
+the kernel. -/
+theorem forgetComprehensionMap_tmEquiv_pull {Γ Δ : Cat.{u, u}} (σ : Δ ⟶ Γ)
+    {A : IDisc.{u, u}.Ty Γ} (t : Tm(Γ, A)) :
+    forgetComprehensionMap.tmEquiv (t⦃σ⦄) = (forgetComprehensionMap.tmEquiv t)⦃σ⦄ := by
+  kernel_rfl'
 
 end ComprehensionCategory.OverCat

@@ -5,6 +5,7 @@ import ComprehensionCategory.Model.OverCat.Displayed.Readme
 import ComprehensionCategory.Model.OverCat.Fibred.Readme
 import ComprehensionCategory.Model.OverCat.Maps.Readme
 import ComprehensionCategory.Model.OverCat.Shared.Readme
+import ComprehensionCategory.Model.OverCat.Applications.Readme
 
 /-!
 # Models over `Cat`
@@ -54,6 +55,18 @@ Two more folders relate them:
   category model and the contravariant one are included into the displayed model by strict maps
   preserving Σ-types and unit types. The unstraightenings are strict maps from the four category
   models to the models of fibrations, preserving the chosen lifts.
+
+One folder uses them:
+
+* `Applications/`: the paper's applications to synthetic category theory, in the models: directed
+  univalence, a natural isomorphism between the function type `A → B` into a discrete type and the
+  Hom-type `Hom_U(A, B)` of the universe, giving a bijection of their terms, natural in `Γ`; the
+  terms of the twisted Hom-type `Hom_B(f̄, g)` of two terms are the natural transformations from
+  `f` to `g`; the terms of a discrete type `G` in context `Γ ▹ x : F` are the natural
+  transformations `F ⟶ G`, through the twisted function type and twisted directed univalence; and
+  transport by Hom-Elim, whose substitution along the reflexivity is a bijection between the terms
+  of `P b` over the context of Hom-Elim and those of `P a`, for `P` discrete, if empty types are
+  unique.
 
 A result about a single model goes in its folder, a type former in the `TypeFormers/` folder of the
 model of its types, or in `Shared/` if its premises are types of another model, and a result

@@ -21,7 +21,8 @@ import Displayed.Displayed.Codomain
   between total categories, as well as the natural transformations and equivalences that vertical
   ones induce.
 * `Section`: sections `D.Section` of a displayed category, the functors into its total category
-  over the base (`Section.equivFunctor`), and their reindexing.
+  over the base (`Section.equivFunctor`), their category, their reindexing, and their images along
+  vertical functors.
 * `Sigma`: the composite `D.sigmaDisp E` over `A` of `D` over `A` and `E` over `D.Total`, whose
   total category is that of `E`, up to reassociation.
 * `Codomain`: the codomain displayed category `cod C`, and the action `codMap F` of a functor on

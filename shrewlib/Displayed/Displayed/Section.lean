@@ -18,10 +18,12 @@ same components, since the transports are then along `rfl`, and a functor up to 
 The sections of `D` form a category (`Section.category`), whose morphisms are the vertical natural
 transformations (`Section.Hom`): a vertical morphism `S.obj a ⟶[𝟙 a] T.obj a` over each `a`,
 natural in `a`. They reindex along `u : A ⟶ B` to sections of `DisplayedCat.pull u D`
-(`Section.pull`).
+(`Section.pull`), and so do the vertical natural transformations (`Section.Hom.pull`). A vertical
+functor `H : D ⟶ E` sends the sections of `D` to those of `E` (`VertFunctor.mapSection`),
+functorially in `H`.
 -/
 
-universe v₁ u₁ v₂ u₂
+universe v₁ u₁ v₂ u₂ v₃ u₃ v₄ u₄
 
 open CategoryTheory
 
@@ -248,5 +250,33 @@ def Section.pull {A B : Cat.{v₁, u₁}} (u : A ⟶ B) {D : Displayed.{v₂, u�
   map f := S.map (u.toFunctor.map f)
   map_id a := S.map_id (u.toFunctor.obj a)
   map_comp f g := S.map_comp (u.toFunctor.map f) (u.toFunctor.map g)
+
+/-- The reindexing of a vertical natural transformation between sections along `u : A ⟶ B`, between
+the reindexed sections: its components at the images along `u`. -/
+def Section.Hom.pull {A B : Cat.{v₁, u₁}} (u : A ⟶ B) {D : Displayed.{v₂, u₂} B}
+    {S T : D.Section} (α : S ⟶ T) : S.pull u ⟶ T.pull u where
+  app a := α.app (u.toFunctor.obj a)
+  naturality f := α.naturality (u.toFunctor.map f)
+
+/-! ## Images along vertical functors -/
+
+/-- The image of a section of `D` along a vertical functor `H : D ⟶ E`. -/
+def VertFunctor.mapSection {D : Displayed.{v₂, u₂} A} {E : Displayed.{v₃, u₃} A}
+    (H : VertFunctor D E) (S : D.Section) : E.Section where
+  obj a := H.obj (S.obj a)
+  map f := H.map (S.map f)
+  map_id a := (congrArg H.map (S.map_id a)).trans (H.map_id _)
+  map_comp f g := (congrArg H.map (S.map_comp f g)).trans (H.map_comp _ _)
+
+/-- The image of a section along a composite is the composite of the images. -/
+theorem VertFunctor.mapSection_comp {D : Displayed.{v₂, u₂} A} {E : Displayed.{v₃, u₃} A}
+    {E' : Displayed.{v₄, u₄} A} (H : VertFunctor D E) (K : VertFunctor E E') (S : D.Section) :
+    K.mapSection (H.mapSection S) = (H ⋙ᵥ K).mapSection S :=
+  Section.ext (fun _ => rfl) fun _ => HEq.rfl
+
+/-- The image of a section along the identity is the section. -/
+theorem VertFunctor.mapSection_id {D : Displayed.{v₂, u₂} A} (S : D.Section) :
+    (VertFunctor.id D).mapSection S = S :=
+  Section.ext (fun _ => rfl) fun _ => HEq.rfl
 
 end Displayed

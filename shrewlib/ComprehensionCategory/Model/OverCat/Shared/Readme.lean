@@ -24,7 +24,7 @@ their conclusion a type of another, in a context of the first.
   morphisms given by discreteness. Forgetting the discreteness preserves them strictly: they are
   those of the category model, since the morphisms of discrete categories are unique. Hom-Disc:
   if empty types are unique, terms `a b` of a discrete type with a term of the Hom-type from `a`
-  to `b` are equal.
+  to `b` are equal; conversely, a term `t` has the reflexivity `homDiscRefl hE t` from `t` to `t`.
 * `Universe`: the Coquand-style universe `UDisc Γ` of the discrete types of level `v`, a type of
   the category model at level `v + 1`, the constant functor at the category of small discrete
   categories. Its terms are exactly the functors `Γ ⥤ Cat.{v, v}` into discrete categories, by
@@ -133,6 +133,10 @@ from one to the other are equal. -/
 recall ComprehensionCategory.OverCat.eq_of_homDiscAt {Γ : Cat.{u, u}} (hE : EmptyUnique.{u})
     {A : IDisc.{u, u}.Ty Γ} (a b : Tm(Γ, A)) (f : Tm(Γ, homDiscAt (OverCat.Tm.toOp hE a) b)) :
     a = b
+
+/-- **Hom-Refl for discrete types**: the reflexivity of a term, if empty types are unique. -/
+recall ComprehensionCategory.OverCat.homDiscRefl {Γ : Cat.{u, u}} {A : IDisc.{u, u}.Ty Γ}
+    (hE : EmptyUnique.{u}) (t : Tm(Γ, A)) : Tm(Γ, homDiscAt (OverCat.Tm.toOp hE t) t)
 
 end HomAt
 

@@ -33,6 +33,12 @@ the discrete category `A γ`, so these values are equal; the sections of `a` and
 morphisms too, since the morphisms of the fibres are unique (`fiber_heq_of_isDiscrete`). The
 values are compared up to the transports and to the first components of the sections, which are
 `γ` only propositionally.
+
+**Reflexivity**: conversely, if the values of `a` and `b` agree, `homDiscAt a b` has a term
+(`homDiscAtRefl`), whose value at `γ` is the `eqToHom` of their equality, and whose transports are
+unique, the morphisms of discrete categories. In particular, if empty types are unique, a term `t`
+of a discrete type gives a term of `homDiscAt (Tm.toOp hE t) t` (`homDiscRefl`), the reflexivity
+`Refl_t` of the paper, and the transport `Tm.toOp hE` commutes with substitution (`toOp_pull`).
 -/
 
 universe u
@@ -187,5 +193,64 @@ Hom-type from `a` to `b` are equal. -/
 theorem eq_of_homDiscAt (hE : EmptyUnique.{u}) {A : IDisc.{u, u}.Ty Γ} (a b : Tm(Γ, A))
     (f : Tm(Γ, homDiscAt (Tm.toOp hE a) b)) : a = b :=
   eq_of_homAt_disc hE a b (f.castTy (homDiscAt_eq _ b))
+
+/-! ## Reflexivity -/
+
+section Refl
+
+variable {A : IDisc.{u, u}.Ty Γ}
+
+/-- The point `((γ', b), a)` of `Γ ▹ b : A ▹ a : Aᵒᵖ` at which `homDiscAt a b` is evaluated at
+`γ`. -/
+abbrev homDiscPt (a : Tm(Γ, Aᵒᵖ)) (b : Tm(Γ, A)) (γ : Γ) :=
+  (consSec b.sec (a.castTy (pull_sec_op_weak_disc b).symm)).toFunctor.obj γ
+
+/-- If the values of `a` and `b` agree, the two objects of `A` at the point `homDiscPt a b γ` are
+equal: the value of `a` and that of `b`, at a first component equal to `γ`. -/
+theorem homDiscPt_eq (a : Tm(Γ, Aᵒᵖ)) (b : Tm(Γ, A))
+    (hab : ∀ γ, (a.sec.toFunctor.obj γ).2 ≍ (b.sec.toFunctor.obj γ).2) (γ : Γ) :
+    @Eq (A.toFunctor.obj (homDiscPt a b γ).1.1) (homDiscPt a b γ).2 (homDiscPt a b γ).1.2 := by
+  let a' := a.castTy (pull_sec_op_weak_disc b).symm
+  have hγ : (a'.sec.toFunctor.obj γ).1 = γ :=
+    Functor.congr_obj (congrArg Cat.Hom.toFunctor a'.sec_proj) γ
+  exact eq_of_heq ((castTy_sec_obj_snd_disc _ a γ).trans ((hab γ).trans
+    (congr_arg_heq (fun γ' => (b.sec.toFunctor.obj γ').2) hγ.symm)))
+
+/-- The values of `homDiscAt a b` are subsingletons: morphisms of discrete categories. -/
+theorem homDiscAt_obj_subsingleton (a : Tm(Γ, Aᵒᵖ)) (b : Tm(Γ, A)) (γ : Γ)
+    (x y : (homDiscAt a b).toFunctor.obj γ) : x = y :=
+  @Subsingleton.elim _ ((A.isDiscrete (homDiscPt a b γ).1.1).subsingleton _ _) x y
+
+/-- The transport along `k` of the reflexivity, a proof of an equality of morphisms of a discrete
+category. It is stated for a variable `k`, so that the kernel checks its type once. -/
+def homDiscAtReflMap (a : Tm(Γ, Aᵒᵖ)) (b : Tm(Γ, A))
+    (hab : ∀ γ, (a.sec.toFunctor.obj γ).2 ≍ (b.sec.toFunctor.obj γ).2) {γ γ' : Γ} (k : γ ⟶ γ') :
+    (∫ (forgetComprehensionMap.toPre.obj (homDiscAt a b))).Hom k
+      (eqToHom (homDiscPt_eq a b hab γ)) (eqToHom (homDiscPt_eq a b hab γ')) :=
+  ⟨⟨homDiscAt_obj_subsingleton a b γ' _ _⟩⟩
+
+/-- **The reflexivity of two terms with the same values**, a term of the Hom-type from one to the
+other: at `γ`, the `eqToHom` of the equality of their values. -/
+def homDiscAtRefl (a : Tm(Γ, Aᵒᵖ)) (b : Tm(Γ, A))
+    (hab : ∀ γ, (a.sec.toFunctor.obj γ).2 ≍ (b.sec.toFunctor.obj γ).2) : Tm(Γ, homDiscAt a b) :=
+  forgetComprehensionMap.tmEquiv.symm (CatModel.Tm.ofSection
+    { obj γ := eqToHom (homDiscPt_eq a b hab γ)
+      map k := homDiscAtReflMap a b hab k
+      map_id _ := discrete'_hom_ext _ _
+      map_comp _ _ := discrete'_hom_ext _ _ })
+
+/-- **Hom-Refl for discrete types**: if empty types are unique, a term `t` of a discrete type gives
+the term `Refl_t` of the Hom-type from `t` to itself. -/
+def homDiscRefl (hE : EmptyUnique.{u}) (t : Tm(Γ, A)) : Tm(Γ, homDiscAt (Tm.toOp hE t) t) :=
+  homDiscAtRefl (Tm.toOp hE t) t fun γ => castTy_sec_obj_snd_disc _ t γ
+
+/-- The transport `Tm.toOp hE` commutes with substitution. -/
+theorem toOp_pull (hE : EmptyUnique.{u}) {Δ : Cat.{u, u}} (σ : Δ ⟶ Γ) (t : Tm(Γ, A)) :
+    (Tm.toOp hE t)⦃σ⦄ = Tm.toOp hE t⦃σ⦄ := by
+  kernel_exact eq_of_heq ((Tm.pull_hcongr σ (op_eq_self hE A)
+    (Tm.castTy_heq (op_eq_self hE A).symm t)).trans
+    (Tm.castTy_heq (op_eq_self hE (A⦃σ⦄)).symm t⦃σ⦄).symm)
+
+end Refl
 
 end ComprehensionCategory.OverCat

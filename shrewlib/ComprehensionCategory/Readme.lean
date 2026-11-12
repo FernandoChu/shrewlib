@@ -64,6 +64,9 @@ Comprehension categories as displayed categories, their type formers, and models
       of the comma AWFS on `Cat`; the Π-types of the category model over the contravariant one,
       of sections over the fibres; the terms of the opposite of a Σ-type and of the twisted
       function type `Ā → B`, through twists.
+    * `Applications/`: the paper's applications: directed univalence, natural transformations as
+      terms of twisted Hom-types and of discrete types in an extended context, and transport by
+      Hom-Elim, with the bijection of the lemma before the Yoneda corollary.
     * `Maps/`: maps between the models: forgetting the discreteness, a strict map preserving
       Σ-types, unit types and opposite types, the inclusions of the category model and the
       contravariant one into the displayed model, strict maps preserving Σ-types and unit types,

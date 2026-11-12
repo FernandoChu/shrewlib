@@ -28,7 +28,9 @@ The files give its ingredients:
   and is fully faithful, so that `ICatLax` is a full split comprehension category.
 * `Term`: terms `Tm(Γ, A)` from values `γ ↦ A γ` and transports (`tmMk`); the variable
   `var A : Tm(Γ ▹ A, A⦃𝐩 A⦄)` and the diagonal `diag A`; the constant types `constTy Γ K`, whose
-  terms are the functors `Γ ⥤ K` (`Tm.constEquiv`), naturally in `Γ`.
+  terms are the functors `Γ ⥤ K` (`Tm.constEquiv`), naturally in `Γ`; the terms are the sections
+  of the unstraightening (`Tm.sectionEquiv`), substitution is their reindexing, and the variable
+  substituted along the section of a term is the term (`var_pull_sec`).
 * `TypeFormers/Sigma`: Σ-types, whose pairing is the inverse of the counit of
   straightening–unstraightening at the composite.
 * `TypeFormers/Op`: opposite types, `A ⋙ opFunctor'`, whose rules hold by `rfl`, with the

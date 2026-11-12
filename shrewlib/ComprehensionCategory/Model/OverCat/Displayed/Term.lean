@@ -89,6 +89,11 @@ def Tm.sectionEquiv {D : Displayed.{u, u} Γ} :
   left_inv _ := Displayed.Tm.ext (Cat.Hom.ext (Section.total_ofFunctor _ _))
   right_inv S := Section.ofFunctor_total S
 
+/-- The section of the term of a section is that section. -/
+theorem Tm.toSection_ofSection {D : Displayed.{u, u} Γ} (S : D.Section) :
+    Tm.toSection (Tm.ofSection S) = S :=
+  Section.ofFunctor_total S
+
 /-- **The substitution of the term of a section is the term of its reindexing**, of type
 `straightenObj (DisplayedCat.pull σ D)`, which is that of the substitution by `rfl`. -/
 theorem Tm.ofSection_pull {Δ : Cat.{u, u}} (σ : Δ ⟶ Γ) {D : Displayed.{u, u} Γ} (S : D.Section) :
