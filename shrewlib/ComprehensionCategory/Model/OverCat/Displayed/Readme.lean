@@ -19,7 +19,8 @@ terminal displayed categories.
   morphisms and is fully faithful, as a composite of equivalences.
 * `Term`: terms of the type `straightenObj D` of a displayed category `D`, the sections of `D`
   (`Tm.sectionEquiv`), from objects of `D` and morphisms of `D` between them (`tmMk`); the
-  substitution of `straightenObj D` is the straightening of the reindexing of `D`, by `rfl`.
+  substitution of `straightenObj D` is the straightening of the reindexing of `D`, by `rfl`, and the
+  projection and the morphisms `𝐪` of `straightenObj D` are those of the total category of `D`.
 * `TypeFormers/Sigma`: Σ-types, whose pairing reassociates the pairs, since unstraightening undoes
   straightening on the nose.
 * `TypeFormers/Unit`: unit types, the straightenings of the terminal displayed categories

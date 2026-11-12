@@ -10,7 +10,9 @@ import Displayed.Fibration.Straightening.Readme
 /-!
 # Fibrations
 
-The exact dual of `Opfibration/`, whose `Readme.lean` explains the design.
+The exact dual of `Opfibration/`, whose `Readme.lean` explains the design. `Opfibration/RAlgebra`
+and `Opfibration/RAlgebraEquiv` (split opfibrations as algebras of the comma AWFS on `Cat`) have no
+dual here.
 
 * `Basic`: cartesian morphisms (`IsCartesian`), displayed functors preserving them
   (`DispFunctor.PreservesCartesian`), and cloven fibrations (`Fib`), with chosen

@@ -14,7 +14,7 @@ folder has a `Readme.lean`.
 * `Displayed/`: displayed categories in general, vertical functors and equivalences, the total
   category and the codomain displayed category.
 * `Opfibration/`: opcartesian morphisms and cloven, pre-split and split opfibrations, which
-  compose;
+  compose, and are the algebras of the comma AWFS on `Cat`;
   `Straightening/` is the equivalence over `Cat` between functors `A ⥤ Cat` and split
   opfibrations.
 * `Fibration/`: cartesian morphisms and cloven, pre-split and split fibrations, which compose;

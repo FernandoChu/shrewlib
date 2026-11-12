@@ -14,6 +14,10 @@ from objects `obj γ` of `D` over `γ` and morphisms `map f : obj γ ⟶[f] obj 
 with identities and composites. Its equation `sec ≫ 𝐩 F = 𝟙 Γ` holds by `rfl`. The substitution
 of `straightenObj E` is the straightening of the reindexing of `E`, by `rfl` (`straightenObj_pull`),
 and the substitution of the term of a section is the term of its reindexing (`Tm.ofSection_pull`).
+The projection of `straightenObj D` is that of the total category of `D` (`proj_straightenObj`),
+and the extension of `σ` by a term of `straightenObj (DisplayedCat.pull σ D)` is its section
+followed by the chosen lift (`consSec_straightenObj`), by `rfl`. They are stated for any `D`, so
+that they are checked without unfolding a particular `D`, which can be slow, as for twists.
 -/
 
 universe u
@@ -30,6 +34,24 @@ variable {Γ : Cat.{u, u}}
 along `u`, by `rfl`. -/
 theorem straightenObj_pull {Δ : Cat.{u, u}} (σ : Δ ⟶ Γ) (E : Displayed.{u, u} Γ) :
     IProf.pull σ (straightenObj E) = straightenObj (DisplayedCat.pull σ E) :=
+  rfl
+
+/-- The projection of the context extension by `straightenObj D` is the projection of the total
+category of `D`, by `rfl`. -/
+theorem proj_straightenObj (D : Displayed.{u, u} Γ) :
+    IProf.proj (a := Γ) (straightenObj D) =
+      (D.π.toCatHom : IProf.ext (a := Γ) (straightenObj D) ⟶ Γ) :=
+  rfl
+
+/-- The extension of `σ` by a term of `straightenObj (DisplayedCat.pull σ D)`, a section of the
+reindexing of `D`, is that section followed by the functor of the chosen lift
+`DisplayedCat.pull σ D ⟶[σ] D`, by `rfl`. Stated for any `D`, it is checked without unfolding a
+particular `D`. -/
+theorem consSec_straightenObj {Δ : Cat.{u, u}} (σ : Δ ⟶ Γ) (D : Displayed.{u, u} Γ)
+    (t : IProf.Tm (Γ := Δ) (straightenObj (DisplayedCat.pull σ D))) :
+    consSec σ (t.castTy (straightenObj_pull σ D).symm) =
+      t.sec ≫ ((DisplayedCat.clift σ D).total.toCatHom :
+        Cat.of (DisplayedCat.pull σ D).Total ⟶ IProf.ext (a := Γ) (straightenObj D)) :=
   rfl
 
 /-- **The term of `straightenObj D` with values `obj γ`** over `γ` and transports

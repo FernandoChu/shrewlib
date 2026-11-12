@@ -59,9 +59,11 @@ Comprehension categories as displayed categories, their type formers, and models
       the discrete model, also of two terms, and those of discrete types with Hom-Disc, under the
       uniqueness of empty types; the universes of discrete and of contravariant types in the
       category model, the twist of a type of the category model, a type of the displayed model,
-      and the twisted Hom-types with their introduction rule (Hom-Intro); the Π-types of the
-      category model over the contravariant one, of sections over the fibres; the terms of the
-      opposite of a Σ-type and of the twisted function type `Ā → B`, through twists.
+      and the twisted Hom-types with their introduction rule (Hom-Intro) and their elimination
+      and computation rules (Hom-Elim, Hom-Comp), stable under substitution, by the chosen lifts
+      of the comma AWFS on `Cat`; the Π-types of the category model over the contravariant one,
+      of sections over the fibres; the terms of the opposite of a Σ-type and of the twisted
+      function type `Ā → B`, through twists.
     * `Maps/`: maps between the models: forgetting the discreteness, a strict map preserving
       Σ-types, unit types and opposite types, the inclusions of the category model and the
       contravariant one into the displayed model, strict maps preserving Σ-types and unit types,

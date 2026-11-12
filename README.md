@@ -46,12 +46,16 @@ files, (op)cartesian morphisms (in `Displayed/{Opfibration,Fibration}/Basic` and
   level, and there are four folders: `Constructions/` (the arrow 2-category, strict slices and
   spans), `Limits/` (2-pullbacks, comma objects and finitely complete 2-categories), `Monad/`
   (monads in a bicategory, strict 2-monads and their algebras, pseudo-algebras, lax idempotent
-  2-monads, whose algebras are left adjoints of the units, distributive laws) and
-  `Factorization/` (AWFSs; in `Comma/`, the comma factorization `f = Lf ≫ Rf` is an AWFS whose
-  2-monad `R` is lax idempotent, and `R`-algebras are split reflections).
+  2-monads, whose algebras are left adjoints of the units, colax idempotent 2-comonads, whose
+  coalgebras are right adjoints of the counits, distributive laws) and `Factorization/` (AWFSs,
+  with their chosen fillers, functorial in coalgebras and algebras; in `Comma/`, the comma
+  factorization `f = Lf ≫ Rf` is an AWFS whose 2-monad `R` is lax idempotent, with `R`-algebras
+  the split reflections, and whose 2-comonad `L` is colax idempotent, with `L`-coalgebras the
+  left adjoint right inverses; it is an AWFS on `Cat`, through comma categories).
 - `DoubleCategory/`: pseudo double categories, and the horizontal bicategory of globular squares.
 - `Displayed/`: categories displayed over a category, in six folders: `Displayed/` (displayed
-  categories in general), `Opfibration/` (including the unstraightening of functors `A ⥤ Cat`),
+  categories in general), `Opfibration/` (including the unstraightening of functors `A ⥤ Cat`, and
+  the equivalence between split opfibration structures and algebras of the comma AWFS on `Cat`),
   `Fibration/` (including the codomain fibration), `Straightening/`
   (straightening–unstraightening for displayed categories, an isomorphism
   `IProf ≅ DisplayedCat` over `Cat`), `CodCatEquiv/` (the equivalence
@@ -67,14 +71,15 @@ files, (op)cartesian morphisms (in `Displayed/{Opfibration,Fibration}/Basic` and
   included by strict maps preserving Σ-types and unit types; with the type formers relating them,
   such as the Hom-types of the category model in the discrete model, of two terms or in context
   form, with Hom-Disc for discrete types under the uniqueness of empty types, the twist of types
-  of the category model into types of the displayed model, the twisted Hom-types and their term
-  `refl`, the Π-types of the category model over the contravariant one, whose values are the
-  categories of sections over the fibres, the terms of the opposite of a Σ-type, pairs of a term
-  and a term of a twist, and those of the twisted function type `Ā → B`, the terms of `B` in
-  context `Γ ▹ a : A`, both naturally in `Γ`. The models of fibrations, the displayed categories,
-  split (op)fibrations and discrete opfibrations with their total categories as comprehension, are
-  full split comprehension categories, and the unstraightenings from the four category models to
-  them are strict maps preserving the chosen lifts.
+  of the category model into types of the displayed model, the twisted Hom-types, their term
+  `refl` and their elimination and computation rules, stable under substitution, as chosen lifts
+  of the comma AWFS on `Cat`, the Π-types of the category model over the contravariant one, whose
+  values are the categories of sections over the fibres, the terms of the opposite of a Σ-type,
+  pairs of a term and a term of a twist, and those of the twisted function type `Ā → B`, the terms
+  of `B` in context `Γ ▹ a : A`, both naturally in `Γ`. The models of fibrations, the displayed
+  categories, split (op)fibrations and discrete opfibrations with their total categories as
+  comprehension, are full split comprehension categories, and the unstraightenings from the four
+  category models to them are strict maps preserving the chosen lifts.
 - `DoubleDisplayed/`: categories doubly displayed over a displayed category, their functors,
   equivalences and fibrations, and dependent 2-sided fibrations with their straightening: an
   equivalence between dependent profunctors over `ICatStr` and D2SFibs over `SplitOpfibStr`, over

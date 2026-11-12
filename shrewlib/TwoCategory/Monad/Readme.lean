@@ -2,6 +2,7 @@ import TwoCategory.Monad.Bicategory
 import TwoCategory.Monad.Basic
 import TwoCategory.Monad.PseudoAlgebra
 import TwoCategory.Monad.LaxIdempotent
+import TwoCategory.Monad.ColaxIdempotent
 import TwoCategory.Monad.DistributiveLaw
 
 /-!
@@ -23,6 +24,10 @@ import TwoCategory.Monad.DistributiveLaw
   pseudo-algebras are left adjoints of `η_x` with invertible counit (`pseudoAlgEquiv`), normal
   pseudo-algebras are left adjoint left inverses (LALIs) of `η_x` (`normalPseudoAlgEquiv`), and
   strict algebras are LALIs `a` with `μ_x ≫ a = T a ≫ a` (`algEquiv`).
+* `ColaxIdempotent`: the dual for 2-comonads, reversing the 1-cells. A colax idempotent 2-comonad
+  has a modification `θ : Tε ⟶ εT`, so that `δ_x ⊣ T ε_x`, and its strict coalgebras are the
+  split right adjoint right inverses (RARIs) `ε_x ⊣ c` of the counits, with identity counit
+  (`coalgEquiv`). The counit and coassociativity laws of 2-comonads are rules from there on.
 -/
 
 universe w v u
@@ -50,3 +55,8 @@ example {C : Type u} [TwoCategory.{w, v} C] (M : TwoMonad C) (K : M.LaxIdempoten
 example {C : Type u} [TwoCategory.{w, v} C] (M : TwoMonad C) (K : M.LaxIdempotent) :
     M.Alg ≃ Σ x : C, M.SplitReflection x :=
   K.algEquiv
+
+/-- The strict coalgebras of a colax idempotent 2-comonad are the split RARIs of the counits. -/
+example {C : Type u} [TwoCategory.{w, v} C] (M : TwoComonad C) (K : M.ColaxIdempotent) :
+    M.Coalg ≃ Σ x : C, M.SplitCoreflection x :=
+  K.coalgEquiv

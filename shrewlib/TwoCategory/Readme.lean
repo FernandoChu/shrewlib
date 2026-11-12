@@ -23,9 +23,12 @@ Strict bicategories, whose laws are rules and hold by `rfl`. Each folder has a `
 * `Limits/`: 2-pullbacks, comma objects and finitely complete 2-categories.
 * `Monad/`: monads in a bicategory, strict 2-monads with their 2-categories of algebras,
   pseudo-algebras, lax idempotent 2-monads, whose pseudo-, normal pseudo- and strict algebras are
-  left adjoints of the units, and distributive laws of a 2-comonad over a 2-monad.
-* `Factorization/`: AWFSs, and in `Comma/` the comma factorization `f = Lf ≫ Rf` through `f/B`, an
-  AWFS whose 2-monad `R` is lax idempotent.
+  left adjoints of the units, colax idempotent 2-comonads, whose strict coalgebras are right
+  adjoints of the counits, and distributive laws of a 2-comonad over a 2-monad.
+* `Factorization/`: AWFSs, with their chosen diagonal fillers, functorial in coalgebras and
+  algebras, and in `Comma/` the comma factorization `f = Lf ≫ Rf` through `f/B`, an AWFS whose
+  2-monad `R` is lax idempotent and whose 2-comonad `L` is colax idempotent, with coalgebras the
+  left adjoint right inverses; on `Cat`, through comma categories.
 -/
 
 universe v u
