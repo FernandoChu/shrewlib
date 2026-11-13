@@ -19,7 +19,8 @@ their conclusion a type of another, in a context of the first.
   category on the morphisms `a ⟶ b` of `A γ`. It is stable under substitution by `rfl`, and its
   own opposite in the discrete model, as a rewrite rule, since these discrete categories are, by
   `propext`. The Hom-type of two terms `a : Tm(Γ, Aᵒᵖ)` and `b : Tm(Γ, A)`, in context `Γ`, as in
-  the paper, is its substitution along their pairing (`homAt`), stable under substitution.
+  the paper, is its substitution along their pairing (`homAt`), stable under substitution, and
+  equal to the Hom-type of `b` and `a` in `Aᵒᵖ` (`homAt_swap`).
 * `HomDisc`: the Hom-types of the types of the discrete model, defined there, with an action on
   morphisms given by discreteness. Forgetting the discreteness preserves them strictly: they are
   those of the category model, since the morphisms of discrete categories are unique. Hom-Disc:
@@ -117,6 +118,10 @@ recall ComprehensionCategory.OverCat.pull_homAt {Γ Δ : Cat.{u, u}} (σ : Δ �
 /-- Hom-op for the Hom-type of two terms. -/
 recall ComprehensionCategory.OverCat.op_homAt {Γ : Cat.{u, u}} {A : ICatLax.{u, u}.Ty Γ}
     (a : Tm(Γ, CatModel.op A)) (b : Tm(Γ, A)) : DiscreteModel.op (homAt a b) = homAt a b
+
+/-- The Hom-type of `a` and `b` is that of `b` and `a` in the opposite type. -/
+recall ComprehensionCategory.OverCat.homAt_swap {Γ : Cat.{u, u}} {A : ICatLax.{u, u}.Ty Γ}
+    (a : Tm(Γ, CatModel.op A)) (b : Tm(Γ, A)) : homAt a b = homAt (A := CatModel.op A) b a
 
 /-- **Forgetting the discreteness preserves the Hom-types strictly**, in context form and for two
 terms. -/

@@ -64,7 +64,19 @@ one by `pull_hom`, along extensions by `a⦃σ⦄` up to transport, over `σ ≫
 `b⦃σ⦄.sec ≫ 𝐪(σ, A)`, which are equal (`Tm.pull_sec_q`). It is its own opposite (`op_homAt`), the
 substitution of `op_hom`; this is not judgmental, since the rule `op_hom` does not apply to the
 opposite of a substitution of `Hom[A]` until it is commuted with the substitution
-(`DiscreteModel.pull_op`). The Hom-types of discrete types and Hom-Disc are in `Shared/HomDisc`.
+(`DiscreteModel.pull_op`).
+
+The Hom-type of `a` and `b` is that of `b` and `a` in `Aᵒᵖ`: `homAt a b = homAt (A := Aᵒᵖ) b a`
+(`homAt_swap`), where `b` is a term of `(Aᵒᵖ)ᵒᵖ`, which is `A` by `rfl`. Pointwise, the morphisms
+from `b γ` to `a γ` in the opposite of `A γ` are those from `a γ` to `b γ`, and the actions
+`homAct` agree up to associativity, which is a rule (`homAct_swap`). It holds by `rfl` for terms
+whose sections are the functors of sections of the unstraightening (`homAt_ofSection_swap`), whose
+equation `sec ≫ 𝐩 A = 𝟙` is `rfl` so that the transport `Tm.castTy` computes, and every term is
+one of them (`CatModel.Tm.sectionEquiv`). For arbitrary terms it is therefore propositional. The
+morphisms of the two functors are compared through their values, each in the kernel, since the
+elaborator and the kernel are slow to compare the two `homAct`s directly.
+
+The Hom-types of discrete types and Hom-Disc are in `Shared/HomDisc`.
 -/
 
 universe u
@@ -85,6 +97,15 @@ def homAct (A : Γ ⥤ Cat.{u, u}) {γ γ' : Γ} (f : γ ⟶ γ') {a b : A.obj �
     (ψ : (A.map f).toFunctor.obj b ⟶ b') (h : a ⟶ b) : a' ⟶ b' :=
   @CategoryStruct.comp ((A ⋙ opFunctor').obj γ') _ b' ((A.map f).toFunctor.obj a) a'
     ((A.map f).toFunctor.map h ≫ ψ : (A.map f).toFunctor.obj a ⟶ b') φ
+
+/-- The action of `((f, ψ), φ)` on the morphisms of `A` is that of `((f, φ), ψ)` on the morphisms
+of `Aᵒᵖ`: both are `h ↦ φ ≫ A f h ≫ ψ`, up to associativity. -/
+theorem homAct_swap (A : Γ ⥤ Cat.{u, u}) {γ γ' : Γ} (f : γ ⟶ γ') {a b : A.obj γ}
+    {a' b' : A.obj γ'}
+    (φ : @Quiver.Hom ((A ⋙ opFunctor').obj γ') _ ((A.map f).toFunctor.obj a) a')
+    (ψ : (A.map f).toFunctor.obj b ⟶ b') (h : a ⟶ b) :
+    homAct A f φ ψ h = homAct (A ⋙ opFunctor') (a := b) (b := a) f ψ φ h :=
+  rfl
 
 /-- The functor of the Hom-type of `A`: at `((γ, b), a)`, the discrete category on the morphisms
 `a ⟶ b` of `A γ`. -/
@@ -153,6 +174,33 @@ theorem homAt_tmMk_obj {A : ICatLax.{u, u}.Ty Γ} (a : ∀ γ : Γ, A.obj γ)
     (homAt (tmMk (A := Aᵒᵖ) a amap amap_id amap_comp) (tmMk b bmap bmap_id bmap_comp)).toFunctor.obj
       γ = discrete' (@Quiver.Hom (A.obj γ) _ (a γ) (b γ)) :=
   rfl
+
+/-- The Hom-type of `a` and `b` is that of `b` and `a` in `Aᵒᵖ`, for terms of sections of the
+unstraightenings, whose transports `Tm.castTy` compute. The morphisms of the two functors are
+compared with their values in the kernel. -/
+theorem homAt_ofSection_swap {A : ICatLax.{u, u}.Ty Γ} (Sa : (∫ Aᵒᵖ).Section)
+    (Sb : (∫ A).Section) :
+    homAt (CatModel.Tm.ofSection Sa) (CatModel.Tm.ofSection Sb) =
+      homAt (A := Aᵒᵖ) (CatModel.Tm.ofSection (A := Aᵒᵖᵒᵖ) Sb) (CatModel.Tm.ofSection Sa) := by
+  refine IDiscOb.ext (Functor.hext (fun _ => rfl) fun γ γ' g => ?_)
+  have e₁ : (homAt (CatModel.Tm.ofSection Sa) (CatModel.Tm.ofSection Sb)).toFunctor.map g =
+      discreteMap' (homAct A g (Sa.map g) (Sb.map g)) := by
+    kernel_rfl'
+  have e₂ : (homAt (A := Aᵒᵖ) (CatModel.Tm.ofSection (A := Aᵒᵖᵒᵖ) Sb)
+      (CatModel.Tm.ofSection Sa)).toFunctor.map g =
+      discreteMap' (homAct (CatModel.op A) g (Sb.map g) (Sa.map g)) := by
+    kernel_rfl'
+  rw [e₁, e₂]
+  exact heq_of_eq (congrArg discreteMap' (funext (homAct_swap A g _ _)))
+
+/-- **The Hom-type of `a` and `b` is that of `b` and `a` in `Aᵒᵖ`**: `Homₐ(a, b) = Homₐᵒᵖ(b, a)`,
+where `b : Tm(Γ, A)` is a term of `(Aᵒᵖ)ᵒᵖ`. Every term is that of its section of the
+unstraightening, for which this is `homAt_ofSection_swap`. -/
+theorem homAt_swap {A : ICatLax.{u, u}.Ty Γ} (a : Tm(Γ, Aᵒᵖ)) (b : Tm(Γ, A)) :
+    homAt a b = homAt (A := Aᵒᵖ) b a := by
+  obtain ⟨Sa, rfl⟩ := CatModel.Tm.sectionEquiv.symm.surjective a
+  obtain ⟨Sb, rfl⟩ := CatModel.Tm.sectionEquiv.symm.surjective b
+  exact homAt_ofSection_swap Sa Sb
 
 /-- The type of the second variable of the Hom-type of `A⦃σ⦄`, substituted along `b⦃σ⦄`, is that
 of `A`, substituted along `𝐪(σ, A)` and `b⦃σ⦄`. They agree by the rules for substitution, which the
