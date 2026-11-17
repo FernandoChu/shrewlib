@@ -16,7 +16,7 @@ models over `Cat`. The Yoneda corollary itself and Remark `lax-ends` are not for
   the values of `A → B` are the sections of the constant family `B γ` over `A γ`, those of
   `Hom_U(A, B)` the `ULift`ed functors. Both types and the isomorphism are stable under
   substitution, and the isomorphism gives a bijection of terms, natural in `Γ` (`dunivTmEquiv`),
-  through a bijection of the terms of isomorphic discrete types (`tmEquivOfIso`).
+  as an isomorphism of `IDisc` (`IDisc.isoOfNatIso`, `Tm.mapEquiv`).
 * `NatHom`: Proposition `internal-nat-hom`. The twisted Hom-type `Hom_B(f̄, g)` of two terms
   (`twistedHomAt`), the twist of the Hom-type substituted along their pairing, is the straightening
   of a displayed category whose objects over `γ` are the morphisms `f γ ⟶ g γ` and whose morphisms

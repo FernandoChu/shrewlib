@@ -22,7 +22,9 @@ Comprehension categories as displayed categories, their type formers, and models
   extension `consSec σ t : Δ ⟶ Γ ▹ A` of a morphism `σ` by a term of `A⦃σ⦄`. The terms of `A⦃σ⦄`
   are the morphisms into `Γ ▹ A` over `σ` (`Tm.liftEquiv`), terms transport along isomorphisms of
   contexts over `Γ` (`Tm.equivOfIso`), and the sections of `Γ ▹ A ▹ T ⟶ Γ` are the pairs of a term
-  `x` of `A` and a term of `T⦃x⦄` (`Tm.sigmaEquiv`).
+  `x` of `A` and a term of `T⦃x⦄` (`Tm.sigmaEquiv`). A vertical morphism of types maps their
+  terms (`Tm.map`), naturally in `Γ` (`Tm.map_pull`), so isomorphic types have the same terms
+  (`Tm.mapEquiv`).
 * `Map`: maps of comprehension categories over a functor of the bases, with a comparison
   `F.obj (Γ ▹ A) ⟶ F.obj Γ ▹ M.obj A`, and their pseudo and strict versions. Strict maps preserve
   the chosen lifts and send terms to terms, and over the identity, the terms of `A` are those of
