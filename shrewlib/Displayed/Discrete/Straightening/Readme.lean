@@ -21,7 +21,9 @@ discrete ones on both sides.
 The files give its ingredients:
 
 * `IDisc`: the split fibration `IDisc`, with the reindexing and the lifts of `ICatLax`, and the
-  fully faithful cartesian functor `IDisc.forget : IDisc ⟶ ICatLax`.
+  fully faithful cartesian functor `IDisc.forget : IDisc ⟶ ICatLax`. Natural transformations
+  and isomorphisms between functors into discrete categories are vertical morphisms and
+  isomorphisms of `IDisc` (`IDisc.homOfNatTrans`, `IDisc.isoOfNatIso`), compatibly with reindexing.
 * `Unstraighten`: the unstraightening of a functor into discrete categories has discrete fibres;
   the functor `unstraighten`, which is `IDisc.forget` followed by the unstraightening of the split
   opfibrations, and is fully faithful.

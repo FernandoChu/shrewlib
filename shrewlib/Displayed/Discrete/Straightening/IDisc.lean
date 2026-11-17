@@ -17,6 +17,12 @@ and the chosen lifts of `ICatLax`, whose laws hold by `rfl` through the rules fo
 Forgetting the discreteness is a fully faithful cartesian functor `IDisc.forget : IDisc ⟶ ICatLax`,
 whose axioms hold by `rfl`.
 
+Into discrete categories, every lax transformation is strict, and the 2-cells are unique: a
+natural transformation `e : X ⟶ Y` is a vertical morphism `homOfNatTrans e` of `IDisc`, with the
+`eqToHom`s of its naturality as 2-cells, and a natural isomorphism an isomorphism of the fiber
+(`isoOfNatIso`). Its transport along `u` is the restriction of `e` along `u`
+(`pullMap_homOfNatTrans`).
+
 A discrete category is a set, but the objects are not functors into sets: they keep their
 category structure. So a construction on `ICatLax` that preserves discreteness gives one on `IDisc`
 that `IDisc.forget` preserves on the nose: it is computed in `ICatLax`, on the same data. This is
@@ -103,5 +109,69 @@ def IDisc.forget :
 def IDisc.forgetFullyFaithful :
     VertFunctor.FullyFaithful IDisc.forget.{v₂, u₂, v₁, u₁}.toDispFunctor where
   preimage φ := φ
+
+/-! ## Natural transformations as vertical morphisms -/
+
+namespace IDisc
+
+variable {A : Cat.{v₁, u₁}} {X Y Z : IDisc.{v₂, u₂}.Fiber A}
+
+/-- The lax transformation of a natural transformation `e : X ⟶ Y` into discrete categories: its
+2-cells are the `eqToHom`s of the naturality of `e`, and its laws hold since the morphisms of the
+values of `Y` are unique. -/
+def laxTransOfNatTrans (e : X.toFunctor ⟶ Y.toFunctor) : LaxTrans X.toFunctor Y.toFunctor where
+  app a := (e.app a).toFunctor
+  naturality f x :=
+    eqToHom (Functor.congr_obj (congrArg Cat.Hom.toFunctor (e.naturality f)) x).symm
+  naturality_naturality {_ _} _ {_ _} _ :=
+    @Subsingleton.elim _ ((Y.isDiscrete _).subsingleton _ _) _ _
+  naturality_id _ := @Subsingleton.elim _ ((Y.isDiscrete _).subsingleton _ _) _ _
+  naturality_comp _ _ _ := @Subsingleton.elim _ ((Y.isDiscrete _).subsingleton _ _) _ _
+
+/-- **A natural transformation `e : X ⟶ Y` into discrete categories is a vertical morphism** of
+`IDisc` over `A`: into discrete categories, every lax transformation is strict. -/
+def homOfNatTrans (e : X.toFunctor ⟶ Y.toFunctor) : X ⟶ Y :=
+  laxTransOfNatTrans e
+
+/-- `homOfNatTrans` preserves identities. -/
+theorem homOfNatTrans_id : homOfNatTrans (𝟙 X.toFunctor) = 𝟙 X :=
+  LaxTrans.ext' (fun _ _ => rfl) (fun _ _ _ _ => HEq.rfl) fun _ _ =>
+    heq_of_eq (@Subsingleton.elim _ ((X.isDiscrete _).subsingleton _ _) _ _)
+
+/-- `homOfNatTrans` preserves composites. -/
+theorem homOfNatTrans_comp (e : X.toFunctor ⟶ Y.toFunctor) (e' : Y.toFunctor ⟶ Z.toFunctor) :
+    homOfNatTrans (e ≫ e') = homOfNatTrans e ≫ homOfNatTrans e' :=
+  LaxTrans.ext' (fun _ _ => rfl) (fun _ _ _ _ => HEq.rfl) fun _ _ =>
+    heq_of_eq (@Subsingleton.elim _ ((Z.isDiscrete _).subsingleton _ _) _ _)
+
+/-- **A natural isomorphism `e : X ≅ Y` into discrete categories is an isomorphism** in the fiber of
+`IDisc` over `A`. -/
+def isoOfNatIso (e : X.toFunctor ≅ Y.toFunctor) : X ≅ Y where
+  hom := homOfNatTrans e.hom
+  inv := homOfNatTrans e.inv
+  hom_inv_id := (homOfNatTrans_comp _ _).symm.trans
+    ((congrArg homOfNatTrans e.hom_inv_id).trans homOfNatTrans_id)
+  inv_hom_id := (homOfNatTrans_comp _ _).symm.trans
+    ((congrArg homOfNatTrans e.inv_hom_id).trans homOfNatTrans_id)
+
+/-- Heterogeneously equal natural isomorphisms between equal objects give heterogeneously equal
+isomorphisms. -/
+theorem isoOfNatIso_hcongr {X' Y' : IDisc.{v₂, u₂}.Fiber A} (hX : X = X') (hY : Y = Y')
+    {e : X.toFunctor ≅ Y.toFunctor} {e' : X'.toFunctor ≅ Y'.toFunctor} (he : e ≍ e') :
+    isoOfNatIso e ≍ isoOfNatIso e' := by
+  subst hX hY
+  cases he
+  rfl
+
+/-- **The transport of `homOfNatTrans e` along `u` is that of the restriction of `e`** along `u`. -/
+theorem pullMap_homOfNatTrans {B : Cat.{v₁, u₁}} (u : B ⟶ A) (e : X.toFunctor ⟶ Y.toFunctor) :
+    IDisc.pullMap u (homOfNatTrans e) =
+      homOfNatTrans (X := IDisc.pull u X) (Y := IDisc.pull u Y)
+        (Functor.whiskerLeft u.toFunctor e) := by
+  rw [pullMap_eq_lift]
+  exact LaxTrans.ext' (fun _ _ => rfl) (fun _ _ _ _ => HEq.rfl) fun _ _ =>
+    heq_of_eq (@Subsingleton.elim _ ((Y.isDiscrete _).subsingleton _ _) _ _)
+
+end IDisc
 
 end Displayed.Discrete.Straightening

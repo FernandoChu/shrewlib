@@ -30,6 +30,12 @@ equal if their extensions are (`Tm.sec_heq_of_consSec`). Hence the sections of t
 of `A` and a term of `T⦃x⦄` (`Tm.sigmaEquiv`), and the sections of a context isomorphic to
 `Γ ▹ A` over `Γ` are the terms of `A` (`Tm.equivOfIso`).
 
+A vertical morphism `φ : A ⟶ B` of types in context `Γ` maps their terms (`Tm.map`), by the
+morphism `Γ ▹ A ⟶ Γ ▹ B` over `Γ` that the comprehension gives `φ`. This is functorial
+(`Tm.map_id`, `Tm.map_comp`), so an isomorphism `A ≅ B` in the fiber gives a bijection of the terms
+(`Tm.mapEquiv`), and natural in `Γ`: substituted along `σ`, the image of `t` along `φ` is that of
+`t⦃σ⦄` along the transport `pullMap σ φ` (`Tm.map_pull`, `Tm.mapEquiv_pull`).
+
 The notation `Tm(Γ, A)` for `D.Tm A`, for `A` over `Γ`, is scoped in `Displayed`, with that of
 `ComprehensionCategory/Basic`. As there, the comprehension category `D` is inferred from the type
 of `A`. The notation `t⦃σ⦄` for `t.pull σ` is that of the substitution of types, `A⦃σ⦄`, whose
@@ -124,6 +130,68 @@ theorem pull_comp {Δ Θ : C} (τ : Θ ⟶ Δ) (σ : Δ ⟶ Γ) (t : Tm(Γ, A)) 
       (congrArg (τ ≫ ·) (pull_sec_q σ t)) :))).symm
 
 end Tm
+
+/-! ## Terms along vertical morphisms -/
+
+section Map
+
+variable {D : Displayed.{v₂, u₂} C} [Fib D] [Comprehension D] {Γ : C}
+
+/-- **The image of a term along a vertical morphism** `φ : A ⟶ B` of types in context `Γ`: its
+section followed by the morphism `Γ ▹ A ⟶ Γ ▹ B` over `Γ` that the comprehension gives `φ`. -/
+def Tm.map {A B : D.Fiber Γ} (φ : A ⟶ B) (t : Tm(Γ, A)) : Tm(Γ, B) where
+  sec := t.sec ≫ D.extMap φ
+  sec_proj := by
+    rw [Category.assoc, D.extMap_proj φ, Category.comp_id]
+    exact t.sec_proj
+
+/-- `Tm.map` preserves identities. -/
+theorem Tm.map_id {A : D.Fiber Γ} (t : Tm(Γ, A)) : Tm.map (𝟙 A) t = t :=
+  Tm.ext (Category.comp_id t.sec)
+
+/-- `Tm.map` preserves composites. -/
+theorem Tm.map_comp {A B B' : D.Fiber Γ} (φ : A ⟶ B) (ψ : B ⟶ B') (t : Tm(Γ, A)) :
+    Tm.map ψ (Tm.map φ t) = Tm.map (φ ≫ ψ) t :=
+  Tm.ext (Category.assoc t.sec (D.extMap φ) (D.extMap ψ))
+
+/-- **The terms of isomorphic types**: an isomorphism `e : A ≅ B` in the fiber over `Γ` gives a
+bijection `Tm(Γ, A) ≃ Tm(Γ, B)`. -/
+def Tm.mapEquiv {A B : D.Fiber Γ} (e : A ≅ B) : Tm(Γ, A) ≃ Tm(Γ, B) where
+  toFun := Tm.map e.hom
+  invFun := Tm.map e.inv
+  left_inv t := (Tm.map_comp _ _ t).trans ((congrArg (Tm.map · t) e.hom_inv_id).trans (map_id t))
+  right_inv t := (Tm.map_comp _ _ t).trans ((congrArg (Tm.map · t) e.inv_hom_id).trans (map_id t))
+
+/-- Heterogeneously equal isomorphisms between equal types give heterogeneously equal maps of
+terms. -/
+theorem Tm.mapEquiv_hcongr {A B A' B' : D.Fiber Γ} (hA : A = A') (hB : B = B') {e : A ≅ B}
+    {e' : A' ≅ B'} (he : e ≍ e') {t : Tm(Γ, A)} {t' : Tm(Γ, A')} (ht : t ≍ t') :
+    Tm.mapEquiv e t ≍ Tm.mapEquiv e' t' := by
+  subst hA hB
+  cases he
+  cases ht
+  rfl
+
+variable {Δ : C} (σ : Δ ⟶ Γ)
+
+/-- **`Tm.map` is natural in `Γ`**: the substitution of the image of `t` along `φ` is the image of
+`t⦃σ⦄` along the transport `pullMap σ φ` of `φ`, by the interchange
+`pullMap σ φ ≫ᵈ clift σ B = clift σ A ≫ᵈ φ`. -/
+theorem Tm.map_pull {A B : D.Fiber Γ} (φ : A ⟶ B) (t : Tm(Γ, A)) :
+    (Tm.map φ t)⦃σ⦄ = Tm.map (D.pullMap σ φ) t⦃σ⦄ :=
+  (Tm.pull_unique σ _ _ (by
+    change t⦃σ⦄.sec ≫ D.extMap (D.pullMap σ φ ≫ᵈ D.clift σ B) = _
+    rw [D.pullMap_clift]
+    exact pull_sec_q_assoc σ t (D.extMap φ))).symm
+
+/-- `Tm.mapEquiv` is natural in `Γ`, along an isomorphism `e'` over `Δ` whose morphism is the
+transport of that of `e`. -/
+theorem Tm.mapEquiv_pull {A B : D.Fiber Γ} (e : A ≅ B) {e' : D.pull σ A ≅ D.pull σ B}
+    (he : e'.hom = D.pullMap σ e.hom) (t : Tm(Γ, A)) :
+    (Tm.mapEquiv e t)⦃σ⦄ = Tm.mapEquiv e' t⦃σ⦄ :=
+  (Tm.map_pull σ e.hom t).trans (congrArg (Tm.map · t⦃σ⦄) he.symm)
+
+end Map
 
 /-! ## Transport and extension -/
 

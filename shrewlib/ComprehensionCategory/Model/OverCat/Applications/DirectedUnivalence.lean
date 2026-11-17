@@ -30,14 +30,6 @@ components in the discrete category `B γ`, so the sections agree on objects, an
 which are unique. So `A → B` is a type of the discrete model (`funDisc`), whose functor is the
 Π-type, by `rfl`.
 
-## Terms along isomorphisms of discrete types
-
-A natural transformation `e : X ⟶ Y` between discrete types sends the sections of `∫ X` to those of
-`∫ Y` (`mapSection`): the value at `γ` is `e γ` of that of the section, and the morphisms, between
-objects of the discrete categories `Y γ'` that the naturality of `e` makes equal, are `eqToHom`s.
-A natural isomorphism gives inverse maps (`mapSectionEquiv`), so a bijection of the terms
-(`tmEquivOfIso`), natural in `Γ` along the restriction of `e` (`tmEquivOfIso_pull`).
-
 ## Directed univalence
 
 For `A : Γᵒᵖ ⥤ Cat.{v, v}` and a discrete `B : IDiscOb.{v, v} Γ` of level `v`, over a context
@@ -56,6 +48,9 @@ discrete (`dunivIsoApp`). It is natural: the transport `pushObj g s` of a sectio
 Both types are stable under substitution by `rfl`, in the kernel (`funU_pull`, `homU_pull`), and
 so is the isomorphism, up to these equalities (`dunivIso_pull`): its restriction along `σ` is the
 isomorphism for `σ ⋙ A` and `σ ⋙ B`.
+
+As a vertical isomorphism of `IDisc` (`IDisc.isoOfNatIso`), it gives the bijection of terms
+(`Tm.mapEquiv`, `ComprehensionCategory/Term`), which is natural in `Γ` (`Tm.mapEquiv_pull`).
 
 The twisted form, `Tm_d(Γ, Hom_U(Ā, B)) ≅ Tm_d(Γ, Ā → B)`, is in `Applications/NatPi`.
 -/
@@ -111,106 +106,6 @@ theorem funDisc_toFunctor : (funDisc A B).toFunctor = Π[A] (funCodDisc A B) :=
   rfl
 
 end Disc
-
-/-! ## Terms along isomorphisms of discrete types -/
-
-section TmIso
-
-variable {Γ : Cat.{u, u}} {X Y : IDisc.{u, u}.Ty Γ}
-
-/-- The values along `k` of the image of a section `S` along `e` are equal: by the naturality of `e`
-and since `S k` is a morphism of a discrete category. -/
-theorem mapSection_eq (e : X.toFunctor ⟶ Y.toFunctor) (S : (∫ X.toFunctor).Section) {γ γ' : Γ}
-    (k : γ ⟶ γ') :
-    (Y.toFunctor.map k).toFunctor.obj ((e.app γ).toFunctor.obj (S.obj γ)) =
-      (e.app γ').toFunctor.obj (S.obj γ') :=
-  (Functor.congr_obj (congrArg Cat.Hom.toFunctor (e.naturality k)) (S.obj γ)).symm.trans
-    (congrArg (e.app γ').toFunctor.obj ((X.isDiscrete γ').eq_of_hom (S.map k)))
-
-/-- The morphism along `k` of the image of a section along `e`, an `eqToHom`. It is stated for a
-variable `k`, so that the kernel checks its type once. -/
-def mapSectionMap (e : X.toFunctor ⟶ Y.toFunctor) (S : (∫ X.toFunctor).Section) {γ γ' : Γ}
-    (k : γ ⟶ γ') :
-    (∫ Y.toFunctor).Hom k ((e.app γ).toFunctor.obj (S.obj γ))
-      ((e.app γ').toFunctor.obj (S.obj γ')) :=
-  eqToHom (mapSection_eq e S k)
-
-/-- **The image of a section of `∫ X` along a natural transformation `e : X ⟶ Y`** of discrete
-types: its values are those of `e` at the values of `S`, and its morphisms are unique. -/
-def mapSection (e : X.toFunctor ⟶ Y.toFunctor) (S : (∫ X.toFunctor).Section) :
-    (∫ Y.toFunctor).Section where
-  obj γ := (e.app γ).toFunctor.obj (S.obj γ)
-  map k := mapSectionMap e S k
-  map_id γ := @Subsingleton.elim _ ((Y.isDiscrete γ).subsingleton _ _) _ _
-  map_comp _ _ := @Subsingleton.elim _ ((Y.isDiscrete _).subsingleton _ _) _ _
-
-/-- `mapSection` preserves composites. -/
-theorem mapSection_mapSection {Z : IDisc.{u, u}.Ty Γ} (e : X.toFunctor ⟶ Y.toFunctor)
-    (e' : Y.toFunctor ⟶ Z.toFunctor) (S : (∫ X.toFunctor).Section) :
-    mapSection e' (mapSection e S) = mapSection (e ≫ e') S :=
-  Section.ext (fun _ => rfl) fun _ =>
-    @hom_heq_of_isDiscrete _ _ (Z.isDiscrete _) _ _ _ _ rfl rfl _ _
-
-/-- `mapSection` preserves identities. -/
-theorem mapSection_id (S : (∫ X.toFunctor).Section) : mapSection (𝟙 X.toFunctor) S = S :=
-  Section.ext (fun _ => rfl) fun _ =>
-    @hom_heq_of_isDiscrete _ _ (X.isDiscrete _) _ _ _ _ rfl rfl _ _
-
-/-- The sections of `∫ X` and of `∫ Y`, for a natural isomorphism `e : X ≅ Y` of discrete types. -/
-def mapSectionEquiv (e : X.toFunctor ≅ Y.toFunctor) :
-    (∫ X.toFunctor).Section ≃ (∫ Y.toFunctor).Section where
-  toFun := mapSection e.hom
-  invFun := mapSection e.inv
-  left_inv S := (mapSection_mapSection _ _ S).trans
-    ((congrArg (mapSection · S) e.hom_inv_id).trans (mapSection_id S))
-  right_inv S := (mapSection_mapSection _ _ S).trans
-    ((congrArg (mapSection · S) e.inv_hom_id).trans (mapSection_id S))
-
-/-- **The terms of isomorphic discrete types**: the terms are the sections, in the category model,
-and the sections correspond along the isomorphism. -/
-def tmEquivOfIso (e : X.toFunctor ≅ Y.toFunctor) : Tm(Γ, X) ≃ Tm(Γ, Y) :=
-  forgetComprehensionMap.tmEquiv.trans (CatModel.Tm.sectionEquiv.trans
-    ((mapSectionEquiv e).trans (CatModel.Tm.sectionEquiv.symm.trans
-      forgetComprehensionMap.tmEquiv.symm)))
-
-/-- Heterogeneously equal isomorphisms between equal discrete types give heterogeneously equal
-bijections. -/
-theorem tmEquivOfIso_hcongr {X' Y' : IDisc.{u, u}.Ty Γ} (hX : X = X') (hY : Y = Y')
-    {e : X.toFunctor ≅ Y.toFunctor} {e' : X'.toFunctor ≅ Y'.toFunctor} (he : e ≍ e')
-    {t : Tm(Γ, X)} {t' : Tm(Γ, X')} (ht : t ≍ t') : tmEquivOfIso e t ≍ tmEquivOfIso e' t' := by
-  subst hX hY
-  cases he
-  cases ht
-  rfl
-
-variable {Δ : Cat.{u, u}} (σ : Δ ⟶ Γ)
-
-/-- The image of a reindexed section along the restricted transformation is the reindexing of the
-image. -/
-theorem mapSection_pull (e : X.toFunctor ⟶ Y.toFunctor) (S : (∫ X.toFunctor).Section) :
-    mapSection (X := X⦃σ⦄) (Y := Y⦃σ⦄) (Functor.whiskerLeft σ.toFunctor e) (S.pull σ) =
-      (mapSection e S).pull σ :=
-  Section.ext (fun _ => rfl) fun _ =>
-    @hom_heq_of_isDiscrete _ _ (Y.isDiscrete _) _ _ _ _ rfl rfl _ _
-
-/-- **The bijection is natural in `Γ`**: substituted along `σ`, the term corresponding to `t` is the
-one corresponding to `t⦃σ⦄` along the restriction of `e`. -/
-theorem tmEquivOfIso_pull (e : X.toFunctor ≅ Y.toFunctor) (t : Tm(Γ, X)) :
-    tmEquivOfIso (X := X⦃σ⦄) (Y := Y⦃σ⦄) (Functor.isoWhiskerLeft σ.toFunctor e) t⦃σ⦄ =
-      (tmEquivOfIso e t)⦃σ⦄ := by
-  apply forgetComprehensionMap.tmEquiv.injective
-  refine Eq.trans ?_ (forgetComprehensionMap_tmEquiv_pull σ _).symm
-  refine Eq.trans ?_ (CatModel.Tm.ofSection_pull σ _).symm
-  change CatModel.Tm.ofSection (mapSection (X := X⦃σ⦄) (Y := Y⦃σ⦄)
-      (Functor.whiskerLeft σ.toFunctor e.hom)
-      (CatModel.Tm.toSection (forgetComprehensionMap.tmEquiv t⦃σ⦄))) = _
-  exact (congrArg (fun S => CatModel.Tm.ofSection (mapSection (X := X⦃σ⦄) (Y := Y⦃σ⦄)
-      (Functor.whiskerLeft σ.toFunctor e.hom) S))
-      ((congrArg CatModel.Tm.toSection (forgetComprehensionMap_tmEquiv_pull σ t)).trans
-        (CatModel.Tm.toSection_pull σ _))).trans
-    (congrArg CatModel.Tm.ofSection (mapSection_pull σ e.hom _))
-
-end TmIso
 
 /-! ## Directed univalence -/
 
@@ -354,16 +249,21 @@ variable (A B) in
 `Hom_U(A, B)`. Through `forgetComprehensionMap.tmEquiv`, the former are the terms of the Π-type of
 the category model. -/
 def dunivTmEquiv : Tm(Γ, funU A B) ≃ Tm(Γ, homU A B) :=
-  tmEquivOfIso (dunivIso A B)
+  Tm.mapEquiv (IDisc.isoOfNatIso (dunivIso A B))
 
 /-- **The bijection is natural in `Γ`**, up to the equalities `funU_pull` and `homU_pull`. -/
 theorem dunivTmEquiv_pull {Δ : Cat.{v + 1, v + 1}} (σ : Δ ⟶ Γ) (t : Tm(Γ, funU A B)) :
     (dunivTmEquiv A B t)⦃σ⦄.castTy (homU_pull A B σ) =
-      dunivTmEquiv (σ.toFunctor.op ⋙ A) (SmallIDisc.pull σ B) (t⦃σ⦄.castTy (funU_pull A B σ)) :=
-  eq_of_heq ((Tm.castTy_heq _ _).trans
-    ((heq_of_eq (tmEquivOfIso_pull σ (dunivIso A B) t)).symm.trans
-      (tmEquivOfIso_hcongr (funU_pull A B σ) (homU_pull A B σ) (dunivIso_pull σ)
-        (Tm.castTy_heq _ _).symm)))
+      dunivTmEquiv (σ.toFunctor.op ⋙ A) (SmallIDisc.pull σ B) (t⦃σ⦄.castTy (funU_pull A B σ)) := by
+  -- Stated in steps: elaborated as one term, the unification of the types times out.
+  have h1 := Tm.mapEquiv_pull σ (IDisc.isoOfNatIso (dunivIso A B))
+    (e' := IDisc.isoOfNatIso (X := (funU A B)⦃σ⦄) (Y := (homU A B)⦃σ⦄)
+      (Functor.isoWhiskerLeft σ.toFunctor (dunivIso A B)))
+    (IDisc.pullMap_homOfNatTrans σ (dunivIso A B).hom).symm t
+  have h2 := Tm.mapEquiv_hcongr (funU_pull A B σ) (homU_pull A B σ)
+    (IDisc.isoOfNatIso_hcongr (funU_pull A B σ) (homU_pull A B σ) (dunivIso_pull σ))
+    (Tm.castTy_heq (funU_pull A B σ) t⦃σ⦄).symm
+  exact eq_of_heq ((Tm.castTy_heq _ _).trans ((heq_of_eq h1).trans h2))
 
 end Small
 
