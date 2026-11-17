@@ -76,4 +76,4 @@ recall ComprehensionCategory.DiscreteModel.op_eq_self (hE : EmptyUnique.{u})
 
 /-- A discrete category is its own opposite. -/
 recall ComprehensionCategory.DiscreteModel.opFunctor'_obj_discrete' (S : Type u) :
-    opFunctor'.obj (Discrete.discrete' S) = Discrete.discrete' S
+    opFunctor'.obj (discrete' S) = discrete' S

@@ -37,8 +37,11 @@ values are compared up to the transports and to the first components of the sect
 **Reflexivity**: conversely, if the values of `a` and `b` agree, `homDiscAt a b` has a term
 (`homDiscAtRefl`), whose value at `γ` is the `eqToHom` of their equality, and whose transports are
 unique, the morphisms of discrete categories. In particular, if empty types are unique, a term `t`
-of a discrete type gives a term of `homDiscAt (Tm.toOp hE t) t` (`homDiscRefl`), the reflexivity
-`Refl_t` of the paper, and the transport `Tm.toOp hE` commutes with substitution (`toOp_pull`).
+of a discrete type gives a term of `homDiscAt (Tm.toOp hE t) t` (`homDiscRefl`), and the transport
+`Tm.toOp hE` commutes with substitution (`toOp_pull`). The reflexivity `Refl_t` of the paper is
+instead Hom-Intro at `t` (`Shared/HomIntro`), a term of the twisted Hom-type, which is this
+Hom-type by Twist-Disc (`Shared/TwistDisc`), with the axiom of uniqueness of empty types;
+`homDiscRefl` needs only the hypothesis.
 -/
 
 universe u

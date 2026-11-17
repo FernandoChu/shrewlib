@@ -81,12 +81,6 @@ weakened to `Γ ▹ A`. -/
 abbrev funCodDisc : ICatLax.{u, u}.Ty (Γ ▹ A) :=
   (forgetComprehensionMap.toPre.obj B)⦃𝐩 A⦄
 
-/-- Morphisms of a discrete category between equal objects are heterogeneously equal. -/
-theorem hom_heq_of_isDiscrete {C : Type u} [Category.{u} C] [IsDiscrete C] {x x' y y' : C}
-    (hx : x = x') (hy : y = y') (f : x ⟶ y) (g : x' ⟶ y') : f ≍ g := by
-  subst hx hy
-  exact heq_of_eq (Subsingleton.elim f g)
-
 /-- **The function type into a discrete type is discrete**: a morphism of sections has components
 in the discrete category `B γ`, so the sections agree, and morphisms are unique. -/
 theorem isDiscrete_piFib (γ : Γ) :

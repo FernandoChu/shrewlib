@@ -37,7 +37,9 @@ models over `Cat`. The Yoneda corollary itself and Remark `lax-ends` are not for
   reflexivity, with inverse `k ↦ j(f, k)`, Hom-Elim with the premise `k` (`yonedaEquiv`), if empty
   types are unique. One round trip is Hom-Comp, and the other is, as in the paper, Hom-Elim into
   the Hom-type `Hom_{F b}(θ, j(f, θ*))` of the discrete model, with the premise `Refl_{θ*}`,
-  followed by Hom-Disc.
+  followed by Hom-Disc. The premise is Hom-Intro at `θ*`, a term of the twisted Hom-type of the
+  discrete type `F a₀`, which is its Hom-type by Twist-Disc: the lemma uses the axiom
+  `emptyUnique`, through the op-Disc rules.
 -/
 
 universe u v

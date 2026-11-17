@@ -2,6 +2,7 @@ import ComprehensionCategory.Model.OverCat.Shared.Hom
 import ComprehensionCategory.Model.OverCat.Shared.HomDisc
 import ComprehensionCategory.Model.OverCat.Shared.Universe
 import ComprehensionCategory.Model.OverCat.Shared.Twist
+import ComprehensionCategory.Model.OverCat.Shared.OpDisc
 import ComprehensionCategory.Model.OverCat.Shared.TwistDisc
 import ComprehensionCategory.Model.OverCat.Shared.HomIntro
 import ComprehensionCategory.Model.OverCat.Shared.Pi
@@ -41,10 +42,14 @@ their conclusion a type of another, in a context of the first.
   `Γ ▹ B`. The twist of a type weakened from `Γ` is that type, seen in the displayed model,
   weakened (Twist-Weak). The twist is stable under substitution, by `rfl`, as a
   rule.
-* `TwistDisc`: the twist along a variable of a discrete type `B` does nothing (Twist-Disc). The
-  twist of `C`, in context `Γ ▹ˢ b : Bᵒᵖ`, is `C` substituted along the swap
-  `Γ ▹ˢ b : B ⟶ Γ ▹ˢ b : Bᵒᵖ`, which inverts the morphisms of the fibres of `B`, and is `C` itself
-  if empty types are unique: the swap is then the identity, by op-Disc.
+* `OpDisc`: with uniqueness of empty types as an axiom (`Logic/EmptyUniqueAxiom`), op-Disc is a
+  rewrite rule, `Bᵒᵖ ↦ B` for a discrete type `B`, in the discrete model and in the forms in which
+  `B` reaches the category model. So `Γ ▹ Bᵒᵖ = Γ ▹ B` by `rfl`. Only `TwistDisc` and the
+  `Readme`s import it.
+* `TwistDisc`: the twist along a variable of a discrete type `B` does nothing (Twist-Disc): for `C`
+  in context `Γ ▹ˢ b : Bᵒᵖ`, which is `Γ ▹ˢ b : B` by op-Disc, `twist C = catToDisp C`. The two
+  displayed categories have the same morphisms once the morphisms of the fibres of `B` are
+  identities, which discreteness allows.
 * `HomIntro`: the twisted Hom-type `Γ ▹ a : A ⊢ Homₐ(ā, a)` of a type `A` of the category model, a
   type of the displayed model whose objects over `(γ, a)` are the endomorphisms of `a`, derived from
   `Hom[A]` by twist and substitution along the diagonal; and, for a term `a₀` of `A`, the term
@@ -200,16 +205,15 @@ end Universe
 recall ComprehensionCategory.OverCat.twist_weak {Γ : Cat.{u, u}} (B C : ICatLax.{u, u}.Ty Γ) :
     twist (C⦃𝐩 (Bᵒᵖ)⦄) = (catToDisp C)⦃𝐩 B⦄
 
-/-- **Twist-Disc**: if empty types are unique, the twist along a variable of a discrete type `B` is
-the type, in context `Γ ▹ˢ b : B`, which op-Disc makes `Γ ▹ˢ b : Bᵒᵖ`. -/
+/-- **Twist-Disc**: the twist along a variable of a discrete type `B` is the type, in context
+`Γ ▹ˢ b : B`, which is `Γ ▹ˢ b : Bᵒᵖ` by the rule op-Disc, from the axiom `emptyUnique`. -/
 recall ComprehensionCategory.OverCat.twist_disc {Γ : Cat.{u, u}} (B : IDisc.{u, u}.Ty Γ)
-    (C : ICatLax.{u, u}.Ty (Γ ▹ DiscreteModel.op B)) (hE : EmptyUnique.{u}) :
-    twist (B := B.toFunctor) C ≍ catToDisp C
-
-/-- Twist-Disc with no hypothesis: the twist is the type substituted along the swap. -/
-recall ComprehensionCategory.OverCat.twist_discSwap {Γ : Cat.{u, u}} (B : IDisc.{u, u}.Ty Γ)
     (C : ICatLax.{u, u}.Ty (Γ ▹ DiscreteModel.op B)) :
-    twist (B := B.toFunctor) C = catToDisp (C⦃discSwap B⦄)
+    twist (B := B.toFunctor) C = catToDisp C
+
+/-- op-Disc is judgmental: the contexts `Γ ▹ˢ b : Bᵒᵖ` and `Γ ▹ˢ b : B` are the same. -/
+example {Γ : Cat.{u, u}} (B : IDisc.{u, u}.Ty Γ) : (Γ ▹ DiscreteModel.op B : Cat.{u, u}) = Γ ▹ B :=
+  rfl
 
 /-- **The twisted Hom-type is derivable**: the twist of the Hom-type, substituted along the
 diagonal. -/

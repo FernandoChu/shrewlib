@@ -1,4 +1,5 @@
 import Logic.EmptyUnique
+import Logic.EmptyUniqueAxiom
 
 /-!
 # Logic
@@ -10,6 +11,9 @@ results that need them rather than as axioms.
   model of Lean. It makes discrete categories their own opposites
   (`CategoryTheory/Opposite/Discrete`), and so the discrete types of the discrete model
   (op-Disc, `ComprehensionCategory/Model/OverCat/Discrete`).
+* `EmptyUniqueAxiom`: uniqueness of empty types as an axiom, `emptyUnique`, the one axiom of the
+  library. It lets op-Disc be a rewrite rule (`ComprehensionCategory/Model/OverCat/Shared/OpDisc`),
+  which a hypothesis cannot, and only that file imports it.
 -/
 
 universe u

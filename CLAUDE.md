@@ -45,7 +45,12 @@ it up to date when a folder's content changes.
   the base to be inferred. Notation such as `⟶[f]`, `≫ᵈ`, `𝟙ᵈ` is used through
   `open scoped Displayed` (or `DoubleDisplayed`).
 - No `sorry`, no new axioms, no `noncomputable`. Factorizations are data (as in `IsOpcartesian`)
-  rather than `∃!` so that constructions from them compute and reduce.
+  rather than `∃!` so that constructions from them compute and reduce. The one axiom,
+  `emptyUnique` (`Logic/EmptyUniqueAxiom`), makes op-Disc a rule in `OverCat/Shared/OpDisc`, and
+  only that file imports it; elsewhere uniqueness of empty types is a hypothesis `hE`. Only
+  `OverCat/Shared/TwistDisc`, `OverCat/Applications/Yoneda` and the `Readme`s see these rules: they
+  break constructions that look into the opposite of a discrete type (see the docstring of
+  `OpDisc`).
 - Law fields that usually hold definitionally (the laws of displayed categories and functors, of
   split (op)fibrations and D2SFibs, of (op)cartesian functors and maps of D2SFibs, …) default to
   `by intros; rfl`: omit them in instances. In a literal nested in another structure the default

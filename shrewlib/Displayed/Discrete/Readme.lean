@@ -1,13 +1,10 @@
 import Displayed.Discrete.Basic
-import Displayed.Discrete.DiscreteCat
 import Displayed.Discrete.Sigma
 import Displayed.Discrete.Straightening.Readme
 
 /-!
 # Discrete opfibrations
 
-* `DiscreteCat`: discrete categories `discrete' S`, whose morphisms are the proofs of equalities,
-  and functions between them as functors. It imports no rewrite rules.
 * `Basic`: discrete opfibrations (`DiscOpfibOb`), split opfibrations whose fibres are discrete
   categories, and the category `DiscOpfibCat` of them displayed over `Cat`, with a fully faithful
   functor forgetting the discreteness into `SplitOpfibLax`. It is a split fibration over `Cat`, by

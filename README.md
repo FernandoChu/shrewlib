@@ -33,8 +33,11 @@ files, (op)cartesian morphisms (in `Displayed/{Opfibration,Fibration}/Basic` and
 - `Examples/`: small examples of the rules.
 - `Logic/`: principles about Lean's types that are independent of its axioms, used as
   hypotheses rather than axioms: uniqueness of empty types (`EmptyUnique`), which holds in the
-  set-theoretic model of Lean.
-- `CategoryTheory/`: constructions on plain categories. `Opposite/` has the opposite functor
+  set-theoretic model of Lean. It is also an axiom (`emptyUnique`, in `EmptyUniqueAxiom`), only so
+  that op-Disc can be a rewrite rule, in the one file that imports it
+  (`ComprehensionCategory/Model/OverCat/Shared/OpDisc`).
+- `CategoryTheory/`: constructions on plain categories. `Discrete` has the discrete categories
+  `discrete' S`, whose morphisms are the proofs of equalities. `Opposite/` has the opposite functor
   `opFunctor' : Cat ⥤ Cat`, which takes the opposite structure on the same objects, so that
   `opFunctor' ⋙ opFunctor' = 𝟭 Cat` by `rfl`, and the opposite of a discrete category, which is
   the category itself if empty types are unique.

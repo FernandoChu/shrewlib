@@ -1,12 +1,12 @@
 import ComprehensionCategory.Model.OverCat.Cat.Term
 import ComprehensionCategory.TypeFormers.Unit
-import Displayed.Discrete.DiscreteCat
+import CategoryTheory.Discrete
 
 /-!
 # Unit types in the category model
 
 The unit type in context `Γ` is the constant type at the terminal category `discrete' PUnit`, the
-discrete category on one object (`Displayed/Discrete/DiscreteCat`). It is closed by `rfl`, since
+discrete category on one object (`CategoryTheory/Discrete`). It is closed by `rfl`, since
 the constant types are. Its star is the constant section `γ ↦ (γ, ⟨⟩)`, and η,
 `𝐩 (unit Γ) ≫ star.sec = 𝟙`, holds by `rfl`: an object of `Γ ⋉ unit Γ` is a pair `(γ, x)` with
 `x : PUnit`, which is `(γ, ⟨⟩)` by eta for `PUnit`, and the second component of a morphism is a
@@ -21,7 +21,7 @@ universe u
 
 namespace ComprehensionCategory.CatModel
 
-open CategoryTheory Displayed Displayed.Opfibration.Straightening Displayed.Discrete
+open CategoryTheory Displayed Displayed.Opfibration.Straightening
 
 open scoped Displayed
 

@@ -2,6 +2,7 @@ import ComprehensionCategory.Model.OverCat.Shared.HomElim
 import ComprehensionCategory.Model.OverCat.Shared.HomDisc
 import ComprehensionCategory.Model.OverCat.Shared.Pi
 import ComprehensionCategory.Model.OverCat.Shared.Universe
+import ComprehensionCategory.Model.OverCat.Shared.TwistDisc
 
 /-!
 # The Yoneda lemma
@@ -34,11 +35,16 @@ The proof is that of the paper:
 * `yonedaInv (yonedaFun θ) = θ` (`yonedaInv_yonedaFun`) uses that `F b` is discrete, and
   uniqueness of empty types (`hE : EmptyUnique`), for Hom-Disc. With `θ* := yonedaFun θ`, Hom-Elim
   with the motive the Hom-type `Hom_{F b}(θ, j(f, θ*))` of the discrete model (`yonedaHom`) and
-  the premise the reflexivity `Refl_{θ*}` (`yonedaRefl`) gives a term of this Hom-type
-  (`yonedaHomTm`), and Hom-Disc concludes. The premise is a term of `Hom_{F a₀}(θ*, θ*)`, which is
-  the motive along `r` (`yonedaHom_pull_homElimR`): the Hom-type is stable under substitution, and
-  `j(f, θ*)` is `θ*` along `r`, by Hom-Comp. This last step is definitional, by the rules, but the
-  stability of the Hom-type is not, so the premise is transported along this equality.
+  the premise `Refl_{θ*}` (`yonedaRefl`) gives a term of this Hom-type (`yonedaHomTm`), and
+  Hom-Disc concludes. The premise must be a term of the motive along `r`, which is
+  `Hom_{F a₀}(θ*, θ*)` (`yonedaHom_pull_homElimR`): the Hom-type is stable under substitution, and
+  `j(f, θ*)` is `θ*` along `r`, by Hom-Comp. As in the paper, it is Hom-Intro at `θ*` for the
+  discrete type `F a₀` (`reflAt`), a term of the twisted Hom-type `Hom_{F a₀}(θ̄*, θ*)`, which is
+  `Hom_{F a₀}(θ*, θ*)` by Twist-Disc (`twist_disc`, `Shared/TwistDisc`).
+
+Twist-Disc holds by the op-Disc rules of `Shared/OpDisc`, from the axiom `emptyUnique`, which this
+file sees through `Shared/TwistDisc`. So the lemma depends on the axiom, and not only on the
+hypothesis `hE`, which Hom-Disc and the motive still take.
 
 The file declares three rules, as conveniences (section Helpers), each oriented from left to right:
 `P⦃homElimCod a₀⦄⦃homElimR a₀⦄ ↦ P⦃a₀.sec⦄` (`pull_homElimCod_homElimR`), Hom-Comp
@@ -73,8 +79,8 @@ this file, so that the proof below reads as in the paper. Each is oriented from 
   discrete model is pushed outside substitutions, so that Hom-Comp applies under it, and no
   equation between `θ` and `j(f, θ*)` along `r` has to be carried in the discrete model.
 
-One transport remains: the premise `Refl_{θ*}` is transported to the motive along `r`
-(`yonedaRefl`), an equality of types that is not definitional (`yonedaHom_pull_homElimR`).
+One transport remains: Hom-Intro at `θ*` is transported to the motive along `r` (`yonedaRefl`),
+along Twist-Disc and equalities of types that are not definitional (`reflAt_yonedaStar_ty`).
 
 The rules are declared here only, and are seen by this file and the `Readme`s that import it. -/
 
@@ -187,11 +193,98 @@ theorem yonedaHom_pull_homElimR :
     (congrArg (fun a => homDiscAt (A := (liftDisc (ElDisc (piApp F)))⦃homElimCod a₀⦄⦃homElimR a₀⦄) a
       ((toDisc θ)⦃homElimR a₀⦄)) (toOp_pull hE (homElimR a₀) (toDisc θ)))
 
-/-- **The premise `Refl_{θ*}`**, a term of `Hom_{F a₀}(θ*, θ*)`, the motive along `r`. -/
+/-! ### The premise `Refl_{θ*}`, by Hom-Intro and Twist-Disc
+
+As in the paper, the premise is Hom-Intro at `θ*` for the discrete type `F a₀`, a term of the
+twisted Hom-type `Hom_{F a₀}(θ̄*, θ*)`, which Twist-Disc makes the Hom-type
+`Hom_{F a₀}(θ*, θ*)`. The types are stated with `F a₀` as the discrete type `F b` substituted along
+`r` (`yonedaDisc`), in the form `B.toFunctor` on which the op-Disc rules fire, so that its contexts
+with and without opposite are the same. The type of `refl_θ*` is then the motive along `r`
+(`reflAt_yonedaStar_ty`), through:
+
+* Twist-Disc (`twist_hom_yonedaTy`), substituted along `[θ*/a][θ*/b]`;
+* the inclusion of the category model into the displayed model, which commutes with substitution
+  (`catToDispComprehensionMap.obj_pull`), and whose terms are those of the category model
+  (Lift-Elim, `tmEquivCatToDisp`);
+* the substitution `[θ*/a][θ*/b]`, which is the pairing of `θ*` with itself
+  (`sec_comp_sec_weak`), along which the Hom-type of two terms is substituted;
+* the Hom-type of the discrete model, which is that of the category model (`homDiscAt_eq`), and
+  is stable under substitution (`yonedaHom_pull_homElimR`). -/
+
+/-- `F a₀`, the type of `θ*`, as a discrete type: `F b` substituted along `r`. -/
+abbrev yonedaDisc (F : Tm(Γ, copresheafTy Γ A)) (a₀ : Tm(Γ, CatModel.constTy Γ A)) :
+    IDisc.{v + 1, v + 1}.Ty Γ :=
+  (liftDisc (ElDisc (piApp F)))⦃homElimCod a₀⦄⦃homElimR a₀⦄
+
+/-- `F a₀` in the category model, as `B.toFunctor` for the discrete type `B`, the form in which the
+op-Disc rules identify it with its opposite. -/
+abbrev yonedaTy (F : Tm(Γ, copresheafTy Γ A)) (a₀ : Tm(Γ, CatModel.constTy Γ A)) :
+    ICatLax.{v + 1, v + 1}.Ty Γ :=
+  (yonedaDisc F a₀).toFunctor
+
+/-- **Twist-Disc for `F a₀`**: the twisted Hom-type of the discrete type `F a₀` is its Hom-type. -/
+theorem twist_hom_yonedaTy :
+    twist (homFunctor (yonedaTy F a₀)) = catToDisp (homFunctor (yonedaTy F a₀)) := by
+  kernel_exact twist_disc ((yonedaDisc F a₀)⦃𝐩 (yonedaDisc F a₀)⦄) (homFunctor (yonedaTy F a₀))
+
+/-- **The substitution `[t/a][t/b]` of Hom-Intro is the pairing of `t` with itself**, along which
+the Hom-type of two terms is substituted (`homAt`), checked componentwise. The opposite of `F a₀`
+is `F a₀` by the op-Disc rules, so that the two sides have the same codomain. -/
+theorem sec_comp_sec_weak (t : Tm(Γ, yonedaTy F a₀)) :
+    t.sec ≫ (t⦃𝐩 (yonedaTy F a₀)⦄).sec = consSec t.sec (t.castTy (pull_sec_op_weak t).symm) :=
+  Cat.Hom.ext (Functor.hext (fun _ => by kernel_rfl') fun _ _ _ => by kernel_rfl')
+
+/-- `θ*`, the term `θ[a₀/b, refl_a₀/f]` of `F a₀`, as a term of `yonedaTy F a₀`: the discrete term
+of `θ` substituted along `r`. -/
+abbrev yonedaStar : Tm(Γ, yonedaTy F a₀) :=
+  forgetComprehensionMap.tmEquiv ((toDisc θ)⦃homElimR a₀⦄)
+
+/-- **The type of `refl_θ*` is the motive along `r`**: the twisted Hom-type of `F a₀` substituted
+along `[θ*/a][θ*/b]` is, by Twist-Disc, the Hom-type `Hom_{F a₀}(θ*, θ*)`, seen in the displayed
+model. Each step is checked in the kernel. -/
+theorem reflAt_yonedaStar_ty :
+    ((twist (homFunctor (yonedaTy F a₀)))⦃((yonedaStar θ)⦃𝐩 (yonedaTy F a₀)⦄).sec⦄)⦃
+        (yonedaStar θ).sec⦄ =
+      catToDisp ((forgetComprehensionMap.toPre.obj (yonedaHom hE θ))⦃homElimR a₀⦄) := by
+  -- Twist-Disc, along `[θ*/a][θ*/b]`.
+  have h₁ : ((twist (homFunctor (yonedaTy F a₀)))⦃((yonedaStar θ)⦃𝐩 (yonedaTy F a₀)⦄).sec⦄)⦃
+        (yonedaStar θ).sec⦄ =
+      ((catToDisp (homFunctor (yonedaTy F a₀)))⦃((yonedaStar θ)⦃𝐩 (yonedaTy F a₀)⦄).sec⦄)⦃
+        (yonedaStar θ).sec⦄ := by
+    kernel_exact congrArg (fun T : Straightening.IProf.{v + 1, v + 1, v + 1}.Ty
+      (Γ ▹ yonedaTy F a₀ ▹ (yonedaTy F a₀)⦃𝐩 (yonedaTy F a₀)⦄) =>
+        T⦃((yonedaStar θ)⦃𝐩 (yonedaTy F a₀)⦄).sec⦄⦃(yonedaStar θ).sec⦄) twist_hom_yonedaTy
+  -- The inclusion into the displayed model commutes with substitution.
+  have h₂ : ((catToDisp (homFunctor (yonedaTy F a₀)))⦃((yonedaStar θ)⦃𝐩 (yonedaTy F a₀)⦄).sec⦄)⦃
+        (yonedaStar θ).sec⦄ =
+      catToDisp ((homFunctor (yonedaTy F a₀))⦃((yonedaStar θ)⦃𝐩 (yonedaTy F a₀)⦄).sec⦄⦃
+        (yonedaStar θ).sec⦄) := by
+    kernel_exact ((catToDispComprehensionMap.obj_pull (yonedaStar θ).sec
+      ((homFunctor (yonedaTy F a₀))⦃((yonedaStar θ)⦃𝐩 (yonedaTy F a₀)⦄).sec⦄)).trans
+      (congrArg (·⦃(yonedaStar θ).sec⦄) (catToDispComprehensionMap.obj_pull
+        ((yonedaStar θ)⦃𝐩 (yonedaTy F a₀)⦄).sec (homFunctor (yonedaTy F a₀))))).symm
+  -- The substitution `[θ*/a][θ*/b]` is the pairing of `θ*` with itself.
+  have h₃ : (homFunctor (yonedaTy F a₀))⦃((yonedaStar θ)⦃𝐩 (yonedaTy F a₀)⦄).sec⦄⦃
+        (yonedaStar θ).sec⦄ =
+      (homFunctor (yonedaTy F a₀))⦃consSec (yonedaStar θ).sec
+        ((yonedaStar θ).castTy (pull_sec_op_weak (yonedaStar θ)).symm)⦄ := by
+    kernel_exact congrArg (fun σ => (homFunctor (yonedaTy F a₀))⦃σ⦄)
+      (sec_comp_sec_weak (yonedaStar θ))
+  -- The Hom-type of the discrete model, and its stability under substitution.
+  have h₄ : (homFunctor (yonedaTy F a₀))⦃consSec (yonedaStar θ).sec
+        ((yonedaStar θ).castTy (pull_sec_op_weak (yonedaStar θ)).symm)⦄ =
+      (forgetComprehensionMap.toPre.obj (yonedaHom hE θ))⦃homElimR a₀⦄ := by
+    kernel_exact congrArg forgetComprehensionMap.toPre.obj
+      ((homDiscAt_eq (Tm.toOp hE ((toDisc θ)⦃homElimR a₀⦄)) ((toDisc θ)⦃homElimR a₀⦄)).symm.trans
+        (yonedaHom_pull_homElimR hE θ).symm)
+  exact h₁.trans (h₂.trans (congrArg catToDisp (h₃.trans h₄)))
+
+/-- **The premise `Refl_{θ*}`**, a term of `Hom_{F a₀}(θ*, θ*)`, the motive along `r`: Hom-Intro
+at `θ*` (`reflAt`), a term of the twisted Hom-type, which is the Hom-type by Twist-Disc, brought
+back to the category model (Lift-Elim). -/
 def yonedaRefl :
-    Tm(Γ, (forgetComprehensionMap.toPre.obj (yonedaHom hE θ))⦃homElimR a₀⦄) := by
-  kernel_exact forgetComprehensionMap.tmEquiv ((homDiscRefl hE ((toDisc θ)⦃homElimR a₀⦄)).castTy
-    (yonedaHom_pull_homElimR hE θ).symm)
+    Tm(Γ, (forgetComprehensionMap.toPre.obj (yonedaHom hE θ))⦃homElimR a₀⦄) :=
+  (tmEquivCatToDisp _).symm ((reflAt (yonedaStar θ)).castTy (reflAt_yonedaStar_ty hE θ))
 
 /-- **Hom-Elim: the term `j(f, Refl_{θ*})` of `Hom_{F b}(θ, j(f, θ*))`**, with the motive
 `yonedaHom` and the premise `yonedaRefl`. -/

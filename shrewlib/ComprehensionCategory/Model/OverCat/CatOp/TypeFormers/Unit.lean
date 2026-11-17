@@ -1,6 +1,6 @@
 import ComprehensionCategory.Model.OverCat.CatOp.Term
 import ComprehensionCategory.TypeFormers.Unit
-import Displayed.Discrete.DiscreteCat
+import CategoryTheory.Discrete
 
 /-!
 # Unit types in the contravariant category model
@@ -17,7 +17,7 @@ universe u
 
 namespace ComprehensionCategory.CatOpModel
 
-open CategoryTheory Displayed Displayed.Fibration.Straightening Displayed.Discrete
+open CategoryTheory Displayed Displayed.Fibration.Straightening
 
 open scoped Displayed
 

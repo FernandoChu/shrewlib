@@ -1,5 +1,5 @@
 import CategoryTheory.Opposite.Discrete
-import Displayed.Discrete.DiscreteCat
+import CategoryTheory.Discrete
 
 /-!
 # The opposite of a discrete category on a type
@@ -7,7 +7,7 @@ import Displayed.Discrete.DiscreteCat
 The opposite of a discrete category is discrete (`CategoryTheory.isDiscrete_opFunctor'_obj`, in
 `CategoryTheory/Opposite/Discrete`), which gives the opposite types of the discrete model.
 
-The discrete categories `discrete' S` of `Displayed/Discrete/DiscreteCat` are moreover their own
+The discrete categories `discrete' S` of `CategoryTheory/Discrete` are moreover their own
 opposites, by `propext` (`opFunctor'_obj_discrete'`): `t = s` and `s = t` are different types,
 but equivalent propositions. This gives Hom-op for the Hom-types, whose values are such discrete
 categories. It is not the case for every discrete category, unless empty types are unique
@@ -22,7 +22,7 @@ universe u
 
 namespace ComprehensionCategory.DiscreteModel
 
-open CategoryTheory Displayed.Discrete
+open CategoryTheory
 
 /-- **A discrete category is its own opposite**, by `propext`. -/
 theorem opCategory'_discreteCategory' (S : Type u) :
