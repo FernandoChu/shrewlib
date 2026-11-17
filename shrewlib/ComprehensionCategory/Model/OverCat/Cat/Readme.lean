@@ -1,6 +1,7 @@
 import ComprehensionCategory.Model.OverCat.Cat.Basic
 import ComprehensionCategory.Model.OverCat.Cat.Small
 import ComprehensionCategory.Model.OverCat.Cat.Term
+import ComprehensionCategory.Model.OverCat.Cat.TermRules
 import ComprehensionCategory.Model.OverCat.Cat.TypeFormers.Sigma
 import ComprehensionCategory.Model.OverCat.Cat.TypeFormers.Op
 import ComprehensionCategory.Model.OverCat.Cat.TypeFormers.Unit
@@ -31,6 +32,9 @@ The files give its ingredients:
   terms are the functors `Γ ⥤ K` (`Tm.constEquiv`), naturally in `Γ`; the terms are the sections
   of the unstraightening (`Tm.sectionEquiv`), substitution is their reindexing, and the variable
   substituted along the section of a term is the term (`var_pull_sec`).
+* `TermRules`: the rules by which terms compute: the first component of `t.sec γ` is `γ`, and
+  the section of a substituted term is that of the reindexed section, so that constructions of the
+  internal language from a term need no transport. They are imported only where they are used.
 * `TypeFormers/Sigma`: Σ-types, whose pairing is the inverse of the counit of
   straightening–unstraightening at the composite.
 * `TypeFormers/Op`: opposite types, `A ⋙ opFunctor'`, whose rules hold by `rfl`, with the

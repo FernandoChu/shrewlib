@@ -200,25 +200,38 @@ theorem natSectionEquiv_hcongr {F F' G G' : (∫ B).Section} (hF : F = F') (hG :
   rfl
 
 /-- The natural transformation of the reindexing of a section is the reindexing of its natural
-transformation. -/
-theorem toNatHom_pull (S : (twistedHomAtDisp F G).Section) :
-    toNatHom (B := B⦃σ⦄) (F := F.pull σ) (G := G.pull σ) (S.pull σ) =
-      Section.Hom.pull σ (toNatHom S) :=
-  Section.Hom.ext fun _ => rfl
+transformation. The reindexed section is a section of `twistedHomAtDisp (F.pull σ) (G.pull σ)` by
+`twistedHomAtDisp_pull`, which the kernel checks: the statement is for any section `S'` of it
+heterogeneously equal to the reindexed one, so that the elaborator does not compare the two
+displayed categories. -/
+theorem toNatHom_pull (S : (twistedHomAtDisp F G).Section)
+    (S' : (twistedHomAtDisp (B := B⦃σ⦄) (F.pull σ) (G.pull σ)).Section) (h : S' ≍ S.pull σ) :
+    toNatHom S' = Section.Hom.pull σ (toNatHom S) := by
+  have hobj : ∀ {D D' : Displayed.{u, u} Δ} (_ : D = D') {T : D.Section} {T' : D'.Section},
+      T ≍ T' → ∀ δ, T.obj δ ≍ T'.obj δ := by
+    rintro _ _ rfl _ _ ⟨⟩ _
+    rfl
+  exact Section.Hom.ext fun δ => eq_of_heq (hobj (twistedHomAtDisp_pull σ F G).symm h δ)
 
 /-- **The bijection is natural in `Γ`**: the natural transformation of a substituted term is the
 reindexing of that of the term. -/
 theorem natEquiv_pull (f g : Tm(Γ, B)) (t : Tm(Γ, twistedHomAt f g)) :
     natEquiv f⦃σ⦄ g⦃σ⦄ (t⦃σ⦄.castTy (twistedHomAt_pull σ f g)) ≍
       Section.Hom.pull σ (natEquiv f g t) := by
-  have ht : t⦃σ⦄ ≍ DisplayedModel.Tm.ofSection ((DisplayedModel.Tm.toSection t).pull σ) :=
-    (heq_of_eq (congrArg (·⦃σ⦄) (DisplayedModel.Tm.sectionEquiv.left_inv t).symm)).trans
-      (DisplayedModel.Tm.ofSection_pull σ _)
-  refine (natSectionEquiv_hcongr (Tm.toSection_pull σ f) (Tm.toSection_pull σ g)
-    ((Tm.castTy_heq _ _).trans ht)).trans ?_
-  refine heq_of_eq ((congrArg natSectionEquiv
-    (DisplayedModel.Tm.sectionEquiv.right_inv _)).trans ?_)
-  exact toNatHom_pull σ _
+  have hD := twistedHomAtDisp_pull σ (Tm.toSection f) (Tm.toSection g)
+  -- The reindexed section of `t`, as a section of the twisted Hom-type of the reindexed sections.
+  obtain ⟨S', hS'⟩ : ∃ S' : (twistedHomAtDisp (B := B⦃σ⦄) ((Tm.toSection f).pull σ)
+      ((Tm.toSection g).pull σ)).Section, S' ≍ (DisplayedModel.Tm.toSection t).pull σ :=
+    ⟨cast (congrArg Displayed.Section hD) _, cast_heq _ _⟩
+  have ht : t⦃σ⦄ ≍ DisplayedModel.Tm.ofSection S' :=
+    ((heq_of_eq (congrArg (·⦃σ⦄) (DisplayedModel.Tm.sectionEquiv.left_inv t).symm)).trans
+      (DisplayedModel.Tm.ofSection_pull σ _)).trans
+      (DisplayedModel.Tm.ofSection_hext hD hS'.symm)
+  have hX : t⦃σ⦄.castTy (twistedHomAt_pull σ f g) ≍ DisplayedModel.Tm.ofSection S' :=
+    (Tm.castTy_heq _ _).trans ht
+  refine (natSectionEquiv_hcongr (Tm.toSection_pull σ f) (Tm.toSection_pull σ g) hX).trans ?_
+  exact heq_of_eq ((congrArg natSectionEquiv
+    (DisplayedModel.Tm.sectionEquiv.right_inv S')).trans (toNatHom_pull σ _ S' hS'))
 
 end Pull
 

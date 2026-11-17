@@ -1,12 +1,13 @@
 import Mathlib.CategoryTheory.Bicategory.Basic
+import Tactic.KernelTactic
 
 /-!
 # `kernel_rfl`
 
 `kernel_rfl` closes a goal `a = b` or `HEq a b` by reflexivity, checked in the kernel rather than
 the elaborator. For equations of 2-cells, it first recomputes the implicit 1-cells of whiskerings
-from the types of their 2-cells (`KernelRfl.canonicalizeWhiskers`), and compares the weak head
-normal forms of both sides.
+from the types of their 2-cells (`KernelRfl.canonicalizeWhiskers`), and goes through the weak head
+normal form of the left-hand side.
 -/
 
 open CategoryTheory
@@ -38,9 +39,12 @@ of many 1-cells induced by universal properties.
 
 If the kernel does not identify the two sides of an equation directly, they are compared through
 their forms with canonical implicit arguments (`KernelRfl.canonicalizeWhiskers`) and the weak
-head normal forms of these, computed by the kernel: when it compares two applications of the same
-head, it compares their arguments first, which can fail where rewriting both sides would
-succeed. -/
+head normal form of that of the left-hand side, computed by the kernel: when it compares two
+applications of the same head, it compares their arguments first, which can fail where rewriting
+both sides would succeed.
+
+As for `kernel_exact`, the kernel makes each comparison once, when it checks the auxiliary theorem
+that closes the goal (`KernelTactic.close`). -/
 elab "kernel_rfl" : tactic => withMainContext do
   let goal ← getMainGoal
   let ty ← instantiateMVars (← goal.getType)
@@ -48,24 +52,22 @@ elab "kernel_rfl" : tactic => withMainContext do
     throwError "kernel_rfl: the goal contains metavariables"
   let env ← getEnv
   let lctx ← getLCtx
-  let defEq (a b : Expr) : MetaM Bool := do
-    match Kernel.isDefEq env lctx a b with
-    | .ok r => pure r
-    | .error _ => throwError "kernel_rfl: the kernel failed to check the equation"
+  let msg : MessageData := "kernel_rfl: the two sides are not definitionally equal"
   let whnf (e : Expr) : MetaM Expr := do
     match Kernel.whnf env lctx e with
     | .ok e => pure e
     | .error _ => throwError "kernel_rfl: the kernel failed to reduce the equation"
   if let some (α, lhs, rhs) := ty.eq? then
-    if ← defEq lhs rhs then
-      goal.assign (← mkEqRefl lhs)
-    else
+    let direct ← try
+        KernelTactic.close goal ty (← mkEqRefl lhs) msg
+        pure true
+      catch ex =>
+        if ex.isRuntime then throw ex
+        pure false
+    unless direct do
       let cl ← KernelRfl.canonicalizeWhiskers lhs
       let cr ← KernelRfl.canonicalizeWhiskers rhs
       let nl ← whnf cl
-      let nr ← whnf cr
-      unless ← defEq nl nr do
-        throwError "kernel_rfl: the two sides are not definitionally equal"
       let u ← getLevel α
       let step (a b : Expr) : MetaM Expr := do
         mkExpectedTypeHint (mkApp2 (mkConst ``Eq.refl [u]) α a) (← mkEq a b)
@@ -73,10 +75,9 @@ elab "kernel_rfl" : tactic => withMainContext do
         mkApp6 (mkConst ``Eq.trans [u]) α a b c h₁ h₂
       let h := trans (← step lhs cl) (trans (← step cl nl) (trans (← step nl cr)
         (← step cr rhs) nl cr rhs) cl nl rhs) lhs cl rhs
-      goal.assign h
-  else if let some (α, lhs, β, rhs) := ty.heq? then
-    unless (← defEq α β) && (← defEq lhs rhs) do
-      throwError "kernel_rfl: the two sides are not definitionally equal"
-    goal.assign (← mkHEqRefl lhs)
+      KernelTactic.close goal ty h msg
+  else if (ty.heq?).isSome then
+    let some (_, lhs, _, _) := ty.heq? | unreachable!
+    KernelTactic.close goal ty (← mkHEqRefl lhs) msg
   else
     throwError "kernel_rfl: the goal is not an equation"

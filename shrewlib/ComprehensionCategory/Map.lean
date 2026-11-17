@@ -20,20 +20,30 @@ followed by the comprehension functor of `E`. The map is
   inverses, and
 * *strict* (`StrictComprehensionMap`) if the two composites into `cod C'` are equal: on objects
   (`compr_obj`, on the underlying `PreStrictComprehensionMap`), so that `F.obj (Γ ▹ A)` is
-  `F.obj Γ ▹ obj A` and `F.map (𝐩 A)` is `𝐩 (obj A)`, and on morphisms (`compr_map`).
+  `F.obj Γ ▹ obj A` and `F.map (𝐩 A)` is `𝐩 (obj A)`, and on morphisms (`compr_map`); and if it
+  preserves the chosen cartesian lifts: substitution of types (`obj_pull`,
+  `obj A⦃σ⦄ = (obj A)⦃F.map σ⦄`) and the lifts themselves (`map_clift`).
 
-Both equations of a strict map are rewrite rules. The equation on objects makes the one on
-morphisms well-typed as a plain equation, and with both, a strict map is pseudo with identity
-comparisons (`StrictComprehensionMap.toPseudo`), whose laws hold by `rfl`.
+The two equations on the comprehension functors are rewrite rules. The equation on objects makes
+the one on morphisms well-typed as a plain equation, and with both, a strict map is pseudo with
+identity comparisons (`StrictComprehensionMap.toPseudo`), whose laws hold by `rfl`. The
+preservation of the chosen lifts is not a rule: `obj_pull`, oriented as for `CartesianFunctor`,
+would rewrite `obj A⦃σ⦄` to a form on which `compr_obj` no longer applies. So `map_clift` is a
+heterogeneous equality, and in the models both hold by `rfl`.
 
 All three kinds have identities and compose, over the identity and composite functors; for strict
-maps, the axioms of the identity and the composite hold by `rfl`.
+maps, the axioms on the comprehension functors of the identity and the composite hold by `rfl`.
 
 A strict map sends the terms of `A` to terms of `obj A` (`StrictComprehensionMap.mapTm`): the
 image of a section of `𝐩 A` is a section of `F.map (𝐩 A)`, which is `𝐩 (obj A)`. Over the identity,
 this is a bijection `Tm(Γ, A) ≃ Tm(Γ, obj A)` (`StrictComprehensionMap.tmEquiv`), with the same
 sections, whose laws hold by `rfl`. These are the rules of Kovács' strict family inclusions,
 Lift-Intro and Lift-Elim, while Lift-Ext, `Γ ▹ obj A = Γ ▹ A`, is the rule `compr_obj`.
+
+Preserving the chosen lifts, a strict map preserves the morphisms `𝐪`
+(`StrictComprehensionMap.q_obj`), and over the identity the bijection on terms commutes with
+substitution (`StrictComprehensionMap.tmEquiv_pull`), heterogeneously: the two terms are of the
+types `obj A⦃σ⦄` and `(obj A)⦃σ⦄`.
 -/
 
 universe v₁ u₁ v₂ u₂ v₃ u₃ v₄ u₄ v₅ u₅ v₆ u₆
@@ -85,14 +95,25 @@ structure PreStrictComprehensionMap extends DispFunctor F D E where
 attribute [rewrite_rule] PreStrictComprehensionMap.compr_obj
 
 /-- A strict map of comprehension categories: a pre-strict map with which the comprehension
-functors commute on morphisms too. As for `SplitFib`, the pre-strict map is a field rather than a
-parent, so that the rule `compr_obj` applies to the axiom on morphisms, which is a rule too. -/
+functors commute on morphisms too, and which preserves the chosen cartesian lifts, hence
+substitution. As for `SplitFib`, the pre-strict map is a field rather than a parent, so that the
+rule `compr_obj` applies to the axiom on morphisms, which is a rule too.
+
+The preservation of the chosen lifts is not a rule: oriented as for `CartesianFunctor`, `obj_pull`
+would rewrite `obj A⦃σ⦄` to `(obj A)⦃F.map σ⦄`, on which `compr_obj` no longer applies. So the
+lifts are compared heterogeneously (`map_clift`), their domains being equal by `obj_pull`. -/
 structure StrictComprehensionMap where
   /-- The underlying pre-strict map. -/
   toPre : PreStrictComprehensionMap F D E
   /-- The comprehension functors commute on morphisms. -/
   compr_map : ∀ {Γ Γ' : C} {f : Γ ⟶ Γ'} {A : D.Ty Γ} {B : D.Ty Γ'} (φ : A ⟶[f] B),
     E.compr.map (toPre.map φ) = (codMap F).map (D.compr.map φ) := by intros; rfl
+  /-- Substitution of types is preserved: `obj A⦃σ⦄` is `(obj A)⦃F.map σ⦄`. -/
+  obj_pull : ∀ {Δ Γ : C} (σ : Δ ⟶ Γ) (A : D.Ty Γ),
+    toPre.obj (Fib.pull σ A) = Fib.pull (F.map σ) (toPre.obj A) := by intros; rfl
+  /-- The chosen cartesian lifts are preserved. -/
+  map_clift : ∀ {Δ Γ : C} (σ : Δ ⟶ Γ) (A : D.Ty Γ),
+    toPre.map (Fib.clift σ A) ≍ Fib.clift (F.map σ) (toPre.obj A) := by intros; rfl
 
 attribute [rewrite_rule] StrictComprehensionMap.compr_map
 
@@ -171,12 +192,25 @@ def StrictComprehensionMap.id : StrictComprehensionMap (𝟭 C) D D where
   toPre.isCartesianMap H := H
   toPre.compr_obj _ := rfl
 
-/-- The composite of strict maps, whose axioms hold by `rfl` through the rules for `M` and `N`. -/
+/-- A displayed functor respects heterogeneous equality of morphisms with equal domains. -/
+theorem DispFunctor.map_heq_of_dom (H : DispFunctor G E E') {a a' : C'} {f : a ⟶ a'}
+    {x x' : E.Ob a} {y : E.Ob a'} (hx : x = x') {φ : x ⟶[f] y} {φ' : x' ⟶[f] y} (h : φ ≍ φ') :
+    H.map φ ≍ H.map φ' := by
+  subst hx
+  cases h
+  rfl
+
+/-- The composite of strict maps. The axioms on the comprehension functors hold by `rfl` through
+the rules for `M` and `N`. -/
 def StrictComprehensionMap.comp (M : StrictComprehensionMap F D E)
     (N : StrictComprehensionMap G E E') : StrictComprehensionMap (F ⋙ G) D E' where
   toPre.toDispFunctor := M.toPre.toDispFunctor.comp N.toPre.toDispFunctor
   toPre.isCartesianMap H := N.toPre.isCartesianMap (M.toPre.isCartesianMap H)
   toPre.compr_obj _ := rfl
+  obj_pull σ A := (congrArg N.toPre.obj (M.obj_pull σ A)).trans (N.obj_pull (F.map σ) _)
+  map_clift σ A :=
+    (DispFunctor.map_heq_of_dom N.toPre.toDispFunctor (M.obj_pull σ A) (M.map_clift σ A)).trans
+      (N.map_clift (F.map σ) _)
 
 end Comp
 
@@ -200,6 +234,40 @@ def StrictComprehensionMap.tmEquiv {D : Displayed.{v₃, u₃} C} [Fib D] [Compr
   invFun s := ⟨s.sec, s.sec_proj⟩
   left_inv _ := rfl
   right_inv _ := rfl
+
+/-- The comprehension functor respects heterogeneous equality of morphisms with equal domains. -/
+theorem extMap_heq {E : Displayed.{v₄, u₄} C'} [Fib E] [Comprehension E] {a a' : C'} {f : a ⟶ a'}
+    {x x' : E.Ob a} {y : E.Ob a'} (hx : x = x') {φ : x ⟶[f] y} {φ' : x' ⟶[f] y} (h : φ ≍ φ') :
+    E.extMap φ ≍ E.extMap φ' := by
+  subst hx
+  cases h
+  rfl
+
+/-- **A strict map preserves the morphisms `𝐪`**: `𝐪(F.map σ, obj A)` is `F.map 𝐪(σ, A)`, since it
+preserves the chosen lifts and commutes with the comprehension functors. -/
+theorem StrictComprehensionMap.q_obj (M : StrictComprehensionMap F D E) {Δ Γ : C} (σ : Δ ⟶ Γ)
+    (A : D.Ty Γ) : 𝐪(F.map σ, M.toPre.obj A) ≍ F.map 𝐪(σ, A) :=
+  (extMap_heq (M.obj_pull σ A).symm (M.map_clift σ A).symm).trans
+    (heq_of_eq (congrArg (fun ψ => ψ.1) (M.compr_map (Fib.clift σ A))))
+
+/-- A section of a type equal to `B⦃σ⦄`, over a term `t` along a morphism equal to `𝐪(σ, B)`, is
+`t⦃σ⦄`. -/
+theorem Tm.heq_pull_of_sec_comp {E : Displayed.{v₄, u₄} C} [Fib E] [Comprehension E] {Δ Γ : C}
+    (σ : Δ ⟶ Γ) {B : E.Ty Γ} (t : Tm(Γ, B)) {B' : E.Ty Δ} (hB : B' = B⦃σ⦄) (s : Tm(Δ, B'))
+    (q' : Δ ▹ B' ⟶ Γ ▹ B) (hq : q' ≍ 𝐪(σ, B)) (h : s.sec ≫ q' = σ ≫ t.sec) : s ≍ t⦃σ⦄ := by
+  subst hB
+  cases hq
+  exact heq_of_eq (Tm.pull_unique σ t s h)
+
+/-- **Over the identity, a strict map commutes with the substitution of terms**: it preserves the
+morphisms `𝐪`, so the image of `t⦃σ⦄` is the section over the image of `t` along `𝐪(σ, obj A)`.
+The two terms are of the types `obj A⦃σ⦄` and `(obj A)⦃σ⦄`, equal by `obj_pull`. -/
+theorem StrictComprehensionMap.tmEquiv_pull {D : Displayed.{v₃, u₃} C} [Fib D] [Comprehension D]
+    {E : Displayed.{v₄, u₄} C} [Fib E] [Comprehension E] (M : StrictComprehensionMap (𝟭 C) D E)
+    {Δ Γ : C} (σ : Δ ⟶ Γ) {A : D.Ty Γ} (t : Tm(Γ, A)) :
+    M.tmEquiv (t⦃σ⦄) ≍ (M.tmEquiv t)⦃σ⦄ :=
+  Tm.heq_pull_of_sec_comp σ (M.tmEquiv t) (M.obj_pull σ A) (M.tmEquiv (t⦃σ⦄)) 𝐪(σ, A)
+    (M.q_obj σ A).symm (Tm.pull_sec_q σ t)
 
 end Tm
 

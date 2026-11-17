@@ -41,7 +41,8 @@ Two more folders relate them:
   Hom-types in the category model, with Hom-Disc if empty types are unique, the category model has
   Coquand-style universes of the discrete types and of the contravariant types, and
   the twist of a type of the category model, contravariant in its last variable, is a type of the
-  displayed model, covariant in it, which gives the twisted Hom-types, their term `refl`, and
+  displayed model, covariant in it, and is the type itself along a variable of a discrete type
+  (Twist-Disc). The twist gives the twisted Hom-types, their term `refl`, and
   their elimination and computation rules, the chosen lifts of the comma AWFS on `Cat`. The
   category model has Π-types over the contravariant one: `Π[A] B` sends `γ` to the sections of
   `∫ B` over the fibre `A γ`. The terms of the opposite of a Σ-type are pairs of a term of `Aᵒᵖ`
@@ -64,9 +65,9 @@ One folder uses them:
   terms of the twisted Hom-type `Hom_B(f̄, g)` of two terms are the natural transformations from
   `f` to `g`; the terms of a discrete type `G` in context `Γ ▹ x : F` are the natural
   transformations `F ⟶ G`, through the twisted function type and twisted directed univalence; and
-  transport by Hom-Elim, whose substitution along the reflexivity is a bijection between the terms
-  of `P b` over the context of Hom-Elim and those of `P a`, for `P` discrete, if empty types are
-  unique.
+  the lemma before the Yoneda corollary: for `A` a type in the empty context and `F : A → U_s`,
+  substitution along the reflexivity is a bijection between the terms of `F b` over the context of
+  Hom-Elim based at `a₀` and those of `F a₀`, with inverse Hom-Elim, if empty types are unique.
 
 A result about a single model goes in its folder, a type former in the `TypeFormers/` folder of the
 model of its types, or in `Shared/` if its premises are types of another model, and a result

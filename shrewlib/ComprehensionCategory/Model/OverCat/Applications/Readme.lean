@@ -1,7 +1,7 @@
 import ComprehensionCategory.Model.OverCat.Applications.NatHom
 import ComprehensionCategory.Model.OverCat.Applications.DirectedUnivalence
 import ComprehensionCategory.Model.OverCat.Applications.NatPi
-import ComprehensionCategory.Model.OverCat.Applications.Transport
+import ComprehensionCategory.Model.OverCat.Applications.Yoneda
 
 /-!
 # Applications
@@ -31,14 +31,13 @@ models over `Cat`. The Yoneda corollary itself and Remark `lax-ends` are not for
   categories of `F̄ → G` and of `Hom_U(F̄, G)` built fibrewise (`twistedDunivEquiv`), and
   `natEquiv` at the universe. The bijection sends `θ` to the transformation whose component at `γ`
   sends `x` to the value of `θ` at `(γ, x)`, and it is natural in `Γ`.
-* `Transport`: the lemma before the Yoneda corollary. Transport `j(f, r, r)` by Hom-Elim, and,
-  for a discrete type `P` in context `Γ ▹ a : A`, the bijection between the terms of `P b` in
-  context `Γ ▹ b : A ▹ a : A ▹ f : Hom_A(ā, b)` and those of `P a` in context `Γ ▹ a : A`,
-  substitution along the reflexivity, with inverse the substitution of `r := k` in transport
-  (`yonedaEquiv`), if empty types are unique. One round trip is Hom-Comp, and the other is, as in
-  the paper, Hom-Elim into the Hom-type of the discrete model followed by Hom-Disc: two terms of a
-  discrete type over the context of Hom-Elim that agree along the reflexivity are equal
-  (`eq_of_pull_reflSec`). The bijection is natural in `Γ`, and so is transport.
+* `Yoneda`: the lemma before the Yoneda corollary. For a type `A` in the empty context and terms
+  `F : A → U_s` and `a₀ : A` in context `Γ`, the bijection between the terms of `F b` in context
+  `Γ ▹ b : A ▹ f : Homₐ(ā₀, b)` and those of `F a₀` in context `Γ`, substitution along the
+  reflexivity, with inverse `k ↦ j(f, k)`, Hom-Elim with the premise `k` (`yonedaEquiv`), if empty
+  types are unique. One round trip is Hom-Comp, and the other is, as in the paper, Hom-Elim into
+  the Hom-type `Hom_{F b}(θ, j(f, θ*))` of the discrete model, with the premise `Refl_{θ*}`,
+  followed by Hom-Disc.
 -/
 
 universe u v
@@ -152,43 +151,41 @@ recall ComprehensionCategory.OverCat.natPiEquiv_pull {Δ : Cat.{v + 1, v + 1}} (
 
 end NatPi
 
-/-! ## Transport and the Yoneda lemma -/
+/-! ## The Yoneda lemma -/
 
-section Transport
+section Yoneda
 
-variable {Γ : Cat.{u, u}} {A : ICatLax.{u, u}.Ty Γ}
+variable {Γ : Cat.{v + 1, v + 1}} {A : Cat.{v + 1, v + 1}} {F : Tm(Γ, copresheafTy Γ A)}
+  {a₀ : Tm(Γ, CatModel.constTy Γ A)}
 
-/-- **Transport**, `j(f, r, r) : P b`, and `j(refl_a, r, r) ≡ r`. -/
-recall ComprehensionCategory.OverCat.transport (P : ICatLax.{u, u}.Ty (Γ ▹ A)) :
-    Tm(elimCtx A P, transportMotive P)
-
-recall ComprehensionCategory.OverCat.transport_refl (P : ICatLax.{u, u}.Ty (Γ ▹ A)) :
-    (transport P)⦃homR A P⦄ = var P
-
-/-- Two terms of a discrete type over the context of Hom-Elim that agree along the reflexivity are
-equal, by Hom-Elim and Hom-Disc. -/
-recall ComprehensionCategory.OverCat.eq_of_pull_reflSec (hE : EmptyUnique.{u})
-    {B : IDisc.{u, u}.Ty (homCtx A)} (a b : Tm(homCtx A, B)) (h : b⦃reflSec A⦄ = a⦃reflSec A⦄) :
-    a = b
-
-/-- **The lemma before the Yoneda corollary**: the terms of `P b` over the context of Hom-Elim are
-those of `P a`, for a discrete type `P`, if empty types are unique. -/
-recall ComprehensionCategory.OverCat.yonedaEquiv (hE : EmptyUnique.{u})
-    {Pd : IDisc.{u, u}.Ty (Γ ▹ A)} :
-    Tm(homCtx A, (forgetComprehensionMap.toPre.obj Pd)⦃homCod A⦄) ≃
-      Tm(Γ ▹ A, forgetComprehensionMap.toPre.obj Pd)
-
-/-- The bijection is substitution along the reflexivity, with inverse the substitution of `r := k`
-in transport. -/
-example (hE : EmptyUnique.{u}) {Pd : IDisc.{u, u}.Ty (Γ ▹ A)}
-    (θ : Tm(homCtx A, (forgetComprehensionMap.toPre.obj Pd)⦃homCod A⦄)) :
-    yonedaEquiv hE θ = θ⦃reflSec A⦄ :=
+/-- `A → U_s`, for a category `A`, a type in the empty context: the Π-type of the universe of
+discrete types over the constant type at `A`. -/
+example : copresheafTy Γ A = piTy (CatOpModel.constTy Γ A) (UDisc (Γ ▹ CatOpModel.constTy Γ A)) :=
   rfl
 
-/-- The bijection is natural in `Γ`. -/
-example {Δ : Cat.{u, u}} (σ : Δ ⟶ Γ) {P : ICatLax.{u, u}.Ty (Γ ▹ A)}
-    (θ : Tm(homCtx A, P⦃homCod A⦄)) :
-    yonedaFun (A := A⦃σ⦄) (P := P⦃𝐪(σ, A)⦄) θ⦃homCtxMap σ A⦄ = (yonedaFun θ)⦃𝐪(σ, A)⦄ :=
-  yonedaFun_pull σ θ
+/-- `F a₀` is the substitution of `F b` along the section of `a₀`. -/
+example : appAt F a₀ = (app F)⦃a₀.sec⦄ :=
+  rfl
 
-end Transport
+/-- `j(refl_a₀, k) ≡ k`, by Hom-Comp. -/
+recall ComprehensionCategory.OverCat.yonedaFun_yonedaInv (k : Tm(Γ, appAt F a₀)) :
+    yonedaFun (yonedaInv k) = k
+
+/-- `j(f, θ*) ≡ θ`, by Hom-Elim into `Hom_{F b}(θ, j(f, θ*))` with the premise `Refl_{θ*}`, and
+Hom-Disc. -/
+recall ComprehensionCategory.OverCat.yonedaInv_yonedaFun (hE : EmptyUnique.{v + 1})
+    (θ : Tm(homElimCtx a₀, (app F)⦃homElimCod a₀⦄)) : yonedaInv (yonedaFun θ) = θ
+
+/-- **The lemma before the Yoneda corollary**: for `A` a type in the empty context, `F : A → U_s`
+and `a₀ : A`, the terms of `F b` over the context of Hom-Elim are those of `F a₀`, if empty types
+are unique. -/
+recall ComprehensionCategory.OverCat.yonedaEquiv (F : Tm(Γ, copresheafTy Γ A))
+    (a₀ : Tm(Γ, CatModel.constTy Γ A)) (hE : EmptyUnique.{v + 1}) :
+    Tm(homElimCtx a₀, (app F)⦃homElimCod a₀⦄) ≃ Tm(Γ, appAt F a₀)
+
+/-- The bijection is the substitution along the reflexivity. -/
+example (hE : EmptyUnique.{v + 1}) (θ : Tm(homElimCtx a₀, (app F)⦃homElimCod a₀⦄)) :
+    yonedaEquiv F a₀ hE θ = θ⦃homElimR a₀⦄ :=
+  rfl
+
+end Yoneda

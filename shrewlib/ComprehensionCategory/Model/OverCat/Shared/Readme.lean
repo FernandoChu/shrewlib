@@ -2,6 +2,7 @@ import ComprehensionCategory.Model.OverCat.Shared.Hom
 import ComprehensionCategory.Model.OverCat.Shared.HomDisc
 import ComprehensionCategory.Model.OverCat.Shared.Universe
 import ComprehensionCategory.Model.OverCat.Shared.Twist
+import ComprehensionCategory.Model.OverCat.Shared.TwistDisc
 import ComprehensionCategory.Model.OverCat.Shared.HomIntro
 import ComprehensionCategory.Model.OverCat.Shared.Pi
 import ComprehensionCategory.Model.OverCat.Shared.OpSigma
@@ -40,10 +41,15 @@ their conclusion a type of another, in a context of the first.
   `Γ ▹ B`. The twist of a type weakened from `Γ` is that type, seen in the displayed model,
   weakened (Twist-Weak). The twist is stable under substitution, by `rfl`, as a
   rule.
+* `TwistDisc`: the twist along a variable of a discrete type `B` does nothing (Twist-Disc). The
+  twist of `C`, in context `Γ ▹ˢ b : Bᵒᵖ`, is `C` substituted along the swap
+  `Γ ▹ˢ b : B ⟶ Γ ▹ˢ b : Bᵒᵖ`, which inverts the morphisms of the fibres of `B`, and is `C` itself
+  if empty types are unique: the swap is then the identity, by op-Disc.
 * `HomIntro`: the twisted Hom-type `Γ ▹ a : A ⊢ Homₐ(ā, a)` of a type `A` of the category model, a
   type of the displayed model whose objects over `(γ, a)` are the endomorphisms of `a`, derived from
-  `Hom[A]` by twist and substitution along the diagonal, and its term `refl A`, the
-  identities (Hom-Intro).
+  `Hom[A]` by twist and substitution along the diagonal; and, for a term `a₀` of `A`, the term
+  `reflAt a₀ : Homₐ(ā₀, a₀)` of the identities of its values (Hom-Intro), stable under
+  substitution, by the rules of `Cat/TermRules`.
 * `Pi`: the Π-types `Π[A] B` of the category model over the contravariant one, for `A` a
   functor `Γᵒᵖ ⥤ Cat` and `B` a functor `Γ ⋉ A ⥤ Cat`: the functor sending `γ` to the category of
   sections of `∫ B` over the fibre `A γ`, stable under substitution by `rfl`. Abstraction and
@@ -60,12 +66,14 @@ their conclusion a type of another, in a context of the first.
   is a functor `A γ ⥤ B γ`, and over `g` a natural transformation `B g ∘ T γ ⇒ T γ' ∘ A g`, and
   these are the sections of `∫ B` over `Γ ▹ A`. Both `Ā → B` and this bijection are stable under
   substitution.
-* `HomElim`: Hom-Elim and Hom-Comp. For `X` in context `Γ ▹ a : A` and a motive `D` of the category
-  model in context `Γ ▹ b : A ▹ a : A ▹ f : Homₐ(ā, b) ▹ x : X`, a term `d` of
-  `D[ā/a, a/b, refl_a/f]` gives the term `j(f, x, d)` of `D`, with `j(refl_a, x, d) ≡ d`, stable
-  under substitution. As in the paper, `j` is the chosen lift of the comma AWFS on `Cat` from the
-  left adjoint right inverse `r : (γ, a, x) ↦ (γ, a, a, 𝟙 a, x)`, an `L`-coalgebra, to the split
-  opfibration `𝐩 D`, an `R`-algebra; stability comes from the functoriality of the chosen lifts.
+* `HomElim`: Hom-Elim and Hom-Comp, based at a term `a₀` of `A`. For a
+  motive `D` of the category model in context `Γ ▹ b : A ▹ f : Homₐ(ā₀, b)`, the category `a₀/A`,
+  whose Hom-type is the twisted one substituted along `[a₀/a]`, a term `d` of
+  `D[a₀/b, refl_a₀/f]` in context `Γ` gives the term `j(f, d)` of `D`, with `j(refl_a₀, d) ≡ d`,
+  stable under substitution. As in the paper, `j` is the chosen lift of the comma AWFS on `Cat`
+  from the left adjoint right inverse `r : γ ↦ (γ, a₀ γ, 𝟙)`, an `L`-coalgebra whose right adjoint
+  is the projection to `Γ`, to the split opfibration `𝐩 D`, an `R`-algebra; stability comes from
+  the functoriality of the chosen lifts.
 -/
 
 universe u
@@ -192,15 +200,31 @@ end Universe
 recall ComprehensionCategory.OverCat.twist_weak {Γ : Cat.{u, u}} (B C : ICatLax.{u, u}.Ty Γ) :
     twist (C⦃𝐩 (Bᵒᵖ)⦄) = (catToDisp C)⦃𝐩 B⦄
 
+/-- **Twist-Disc**: if empty types are unique, the twist along a variable of a discrete type `B` is
+the type, in context `Γ ▹ˢ b : B`, which op-Disc makes `Γ ▹ˢ b : Bᵒᵖ`. -/
+recall ComprehensionCategory.OverCat.twist_disc {Γ : Cat.{u, u}} (B : IDisc.{u, u}.Ty Γ)
+    (C : ICatLax.{u, u}.Ty (Γ ▹ DiscreteModel.op B)) (hE : EmptyUnique.{u}) :
+    twist (B := B.toFunctor) C ≍ catToDisp C
+
+/-- Twist-Disc with no hypothesis: the twist is the type substituted along the swap. -/
+recall ComprehensionCategory.OverCat.twist_discSwap {Γ : Cat.{u, u}} (B : IDisc.{u, u}.Ty Γ)
+    (C : ICatLax.{u, u}.Ty (Γ ▹ DiscreteModel.op B)) :
+    twist (B := B.toFunctor) C = catToDisp (C⦃discSwap B⦄)
+
 /-- **The twisted Hom-type is derivable**: the twist of the Hom-type, substituted along the
 diagonal. -/
 recall ComprehensionCategory.OverCat.twistedHom_eq {Γ : Cat.{u, u}} (A : ICatLax.{u, u}.Ty Γ)
     :
     twistedHom A = (twist (homFunctor A))⦃diag A⦄
 
-/-- **Hom-Intro**: the identities are a term of the twisted Hom-type. -/
-recall ComprehensionCategory.OverCat.refl {Γ : Cat.{u, u}} (A : ICatLax.{u, u}.Ty Γ) :
-    Tm(Γ ▹ A, twistedHom A)
+/-- **Hom-Intro**: `Γ ⊢ refl_a₀ : Homₐ(ā₀, a₀)`. -/
+recall ComprehensionCategory.OverCat.reflAt {Γ : Cat.{u, u}} {A : ICatLax.{u, u}.Ty Γ}
+    (a₀ : Tm(Γ, A)) : Tm(Γ, ((twist (homFunctor A))⦃(a₀⦃𝐩 A⦄).sec⦄)⦃a₀.sec⦄)
+
+/-- **Hom-Intro is stable under substitution.** -/
+recall ComprehensionCategory.OverCat.reflAt_pull {Γ Δ : Cat.{u, u}} (σ : Δ ⟶ Γ)
+    {A : ICatLax.{u, u}.Ty Γ} (a₀ : Tm(Γ, A)) :
+    (reflAt a₀)⦃σ⦄ = reflAt a₀⦃σ⦄
 
 /-- **The category model has Π-types over the contravariant model.** -/
 recall ComprehensionCategory.OverCat.hasPi :
@@ -280,48 +304,43 @@ end FunTwist
 
 section HomElim
 
-variable {Γ : Cat.{u, u}} {A : ICatLax.{u, u}.Ty Γ} {X : ICatLax.{u, u}.Ty (Γ ▹ A)}
+variable {Γ : Cat.{u, u}} {A : ICatLax.{u, u}.Ty Γ} {a₀ : Tm(Γ, A)}
 
-/-- **Hom-Elim**: a term of the motive in context `Γ ▹ b : A ▹ a : A ▹ f : Homₐ(ā, b) ▹ x : X`. -/
-recall ComprehensionCategory.OverCat.homElim (D : ICatLax.{u, u}.Ty (elimCtx A X))
-    (d : Tm(Γ ▹ A ▹ X, D⦃homR A X⦄)) : Tm(elimCtx A X, D)
+/-- **Hom-Elim**: a term of the motive in context `Γ ▹ b : A ▹ f : Homₐ(ā₀, b)`. -/
+recall ComprehensionCategory.OverCat.homElim (D : ICatLax.{u, u}.Ty (homElimCtx a₀))
+    (d : Tm(Γ, D⦃homElimR a₀⦄)) : Tm(homElimCtx a₀, D)
 
-/-- The context of the motive extends the twisted Hom-type, in the displayed model. -/
-example : homCtx A = (Γ ▹ A ▹ A⦃𝐩 A⦄ ▹ twist (homFunctor A) : Cat.{u, u}) :=
+/-- The context of the motive extends the twisted Hom-type, substituted along `[a₀/a]`, in the
+displayed model. -/
+example : homElimCtx a₀ = (Γ ▹ A ▹ (twist (homFunctor A))⦃(a₀⦃𝐩 A⦄).sec⦄ : Cat.{u, u}) :=
   rfl
 
-/-- The premise is a term of `D[ā/a, a/b, refl_a/f]`: `r` is the substitution `reflSec A`,
-`(γ, a) ↦ (γ, a, a, 𝟙 a)`, extended by `x`, and `reflSec A` the extension of the diagonal by
-`refl A`. -/
-recall ComprehensionCategory.OverCat.homR_eq (A : ICatLax.{u, u}.Ty Γ)
-    (X : ICatLax.{u, u}.Ty (Γ ▹ A)) : homR A X = 𝐪(reflSec A, X⦃homDom A⦄)
+/-- The premise is a term of `D[a₀/b, refl_a₀/f]`: `r` is the extension of the section of `a₀` by
+the term `refl_a₀` of Hom-Intro. -/
+example : homElimR a₀ = consSec a₀.sec (reflAt a₀) :=
+  rfl
 
-recall ComprehensionCategory.OverCat.reflSec_eq (A : ICatLax.{u, u}.Ty Γ) :
-    reflSec A = consSec (diag A) ((refl A).castTy (twistedHom_eq A))
+/-- **Hom-Comp**: `j(refl_a₀, d) ≡ d`. -/
+recall ComprehensionCategory.OverCat.homComp (D : ICatLax.{u, u}.Ty (homElimCtx a₀))
+    (d : Tm(Γ, D⦃homElimR a₀⦄)) : (homElim D d)⦃homElimR a₀⦄ = d
 
-/-- **Hom-Comp**: `j(refl_a, x, d) ≡ d`. -/
-recall ComprehensionCategory.OverCat.homElim_pull_homR (D : ICatLax.{u, u}.Ty (elimCtx A X))
-    (d : Tm(Γ ▹ A ▹ X, D⦃homR A X⦄)) : (homElim D d)⦃homR A X⦄ = d
-
-/-- **Hom-Elim is stable under substitution**, along `σ⁺ = elimCtxMap σ A X`, the morphism of the
+/-- **Hom-Elim is stable under substitution**, along `σ⁺ = homElimCtxMap σ a₀`, the morphism of the
 comprehension structures. -/
 recall ComprehensionCategory.OverCat.homElim_pull {Γ Δ : Cat.{u, u}} (σ : Δ ⟶ Γ)
-    {A : ICatLax.{u, u}.Ty Γ} {X : ICatLax.{u, u}.Ty (Γ ▹ A)}
-    (D : ICatLax.{u, u}.Ty (elimCtx A X)) (d : Tm(Γ ▹ A ▹ X, D⦃homR A X⦄)) :
-    (homElim D d)⦃elimCtxMap σ A X⦄ =
-      homElim (D⦃elimCtxMap σ A X⦄) (homElimPremisePull σ D d)
+    {A : ICatLax.{u, u}.Ty Γ} {a₀ : Tm(Γ, A)} (D : ICatLax.{u, u}.Ty (homElimCtx a₀))
+    (d : Tm(Γ, D⦃homElimR a₀⦄)) :
+    (homElim D d)⦃homElimCtxMap σ a₀⦄ =
+      homElim (D⦃homElimCtxMap σ a₀⦄) d⦃σ⦄
 
-recall ComprehensionCategory.OverCat.elimCtxMap_eq {Δ : Cat.{u, u}} (σ : Δ ⟶ Γ)
-    (A : ICatLax.{u, u}.Ty Γ) (X : ICatLax.{u, u}.Ty (Γ ▹ A)) :
-    elimCtxMap σ A X = 𝐪(homCtxMap σ A, X⦃homDom A⦄)
+/-- The Hom-type `Homₐ(ā₀, b)` is stable under substitution, as a rule. -/
+recall ComprehensionCategory.OverCat.homElimTy_pull {Δ : Cat.{u, u}} (σ : Δ ⟶ Γ)
+    {A : ICatLax.{u, u}.Ty Γ} (a₀ : Tm(Γ, A)) :
+    ((twist (homFunctor A))⦃(a₀⦃𝐩 A⦄).sec⦄)⦃𝐪(σ, A)⦄ =
+      (twist (homFunctor (A⦃σ⦄)))⦃(a₀⦃σ⦄⦃𝐩 (A⦃σ⦄)⦄).sec⦄
 
-recall ComprehensionCategory.OverCat.homCtxMap_eq {Δ : Cat.{u, u}} (σ : Δ ⟶ Γ)
-    (A : ICatLax.{u, u}.Ty Γ) :
-    homCtxMap σ A = 𝐪(𝐪(𝐪(σ, A), A⦃𝐩 A⦄), twist (homFunctor A))
-
-/-- The substituted premise is `d⦃𝐪(𝐪(σ, A), X)⦄`, with no transport. -/
-example {Δ : Cat.{u, u}} (σ : Δ ⟶ Γ) (D : ICatLax.{u, u}.Ty (elimCtx A X))
-    (d : Tm(Γ ▹ A ▹ X, D⦃homR A X⦄)) : homElimPremisePull σ D d = d⦃𝐪(𝐪(σ, A), X)⦄ :=
+/-- The substitution `σ⁺` is the morphism of the comprehension structures. -/
+example {Δ : Cat.{u, u}} (σ : Δ ⟶ Γ) {A : ICatLax.{u, u}.Ty Γ} (a₀ : Tm(Γ, A)) :
+    homElimCtxMap σ a₀ = 𝐪(𝐪(σ, A), (twist (homFunctor A))⦃(a₀⦃𝐩 A⦄).sec⦄) :=
   rfl
 
 end HomElim

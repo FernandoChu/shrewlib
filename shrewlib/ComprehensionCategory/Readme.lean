@@ -24,8 +24,9 @@ Comprehension categories as displayed categories, their type formers, and models
   contexts over `Γ` (`Tm.equivOfIso`), and the sections of `Γ ▹ A ▹ T ⟶ Γ` are the pairs of a term
   `x` of `A` and a term of `T⦃x⦄` (`Tm.sigmaEquiv`).
 * `Map`: maps of comprehension categories over a functor of the bases, with a comparison
-  `F.obj (Γ ▹ A) ⟶ F.obj Γ ▹ M.obj A`, and their pseudo and strict versions. Strict maps send terms
-  to terms, and over the identity, the terms of `A` are those of `M.obj A` (`tmEquiv`).
+  `F.obj (Γ ▹ A) ⟶ F.obj Γ ▹ M.obj A`, and their pseudo and strict versions. Strict maps preserve
+  the chosen lifts and send terms to terms, and over the identity, the terms of `A` are those of
+  `M.obj A` (`tmEquiv`), compatibly with substitution (`tmEquiv_pull`).
 * `TypeFormers/`: what it means to have a (strict) type former.
   * `Pi`: Π-types `Π[A] B` of `E` over `D`, for `A` a type of `D` and `B` one of `E` in context
     `Γ ▹ A`, with abstraction and application `Tm(Γ ▹ A, B) ≃ Tm(Γ, Π[A] B)`, stable under
@@ -59,14 +60,15 @@ Comprehension categories as displayed categories, their type formers, and models
       the discrete model, also of two terms, and those of discrete types with Hom-Disc, under the
       uniqueness of empty types; the universes of discrete and of contravariant types in the
       category model, the twist of a type of the category model, a type of the displayed model,
-      and the twisted Hom-types with their introduction rule (Hom-Intro) and their elimination
-      and computation rules (Hom-Elim, Hom-Comp), stable under substitution, by the chosen lifts
-      of the comma AWFS on `Cat`; the Π-types of the category model over the contravariant one,
-      of sections over the fibres; the terms of the opposite of a Σ-type and of the twisted
-      function type `Ā → B`, through twists.
+      trivial along a variable of a discrete type (Twist-Disc), and the twisted Hom-types with
+      their introduction rule (Hom-Intro) and their elimination and computation rules (Hom-Elim,
+      Hom-Comp), based at a term and stable under substitution,
+      by the chosen lifts of the comma AWFS on `Cat`; the Π-types of the category model over the
+      contravariant one, of sections over the fibres; the terms of the opposite of a Σ-type and
+      of the twisted function type `Ā → B`, through twists.
     * `Applications/`: the paper's applications: directed univalence, natural transformations as
-      terms of twisted Hom-types and of discrete types in an extended context, and transport by
-      Hom-Elim, with the bijection of the lemma before the Yoneda corollary.
+      terms of twisted Hom-types and of discrete types in an extended context, and the
+      bijection of the lemma before the Yoneda corollary, by Hom-Elim.
     * `Maps/`: maps between the models: forgetting the discreteness, a strict map preserving
       Σ-types, unit types and opposite types, the inclusions of the category model and the
       contravariant one into the displayed model, strict maps preserving Σ-types and unit types,

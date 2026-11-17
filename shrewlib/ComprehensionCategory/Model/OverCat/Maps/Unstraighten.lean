@@ -93,5 +93,8 @@ def unstraightenDisplayedComprehensionMap :
   toPre.toDispFunctor := Straightening.unstraighten
   toPre.isCartesianMap := Straightening.isCartesianUnstraightenMap
   toPre.compr_obj _ := rfl
+  obj_pull σ A := Straightening.unstraightenObj_pullback σ A
+  map_clift σ A := by
+    kernel_exact heq_of_eq (Straightening.unstraightenCartesian.map_clift σ A)
 
 end ComprehensionCategory.OverCat

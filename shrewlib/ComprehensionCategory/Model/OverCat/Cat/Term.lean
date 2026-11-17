@@ -10,8 +10,9 @@ A term `t : Tm(Γ, A)` of a type `A : Γ ⥤ Cat` is a section of the projection
 term `tmMk obj map _ _` is the section `γ ↦ (γ, obj γ)`, from values `obj γ : A γ` and transports
 `map f : A f (obj γ) ⟶ obj γ'`, compatible with identities and composites; its equation
 `sec ≫ 𝐩 A = 𝟙 Γ` holds by `rfl`. Every term is of this form, but only propositionally: the
-first component of `t.sec γ` is `γ` by `t.sec_proj`. The variable `var A : Tm(Γ ▹ A, A⦃𝐩 A⦄)` is
-`(γ, a) ↦ a`, and its section is the diagonal `diag A : Γ ▹ A ⟶ Γ ▹ A ▹ A⦃𝐩 A⦄`.
+first component of `t.sec γ` is `γ` by `t.sec_proj` (it is so by rules in `Cat/TermRules`). The
+variable `var A : Tm(Γ ▹ A, A⦃𝐩 A⦄)` is `(γ, a) ↦ a`, and its section is the diagonal
+`diag A : Γ ▹ A ⟶ Γ ▹ A ▹ A⦃𝐩 A⦄`.
 
 For the constant type `constTy Γ K` at a category `K`, whose transports are identities, the values
 do not depend on these first components: the terms are the functors `Γ ⥤ K` (`Tm.constEquiv`). A

@@ -14,6 +14,8 @@ from objects `obj γ` of `D` over `γ` and morphisms `map f : obj γ ⟶[f] obj 
 with identities and composites. Its equation `sec ≫ 𝐩 F = 𝟙 Γ` holds by `rfl`. The substitution
 of `straightenObj E` is the straightening of the reindexing of `E`, by `rfl` (`straightenObj_pull`),
 and the substitution of the term of a section is the term of its reindexing (`Tm.ofSection_pull`).
+A section of `D` reindexed along two morphisms is so a term of `straightenObj D` substituted along
+them (`Tm.ofSectionPull₂`).
 The projection of `straightenObj D` is that of the total category of `D` (`proj_straightenObj`),
 and the extension of `σ` by a term of `straightenObj (DisplayedCat.pull σ D)` is its section
 followed by the chosen lift (`consSec_straightenObj`), by `rfl`. They are stated for any `D`, so
@@ -80,6 +82,14 @@ def Tm.ofSection {D : Displayed.{u, u} Γ} (S : D.Section) :
     IProf.Tm (Γ := Γ) (straightenObj D) where
   sec := S.total.toCatHom
   sec_proj := rfl
+
+/-- The term of `straightenObj D` substituted along `σ` and then `τ`, of a section of `D` reindexed
+along them: its type is that of the reindexed category by `rfl` (`straightenObj_pull`). Stated for
+any `D`, the type is checked without unfolding a particular `D`. -/
+def Tm.ofSectionPull₂ {Θ Δ : Cat.{u, u}} (τ : Θ ⟶ Δ) (σ : Δ ⟶ Γ) (D : Displayed.{u, u} Γ)
+    (S : (DisplayedCat.pull τ (DisplayedCat.pull σ D)).Section) :
+    IProf.Tm (Γ := Θ) (IProf.pull τ (IProf.pull σ (straightenObj D))) :=
+  Tm.ofSection S
 
 /-- **The terms of `straightenObj D` are the sections of `D`.** -/
 def Tm.sectionEquiv {D : Displayed.{u, u} Γ} :

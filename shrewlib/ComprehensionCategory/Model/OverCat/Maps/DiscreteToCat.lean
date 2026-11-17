@@ -19,7 +19,8 @@ the category model with a proof of discreteness:
 * the unit types (`forgetComprehensionMap_preservesUnit`), and so the stars.
 
 It sends a term to the term with the same section, which commutes with substitution by `rfl`
-(`forgetComprehensionMap_tmEquiv_pull`).
+(`forgetComprehensionMap_tmEquiv_pull`), as any strict map
+(`StrictComprehensionMap.tmEquiv_pull`); here the two terms have the same type by `rfl`.
 -/
 
 universe u
@@ -56,11 +57,10 @@ model are those of the category model. -/
 theorem forgetComprehensionMap_preservesUnit : forgetComprehensionMap.{u}.PreservesUnit where
   obj_unit _ := rfl
 
-/-- **Forgetting the discreteness commutes with the substitution of terms**, by `rfl`, checked in
-the kernel. -/
+/-- **Forgetting the discreteness commutes with the substitution of terms**, as any strict map. -/
 theorem forgetComprehensionMap_tmEquiv_pull {Γ Δ : Cat.{u, u}} (σ : Δ ⟶ Γ)
     {A : IDisc.{u, u}.Ty Γ} (t : Tm(Γ, A)) :
-    forgetComprehensionMap.tmEquiv (t⦃σ⦄) = (forgetComprehensionMap.tmEquiv t)⦃σ⦄ := by
-  kernel_rfl'
+    forgetComprehensionMap.tmEquiv (t⦃σ⦄) = (forgetComprehensionMap.tmEquiv t)⦃σ⦄ :=
+  eq_of_heq (forgetComprehensionMap.tmEquiv_pull σ t)
 
 end ComprehensionCategory.OverCat

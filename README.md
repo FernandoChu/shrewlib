@@ -71,16 +71,16 @@ files, (op)cartesian morphisms (in `Displayed/{Opfibration,Fibration}/Basic` and
   included by strict maps preserving Σ-types and unit types; with the type formers relating them,
   such as the Hom-types of the category model in the discrete model, of two terms or in context
   form, with Hom-Disc for discrete types under the uniqueness of empty types, the twist of types
-  of the category model into types of the displayed model, the twisted Hom-types, their term
-  `refl` and their elimination and computation rules, stable under substitution, as chosen lifts
-  of the comma AWFS on `Cat`, the Π-types of the category model over the contravariant one, whose
-  values are the categories of sections over the fibres, the terms of the opposite of a Σ-type,
-  pairs of a term and a term of a twist, and those of the twisted function type `Ā → B`, the terms
-  of `B` in context `Γ ▹ a : A`, both naturally in `Γ`. The paper's applications use them
+  of the category model into types of the displayed model, which does nothing along a variable of
+  a discrete type (Twist-Disc), the twisted Hom-types, their term `refl` and their elimination and
+  computation rules, based at a term and stable under substitution, as chosen lifts of the comma AWFS on `Cat`, the Π-types of the category model over
+  the contravariant one, whose values are the categories of sections over the fibres, the terms of
+  the opposite of a Σ-type, pairs of a term and a term of a twist, and those of the twisted
+  function type `Ā → B`, the terms of `B` in context `Γ ▹ a : A`, both naturally in `Γ`. The paper's applications use them
   (`Model/OverCat/Applications/`): directed univalence, a natural isomorphism between the function
   type into a discrete type and the Hom-type of the universe, the natural transformations as the
-  terms of twisted Hom-types and of discrete types in an extended context, and transport by
-  Hom-Elim, with the bijection of the lemma before the Yoneda corollary. The models of fibrations,
+  terms of twisted Hom-types and of discrete types in an extended context, and the bijection of
+  the lemma before the Yoneda corollary, by Hom-Elim. The models of fibrations,
   the displayed categories, split (op)fibrations and discrete opfibrations with their total
   categories as comprehension, are full split comprehension categories, and the unstraightenings
   from the four category models to them are strict maps preserving the chosen lifts.
